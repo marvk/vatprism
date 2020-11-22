@@ -1,6 +1,8 @@
 package net.marvk.fs.vatsim.map.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
 import java.time.DateTimeException;

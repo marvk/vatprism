@@ -38,20 +38,24 @@ public class ClientDetailView implements FxmlView<ClientDetailViewModel> {
             setFlightPlan(newValue);
         });
 
-        setFlightPlan(viewModel.getClient().getFlightPlan());
+        setFlightPlan(viewModel.getClient().flightPlanProperty().get());
 
-        final Node flightPlan = Borders.wrap(this.flightPlan).lineBorder().title("Flight Plan").build().build();
-
-        root.getChildren().remove(1);
-        root.getChildren().add(flightPlan);
+//        final Node flightPlan = Borders.wrap(this.flightPlan).lineBorder().title("Flight Plan").build().build();
+//
+//        root.getChildren().remove(1);
+//        root.getChildren().add(flightPlan);
     }
 
     private void setFlightPlan(final FlightPlan flightPlan) {
         if (flightPlan == null) {
+            flightRules.setText("");
+            aircraftType.setText("");
+            trueAirSpeed.setText("");
+            cruiseAltitude.setText("");
+            departure.setText("");
+            arrival.setText("");
             return;
         }
-
-        System.out.println(flightPlan);
 
         flightRules.setText(flightPlan.getFlightType().toString());
         aircraftType.setText(flightPlan.getAircraft());

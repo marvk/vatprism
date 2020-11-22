@@ -14,9 +14,11 @@
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <lombok.version>1.18.16</lombok.version>
+
         <java.version>15</java.version>
+        <lombok.version>1.18.16</lombok.version>
         <javafx.version>11.0.2</javafx.version>
+        <slf4j.version>1.7.30</slf4j.version>
     </properties>
 
     <dependencies>
@@ -73,6 +75,17 @@
             <groupId>eu.lestard</groupId>
             <artifactId>advanced-bindings</artifactId>
             <version>0.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 
