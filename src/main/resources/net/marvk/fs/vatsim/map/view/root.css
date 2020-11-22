@@ -1,0 +1,15 @@
+.description {
+    -fx-font-weight: BOLD;
+}
+
+.table-row-cell {
+    -fx-padding: 0;
+}
+
+.table-cell {
+    -fx-padding: 0;
+}
+
+.table-view {
+    -fx-table-cell-border-color: transparent;
+}
