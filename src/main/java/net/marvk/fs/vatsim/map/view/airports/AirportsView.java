@@ -8,5 +8,7 @@ public class AirportsView extends AbstractTableView<AirportsViewModel, AirportVi
     public void initialize() {
         super.initialize();
         addColumn("ICAO", "icao");
+        addColumn("Name", "name");
+        enableFilter();
     }
 }

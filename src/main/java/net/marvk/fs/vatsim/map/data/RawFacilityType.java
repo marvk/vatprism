@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import java.util.Arrays;
 import java.util.List;
 
-public enum FacilityType {
+public enum RawFacilityType {
     NONE(null, "OBS"),
     FLIGHT_SERVICE_STATION("FSS"),
     DELIVERY("DEL"),
@@ -14,11 +14,11 @@ public enum FacilityType {
 
     private final List<String> suffixes;
 
-    FacilityType(final String... suffixes) {
+    RawFacilityType(final String... suffixes) {
         this.suffixes = Arrays.asList(suffixes);
     }
 
-    public static FacilityType fromString(final String facilityType) {
+    public static RawFacilityType fromString(final String facilityType) {
         return switch (facilityType) {
             case "1" -> FLIGHT_SERVICE_STATION;
             case "2" -> DELIVERY;

@@ -5,8 +5,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
 
-public class AirportViewModel extends SimpleDataViewModel<VatsimAirport> {
-    public AirportViewModel(final DataViewModel<VatsimAirport> viewModel) {
+public class AirportViewModel extends SimpleDataViewModel<VatsimAirport, AirportViewModel> {
+    public AirportViewModel(final AirportViewModel viewModel) {
         super(viewModel);
     }
 

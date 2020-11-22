@@ -19,6 +19,7 @@
         <lombok.version>1.18.16</lombok.version>
         <javafx.version>11.0.2</javafx.version>
         <slf4j.version>1.7.30</slf4j.version>
+        <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
     </properties>
 
     <dependencies>
@@ -64,7 +65,7 @@
         <dependency>
             <groupId>de.saxsys</groupId>
             <artifactId>mvvmfx</artifactId>
-            <version>1.9.0-SNAPSHOT</version>
+            <version>${mvvmfx.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.lestard</groupId>
@@ -86,6 +87,17 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.saxsys</groupId>
+            <artifactId>mvvmfx-guice</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>4.2.3</version>
         </dependency>
     </dependencies>
 

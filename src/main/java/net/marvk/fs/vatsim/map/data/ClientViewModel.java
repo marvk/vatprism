@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -7,17 +8,30 @@ import net.marvk.fs.vatsim.api.data.VatsimClient;
 
 import java.time.ZonedDateTime;
 
-public class ClientViewModel extends SimpleDataViewModel<VatsimClient> implements ViewModel {
-    public ClientViewModel(final DataViewModel<VatsimClient> viewModel) {
-        super(viewModel);
-    }
+public class ClientViewModel extends SimpleDataViewModel<VatsimClient, ClientViewModel> implements ViewModel {
+    private final FlightPlanViewModel flightPlan;
+    private final ClientStatusViewModel clientStatus;
+    private final ControllerDataViewModel controllerData;
 
-    public ClientViewModel(final VatsimClient vatsimClient) {
-        super(vatsimClient);
-    }
-
-    public ClientViewModel() {
+    @Inject
+    public ClientViewModel(
+            final FlightPlanViewModel flightPlan,
+            final ClientStatusViewModel clientStatus,
+            final ControllerDataViewModel controllerData
+    ) {
         super();
+
+        this.flightPlan = flightPlan;
+        this.clientStatus = clientStatus;
+        this.controllerData = controllerData;
+
+        setupBinding();
+    }
+
+    private void setupBinding() {
+        flightPlan.modelProperty().bind(modelProperty());
+        clientStatus.modelProperty().bind(modelProperty());
+        controllerData.modelProperty().bind(modelProperty());
     }
 
     public StringProperty callsignProperty() {
@@ -32,8 +46,8 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient> implement
         return stringProperty("realName", VatsimClient::getRealName);
     }
 
-    public ObjectProperty<ClientType> clientTypeProperty() {
-        return objectProperty("clientType", c -> ClientType.fromString(c.getClientType()));
+    public ObjectProperty<RawClientType> rawClientTypeProperty() {
+        return objectProperty("rawClientType", c -> RawClientType.fromString(c.getClientType()));
     }
 
     public StringProperty frequencyProperty() {
@@ -52,8 +66,8 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient> implement
         return stringProperty("transponder", VatsimClient::getTransponder);
     }
 
-    public ObjectProperty<FacilityType> facilityTypeProperty() {
-        return objectProperty("facilityType", c -> FacilityType.fromString(c.getFaciliyType()));
+    public ObjectProperty<RawFacilityType> rawFacilityTypeProperty() {
+        return objectProperty("rawFacilityType", c -> RawFacilityType.fromString(c.getFaciliyType()));
     }
 
     public StringProperty visualRangeProperty() {
@@ -80,11 +94,15 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient> implement
         return stringProperty("qnhMillibars", VatsimClient::getQnhMillibars);
     }
 
-    public ObjectProperty<ClientStatus> clientStatusProperty() {
-        return objectProperty("clientStatus", ClientStatus::fromVatsimClient);
+    public ClientStatusViewModel clientStatus() {
+        return clientStatus;
     }
 
-    public ObjectProperty<FlightPlan> flightPlanProperty() {
-        return objectProperty("flightPlane", FlightPlan::fromVatsimClient);
+    public FlightPlanViewModel flightPlan() {
+        return flightPlan;
+    }
+
+    public ControllerDataViewModel controllerDataProperty() {
+        return controllerData;
     }
 }

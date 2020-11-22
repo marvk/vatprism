@@ -4,6 +4,7 @@ import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.InjectContext;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
@@ -26,8 +27,9 @@ public class ClientsView extends AbstractTableView<ClientsViewModel, ClientViewM
         super.initialize();
         addColumn("Callsign", "callsign");
         addColumn("CID", "cid");
+        addColumn("ControllerType", e -> e.controllerDataProperty().controllerTypeProperty().asString());
         addColumn("Name", "realName");
-        addColumn("Type", "clientType");
+        addColumn("Type", "rawClientType");
 
         table.setFixedCellSize(18);
         enableFilter();

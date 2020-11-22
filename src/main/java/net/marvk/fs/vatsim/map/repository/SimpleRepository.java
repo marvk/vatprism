@@ -7,6 +7,7 @@ import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.map.data.DataViewModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,17 +18,16 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
     protected final ObservableList<ViewModel> unmodifiableList;
     protected final VatsimApi vatsimApi;
 
-    public SimpleRepository(
-            final VatsimApi vatsimApi
-    ) {
+    public SimpleRepository(final VatsimApi vatsimApi) {
         this.vatsimApi = vatsimApi;
 
+        System.out.println("SimpleRepository.SimpleRepository");
         this.list = FXCollections.observableArrayList();
         this.map = FXCollections.observableHashMap();
         this.unmodifiableList = FXCollections.unmodifiableObservableList(this.list);
     }
 
-    protected abstract ViewModel map(final Model model);
+    protected abstract ViewModel create(final Model model);
 
     protected abstract String extractKey(final Model model);
 
@@ -40,6 +40,8 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
 
     @Override
     public void reload() throws RepositoryException {
+        System.out.println("RELOAD");
+
         try {
             final Collection<Model> models = extractModelList(vatsimApi);
 
@@ -51,17 +53,21 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
             list.removeIf(e -> keysInUpdate.contains(extractKey(e.getModel())));
             map.keySet().removeIf(keysInUpdate::contains);
 
+            final ArrayList<ViewModel> toAdd = new ArrayList<>();
+
             for (final Model model : models) {
                 final String key = extractKey(model);
                 final ViewModel viewModel = map.get(key);
                 if (viewModel == null) {
-                    final ViewModel newViewModel = map(model);
+                    final ViewModel newViewModel = create(model);
                     map.put(key, newViewModel);
-                    list.add(newViewModel);
+                    toAdd.add(newViewModel);
                 } else {
                     viewModel.setModel(model);
                 }
             }
+
+            list.addAll(toAdd);
         } catch (final VatsimApiException e) {
             throw new RepositoryException(e);
         }

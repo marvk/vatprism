@@ -1,17 +1,21 @@
 package net.marvk.fs.vatsim.map.data;
 
 import de.saxsys.mvvmfx.utils.mapping.ModelWrapper;
-import de.saxsys.mvvmfx.utils.mapping.accessorfunctions.*;
+import de.saxsys.mvvmfx.utils.mapping.accessorfunctions.BooleanGetter;
+import de.saxsys.mvvmfx.utils.mapping.accessorfunctions.DoubleGetter;
+import de.saxsys.mvvmfx.utils.mapping.accessorfunctions.ObjectGetter;
+import de.saxsys.mvvmfx.utils.mapping.accessorfunctions.StringGetter;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 
 import java.util.function.Function;
 
-public abstract class SimpleDataViewModel<Model> implements DataViewModel<Model> {
+public abstract class SimpleDataViewModel<Model, ViewModel extends SimpleDataViewModel<Model, ViewModel>> implements DataViewModel<Model> {
     protected final ModelWrapper<Model> wrapper = new ModelWrapper<>();
 
-    public SimpleDataViewModel(final DataViewModel<Model> viewModel) {
+    public SimpleDataViewModel(final ViewModel viewModel) {
         this(viewModel != null ? viewModel.getModel() : null);
     }
 
@@ -44,6 +48,10 @@ public abstract class SimpleDataViewModel<Model> implements DataViewModel<Model>
     }
 
     protected StringProperty stringProperty(final String identifier, final StringGetter<Model> mapper) {
+        return wrapper.field(identifier, mapper, null);
+    }
+
+    protected DoubleProperty doubleProperty(final String identifier, final DoubleGetter<Model> mapper) {
         return wrapper.field(identifier, mapper, null);
     }
 

@@ -3,12 +3,10 @@ package net.marvk.fs.vatsim.map.view.clientdetail;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import net.marvk.fs.vatsim.map.data.FlightPlan;
-import org.controlsfx.tools.Borders;
+import net.marvk.fs.vatsim.map.data.FlightPlanViewModel;
 
 public class ClientDetailView implements FxmlView<ClientDetailViewModel> {
     @FXML
@@ -28,40 +26,21 @@ public class ClientDetailView implements FxmlView<ClientDetailViewModel> {
     @FXML
     private Pane root;
     @FXML
-    private GridPane flightPlan;
+    private GridPane grid;
     @InjectViewModel
     private ClientDetailViewModel viewModel;
 
     public void initialize() {
         callsign.textProperty().bind(viewModel.getClient().callsignProperty());
-        viewModel.getClient().flightPlanProperty().addListener((observable, oldValue, newValue) -> {
-            setFlightPlan(newValue);
-        });
 
-        setFlightPlan(viewModel.getClient().flightPlanProperty().get());
+        final FlightPlanViewModel flightPlan = viewModel.getClient().flightPlan();
 
-//        final Node flightPlan = Borders.wrap(this.flightPlan).lineBorder().title("Flight Plan").build().build();
-//
-//        root.getChildren().remove(1);
-//        root.getChildren().add(flightPlan);
+        flightRules.textProperty().bind(flightPlan.rawFlightTypeProperty().asString());
+        aircraftType.textProperty().bind(flightPlan.aircraftProperty());
+        trueAirSpeed.textProperty().bind(flightPlan.trueAirspeedCruiseProperty());
+        cruiseAltitude.textProperty().bind(flightPlan.altitudePropertyProperty());
+        departure.textProperty().bind(flightPlan.departureAirportProperty());
+        arrival.textProperty().bind(flightPlan.destinationAirportProperty());
     }
 
-    private void setFlightPlan(final FlightPlan flightPlan) {
-        if (flightPlan == null) {
-            flightRules.setText("");
-            aircraftType.setText("");
-            trueAirSpeed.setText("");
-            cruiseAltitude.setText("");
-            departure.setText("");
-            arrival.setText("");
-            return;
-        }
-
-        flightRules.setText(flightPlan.getFlightType().toString());
-        aircraftType.setText(flightPlan.getAircraft());
-        trueAirSpeed.setText(String.valueOf(flightPlan.getTrueAirspeedCruise()));
-        cruiseAltitude.setText(String.valueOf(flightPlan.getAltitude()));
-        departure.setText(flightPlan.getDepartureAirport());
-        arrival.setText(flightPlan.getDestinationAirport());
-    }
 }
