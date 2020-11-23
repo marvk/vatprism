@@ -16,20 +16,20 @@ public class App extends MvvmfxGuiceApplication {
     }
 
     @Override
-    public void startMvvmfx(final Stage primaryStage) throws Exception {
+    public void startMvvmfx(final Stage primaryStage) {
         final GlobalScope globalScope = new GlobalScope();
 
-        final var viewTuple =
-                FluentViewLoader.fxmlView(MainView.class)
-                                .providedScopes(globalScope)
-                                .load();
+        final var viewTuple = FluentViewLoader
+                .fxmlView(MainView.class)
+                .providedScopes(globalScope)
+                .load();
 
-        primaryStage.setScene(new Scene(viewTuple.getView()));
+        primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         primaryStage.show();
     }
 
     @Override
-    public void initGuiceModules(final List<Module> modules) throws Exception {
+    public void initGuiceModules(final List<Module> modules) {
         modules.add(new AppModule());
     }
 }

@@ -3,17 +3,11 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
 
 public class AirportViewModel extends SimpleDataViewModel<VatsimAirport, AirportViewModel> {
-    public AirportViewModel(final AirportViewModel viewModel) {
-        super(viewModel);
-    }
-
-    public AirportViewModel(final VatsimAirport vatsimAirport) {
-        super(vatsimAirport);
-    }
-
     public AirportViewModel() {
         super();
     }

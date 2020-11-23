@@ -3,6 +3,8 @@ package net.marvk.fs.vatsim.map.view.table;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -19,7 +21,9 @@ public abstract class AbstractTableView<TableViewModel extends AbstractTableView
     protected TableViewModel viewModel;
 
     public void initialize() {
-        table.setItems(viewModel.items());
+        final SortedList<TableViewViewModel> value = new SortedList<>(viewModel.items());
+        value.comparatorProperty().bind(table.comparatorProperty());
+        table.setItems(value);
 
         final var selectionModel = table.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
@@ -41,6 +45,7 @@ public abstract class AbstractTableView<TableViewModel extends AbstractTableView
     protected void addColumnFromPropertyExtractor(final String header, final Callback<TableColumn.CellDataFeatures<TableViewViewModel, String>, ObservableValue<String>> callback) {
         final TableColumn<TableViewViewModel, String> column = new TableColumn<>(header);
         column.setCellValueFactory(callback);
+        column.setSortable(true);
         table.getColumns().add(column);
     }
 }

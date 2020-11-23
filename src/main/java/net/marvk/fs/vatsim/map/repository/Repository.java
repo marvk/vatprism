@@ -6,4 +6,6 @@ public interface Repository<ViewModel> {
     ObservableList<ViewModel> list();
 
     void reload() throws RepositoryException;
+
+    ViewModel getByKey(final String key);
 }

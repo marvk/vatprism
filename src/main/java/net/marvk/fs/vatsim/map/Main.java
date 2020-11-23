@@ -1,7 +1,10 @@
 package net.marvk.fs.vatsim.map;
 
 import lombok.SneakyThrows;
-import net.marvk.fs.vatsim.api.*;
+import net.marvk.fs.vatsim.api.HttpDataSource;
+import net.marvk.fs.vatsim.api.SimpleVatsimApi;
+import net.marvk.fs.vatsim.api.VatsimApi;
+import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.Point;
 import net.marvk.fs.vatsim.api.data.*;
 import org.geotools.data.shapefile.files.ShpFiles;
@@ -18,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -54,20 +58,6 @@ public final class Main {
 
     private void paintActiveFirBoundaries(final BufferedImage image, final Color color) throws VatsimApiException {
         final Graphics2D g = (Graphics2D) image.getGraphics();
-
-        final List<VatsimClient> atcs = data.getClients()
-                                            .stream()
-                                            .filter(e -> "ATC".equals(e.getClientType()))
-                                            .collect(Collectors.toList());
-
-        final VatsimVatSpy x = api.vatSpy();
-
-
-        System.out.println(x);
-
-        atcs.forEach(System.out::println);
-
-
     }
 
     private void paintBackground(final BufferedImage image, final Color color) {
@@ -79,6 +69,10 @@ public final class Main {
     private void paintFirBoundaries(final BufferedImage image, final Color color) {
         final Graphics2D g = image.createGraphics();
         for (final VatsimAirspace airspace : vatsimFirBoundaries) {
+            if (!"enbd".equalsIgnoreCase(airspace.getGeneral().getIcao())) {
+                continue;
+            }
+
             final List<Point> points = airspace.getAirspacePoints()
                                                .stream()
                                                .map(Main::geoToFlat)

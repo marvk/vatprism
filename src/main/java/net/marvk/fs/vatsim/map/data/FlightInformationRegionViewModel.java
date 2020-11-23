@@ -1,18 +1,23 @@
 package net.marvk.fs.vatsim.map.data;
 
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.beans.property.StringProperty;
 import net.marvk.fs.vatsim.api.data.VatsimFlightInformationRegion;
 
 public class FlightInformationRegionViewModel extends SimpleDataViewModel<VatsimFlightInformationRegion, FlightInformationRegionViewModel> implements ViewModel {
-    public FlightInformationRegionViewModel(final FlightInformationRegionViewModel viewModel) {
-        super(viewModel);
+    public StringProperty icaoProperty() {
+        return stringProperty("icao", VatsimFlightInformationRegion::getIcao);
     }
 
-    public FlightInformationRegionViewModel(final VatsimFlightInformationRegion vatsimFlightInformationRegion) {
-        super(vatsimFlightInformationRegion);
+    public StringProperty nameProperty() {
+        return stringProperty("name", VatsimFlightInformationRegion::getName);
     }
 
-    public FlightInformationRegionViewModel() {
-        super();
+    public StringProperty prefixPositionProperty() {
+        return stringProperty("prefoxPosition", VatsimFlightInformationRegion::getPrefixPosition);
+    }
+
+    public StringProperty unknown1Property() {
+        return stringProperty("unknown1", VatsimFlightInformationRegion::getUnknown1);
     }
 }

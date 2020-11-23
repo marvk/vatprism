@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Model>> implements Repository<ViewModel> {
+public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Model, ViewModel>> implements Repository<ViewModel> {
     protected final ObservableList<ViewModel> list;
     protected final ObservableMap<String, ViewModel> map;
     protected final ObservableList<ViewModel> unmodifiableList;
@@ -21,7 +21,6 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
     public SimpleRepository(final VatsimApi vatsimApi) {
         this.vatsimApi = vatsimApi;
 
-        System.out.println("SimpleRepository.SimpleRepository");
         this.list = FXCollections.observableArrayList();
         this.map = FXCollections.observableHashMap();
         this.unmodifiableList = FXCollections.unmodifiableObservableList(this.list);
@@ -34,14 +33,17 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
     protected abstract Collection<Model> extractModelList(final VatsimApi api) throws VatsimApiException;
 
     @Override
+    public ViewModel getByKey(final String key) {
+        return map.get(key);
+    }
+
+    @Override
     public ObservableList<ViewModel> list() {
         return unmodifiableList;
     }
 
     @Override
     public void reload() throws RepositoryException {
-        System.out.println("RELOAD");
-
         try {
             final Collection<Model> models = extractModelList(vatsimApi);
 

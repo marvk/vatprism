@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -7,16 +8,36 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.map.repository.AirportRepository;
+import net.marvk.fs.vatsim.map.repository.FlightInformationRegionBoundaryRepository;
 
 @Slf4j
 public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, ControllerDataViewModel> implements ViewModel {
     private final ObjectProperty<ControllerType> controllerType = new SimpleObjectProperty<>();
     private final StringProperty infix = new SimpleStringProperty();
-    private final StringProperty airport = new SimpleStringProperty();
-    private final StringProperty fir = new SimpleStringProperty();
+    private final AirportViewModel airport;
+    private final AirportRepository airportRepository;
+    private final FlightInformationRegionBoundaryViewModel flightInformationRegion;
     private final StringProperty uir = new SimpleStringProperty();
 
-    public ControllerDataViewModel() {
+    private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
+
+    @Inject
+    public ControllerDataViewModel(
+            final FlightInformationRegionBoundaryViewModel flightInformationRegionBoundary,
+            final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
+            final AirportViewModel airport,
+            final AirportRepository airportRepository
+    ) {
+        this.flightInformationRegion = flightInformationRegionBoundary;
+        this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
+        this.airport = airport;
+        this.airportRepository = airportRepository;
+
+        setupBindings();
+    }
+
+    private void setupBindings() {
         modelProperty().addListener((observable, oldValue, newValue) -> update(newValue));
     }
 
@@ -54,8 +75,8 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
         set(
                 controllerType,
                 infix,
-                location,
-                null,
+                airportRepository.getByKey(location),
+                flightInformationRegionBoundaryRepository.getByKey(location),
                 null
         );
     }
@@ -64,11 +85,11 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
         set(ControllerType.NONE, null, null, null, null);
     }
 
-    private void set(final ControllerType controllerType, final String infix, final String airport, final String fir, final String uir) {
+    private void set(final ControllerType controllerType, final String infix, final AirportViewModel airport, final FlightInformationRegionBoundaryViewModel flightInformationRegion, final String uir) {
         this.controllerType.set(controllerType);
         this.infix.set(infix);
-        this.airport.set(airport);
-        this.fir.set(fir);
+        this.airport.setModelFromViewModel(airport);
+        this.flightInformationRegion.setModelFromViewModel(flightInformationRegion);
         this.uir.set(uir);
     }
 
@@ -80,12 +101,12 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
         return infix;
     }
 
-    public StringProperty airportProperty() {
+    public AirportViewModel airport() {
         return airport;
     }
 
-    public StringProperty firProperty() {
-        return fir;
+    public FlightInformationRegionBoundaryViewModel fir() {
+        return flightInformationRegion;
     }
 
     public StringProperty uirProperty() {

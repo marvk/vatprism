@@ -11,20 +11,24 @@ import net.marvk.fs.vatsim.map.repository.*;
 public class MainViewModel implements ViewModel {
     private final Command loadAirports;
     private final Command loadFirs;
+    private final Command loadFirbs;
     private final Command loadClients;
 
     @Inject
     public MainViewModel(
             final AirportRepository airportRepository,
             final ClientRepository clientRepository,
-            final FlightInformationRegionRepository flightInformationRegionRepository
+            final FlightInformationRegionRepository flightInformationRegionRepository,
+            final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository
     ) {
         loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
         loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
+        loadFirbs = new ReloadRepositoryAction(flightInformationRegionBoundaryRepository).asCommand();
         loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
 
         new CompositeCommand(
                 loadFirs,
+                loadFirbs,
                 loadAirports,
                 loadClients
         ).execute();
@@ -43,7 +47,7 @@ public class MainViewModel implements ViewModel {
         }
 
         private DelegateCommand asCommand() {
-            return new DelegateCommand(() -> this, true);
+            return new DelegateCommand(() -> this, false);
         }
     }
 }

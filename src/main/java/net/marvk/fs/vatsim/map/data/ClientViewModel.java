@@ -25,10 +25,15 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient, ClientVie
         this.clientStatus = clientStatus;
         this.controllerData = controllerData;
 
-        setupBinding();
+        setupBindings();
     }
 
-    private void setupBinding() {
+    private void setupBindings() {
+//        modelProperty().addListener((observable, oldValue, newValue) -> {
+//            flightPlan.setModel(newValue);
+//            clientStatus.setModel(newValue);
+//            controllerData.setModel(newValue);
+//        });
         flightPlan.modelProperty().bind(modelProperty());
         clientStatus.modelProperty().bind(modelProperty());
         controllerData.modelProperty().bind(modelProperty());
@@ -102,7 +107,7 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient, ClientVie
         return flightPlan;
     }
 
-    public ControllerDataViewModel controllerDataProperty() {
+    public ControllerDataViewModel controllerData() {
         return controllerData;
     }
 }

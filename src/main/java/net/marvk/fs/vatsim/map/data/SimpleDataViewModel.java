@@ -12,19 +12,27 @@ import javafx.beans.property.StringProperty;
 
 import java.util.function.Function;
 
-public abstract class SimpleDataViewModel<Model, ViewModel extends SimpleDataViewModel<Model, ViewModel>> implements DataViewModel<Model> {
-    protected final ModelWrapper<Model> wrapper = new ModelWrapper<>();
+public abstract class SimpleDataViewModel<Model, ViewModel extends SimpleDataViewModel<Model, ViewModel>> implements DataViewModel<Model, ViewModel> {
+    protected final ModelWrapper<Model> wrapper = new ModelWrapper<>() {
+        @Override
+        public void reload() {
+            super.reload();
+            if (super.modelProperty().get() == null) {
+                reset();
+            }
+        }
+    };
 
     public SimpleDataViewModel(final ViewModel viewModel) {
         this(viewModel != null ? viewModel.getModel() : null);
     }
 
-    public SimpleDataViewModel(final Model model) {
-        setModel(model);
-    }
-
     public SimpleDataViewModel() {
         this((Model) null);
+    }
+
+    public SimpleDataViewModel(final Model model) {
+        setModel(model);
     }
 
     @Override
@@ -35,6 +43,15 @@ public abstract class SimpleDataViewModel<Model, ViewModel extends SimpleDataVie
     @Override
     public void setModel(final Model model) {
         wrapper.modelProperty().set(model);
+    }
+
+    @Override
+    public void setModelFromViewModel(final ViewModel viewModel) {
+        if (viewModel == null) {
+            setModel(null);
+        } else {
+            setModel(viewModel.getModel());
+        }
     }
 
     @Override
