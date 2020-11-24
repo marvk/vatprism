@@ -9,6 +9,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Point2D;
 
 import java.util.function.Function;
 
@@ -76,10 +77,10 @@ public abstract class SimpleDataViewModel<Model, ViewModel extends SimpleDataVie
         return wrapper.field(identifier, mapper, null);
     }
 
-    protected ObjectProperty<Point> pointProperty(final String identifier, final Function<Model, net.marvk.fs.vatsim.api.data.Point> position) {
+    protected ObjectProperty<Point2D> pointProperty(final String identifier, final Function<Model, net.marvk.fs.vatsim.api.data.Point> position) {
         return objectProperty(
                 identifier,
-                a -> new Point(position.apply(a).getLongitude(), position.apply(a).getLatitude())
+                a -> new Point2D(position.apply(a).getLongitude(), position.apply(a).getLatitude())
         );
     }
 

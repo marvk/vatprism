@@ -3,7 +3,9 @@ package net.marvk.fs.vatsim.map.data;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -37,16 +39,18 @@ public class FlightPlanViewModel extends SimpleDataViewModel<VatsimClient, Fligh
         return stringProperty("departureAirport", VatsimClient::getPlannedDepartureAirport);
     }
 
-    public ObjectProperty<Point> departureAirportPositionProperty() {
-        return objectProperty("departureAirportPosition", c -> Point.from(c.getPlannedDepartureAirportLongitude(), c.getPlannedDepartureAirportLatitude()));
+    public ObjectProperty<Point2D> departureAirportPositionProperty() {
+        return objectProperty("departureAirportPosition", c -> GeomUtil.parsePoint(c.getPlannedDepartureAirportLongitude(), c
+                .getPlannedDepartureAirportLatitude()));
     }
 
     public StringProperty destinationAirportProperty() {
         return stringProperty("destinationAirport", VatsimClient::getPlannedDestinationAirport);
     }
 
-    public ObjectProperty<Point> destinationAirportPositionProperty() {
-        return objectProperty("destinationAirportPosition", c -> Point.from(c.getPlannedArrivalAirportLongitude(), c.getPlannedArrivalAirportLatitude()));
+    public ObjectProperty<Point2D> destinationAirportPositionProperty() {
+        return objectProperty("destinationAirportPosition", c -> GeomUtil.parsePoint(c.getPlannedArrivalAirportLongitude(), c
+                .getPlannedArrivalAirportLatitude()));
     }
 
     public StringProperty altitudePropertyProperty() {

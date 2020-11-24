@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableNumberValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -24,6 +25,8 @@ import java.time.ZoneOffset;
 import java.util.function.Function;
 
 public class ClientDetailView implements FxmlView<ClientDetailViewModel> {
+    @FXML
+    private Label altitude;
     @FXML
     private TextArea remarks;
     @FXML
@@ -135,17 +138,18 @@ public class ClientDetailView implements FxmlView<ClientDetailViewModel> {
 
         this.latitude.textProperty().bind(nullSafeStringBinding(
                 client.clientStatus().position(),
-                Point::getLatitude
+                Point2D::getX
         ));
         this.longitude.textProperty().bind(nullSafeStringBinding(
                 client.clientStatus().position(),
-                Point::getLongitude
+                Point2D::getY
         ));
 
         this.groundSpeed.textProperty().bind(nullSafeStringBindingFromNumber(client.clientStatus().groundSpeed(),
                 Number::intValue
         ));
         this.heading.textProperty().bind(client.clientStatus().heading().asString());
+        this.altitude.textProperty().bind(client.clientStatus().altitude().asString());
         this.squawk.textProperty().bind(client.transponderProperty());
         this.qnhInchesMercury.textProperty().bind(client.qnhInchesMercuryProperty().concat("inHg"));
         this.qnhMillibars.textProperty().bind(client.qnhMillibarsProperty().concat("mbar"));

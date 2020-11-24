@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.ClientViewModel;
-import net.marvk.fs.vatsim.map.data.Point;
 
 import java.util.Arrays;
 
@@ -128,7 +127,12 @@ public class MapView implements FxmlView<MapViewModel> {
         final GraphicsContext c = canvas.getGraphicsContext2D();
         drawBackground(c);
         drawWorld(c);
+        drawFirs(c);
         drawClients(c);
+    }
+
+    private void drawFirs(final GraphicsContext c) {
+        c.setStroke(Color.valueOf("3B341F"));
     }
 
     private void drawWorld(final GraphicsContext c) {
@@ -149,7 +153,7 @@ public class MapView implements FxmlView<MapViewModel> {
     private void drawClients(final GraphicsContext c) {
         final Color greenyellow = Color.valueOf("85cb33");
         for (final ClientViewModel client : viewModel.clients()) {
-            final Point point = client.clientStatus().position().get();
+            final Point2D point = client.clientStatus().position().get();
             c.getPixelWriter().setColor(
                     (int) toCanvasX(point.getX()),
                     (int) toCanvasY(point.getY()),

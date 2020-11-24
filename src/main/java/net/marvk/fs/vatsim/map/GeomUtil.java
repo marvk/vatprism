@@ -1,49 +1,30 @@
-package net.marvk.fs.vatsim.map.data;
+package net.marvk.fs.vatsim.map;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import javafx.geometry.Point2D;
 
-@Data
-@AllArgsConstructor
-public class Point {
-    private final Double longitude;
-    private final Double latitude;
-    private final Double altitude;
-
-    public Point(final Double longitude, final Double latitude) {
-        this(longitude, latitude, null);
+public final class GeomUtil {
+    private GeomUtil() {
+        throw new AssertionError("No instances of utility class " + GeomUtil.class);
     }
 
-    public Double getX() {
-        return longitude;
-    }
-
-    public Double getY() {
-        return latitude;
-    }
-
-    public Double getZ() {
-        return altitude;
-    }
-
-    public static Point from(final String longitude, final String latitude) {
+    public static Point2D parsePoint(final String longitude, final String latitude) {
         if (longitude == null || latitude == null) {
             return null;
         }
 
-        return new Point(Double.parseDouble(longitude), Double.parseDouble(latitude));
+        return new Point2D(Double.parseDouble(longitude), Double.parseDouble(latitude));
     }
 
-    public static Point from(final Double longitude, final Double latitude) {
+    public static Point2D parsePoint(final Double longitude, final Double latitude) {
         if (longitude == null || latitude == null) {
             return null;
         }
 
-        return new Point(longitude, latitude);
+        return new Point2D(longitude, latitude);
     }
 
-    public double distanceOnMsl(final Point other) {
-        return distance(latitude, longitude, 0, other.latitude, other.longitude, 0);
+    public static double distanceOnMsl(final Point2D p1, final Point2D p2) {
+        return distance(p1.getX(), p1.getY(), 0, p2.getX(), p2.getY(), 0);
     }
 
     /*

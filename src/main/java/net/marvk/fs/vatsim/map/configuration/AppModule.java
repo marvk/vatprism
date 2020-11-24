@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import net.marvk.fs.vatsim.api.ExampleDataSource;
 import net.marvk.fs.vatsim.api.SimpleVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
+import net.marvk.fs.vatsim.api.VatsimApiDataSource;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.repository.*;
 import org.geotools.data.shapefile.files.ShpFiles;
@@ -23,7 +24,7 @@ import java.util.List;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(VatsimApi.class).toInstance(new SimpleVatsimApi(new ExampleDataSource()));
+        bind(VatsimApiDataSource.class).to(ExampleDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);
@@ -38,6 +39,12 @@ public class AppModule extends AbstractModule {
         bind(FlightInformationRegionViewModel.class);
         bind(FlightPlanViewModel.class);
         bind(UpperInformationRegionViewModel.class);
+    }
+
+    @Provides
+    @Singleton
+    public VatsimApi vatsimApi(final VatsimApiDataSource dataSource) {
+        return new SimpleVatsimApi(dataSource);
     }
 
     @Provides

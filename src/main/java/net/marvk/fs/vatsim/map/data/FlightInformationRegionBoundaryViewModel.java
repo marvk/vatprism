@@ -7,6 +7,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 import net.marvk.fs.vatsim.map.repository.FlightInformationRegionRepository;
 
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewModel<VatsimAirspace, FlightInformationRegionBoundaryViewModel> implements ViewModel {
-    private final ObservableList<Point> points = FXCollections.observableArrayList();
+    private final ObservableList<Point2D> points = FXCollections.observableArrayList();
     private final FlightInformationRegionRepository flightInformationRegionRepository;
 
     @Inject
@@ -41,10 +42,10 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
         if (airspace == null) {
             points.clear();
         } else {
-            final List<Point> newPoints = airspace
+            final List<Point2D> newPoints = airspace
                     .getAirspacePoints()
                     .stream()
-                    .map(e -> new Point(e.getX(), e.getY()))
+                    .map(e -> new Point2D(e.getX(), e.getY()))
                     .collect(Collectors.toList());
 
             points.setAll(newPoints);
@@ -63,19 +64,19 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
         return booleanProperty("extension", c -> c.getGeneral().getExtension());
     }
 
-    public ObjectProperty<Point> minPositionProperty() {
+    public ObjectProperty<Point2D> minPositionProperty() {
         return pointProperty("minPosition", c -> c.getGeneral().getMinPosition());
     }
 
-    public ObjectProperty<Point> maxPositionProperty() {
+    public ObjectProperty<Point2D> maxPositionProperty() {
         return pointProperty("maxPosition", c -> c.getGeneral().getMaxPosition());
     }
 
-    public ObjectProperty<Point> centerPositionProperty() {
+    public ObjectProperty<Point2D> centerPositionProperty() {
         return pointProperty("centerPosition", c -> c.getGeneral().getCenterPosition());
     }
 
-    public ObservableList<Point> points() {
+    public ObservableList<Point2D> points() {
         return points;
     }
 }

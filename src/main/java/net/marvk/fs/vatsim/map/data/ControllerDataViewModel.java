@@ -6,8 +6,10 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.geometry.Point2D;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.repository.AirportRepository;
 import net.marvk.fs.vatsim.map.repository.FlightInformationRegionBoundaryRepository;
 import net.marvk.fs.vatsim.map.repository.FlightInformationRegionRepository;
@@ -166,7 +168,7 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
         return returnFirst(
                 () -> extractViewModel(
                         upperInformationRegionRepository.getByIcao(identifier),
-                        e -> new Point(0., 0.),
+                        e -> new Point2D(0., 0.),
                         vatsimClient
                 )
         );
@@ -202,7 +204,7 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
         return Arrays.stream(supplier).map(Supplier::get).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
-    private static <ViewModel> ViewModel extractViewModel(final List<ViewModel> viewModels, final Function<ViewModel, Point> positionExtractor, final VatsimClient vatsimClient) {
+    private static <ViewModel> ViewModel extractViewModel(final List<ViewModel> viewModels, final Function<ViewModel, Point2D> positionExtractor, final VatsimClient vatsimClient) {
         if (viewModels.isEmpty()) {
             return null;
         }
@@ -211,19 +213,19 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
             return viewModels.get(0);
         }
 
-        final Point other = vatsimClientPosition(vatsimClient);
+        final Point2D other = vatsimClientPosition(vatsimClient);
 
         return viewModels
                 .stream()
-                .min(Comparator.comparingDouble(e -> positionExtractor.apply(e).distanceOnMsl(other)))
+                .min(Comparator.comparingDouble(e -> GeomUtil.distanceOnMsl(positionExtractor.apply(e), other)))
                 .get();
 
     }
 
-    private static Point vatsimClientPosition(final VatsimClient vatsimClient) {
-        return new Point(
-                Double.parseDouble(vatsimClient.getLongitude()),
-                Double.parseDouble(vatsimClient.getLatitude())
+    private static Point2D vatsimClientPosition(final VatsimClient vatsimClient) {
+        return GeomUtil.parsePoint(
+                vatsimClient.getLongitude(),
+                vatsimClient.getLatitude()
         );
     }
 

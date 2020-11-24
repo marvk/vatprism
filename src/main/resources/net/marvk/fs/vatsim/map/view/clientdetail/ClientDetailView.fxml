@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <VBox fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../root.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.clientdetail.ClientDetailView">
     <TitledPane animated="false" collapsible="false">
         <graphic>
@@ -47,28 +40,33 @@
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="10.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
-                    <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                    <Label styleClass="description" text="Squawk" GridPane.rowIndex="3" />
-                    <Label styleClass="description" text="Heading" GridPane.rowIndex="1" />
-                    <Label styleClass="description" text="Longitude" GridPane.columnIndex="3" />
-                    <Label styleClass="description" text="Ground speed" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                    <Label fx:id="latitude" text="Label" GridPane.columnIndex="1" />
-                    <Label fx:id="heading" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                    <Label fx:id="longitude" text="Label" GridPane.columnIndex="4" />
-                    <Label fx:id="groundSpeed" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                    <Label fx:id="qnhMillibars" text="Label" GridPane.columnIndex="4" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
-                    <Label fx:id="qnhInchesMercury" text="Label" GridPane.columnIndex="4" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
-                    <Label styleClass="description" text="Latitude" />
-                    <Label fx:id="squawk" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+                    <Label styleClass="description" text="Squawk" GridPane.rowIndex="4"/>
+                    <Label styleClass="description" text="Heading" GridPane.rowIndex="1"/>
+                    <Label styleClass="description" text="Longitude" GridPane.columnIndex="3"/>
+                    <Label styleClass="description" text="Ground speed" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                    <Label fx:id="latitude" text="Label" GridPane.columnIndex="1"/>
+                    <Label fx:id="heading" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    <Label fx:id="longitude" text="Label" GridPane.columnIndex="4"/>
+                    <Label fx:id="groundSpeed" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
+                    <Label fx:id="qnhMillibars" text="Label" GridPane.columnIndex="4" GridPane.columnSpan="2147483647"
+                           GridPane.rowIndex="4"/>
+                    <Label fx:id="qnhInchesMercury" text="Label" GridPane.columnIndex="4"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="5"/>
+                    <Label styleClass="description" text="Latitude"/>
+                    <Label fx:id="squawk" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    <Label styleClass="description" text="Altitude" GridPane.rowIndex="2"/>
+                    <Label fx:id="altitude" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 </GridPane>
             </TitledPane>
             <TitledPane collapsible="false" text="Flight Plan">
