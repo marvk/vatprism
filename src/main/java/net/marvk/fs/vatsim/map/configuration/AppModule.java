@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map;
+package net.marvk.fs.vatsim.map.configuration;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -43,7 +43,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Named("shapefileUrl")
     public URL shapefileUrl() {
-        return getClass().getResource("ne_110m_coastline/ne_110m_coastline.shp");
+        return getClass().getResource("../ne_110m_coastline/ne_110m_coastline.shp");
     }
 
     @Provides
@@ -57,14 +57,18 @@ public class AppModule extends AbstractModule {
                 new GeometryFactory()
         );
 
-        final List<MultiLineString> result = new ArrayList<>();
+        try {
+            final List<MultiLineString> result = new ArrayList<>();
 
-        while (shapefileReader.hasNext()) {
-            final ShapefileReader.Record record = shapefileReader.nextRecord();
-            final MultiLineString mls = (MultiLineString) record.shape();
-            result.add(mls);
+            while (shapefileReader.hasNext()) {
+                final ShapefileReader.Record record = shapefileReader.nextRecord();
+                final MultiLineString mls = (MultiLineString) record.shape();
+                result.add(mls);
+            }
+
+            return Collections.unmodifiableList(result);
+        } finally {
+            shapefileReader.close();
         }
-
-        return Collections.unmodifiableList(result);
     }
 }

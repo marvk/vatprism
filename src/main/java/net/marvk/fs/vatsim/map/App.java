@@ -5,6 +5,8 @@ import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.marvk.fs.vatsim.map.configuration.AopModule;
+import net.marvk.fs.vatsim.map.configuration.AppModule;
 import net.marvk.fs.vatsim.map.view.GlobalScope;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 
@@ -31,5 +33,6 @@ public class App extends MvvmfxGuiceApplication {
     @Override
     public void initGuiceModules(final List<Module> modules) {
         modules.add(new AppModule());
+        modules.add(new AopModule());
     }
 }

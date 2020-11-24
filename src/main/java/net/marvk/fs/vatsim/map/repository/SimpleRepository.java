@@ -6,6 +6,7 @@ import javafx.collections.ObservableMap;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
+import net.marvk.fs.vatsim.map.aop.LogLifecycle;
 import net.marvk.fs.vatsim.map.data.DataViewModel;
 
 import java.util.ArrayList;
@@ -54,9 +55,9 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
     }
 
     @Override
+    @LogLifecycle
     public void reload() throws RepositoryException {
         try {
-            log.info(getClass().getName() + " reloading start");
             final Collection<Model> models = extractModelList(vatsimApi);
 
             final Set<String> keysInUpdate = models
@@ -89,10 +90,7 @@ public abstract class SimpleRepository<Model, ViewModel extends DataViewModel<Mo
 
             list.addAll(toAdd);
         } catch (final VatsimApiException e) {
-            log.error(getClass().getName() + " reloading stop", e);
             throw new RepositoryException(e);
-        } finally {
-            log.info(getClass().getName() + " reloading stop");
         }
     }
 }
