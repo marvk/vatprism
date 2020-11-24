@@ -99,6 +99,10 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient, ClientVie
         return stringProperty("qnhMillibars", VatsimClient::getQnhMillibars);
     }
 
+    public StringProperty serverProperty() {
+        return stringProperty("server", VatsimClient::getServer);
+    }
+
     public ClientStatusViewModel clientStatus() {
         return clientStatus;
     }

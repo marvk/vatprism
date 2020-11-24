@@ -14,7 +14,7 @@ public class FlightInformationRegionViewModel extends SimpleDataViewModel<Vatsim
     }
 
     public StringProperty prefixPositionProperty() {
-        return stringProperty("prefoxPosition", VatsimFlightInformationRegion::getPrefixPosition);
+        return stringProperty("prefixPosition", VatsimFlightInformationRegion::getPrefixPosition);
     }
 
     public StringProperty unknown1Property() {

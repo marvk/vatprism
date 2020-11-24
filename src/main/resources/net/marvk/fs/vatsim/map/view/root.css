@@ -1,5 +1,5 @@
 .description {
-    -fx-font-weight: BOLD;
+    -fx-font-weight: bold;
 }
 
 .table-row-cell {
@@ -12,4 +12,13 @@
 
 .table-view {
     /*-fx-table-cell-border-color: transparent;*/
+}
+
+.callsign {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+.realname {
+    -fx-font-size: 18;
 }

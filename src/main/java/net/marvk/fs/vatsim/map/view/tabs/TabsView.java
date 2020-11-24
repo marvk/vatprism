@@ -6,6 +6,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import net.marvk.fs.vatsim.map.view.airports.AirportsView;
 import net.marvk.fs.vatsim.map.view.clients.ClientsView;
+import net.marvk.fs.vatsim.map.view.map.MapView;
 
 public class TabsView implements FxmlView<TabsViewModel> {
     @FXML
@@ -18,6 +19,7 @@ public class TabsView implements FxmlView<TabsViewModel> {
     private Context context;
 
     public void initialize() {
+        tabPane.getTabs().add(new Tab("Map", FluentViewLoader.fxmlView(MapView.class).context(context).load().getView()));
         tabPane.getTabs().add(new Tab("Clients", FluentViewLoader.fxmlView(ClientsView.class).context(context).load().getView()));
         tabPane.getTabs().add(new Tab("Airports", FluentViewLoader.fxmlView(AirportsView.class).context(context).load().getView()));
     }

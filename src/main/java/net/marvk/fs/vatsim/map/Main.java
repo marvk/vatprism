@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public final class Main {
@@ -68,8 +68,9 @@ public final class Main {
 
     private void paintFirBoundaries(final BufferedImage image, final Color color) {
         final Graphics2D g = image.createGraphics();
+        int i = 0;
         for (final VatsimAirspace airspace : vatsimFirBoundaries) {
-            if (!"enbd".equalsIgnoreCase(airspace.getGeneral().getIcao())) {
+            if (!"UHWW".equalsIgnoreCase(airspace.getGeneral().getIcao())) {
                 continue;
             }
 
@@ -80,7 +81,8 @@ public final class Main {
                                                        .getY(), LAT_RANGE * 2 * SCALE)))
                                                .collect(Collectors.toList());
 
-            drawPolygon(image, g, color, false, points);
+            g.setStroke(new BasicStroke(4 - i++));
+            drawPolygon(image, g, new Color(ThreadLocalRandom.current().nextInt()), false, points);
         }
     }
 

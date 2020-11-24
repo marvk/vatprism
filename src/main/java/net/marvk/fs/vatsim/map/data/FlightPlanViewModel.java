@@ -70,7 +70,7 @@ public class FlightPlanViewModel extends SimpleDataViewModel<VatsimClient, Fligh
     }
 
     public StringProperty remarksProperty() {
-        return stringProperty("route", VatsimClient::getPlannedRemarks);
+        return stringProperty("remarks", VatsimClient::getPlannedRemarks);
     }
 
     private static Duration parseDuration(final String hours, final String minutes) {

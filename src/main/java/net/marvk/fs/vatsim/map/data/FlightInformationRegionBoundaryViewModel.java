@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -16,6 +17,7 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
     private final ObservableList<Point> points = FXCollections.observableArrayList();
     private final FlightInformationRegionRepository flightInformationRegionRepository;
 
+    @Inject
     public FlightInformationRegionBoundaryViewModel(final FlightInformationRegionRepository flightInformationRegionRepository) {
         super();
         this.flightInformationRegionRepository = flightInformationRegionRepository;
