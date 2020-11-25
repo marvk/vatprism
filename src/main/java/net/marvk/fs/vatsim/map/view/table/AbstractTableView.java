@@ -3,7 +3,6 @@ package net.marvk.fs.vatsim.map.view.table;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
@@ -31,7 +30,7 @@ public abstract class AbstractTableView<TableViewModel extends AbstractTableView
     }
 
     protected void enableFilter() {
-        TableFilter.forTableView(table).apply();
+        TableFilter.forTableView(table).lazy(true).apply();
     }
 
     protected void addColumn(final String header, final String propertyName) {

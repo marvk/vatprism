@@ -5,10 +5,17 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
+import net.marvk.fs.vatsim.map.GeomUtil;
 
 public class AirportViewModel extends SimpleDataViewModel<VatsimAirport, AirportViewModel> {
+
+    private Point2D position;
+
     public AirportViewModel() {
         super();
+        modelProperty().addListener((observable, oldValue, newValue) -> {
+            position = GeomUtil.parsePoint(newValue.getPosition().getX(), newValue.getPosition().getY());
+        });
     }
 
     public StringProperty icaoProperty() {
@@ -33,5 +40,9 @@ public class AirportViewModel extends SimpleDataViewModel<VatsimAirport, Airport
 
     public BooleanProperty pseudoProperty() {
         return booleanProperty("pseudo", VatsimAirport::getPseudo);
+    }
+
+    public Point2D getPosition() {
+        return position;
     }
 }

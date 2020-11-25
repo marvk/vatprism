@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
-import net.marvk.fs.vatsim.map.view.GlobalScope;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 
 import java.util.List;
@@ -19,11 +18,8 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(final Stage primaryStage) {
-        final GlobalScope globalScope = new GlobalScope();
-
         final var viewTuple = FluentViewLoader
                 .fxmlView(MainView.class)
-                .providedScopes(globalScope)
                 .load();
 
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));

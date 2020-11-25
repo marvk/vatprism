@@ -72,7 +72,7 @@ public class ClientViewModel extends SimpleDataViewModel<VatsimClient, ClientVie
     }
 
     public ObjectProperty<RawFacilityType> rawFacilityTypeProperty() {
-        return objectProperty("rawFacilityType", c -> RawFacilityType.fromString(c.getFaciliyType()));
+        return objectProperty("rawFacilityType", c -> RawFacilityType.fromString(c.getFacilityType()));
     }
 
     public StringProperty visualRangeProperty() {

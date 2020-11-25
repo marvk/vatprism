@@ -51,7 +51,7 @@ public class ControllerDataViewModel extends SimpleDataViewModel<VatsimClient, C
             final UpperInformationRegionViewModel upperInformationRegion,
             final UpperInformationRegionRepository upperInformationRegionRepository
     ) {
-        this.flightInformationRegionBoundary = flightInformationRegionBoundary;
+                this.flightInformationRegionBoundary = flightInformationRegionBoundary;
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.flightInformationRegion = flightInformationRegion;
         this.flightInformationRegionRepository = flightInformationRegionRepository;

@@ -35,10 +35,6 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
     }
 
     private void updatePoints(final VatsimAirspace airspace) {
-        if ("BIRD-S".equals(icaoProperty().get())) {
-            System.out.println();
-        }
-
         if (airspace == null) {
             polygon.set(null);
         } else {

@@ -1,8 +1,8 @@
 package net.marvk.fs.vatsim.map.data;
 
-import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import net.marvk.fs.vatsim.api.data.Point;
-import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Geometry;
 
 import java.util.List;
 
@@ -10,15 +10,14 @@ public class Polygon {
     private final double[] pointsX;
     private final double[] pointsY;
 
-    private final Point2D min;
-    private final Point2D max;
+    private final Rectangle2D boundary;
 
     public Polygon(final List<Point> points) {
         this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), points.size());
     }
 
-    public Polygon(final MultiLineString mls) {
-        this(mls.getCoordinates(), (e, i) -> e[i].getX(), (e, i) -> e[i].getY(), mls.getCoordinates().length);
+    public Polygon(final Geometry geometry) {
+        this(geometry.getCoordinates(), (e, i) -> e[i].getX(), (e, i) -> e[i].getY(), geometry.getCoordinates().length);
     }
 
     public <T> Polygon(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final int length) {
@@ -44,9 +43,22 @@ public class Polygon {
             this.pointsY[i] = y;
         }
 
-        this.min = new Point2D(minX, minY);
-        this.max = new Point2D(maxX, maxY);
+        this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
     }
+
+//    public Polygon(final MultiPolygon m) {
+//        this(m, new CoordinateExtractor<MultiPolygon>() {
+//            @Override
+//            public double extract(final MultiPolygon multiPolygon, final int index) {
+//                return 0;
+//            }
+//        }, new CoordinateExtractor<MultiPolygon>() {
+//            @Override
+//            public double extract(final MultiPolygon multiPolygon, final int index) {
+//                return 0;
+//            }
+//        }, m.getCoordinates().length);
+//    }
 
     public int size() {
         return pointsX.length;
@@ -60,12 +72,8 @@ public class Polygon {
         return pointsY;
     }
 
-    public Point2D getMin() {
-        return min;
-    }
-
-    public Point2D getMax() {
-        return max;
+    public Rectangle2D boundary() {
+        return boundary;
     }
 
     @FunctionalInterface

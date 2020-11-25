@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface LogLifecycle {
     boolean logStart() default true;
-
     boolean logCompleted() default true;
-
     boolean logFailed() default true;
 }

@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import net.marvk.fs.vatsim.api.ExampleDataSource;
+import net.marvk.fs.vatsim.api.HttpDataSource;
 import net.marvk.fs.vatsim.api.SimpleVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiDataSource;
@@ -14,6 +14,7 @@ import org.geotools.data.shapefile.files.ShpFiles;
 import org.geotools.data.shapefile.shp.ShapefileReader;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPolygon;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,7 +25,7 @@ import java.util.List;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(VatsimApiDataSource.class).to(ExampleDataSource.class).in(Singleton.class);
+        bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);
@@ -51,7 +52,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Named("shapefileUrl")
     public URL shapefileUrl() {
-        return getClass().getResource("../ne_110m_coastline/ne_110m_coastline.shp");
+        return getClass().getResource("../ne_110m_land/ne_110m_land.shp");
     }
 
     @Provides
@@ -70,8 +71,22 @@ public class AppModule extends AbstractModule {
 
             while (shapefileReader.hasNext()) {
                 final ShapefileReader.Record record = shapefileReader.nextRecord();
-                final MultiLineString mls = (MultiLineString) record.shape();
-                result.add(new Polygon(mls));
+
+                final Object shape = record.shape();
+
+                if (shape instanceof MultiLineString) {
+                    final MultiLineString mls = (MultiLineString) shape;
+
+                    for (int i = 0; i < mls.getNumGeometries(); i++) {
+                        result.add(new Polygon(mls.getGeometryN(i)));
+                    }
+                } else if (shape instanceof MultiPolygon) {
+                    final MultiPolygon mp = (MultiPolygon) shape;
+
+                    for (int i = 0; i < mp.getNumGeometries(); i++) {
+                        result.add(new Polygon(mp.getGeometryN(i)));
+                    }
+                }
             }
 
             return Collections.unmodifiableList(result);
