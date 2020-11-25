@@ -7,10 +7,11 @@ import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class WorldPainter extends MapPainter<Polygon> {
-    private static final Color color = Color.valueOf("A5CBC3");
+    private final Color color;
 
-    public WorldPainter(final MapVariables mapVariables) {
+    public WorldPainter(final MapVariables mapVariables, final Color color) {
         super(mapVariables);
+        this.color = color;
     }
 
     @Override

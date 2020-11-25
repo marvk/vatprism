@@ -113,11 +113,12 @@ public class MapViewModel implements ViewModel {
         this.world = world;
 
         this.painterExecutors = List.of(
-                new PainterExecutor<>("Background", new BackgroundPainter(mapVariables)),
-                new PainterExecutor<>("World", new WorldPainter(mapVariables), this::world),
-                new PainterExecutor<>("Date Line", new IdlPainter(mapVariables), () -> Collections.singletonList(internationalDateLine())),
+                new PainterExecutor<>("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
+                new PainterExecutor<>("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
+                new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
+                        .singletonList(internationalDateLine())),
 //                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports),
-                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F"), 0.5), this::flightInformationRegionBoundaries),
+                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.rgb(59, 52, 31, 0.5), 0.5, true), this::flightInformationRegionBoundaries),
                 new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1.5)), () -> onlineUirs),
                 new PainterExecutor<>("Online Firs", new FirPainter(mapVariables, Color.DEEPPINK, 2), () -> onlineFirs),
 //                new PainterExecutor<>("Filtered Firs", new FirPainter(mapVariables, Color.RED, 0.5), () -> highlightedBoundaries),

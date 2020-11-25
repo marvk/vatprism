@@ -9,13 +9,19 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewModel> {
 
-    private final Color borderColor;
+    private final Color color;
     private final double lineWidth;
+    private final boolean fill;
 
-    public FirPainter(final MapVariables mapVariables, final Color borderColor, final double lineWidth) {
+    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill) {
         super(mapVariables);
-        this.borderColor = borderColor;
+        this.color = color;
         this.lineWidth = lineWidth;
+        this.fill = fill;
+    }
+
+    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
+        this(mapVariables, color, lineWidth, false);
     }
 
     @Override
@@ -23,9 +29,6 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewMo
 //        final Color activeFirColor = Color.valueOf("#3B341F");
 
         final GraphicsContext c = canvas.getGraphicsContext2D();
-
-        c.setLineWidth(lineWidth);
-        c.setStroke(borderColor);
 
         final FlightInformationRegionBoundaryViewModel fir = flightInformationRegionBoundaryViewModel;
         if (fir.extensionProperty().get()) {
@@ -58,6 +61,14 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewMo
 //                c.setStroke(Color.CYAN);
 //            }
 
-        painterHelper.strokePolygons(c, polygon);
+        if (fill) {
+            c.setFill(color);
+            painterHelper.fillPolygons(c, polygon);
+        } else {
+            c.setStroke(color);
+            c.setLineWidth(lineWidth);
+            c.setLineDashes(null);
+            painterHelper.strokePolygons(c, polygon);
+        }
     }
 }

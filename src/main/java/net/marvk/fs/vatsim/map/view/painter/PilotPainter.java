@@ -11,6 +11,7 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 public class PilotPainter extends MapPainter<ClientViewModel> {
     private static final Color COLOR = Color.valueOf("85cb33");
     private static final int TAIL_LENGTH = 5;
+    private static final int MULTIDRAW_BOUND = 10;
 
     public PilotPainter(final MapVariables mapVariables) {
         super(mapVariables);
@@ -22,8 +23,25 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
             return;
         }
 
+        final Point2D position = client.clientStatus().position().get();
+
+        final double centerX = mapVariables.toCanvasX(position.getX());
+
+        if (centerX - MULTIDRAW_BOUND < 0) {
+            draw(canvas, client, 360);
+        }
+
+        if (centerX + MULTIDRAW_BOUND > mapVariables.getViewWidth()) {
+            draw(canvas, client, -360);
+        }
+
+        draw(canvas, client, 0);
+    }
+
+    private void draw(final Canvas canvas, final ClientViewModel client, final int xOffset) {
         final Point2D point = client.clientStatus().position().get();
-        final double xPrecise = mapVariables.toCanvasX(point.getX());
+
+        final double xPrecise = mapVariables.toCanvasX(point.getX() + xOffset);
         final int x = (int) xPrecise;
         final double yPrecise = mapVariables.toCanvasY(point.getY());
         final int y = (int) yPrecise;

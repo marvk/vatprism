@@ -6,14 +6,17 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class BackgroundPainter extends MapPainter<Void> {
-    public BackgroundPainter(final MapVariables mapVariables) {
+    private final Color color;
+
+    public BackgroundPainter(final MapVariables mapVariables, final Color color) {
         super(mapVariables);
+        this.color = color;
     }
 
     @Override
     public void paint(final Canvas canvas, final Void unused) {
         final GraphicsContext c = canvas.getGraphicsContext2D();
-        c.setFill(Color.valueOf("100B00"));
+        c.setFill(color);
         c.fillRect(0, 0, mapVariables.getViewWidth(), mapVariables.getViewHeight());
     }
 }

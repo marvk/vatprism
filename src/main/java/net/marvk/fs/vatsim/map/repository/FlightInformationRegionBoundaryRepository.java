@@ -12,6 +12,7 @@ import net.marvk.fs.vatsim.map.data.SimpleDataViewModel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -41,6 +42,36 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
 
     public List<FlightInformationRegionBoundaryViewModel> getByIcao(final String icao) {
         return this.icao.get(icao);
+    }
+
+    @Override
+    public void reload() throws RepositoryException {
+        super.reload();
+
+        final List<FlightInformationRegionBoundaryViewModel> extensions =
+                list()
+                        .stream()
+                        .filter(e -> e.extensionProperty().get())
+                        .collect(Collectors.toList());
+
+        list.removeAll(extensions);
+
+        for (final FlightInformationRegionBoundaryViewModel extension : extensions) {
+            final Optional<FlightInformationRegionBoundaryViewModel> maybeParent =
+                    list.stream()
+                        .filter(e -> e.oceanicProperty().get() == extension.oceanicProperty().get())
+                        .filter(e -> e.icaoProperty().get().equals(extension.icaoProperty().get()))
+                        .findFirst();
+
+            if (maybeParent.isPresent()) {
+                final FlightInformationRegionBoundaryViewModel parent = maybeParent.get();
+
+                parent.mergeInto(extension);
+            } else {
+                log.warn("No parent found for extension FIR " + extractKey(extension.getModel()));
+            }
+        }
+
     }
 
     public FlightInformationRegionBoundaryViewModel getByIcao(final String icao, final boolean oceanic, final boolean extension) {

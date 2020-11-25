@@ -57,7 +57,7 @@ public class MapVariables {
     }
 
     public double toWorldX(final double canvasX) {
-        return (((canvasX / viewWidth - 0.5) * WORLD_WIDTH - WORLD_HALF_WIDTH) / scale) - worldCenterX;
+        return ((((canvasX - 0.5) / viewWidth) * WORLD_WIDTH - WORLD_HALF_WIDTH) / scale) - worldCenterX;
     }
 
     public double toCanvasY(final double modelY) {
@@ -68,7 +68,7 @@ public class MapVariables {
     }
 
     public double toWorldY(final double canvasY) {
-        return ((((1 - canvasY / viewHeight - 0.5) * WORLD_HEIGHT - WORLD_HALF_HEIGHT) / scale) / aspectScaleY()) - worldCenterY;
+        return ((((1 - (canvasY - 0.5) / viewHeight) * WORLD_HEIGHT - WORLD_HALF_HEIGHT) / scale) / aspectScaleY()) - worldCenterY;
     }
 
     public double aspectScaleY() {
