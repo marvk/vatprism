@@ -14,6 +14,7 @@ public class MainViewModel implements ViewModel {
     private final Command loadFirbs;
     private final Command loadUirs;
     private final Command loadClients;
+    private final Command loadInternationalDateLine;
 
     @Inject
     public MainViewModel(
@@ -21,15 +22,18 @@ public class MainViewModel implements ViewModel {
             final ClientRepository clientRepository,
             final FlightInformationRegionRepository flightInformationRegionRepository,
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
-            final UpperInformationRegionRepository upperInformationRegionRepository
+            final UpperInformationRegionRepository upperInformationRegionRepository,
+            final InternationalDateLineRepository internationalDateLineRepository
     ) {
         loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
         loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
         loadFirbs = new ReloadRepositoryAction(flightInformationRegionBoundaryRepository).asCommand();
         loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
         loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
+        loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
 
         new CompositeCommand(
+                loadInternationalDateLine,
                 loadFirs,
                 loadFirbs,
                 loadUirs,

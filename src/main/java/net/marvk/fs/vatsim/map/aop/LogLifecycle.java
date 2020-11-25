@@ -8,4 +8,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface LogLifecycle {
+    boolean logStart() default true;
+
+    boolean logCompleted() default true;
+
+    boolean logFailed() default true;
 }

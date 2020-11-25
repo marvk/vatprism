@@ -30,6 +30,7 @@ public class AppModule extends AbstractModule {
         bind(FlightInformationRegionRepository.class).in(Singleton.class);
         bind(FlightInformationRegionBoundaryRepository.class).in(Singleton.class);
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
+        bind(InternationalDateLineRepository.class).in(Singleton.class);
 
         bind(AirportViewModel.class);
         bind(ClientStatusViewModel.class);
@@ -56,7 +57,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("world")
-    public List<MultiLineString> worldShape(@Named("shapefileUrl") final URL shapefileUrl) throws IOException {
+    public List<Polygon> worldShape(@Named("shapefileUrl") final URL shapefileUrl) throws IOException {
         final ShapefileReader shapefileReader = new ShapefileReader(
                 new ShpFiles(shapefileUrl),
                 false,
@@ -65,12 +66,12 @@ public class AppModule extends AbstractModule {
         );
 
         try {
-            final List<MultiLineString> result = new ArrayList<>();
+            final List<Polygon> result = new ArrayList<>();
 
             while (shapefileReader.hasNext()) {
                 final ShapefileReader.Record record = shapefileReader.nextRecord();
                 final MultiLineString mls = (MultiLineString) record.shape();
-                result.add(mls);
+                result.add(new Polygon(mls));
             }
 
             return Collections.unmodifiableList(result);

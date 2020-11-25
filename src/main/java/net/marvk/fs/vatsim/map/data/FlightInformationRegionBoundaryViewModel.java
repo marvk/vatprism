@@ -4,19 +4,15 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 import net.marvk.fs.vatsim.map.repository.FlightInformationRegionRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewModel<VatsimAirspace, FlightInformationRegionBoundaryViewModel> implements ViewModel {
-    private final ObservableList<Point2D> points = FXCollections.observableArrayList();
     private final FlightInformationRegionRepository flightInformationRegionRepository;
+    private final ObjectProperty<Polygon> polygon = new SimpleObjectProperty<>();
 
     @Inject
     public FlightInformationRegionBoundaryViewModel(final FlightInformationRegionRepository flightInformationRegionRepository) {
@@ -39,16 +35,14 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
     }
 
     private void updatePoints(final VatsimAirspace airspace) {
-        if (airspace == null) {
-            points.clear();
-        } else {
-            final List<Point2D> newPoints = airspace
-                    .getAirspacePoints()
-                    .stream()
-                    .map(e -> new Point2D(e.getX(), e.getY()))
-                    .collect(Collectors.toList());
+        if ("BIRD-S".equals(icaoProperty().get())) {
+            System.out.println();
+        }
 
-            points.setAll(newPoints);
+        if (airspace == null) {
+            polygon.set(null);
+        } else {
+            polygon.set(new Polygon(airspace.getAirspacePoints()));
         }
     }
 
@@ -76,7 +70,11 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
         return pointProperty("centerPosition", c -> c.getGeneral().getCenterPosition());
     }
 
-    public ObservableList<Point2D> points() {
-        return points;
+    public Polygon getPolygon() {
+        return polygon.get();
+    }
+
+    public ObjectProperty<Polygon> polygonProperty() {
+        return polygon;
     }
 }
