@@ -1,12 +1,12 @@
 package net.marvk.fs.vatsim.map.data;
 
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import lombok.ToString;
 import net.marvk.fs.vatsim.api.data.Point;
 import org.locationtech.jts.geom.Geometry;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @ToString
 public class Polygon {
@@ -92,46 +92,109 @@ public class Polygon {
             return polygon1;
         }
 
-        int sameCount = 0;
-
-        int inARow = 0;
+        final Map<Integer, Integer> sameMap = new HashMap<>();
+        final List<Integer> sameJ = new ArrayList<>();
+        final List<Integer> sameI = new ArrayList<>();
 
         for (int i = 0; i < polygon1.numPoints(); i++) {
             final double p1x = polygon1.pointsX[i];
             final double p1y = polygon1.pointsY[i];
 
-            int lastSameCount = sameCount;
-
             for (int j = 0; j < polygon2.numPoints(); j++) {
-                final double p2x = polygon2.pointsX[polygon2.numPoints() - 1 - j];
-                final double p2y = polygon2.pointsY[polygon2.numPoints() - 1 - j];
+                final double p2x = polygon2.pointsX[j];
+                final double p2y = polygon2.pointsY[j];
 
-                if (Double.compare(Math.abs(p1x), Math.abs(p2x)) == 0 && Double.compare(p1y, p2y) == 0) {
-                    sameCount++;
+                if (Double.compare((p1x + 720) % 360, (p2x + 720) % 360) == 0 && Double.compare(p1y, p2y) == 0) {
+                    sameMap.put(i, j);
+                    sameI.add(i);
+                    sameJ.add(j);
                     break;
                 }
             }
+        }
 
-            if (lastSameCount == sameCount) {
-                if (inARow > 0) {
-                    System.out.println("inARow = " + inARow);
-                    inARow = 0;
+        final boolean reverse;
+
+        //Some extension polygons have the wrong rotation
+        if (sameJ.get(0) > sameJ.get(sameJ.size() - 1)) {
+            Collections.reverse(sameJ);
+            reverse = true;
+        } else {
+            reverse = false;
+        }
+
+        final List<Point2D> result;
+        if (sameJ.get(0) + 1 == sameJ.get(1)) {
+            result = mergeWithLineOverlap(polygon1, polygon2, sameMap, sameI, reverse);
+        } else {
+            result = mergeWithEndPointOverlap(polygon1, polygon2, sameMap);
+        }
+
+        return new Polygon(result,
+                (e, i) -> e.get(i).getX(),
+                (e, i) -> e.get(i).getY(),
+                result.size()
+        );
+    }
+
+    private static List<Point2D> mergeWithEndPointOverlap(final Polygon polygon1, final Polygon polygon2, final Map<Integer, Integer> sameMap) {
+        final List<Point2D> result = new ArrayList<>();
+
+        for (int i = 0; i < polygon1.numPoints(); i++) {
+            result.add(new Point2D(normalizeX(polygon1.pointsX[i]), polygon1.pointsY[i]));
+        }
+
+        final boolean reverse = sameMap.get(0) == 0;
+
+        for (int i = 0; i < polygon2.numPoints(); i++) {
+            final int index = reverse ? polygon2.numPoints() - i - 1 : i;
+            result.add(new Point2D(normalizeX(polygon2.pointsX[index]), polygon2.pointsY[index]));
+        }
+
+        return result;
+    }
+
+    private static List<Point2D> mergeWithLineOverlap(
+            final Polygon polygon1,
+            final Polygon polygon2,
+            final Map<Integer, Integer> sameMap,
+            final List<Integer> sameI,
+            final boolean reverse
+    ) {
+        final List<Point2D> result = new ArrayList<>();
+
+        final int step = reverse ? 1 : -1;
+
+        for (int i = 0; i < polygon1.numPoints(); i++) {
+            result.add(new Point2D(normalizeX(polygon1.pointsX[i]), polygon1.pointsY[i]));
+
+            final Integer sameIndex = sameMap.get(i);
+
+            if (sameIndex != null) {
+                for (
+                        int j = sameIndex + step;
+                        !sameMap.containsValue(j);
+                        j = (polygon2.numPoints() + j + step) % polygon2.numPoints()
+                ) {
+                    result.add(new Point2D(normalizeX(polygon2.pointsX[j]), polygon2.pointsY[j]));
                 }
-            } else {
-                inARow++;
+
+                i = sameI.get(sameI.size() - 1);
             }
         }
+        return result;
+    }
 
-        if (inARow > 0) {
-            System.out.println("inARow = " + inARow);
+    private static double normalizeX(final double e) {
+        return e < 0 ? e + 360 : e;
+    }
+
+    private static void reverse(final double[] arr) {
+        for (int i = 0; i < arr.length / 2; i++) {
+            double temp = arr[i];
+            arr[i] = arr[arr.length - i - 1];
+            arr[arr.length - i - 1] = temp;
         }
-
-        System.out.println("sameCount = " + sameCount);
-        System.out.println("polygon1.numPoints() = " + polygon1.numPoints());
-        System.out.println("polygon2.numPoints() = " + polygon2.numPoints());
-        System.out.println();
-
-        return polygon1;
     }
 
     @Override

@@ -71,7 +71,6 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
                 log.warn("No parent found for extension FIR " + extractKey(extension.getModel()));
             }
         }
-
     }
 
     public FlightInformationRegionBoundaryViewModel getByIcao(final String icao, final boolean oceanic, final boolean extension) {
