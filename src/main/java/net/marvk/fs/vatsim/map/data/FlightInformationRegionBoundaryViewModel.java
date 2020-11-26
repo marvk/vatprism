@@ -75,7 +75,6 @@ public class FlightInformationRegionBoundaryViewModel extends SimpleDataViewMode
     }
 
     public void mergeInto(final FlightInformationRegionBoundaryViewModel extension) {
-        System.out.println("icaoProperty().get() = " + icaoProperty().get());
         polygon.set(Polygon.merge(getPolygon(), extension.getPolygon()));
     }
 }

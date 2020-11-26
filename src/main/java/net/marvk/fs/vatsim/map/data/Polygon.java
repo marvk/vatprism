@@ -46,7 +46,12 @@ public class Polygon {
             this.pointsY[i] = y;
         }
 
-        this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
+        this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY) {
+            @Override
+            public boolean contains(final double x, final double y) {
+                return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
+            }
+        };
     }
 
 //    public Polygon(final MultiPolygon m) {

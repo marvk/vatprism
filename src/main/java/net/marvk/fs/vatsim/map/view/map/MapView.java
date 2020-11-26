@@ -1,6 +1,9 @@
 package net.marvk.fs.vatsim.map.view.map;
 
+import com.sun.javafx.scene.control.ContextMenuContent;
+import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectContext;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -8,15 +11,20 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.geometry.Side;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundaryViewModel;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
 import java.util.concurrent.*;
@@ -37,6 +45,11 @@ public class MapView implements FxmlView<MapViewModel> {
     private MapViewModel viewModel;
 
     private final Renderer renderer = new Renderer();
+
+    private RightClickMenu rightClickMenu;
+
+    @InjectContext
+    private Context context;
 
     public MapView() {
         this.canvas = new Canvas(100, 100);
@@ -59,6 +72,8 @@ public class MapView implements FxmlView<MapViewModel> {
     }
 
     public void initialize() {
+        this.rightClickMenu = new RightClickMenu();
+
         this.viewModel.viewWidthProperty().bind(this.canvas.widthProperty());
         this.viewModel.viewHeightProperty().bind(this.canvas.heightProperty());
 
@@ -67,12 +82,10 @@ public class MapView implements FxmlView<MapViewModel> {
         this.viewModel.viewWidthProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
         this.viewModel.viewHeightProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
 
-        this.viewModel.mouseViewPositionProperty().addListener(new ChangeListener<Point2D>() {
-            @Override
-            public void changed(final ObservableValue<? extends Point2D> observable, final Point2D oldValue, final Point2D newValue) {
-                invalidateCanvas();
-            }
-        });
+        this.viewModel.mouseViewPositionProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
+
+        this.viewModel.selectedFir()
+                      .addListener((ListChangeListener<FlightInformationRegionBoundaryViewModel>) c -> invalidateCanvas());
 
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
 
@@ -119,9 +132,11 @@ public class MapView implements FxmlView<MapViewModel> {
     private class MouseEventHandler {
         private double lastX = 0;
         private double lastY = 0;
-        private final BooleanProperty leftMouseDown = new SimpleBooleanProperty();
 
+        private final BooleanProperty leftMouseDown = new SimpleBooleanProperty();
         private final BooleanProperty rightMouseDown = new SimpleBooleanProperty();
+
+        private boolean moved = false;
 
         public void onStart(final MouseEvent event) {
             leftMouseDown.set(event.isPrimaryButtonDown());
@@ -130,12 +145,16 @@ public class MapView implements FxmlView<MapViewModel> {
             lastX = event.getX();
             lastY = event.getY();
             invalidateCanvas();
+
+            rightClickMenu.hide();
         }
 
         public void onDrag(final MouseEvent event) {
             if (!rightMouseDown.get()) {
                 return;
             }
+
+            moved = true;
 
             final double x = event.getX();
             final double y = event.getY();
@@ -155,11 +174,63 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void onRelease(final MouseEvent event) {
             leftMouseDown.set(event.isPrimaryButtonDown());
+
+            if (rightMouseDown.get() && !event.isSecondaryButtonDown()) {
+                if (mouseEventHandler.moved) {
+                    moved = false;
+                } else {
+                    rightClickMenu.show(canvas, event.getScreenX(), event.getScreenY());
+                }
+            }
+
             rightMouseDown.set(event.isSecondaryButtonDown());
         }
 
         public void onMove(final MouseEvent event) {
             viewModel.mouseViewPositionProperty().set(new Point2D(event.getX(), event.getY()));
+        }
+    }
+
+    private final class RightClickMenu extends ContextMenu {
+        public RightClickMenu() {
+            setSkin(createDefaultSkin());
+        }
+
+        @Override
+        public void show(final Node anchor, final Side side, final double dx, final double dy) {
+            super.show(anchor, side, dx, dy);
+        }
+
+        @Override
+        public void show(final Node anchor, final double screenX, final double screenY) {
+            super.show(anchor, screenX, screenY);
+            setupItems();
+        }
+
+        @Override
+        public void hide() {
+            viewModel.setSelectedFir(null);
+            super.hide();
+        }
+
+        private void setupItems() {
+            getItems().clear();
+            for (final FlightInformationRegionBoundaryViewModel h : viewModel.highlightedBoundaries()) {
+                getItems().add(new MenuItem(h.icaoProperty().get()));
+            }
+
+            final ContextMenuContent cmc = (ContextMenuContent) getSkin().getNode();
+
+            final ObservableList<Node> cmcChildren = cmc.getItemsContainer().getChildren();
+            for (int i = 0; i < cmcChildren.size(); i++) {
+                final ContextMenuContent.MenuItemContainer node = (ContextMenuContent.MenuItemContainer) cmcChildren.get(i);
+                final int finalI = i;
+                node.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        viewModel.setSelectedFir(viewModel.highlightedBoundaries().get(finalI));
+                    }
+                });
+            }
         }
     }
 

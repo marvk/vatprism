@@ -8,6 +8,7 @@ import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
@@ -17,9 +18,7 @@ import net.marvk.fs.vatsim.map.repository.*;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ScopeProvider(StatusbarScope.class)
@@ -48,6 +47,8 @@ public class MapViewModel implements ViewModel {
 
     private final FilteredList<UpperInformationRegionViewModel> onlineUirs;
 
+    private final ObservableList<FlightInformationRegionBoundaryViewModel> selectedFir = FXCollections.observableList(new ArrayList<>(1));
+
     @InjectScope
     private StatusbarScope statusbarScope;
 
@@ -56,15 +57,13 @@ public class MapViewModel implements ViewModel {
     }
 
     private boolean isFirOnline(final FlightInformationRegionBoundaryViewModel fir) {
-        final Set<String> onlineIcaos = controllers()
+        return controllers()
                 .stream()
                 .map(ClientViewModel::controllerData)
                 .map(ControllerDataViewModel::flightInformationRegion)
                 .map(FlightInformationRegionViewModel::icaoProperty)
                 .map(ObservableObjectValue::get)
-                .collect(Collectors.toSet());
-
-        return onlineIcaos.contains(fir.icaoProperty().get());
+                .anyMatch(e -> Objects.equals(e, fir.icaoProperty().get()));
     }
 
     private boolean isUirOnline(final UpperInformationRegionViewModel uir) {
@@ -118,10 +117,12 @@ public class MapViewModel implements ViewModel {
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
                         .singletonList(internationalDateLine())),
 //                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports),
-                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.rgb(59, 52, 31, 0.5), 0.5, true), this::flightInformationRegionBoundaries),
-                new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1.5)), () -> onlineUirs),
-                new PainterExecutor<>("Online Firs", new FirPainter(mapVariables, Color.DEEPPINK, 2), () -> onlineFirs),
+                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F"), 0.5), this::flightInformationRegionBoundaries),
+                new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1)), () -> onlineUirs),
+                new PainterExecutor<>("Online Firs", new FirPainter(mapVariables, Color.DEEPPINK.darker()
+                                                                                                .darker(), 1.5), () -> onlineFirs),
 //                new PainterExecutor<>("Filtered Firs", new FirPainter(mapVariables, Color.RED, 0.5), () -> highlightedBoundaries),
+                new PainterExecutor<>("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), () -> selectedFir),
                 new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots)
         );
 
@@ -199,5 +200,20 @@ public class MapViewModel implements ViewModel {
 
     public ObjectProperty<Point2D> mouseViewPositionProperty() {
         return mouseViewPosition;
+    }
+
+    public FilteredList<FlightInformationRegionBoundaryViewModel> highlightedBoundaries() {
+        return highlightedBoundaries;
+    }
+
+    public ObservableList<FlightInformationRegionBoundaryViewModel> selectedFir() {
+        return selectedFir;
+    }
+
+    public void setSelectedFir(final FlightInformationRegionBoundaryViewModel fir) {
+        selectedFir.clear();
+        if (fir != null) {
+            selectedFir.add(0, fir);
+        }
     }
 }
