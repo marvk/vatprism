@@ -4,9 +4,15 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import lombok.ToString;
 import net.marvk.fs.vatsim.api.data.Point;
+import org.geotools.polylabel.PolyLabeller;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @ToString
 public class Polygon {
@@ -14,6 +20,7 @@ public class Polygon {
     private final double[] pointsY;
 
     private final Rectangle2D boundary;
+    private final Point2D polylabel;
 
     public Polygon(final List<Point> points) {
         this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), points.size());
@@ -52,6 +59,30 @@ public class Polygon {
                 return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
             }
         };
+
+        this.polylabel = extracted();
+    }
+
+    private Point2D extracted() {
+        try {
+            if (numPoints() <= 2) {
+                return null;
+            }
+
+            final Coordinate[] objects = IntStream
+                    .rangeClosed(0, numPoints())
+                    .mapToObj(e -> new Coordinate(pointsX[e % numPoints()], pointsY[e % numPoints()]))
+                    .toArray(Coordinate[]::new);
+
+            final org.locationtech.jts.geom.Polygon polygon = new org.locationtech.jts.geom.Polygon(
+                    new LinearRing(new CoordinateArraySequence(objects, 2), new GeometryFactory()), new LinearRing[0], new GeometryFactory()
+            );
+            final org.locationtech.jts.geom.Point polylabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
+
+            return new Point2D(polylabel.getX(), polylabel.getY());
+        } catch (final IllegalStateException | IllegalArgumentException e) {
+            return null;
+        }
     }
 
 //    public Polygon(final MultiPolygon m) {
@@ -225,5 +256,9 @@ public class Polygon {
     @FunctionalInterface
     public interface CoordinateExtractor<T> {
         double extract(final T t, final int index);
+    }
+
+    public Point2D getPolylabel() {
+        return polylabel;
     }
 }

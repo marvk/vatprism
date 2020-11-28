@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
+import java.util.Random;
+
 public class WorldPainter extends MapPainter<Polygon> {
     private final Color color;
 
@@ -17,6 +19,8 @@ public class WorldPainter extends MapPainter<Polygon> {
     @Override
     public void paint(final Canvas canvas, final Polygon polygon) {
         final GraphicsContext c = canvas.getGraphicsContext2D();
+
+        final Random current = new Random(polygon.hashCode());
 
         c.setLineWidth(1);
         c.setFill(color);

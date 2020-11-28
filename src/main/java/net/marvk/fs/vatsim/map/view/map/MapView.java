@@ -82,7 +82,7 @@ public class MapView implements FxmlView<MapViewModel> {
         this.viewModel.viewWidthProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
         this.viewModel.viewHeightProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
 
-        this.viewModel.mouseViewPositionProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
+//        this.viewModel.mouseViewPositionProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
 
         this.viewModel.selectedFir()
                       .addListener((ListChangeListener<FlightInformationRegionBoundaryViewModel>) c -> invalidateCanvas());

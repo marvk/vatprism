@@ -52,7 +52,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Named("shapefileUrl")
     public URL shapefileUrl() {
-        return getClass().getResource("../ne_110m_land/ne_110m_land.shp");
+        return getClass().getResource("../ne_50m_land/ne_50m_land.shp");
     }
 
     @Provides

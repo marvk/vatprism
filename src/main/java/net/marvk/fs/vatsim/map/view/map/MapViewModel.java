@@ -117,10 +117,11 @@ public class MapViewModel implements ViewModel {
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
                         .singletonList(internationalDateLine())),
 //                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports),
-                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F"), 0.5), this::flightInformationRegionBoundaries),
-                new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1)), () -> onlineUirs),
+                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F")
+                                                                                .deriveColor(0, 1, 1, 0.25), 0.5), this::flightInformationRegionBoundaries),
+                new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1, true, true)), () -> onlineUirs),
                 new PainterExecutor<>("Online Firs", new FirPainter(mapVariables, Color.DEEPPINK.darker()
-                                                                                                .darker(), 1.5), () -> onlineFirs),
+                                                                                                .darker(), 2, true, true), () -> onlineFirs),
 //                new PainterExecutor<>("Filtered Firs", new FirPainter(mapVariables, Color.RED, 0.5), () -> highlightedBoundaries),
                 new PainterExecutor<>("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), () -> selectedFir),
                 new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots)
