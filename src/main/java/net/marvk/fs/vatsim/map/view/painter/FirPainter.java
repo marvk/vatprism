@@ -2,7 +2,6 @@ package net.marvk.fs.vatsim.map.view.painter;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -30,9 +29,7 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewMo
     }
 
     @Override
-    public void paint(final Canvas canvas, final FlightInformationRegionBoundaryViewModel fir) {
-        final GraphicsContext c = canvas.getGraphicsContext2D();
-
+    public void paint(final GraphicsContext c, final FlightInformationRegionBoundaryViewModel fir) {
         if (fir.extensionProperty().get()) {
             return;
         }

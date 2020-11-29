@@ -1,6 +1,6 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,10 +31,10 @@ public class PainterExecutor<T> {
         this.name = name;
     }
 
-    public void paint(final Canvas canvas) {
+    public void paint(final GraphicsContext c) {
         final long start = System.nanoTime();
         for (final T t : paintablesSupplier.get()) {
-            painter.paint(canvas, t);
+            painter.paint(c, t);
         }
         lastDurationNanos = System.nanoTime() - start;
     }

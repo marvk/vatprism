@@ -9,6 +9,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
@@ -49,6 +50,8 @@ public class MapViewModel implements ViewModel {
 
     private final ObservableList<FlightInformationRegionBoundaryViewModel> selectedFir = FXCollections.observableList(new ArrayList<>(1));
 
+    private final ObservableList<Map<AirportViewModel, List<ClientViewModel>>> airportAtc = FXCollections.observableArrayList();
+
     @InjectScope
     private StatusbarScope statusbarScope;
 
@@ -87,7 +90,6 @@ public class MapViewModel implements ViewModel {
             final UpperInformationRegionRepository upperInformationRegionRepository,
             @Named("world") final List<Polygon> world
     ) {
-
         this.clientRepository = clientRepository;
         this.airportRepository = airportRepository;
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
@@ -117,6 +119,7 @@ public class MapViewModel implements ViewModel {
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
                         .singletonList(internationalDateLine())),
 //                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports),
+                new PainterExecutor<>("Airports", new AirportAtcPainter(mapVariables), () -> airportAtc),
                 new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F")
                                                                                 .deriveColor(0, 1, 1, 0.25), 0.5), this::flightInformationRegionBoundaries),
                 new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1, true, true)), () -> onlineUirs),
@@ -138,6 +141,21 @@ public class MapViewModel implements ViewModel {
         viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         mapVariables.setViewHeight(viewHeight.get());
 
+        airports().addListener((ListChangeListener<AirportViewModel>) c -> updateAirportAtc());
+        controllers().addListener((ListChangeListener<ClientViewModel>) c -> updateAirportAtc());
+        updateAirportAtc();
+    }
+
+    private void updateAirportAtc() {
+        final Map<AirportViewModel, List<ClientViewModel>> collect =
+                controllers()
+                        .stream()
+                        .collect(Collectors.groupingBy(e -> e
+                                .controllerData()
+                                .airport()));
+
+        airportAtc.clear();
+        airportAtc.add(collect);
     }
 
     public void initialize() {

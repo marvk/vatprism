@@ -1,6 +1,5 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.InternationalDateLineViewModel;
@@ -16,10 +15,8 @@ public class IdlPainter extends MapPainter<InternationalDateLineViewModel> {
     }
 
     @Override
-    public void paint(final Canvas canvas, final InternationalDateLineViewModel internationalDateLineViewModel) {
+    public void paint(final GraphicsContext c, final InternationalDateLineViewModel internationalDateLineViewModel) {
         final Polygon points = internationalDateLineViewModel.polygon();
-
-        final GraphicsContext c = canvas.getGraphicsContext2D();
 
         c.setLineWidth(1);
         c.setStroke(color);

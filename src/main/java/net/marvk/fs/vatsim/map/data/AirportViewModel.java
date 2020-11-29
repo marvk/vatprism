@@ -45,4 +45,19 @@ public class AirportViewModel extends SimpleDataViewModel<VatsimAirport, Airport
     public Point2D getPosition() {
         return position;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final AirportViewModel that = (AirportViewModel) o;
+
+        return getModel() != null ? getModel().equals(that.getModel()) : that.getModel() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return getModel() != null ? getModel().hashCode() : 0;
+    }
 }

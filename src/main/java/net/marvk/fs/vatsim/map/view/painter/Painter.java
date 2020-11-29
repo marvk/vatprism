@@ -1,27 +1,27 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.util.Collection;
 import java.util.stream.Stream;
 
 public interface Painter<T> {
-    void paint(final Canvas canvas, final T t);
+    void paint(final GraphicsContext context, final T t);
 
     @SuppressWarnings("unchecked")
-    default void paint(final Canvas canvas, final T... paintables) {
+    default void paint(final GraphicsContext context, final T... paintables) {
         for (final T t : paintables) {
-            paint(canvas, t);
+            paint(context, t);
         }
     }
 
-    default void paint(final Canvas canvas, final Collection<T> paintables) {
+    default void paint(final GraphicsContext context, final Collection<T> paintables) {
         for (final T t : paintables) {
-            paint(canvas, t);
+            paint(context, t);
         }
     }
 
-    default void paint(final Canvas canvas, final Stream<T> paintables) {
-        paintables.forEach(t -> paint(canvas, t));
+    default void paint(final GraphicsContext context, final Stream<T> paintables) {
+        paintables.forEach(t -> paint(context, t));
     }
 }

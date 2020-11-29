@@ -1,6 +1,6 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundaryViewModel;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegionViewModel;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
@@ -14,9 +14,9 @@ public class UirPainter extends MapPainter<UpperInformationRegionViewModel> {
     }
 
     @Override
-    public void paint(final Canvas canvas, final UpperInformationRegionViewModel upperInformationRegionViewModel) {
+    public void paint(final GraphicsContext c, final UpperInformationRegionViewModel upperInformationRegionViewModel) {
         for (final var fir : upperInformationRegionViewModel.flightInformationRegionBoundaries()) {
-            firPainter.paint(canvas, fir);
+            firPainter.paint(c, fir);
         }
     }
 }

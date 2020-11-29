@@ -1,7 +1,6 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
 import javafx.geometry.Point2D;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.ClientViewModel;
@@ -18,7 +17,7 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
     }
 
     @Override
-    public void paint(final Canvas canvas, final ClientViewModel client) {
+    public void paint(final GraphicsContext c, final ClientViewModel client) {
         if (client.rawClientTypeProperty().get() != RawClientType.PILOT) {
             return;
         }
@@ -28,17 +27,17 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
         final double centerX = mapVariables.toCanvasX(position.getX());
 
         if (centerX - MULTIDRAW_BOUND < 0) {
-            draw(canvas, client, 360);
+            draw(c, client, 360);
         }
 
         if (centerX + MULTIDRAW_BOUND > mapVariables.getViewWidth()) {
-            draw(canvas, client, -360);
+            draw(c, client, -360);
         }
 
-        draw(canvas, client, 0);
+        draw(c, client, 0);
     }
 
-    private void draw(final Canvas canvas, final ClientViewModel client, final int xOffset) {
+    private void draw(final GraphicsContext c, final ClientViewModel client, final int xOffset) {
         final Point2D point = client.clientStatus().position().get();
 
         final double xPrecise = mapVariables.toCanvasX(point.getX() + xOffset);
@@ -46,7 +45,6 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
         final double yPrecise = mapVariables.toCanvasY(point.getY());
         final int y = (int) yPrecise;
 
-        final GraphicsContext c = canvas.getGraphicsContext2D();
         c.setStroke(COLOR);
         c.setLineWidth(1);
         c.strokeRect(x - 0.5, y - 0.5, 2, 2);

@@ -119,7 +119,7 @@ public class MapView implements FxmlView<MapViewModel> {
     private RunnableFuture<Void> redraw() {
         final FutureTask<Void> task = new FutureTask<>(() -> {
             for (final PainterExecutor<?> painterExecutor : viewModel.getPainterExecutors()) {
-                painterExecutor.paint(canvas);
+                painterExecutor.paint(canvas.getGraphicsContext2D());
                 log.info(painterExecutor.getName() + " finished in " + (painterExecutor.getLastDurationNanos() / 1000000.0) + "ms");
             }
         }, null);

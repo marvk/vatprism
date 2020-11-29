@@ -27,7 +27,7 @@ public class MapVariables {
     private double aspectScaleY;
 
     public MapVariables() {
-        this(32000);
+        this(320000);
     }
 
     public MapVariables(final int bufferSize) {
