@@ -2,10 +2,10 @@ package net.marvk.fs.vatsim.map.data;
 
 import java.util.Locale;
 
-public enum RawFlightType {
+public enum FlightType {
     IFR, VFR, DVFR, SVFR, UNKNOWN;
 
-    public static RawFlightType fromString(final String identifier) {
+    public static FlightType fromString(final String identifier) {
         if (identifier == null) {
             return UNKNOWN;
         }

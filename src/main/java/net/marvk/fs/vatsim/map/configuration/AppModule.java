@@ -9,7 +9,6 @@ import net.marvk.fs.vatsim.api.SimpleVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiDataSource;
 import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.repository.*;
 import org.geotools.data.shapefile.files.ShpFiles;
 import org.geotools.data.shapefile.shp.ShapefileReader;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -33,14 +32,11 @@ public class AppModule extends AbstractModule {
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
         bind(InternationalDateLineRepository.class).in(Singleton.class);
 
-        bind(AirportViewModel.class);
-        bind(ClientStatusViewModel.class);
-        bind(ClientViewModel.class);
-        bind(ControllerDataViewModel.class);
-        bind(FlightInformationRegionBoundaryViewModel.class);
-        bind(FlightInformationRegionViewModel.class);
-        bind(FlightPlanViewModel.class);
-        bind(UpperInformationRegionViewModel.class);
+        bind(Airport.class);
+        bind(Client.class);
+        bind(FlightInformationRegionBoundary.class);
+        bind(FlightInformationRegion.class);
+        bind(UpperInformationRegion.class);
     }
 
     @Provides

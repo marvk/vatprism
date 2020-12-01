@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 
 import java.text.DecimalFormat;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
         highlightedFirs.textProperty().bind(Bindings.createStringBinding(() ->
                         viewModel.getHighlightedFirs()
                                  .stream()
-                                 .map(e -> e.icaoProperty().get())
+                                 .map(FlightInformationRegionBoundary::getIcao)
                                  .collect(Collectors.joining(", ")),
                 viewModel.getHighlightedFirs()
         ));

@@ -2,17 +2,17 @@ package net.marvk.fs.vatsim.map.view.clientdetail;
 
 import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
-import net.marvk.fs.vatsim.map.data.ClientViewModel;
+import net.marvk.fs.vatsim.map.data.Client;
 
 public class ClientDetailViewModel implements ViewModel {
-    private final ClientViewModel client;
+    private final Client client;
 
     @Inject
-    public ClientDetailViewModel(final ClientViewModel clientViewModel) {
+    public ClientDetailViewModel(final Client clientViewModel) {
         this.client = clientViewModel;
     }
 
-    public ClientViewModel getClient() {
+    public Client getClient() {
         return client;
     }
 }

@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.repository;
+package net.marvk.fs.vatsim.map.data;
 
 import java.io.Serial;
 

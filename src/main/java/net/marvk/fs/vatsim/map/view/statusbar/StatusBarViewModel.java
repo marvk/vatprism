@@ -8,12 +8,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundaryViewModel;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 
 public class StatusBarViewModel implements ViewModel {
     private final ObjectProperty<Point2D> mouseWorldPosition = new SimpleObjectProperty<>();
-    private final ObservableList<FlightInformationRegionBoundaryViewModel> highlightedFirs = FXCollections.observableArrayList();
+    private final ObservableList<FlightInformationRegionBoundary> highlightedFirs = FXCollections.observableArrayList();
 
     @InjectScope
     private StatusbarScope statusbarScope;
@@ -28,7 +28,7 @@ public class StatusBarViewModel implements ViewModel {
         return mouseWorldPosition;
     }
 
-    public ObservableList<FlightInformationRegionBoundaryViewModel> getHighlightedFirs() {
+    public ObservableList<FlightInformationRegionBoundary> getHighlightedFirs() {
         return highlightedFirs;
     }
 }

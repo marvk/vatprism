@@ -5,11 +5,11 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundaryViewModel;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewModel> {
+public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
 
     private final Color color;
     private final double lineWidth;
@@ -29,18 +29,30 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundaryViewMo
     }
 
     @Override
-    public void paint(final GraphicsContext c, final FlightInformationRegionBoundaryViewModel fir) {
+    public void paint(final GraphicsContext c, final FlightInformationRegionBoundary fir) {
         if (fir.extensionProperty().get()) {
             return;
         }
 
         final Polygon polygon = fir.getPolygon();
 
+        final boolean firControllers = fir.hasFirControllers();
+        final boolean uirControllers = fir.hasUirControllers();
+
+        final Color color;
+        if (firControllers) {
+            color = Color.DARKMAGENTA;
+        } else if (uirControllers) {
+            color = Color.DARKCYAN;
+        } else {
+            color = this.color;
+        }
+
         c.setStroke(color);
         c.setFill(color);
 
         final Point2D polylabel = polygon.getPolylabel();
-        if (text && polylabel != null) {
+        if ((firControllers || uirControllers) && polylabel != null) {
             c.setTextAlign(TextAlignment.CENTER);
             c.setTextBaseline(VPos.CENTER);
             c.fillText(

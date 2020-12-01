@@ -7,20 +7,18 @@ import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.repository.*;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @ScopeProvider(StatusbarScope.class)
 public class MapViewModel implements ViewModel {
@@ -43,42 +41,15 @@ public class MapViewModel implements ViewModel {
 
     private final MapVariables mapVariables = new MapVariables();
 
-    private final FilteredList<FlightInformationRegionBoundaryViewModel> highlightedBoundaries;
-    private final FilteredList<FlightInformationRegionBoundaryViewModel> onlineFirs;
+    private final FilteredList<FlightInformationRegionBoundary> highlightedBoundaries;
 
-    private final FilteredList<UpperInformationRegionViewModel> onlineUirs;
-
-    private final ObservableList<FlightInformationRegionBoundaryViewModel> selectedFir = FXCollections.observableList(new ArrayList<>(1));
-
-    private final ObservableList<Map<AirportViewModel, List<ClientViewModel>>> airportAtc = FXCollections.observableArrayList();
+    private final ObservableList<FlightInformationRegionBoundary> selectedFir = FXCollections.observableList(new ArrayList<>(1));
 
     @InjectScope
     private StatusbarScope statusbarScope;
 
-    private boolean isMouseInBounds(final FlightInformationRegionBoundaryViewModel fir) {
+    private boolean isMouseInBounds(final FlightInformationRegionBoundary fir) {
         return fir.getPolygon().boundary().contains(mouseWorldPosition.get());
-    }
-
-    private boolean isFirOnline(final FlightInformationRegionBoundaryViewModel fir) {
-        return controllers()
-                .stream()
-                .map(ClientViewModel::controllerData)
-                .map(ControllerDataViewModel::flightInformationRegion)
-                .map(FlightInformationRegionViewModel::icaoProperty)
-                .map(ObservableObjectValue::get)
-                .anyMatch(e -> Objects.equals(e, fir.icaoProperty().get()));
-    }
-
-    private boolean isUirOnline(final UpperInformationRegionViewModel uir) {
-        final Set<String> onlineIcaos = controllers()
-                .stream()
-                .map(ClientViewModel::controllerData)
-                .map(ControllerDataViewModel::upperInformationRegion)
-                .map(UpperInformationRegionViewModel::icaoProperty)
-                .map(ObservableObjectValue::get)
-                .collect(Collectors.toSet());
-
-        return onlineIcaos.contains(uir.icaoProperty().get());
     }
 
     @Inject
@@ -101,33 +72,19 @@ public class MapViewModel implements ViewModel {
                 mouseWorldPosition
         ));
 
-        this.onlineFirs = new FilteredList<>(flightInformationRegionBoundaries(), this::isFirOnline);
-        this.onlineFirs.predicateProperty().bind(Bindings.createObjectBinding(
-                () -> this::isFirOnline
-        ));
-
-        this.onlineUirs = new FilteredList<>(upperInformationRegionRepository.list(), this::isUirOnline);
-        this.onlineUirs.predicateProperty().bind(Bindings.createObjectBinding(
-                () -> this::isUirOnline
-        ));
-
         this.world = world;
 
         this.painterExecutors = List.of(
                 new PainterExecutor<>("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
                 new PainterExecutor<>("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
-                        .singletonList(internationalDateLine())),
-//                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports),
-                new PainterExecutor<>("Airports", new AirportAtcPainter(mapVariables), () -> airportAtc),
+                        .singleton(internationalDateLine())),
                 new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F")
                                                                                 .deriveColor(0, 1, 1, 0.25), 0.5), this::flightInformationRegionBoundaries),
-                new PainterExecutor<>("Online Uirs", new UirPainter(mapVariables, new FirPainter(mapVariables, Color.LIGHTBLUE, 1, true, true)), () -> onlineUirs),
-                new PainterExecutor<>("Online Firs", new FirPainter(mapVariables, Color.DEEPPINK.darker()
-                                                                                                .darker(), 2, true, true), () -> onlineFirs),
 //                new PainterExecutor<>("Filtered Firs", new FirPainter(mapVariables, Color.RED, 0.5), () -> highlightedBoundaries),
                 new PainterExecutor<>("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), () -> selectedFir),
-                new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots)
+                new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots),
+                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports)
         );
 
         mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
@@ -140,22 +97,6 @@ public class MapViewModel implements ViewModel {
         mapVariables.setViewWidth(viewWidth.get());
         viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         mapVariables.setViewHeight(viewHeight.get());
-
-        airports().addListener((ListChangeListener<AirportViewModel>) c -> updateAirportAtc());
-        controllers().addListener((ListChangeListener<ClientViewModel>) c -> updateAirportAtc());
-        updateAirportAtc();
-    }
-
-    private void updateAirportAtc() {
-        final Map<AirportViewModel, List<ClientViewModel>> collect =
-                controllers()
-                        .stream()
-                        .collect(Collectors.groupingBy(e -> e
-                                .controllerData()
-                                .airport()));
-
-        airportAtc.clear();
-        airportAtc.add(collect);
     }
 
     public void initialize() {
@@ -181,23 +122,23 @@ public class MapViewModel implements ViewModel {
         return worldCenter.get();
     }
 
-    public ObservableList<ClientViewModel> pilots() {
+    public ObservableList<Pilot> pilots() {
         return clientRepository.pilots();
     }
 
-    public ObservableList<ClientViewModel> controllers() {
+    public ObservableList<Controller> controllers() {
         return clientRepository.controllers();
     }
 
-    public ObservableList<FlightInformationRegionBoundaryViewModel> flightInformationRegionBoundaries() {
+    public ObservableList<FlightInformationRegionBoundary> flightInformationRegionBoundaries() {
         return flightInformationRegionBoundaryRepository.list();
     }
 
-    public InternationalDateLineViewModel internationalDateLine() {
+    public InternationalDateLine internationalDateLine() {
         return internationalDateLineRepository.list().get(0);
     }
 
-    public ObservableList<AirportViewModel> airports() {
+    public ObservableList<Airport> airports() {
         return airportRepository.list();
     }
 
@@ -221,15 +162,15 @@ public class MapViewModel implements ViewModel {
         return mouseViewPosition;
     }
 
-    public FilteredList<FlightInformationRegionBoundaryViewModel> highlightedBoundaries() {
+    public FilteredList<FlightInformationRegionBoundary> highlightedBoundaries() {
         return highlightedBoundaries;
     }
 
-    public ObservableList<FlightInformationRegionBoundaryViewModel> selectedFir() {
+    public ObservableList<FlightInformationRegionBoundary> selectedFir() {
         return selectedFir;
     }
 
-    public void setSelectedFir(final FlightInformationRegionBoundaryViewModel fir) {
+    public void setSelectedFir(final FlightInformationRegionBoundary fir) {
         selectedFir.clear();
         if (fir != null) {
             selectedFir.add(0, fir);

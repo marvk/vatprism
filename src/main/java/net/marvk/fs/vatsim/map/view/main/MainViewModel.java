@@ -6,7 +6,7 @@ import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
-import net.marvk.fs.vatsim.map.repository.*;
+import net.marvk.fs.vatsim.map.data.*;
 
 public class MainViewModel implements ViewModel {
     private final Command loadAirports;
@@ -26,18 +26,18 @@ public class MainViewModel implements ViewModel {
             final InternationalDateLineRepository internationalDateLineRepository
     ) {
         loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
-        loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
+        loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
         loadFirbs = new ReloadRepositoryAction(flightInformationRegionBoundaryRepository).asCommand();
+        loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
         loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
         loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
-        loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
 
         new CompositeCommand(
-                loadInternationalDateLine,
-                loadFirs,
-                loadFirbs,
-                loadUirs,
                 loadAirports,
+                loadInternationalDateLine,
+                loadFirbs,
+                loadFirs,
+                loadUirs,
                 loadClients
         ).execute();
     }

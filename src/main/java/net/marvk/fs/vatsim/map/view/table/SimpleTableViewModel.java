@@ -1,7 +1,7 @@
 package net.marvk.fs.vatsim.map.view.table;
 
 import javafx.collections.ObservableList;
-import net.marvk.fs.vatsim.map.repository.Repository;
+import net.marvk.fs.vatsim.map.data.Repository;
 
 public abstract class SimpleTableViewModel<ViewModel> extends AbstractTableViewModel<ViewModel> {
     private final Repository<ViewModel> clientRepository;

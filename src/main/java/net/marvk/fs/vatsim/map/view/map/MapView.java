@@ -24,7 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundaryViewModel;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
 import java.util.concurrent.*;
@@ -85,7 +85,7 @@ public class MapView implements FxmlView<MapViewModel> {
 //        this.viewModel.mouseViewPositionProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
 
         this.viewModel.selectedFir()
-                      .addListener((ListChangeListener<FlightInformationRegionBoundaryViewModel>) c -> invalidateCanvas());
+                      .addListener((ListChangeListener<FlightInformationRegionBoundary>) c -> invalidateCanvas());
 
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
 
@@ -215,8 +215,8 @@ public class MapView implements FxmlView<MapViewModel> {
 
         private void setupItems() {
             getItems().clear();
-            for (final FlightInformationRegionBoundaryViewModel h : viewModel.highlightedBoundaries()) {
-                getItems().add(new MenuItem(h.icaoProperty().get()));
+            for (final FlightInformationRegionBoundary h : viewModel.highlightedBoundaries()) {
+                getItems().add(new MenuItem(h.getIcao()));
             }
 
             final ContextMenuContent cmc = (ContextMenuContent) getSkin().getNode();

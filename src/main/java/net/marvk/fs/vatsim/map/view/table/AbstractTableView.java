@@ -14,7 +14,7 @@ import org.controlsfx.control.table.TableFilter;
 
 public abstract class AbstractTableView<TableViewModel extends AbstractTableViewModel<TableViewViewModel>, TableViewViewModel> implements FxmlView<TableViewModel> {
     @FXML
-    private TableView<TableViewViewModel> table;
+    protected TableView<TableViewViewModel> table;
 
     @InjectViewModel
     protected TableViewModel viewModel;

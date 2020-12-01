@@ -3,11 +3,10 @@ package net.marvk.fs.vatsim.map.view.painter;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import net.marvk.fs.vatsim.map.data.ClientViewModel;
-import net.marvk.fs.vatsim.map.data.RawClientType;
+import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class PilotPainter extends MapPainter<ClientViewModel> {
+public class PilotPainter extends MapPainter<Pilot> {
     private static final Color COLOR = Color.valueOf("85cb33");
     private static final int TAIL_LENGTH = 5;
     private static final int MULTIDRAW_BOUND = 10;
@@ -17,12 +16,8 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
     }
 
     @Override
-    public void paint(final GraphicsContext c, final ClientViewModel client) {
-        if (client.rawClientTypeProperty().get() != RawClientType.PILOT) {
-            return;
-        }
-
-        final Point2D position = client.clientStatus().position().get();
+    public void paint(final GraphicsContext c, final Pilot client) {
+        final Point2D position = client.getPosition();
 
         final double centerX = mapVariables.toCanvasX(position.getX());
 
@@ -37,8 +32,8 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
         draw(c, client, 0);
     }
 
-    private void draw(final GraphicsContext c, final ClientViewModel client, final int xOffset) {
-        final Point2D point = client.clientStatus().position().get();
+    private void draw(final GraphicsContext c, final Pilot client, final int xOffset) {
+        final Point2D point = client.getPosition();
 
         final double xPrecise = mapVariables.toCanvasX(point.getX() + xOffset);
         final int x = (int) xPrecise;
@@ -48,7 +43,7 @@ public class PilotPainter extends MapPainter<ClientViewModel> {
         c.setStroke(COLOR);
         c.setLineWidth(1);
         c.strokeRect(x - 0.5, y - 0.5, 2, 2);
-        final double heading = client.clientStatus().heading().get();
+        final double heading = client.getHeading();
 
         final double rad = Math.toRadians(heading);
         final int x2 = (int) (xPrecise + Math.sin(rad) * TAIL_LENGTH);

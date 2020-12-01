@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public final class ParseUtil {
+final class ParseUtil {
     private ParseUtil() {
         throw new AssertionError("No instances of utility class " + ParseUtil.class);
     }

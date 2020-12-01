@@ -1,0 +1,104 @@
+package net.marvk.fs.vatsim.map.data;
+
+import javafx.beans.property.*;
+import net.marvk.fs.vatsim.api.data.VatsimClient;
+
+public class Controller extends Client {
+    private final StringProperty frequency = new SimpleStringProperty();
+    private final StringProperty rating = new SimpleStringProperty();
+    private final StringProperty atisMessage = new SimpleStringProperty();
+
+    private final ObjectProperty<ControllerType> controllerType = new SimpleObjectProperty<>();
+
+    private final ReadOnlyObjectWrapper<Airport> workingAirport =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, Airport::getControllersWritable);
+
+    private final ReadOnlyObjectWrapper<FlightInformationRegion> workingFlightInformationRegion =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegion::getControllersWritable);
+
+    private final ReadOnlyObjectWrapper<UpperInformationRegion> workingUpperInformationRegion =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, UpperInformationRegion::getControllersWritable);
+
+    @Override
+    public void setFromModel(final VatsimClient model) {
+        super.setFromModel(model);
+        frequency.set(model.getFrequency());
+        rating.set(model.getRating());
+        atisMessage.set(model.getAtisMessage());
+    }
+
+    public void setFromCallsignParserResult(final CallsignParser.Result result) {
+        controllerType.set(result.getControllerType());
+        workingAirport.set(result.getAirport());
+        workingFlightInformationRegion.set(result.getFlightInformationRegion());
+        workingUpperInformationRegion.set(result.getUpperInformationRegion());
+    }
+
+    public String getFrequency() {
+        return frequency.get();
+    }
+
+    public ReadOnlyStringProperty frequencyProperty() {
+        return frequency;
+    }
+
+    public String getRating() {
+        return rating.get();
+    }
+
+    public ReadOnlyStringProperty ratingProperty() {
+        return rating;
+    }
+
+    public String getAtisMessage() {
+        return atisMessage.get();
+    }
+
+    public ReadOnlyStringProperty atisMessageProperty() {
+        return atisMessage;
+    }
+
+    public ControllerType getControllerType() {
+        return controllerType.get();
+    }
+
+    public ReadOnlyObjectProperty<ControllerType> controllerTypeProperty() {
+        return controllerType;
+    }
+
+    public Airport getWorkingAirport() {
+        return workingAirport.get();
+    }
+
+    ObjectProperty<Airport> workingAirportPropertyWritable() {
+        return workingAirport;
+    }
+
+    public ReadOnlyObjectProperty<Airport> workingAirportProperty() {
+        return workingAirport.getReadOnlyProperty();
+    }
+
+    public FlightInformationRegion getWorkingFlightInformationRegion() {
+        return workingFlightInformationRegion.get();
+    }
+
+    ObjectProperty<FlightInformationRegion> workingFlightInformationRegionPropertyWritable() {
+        return workingFlightInformationRegion;
+    }
+
+    public ReadOnlyObjectProperty<FlightInformationRegion> workingFlightInformationRegionProperty() {
+        return workingFlightInformationRegion.getReadOnlyProperty();
+    }
+
+    public UpperInformationRegion getWorkingUpperInformationRegion() {
+        return workingUpperInformationRegion.get();
+    }
+
+    ObjectProperty<UpperInformationRegion> workingUpperInformationRegionPropertyWritable() {
+        return workingUpperInformationRegion;
+    }
+
+    public ReadOnlyObjectProperty<UpperInformationRegion> workingUpperInformationRegionProperty() {
+        return workingUpperInformationRegion.getReadOnlyProperty();
+    }
+}

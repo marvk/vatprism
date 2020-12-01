@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map;
 
 import javafx.geometry.Point2D;
+import net.marvk.fs.vatsim.api.data.Point;
 
 public final class GeomUtil {
     private GeomUtil() {
@@ -50,5 +51,9 @@ public final class GeomUtil {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+    }
+
+    public static Point2D parsePoint(final Point position) {
+        return parsePoint(position.getX(), position.getY());
     }
 }
