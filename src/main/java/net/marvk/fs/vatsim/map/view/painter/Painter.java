@@ -24,4 +24,16 @@ public interface Painter<T> {
     default void paint(final GraphicsContext context, final Stream<T> paintables) {
         paintables.forEach(t -> paint(context, t));
     }
+
+    default void beforeAllRender() {
+    }
+
+    default void beforeEachRender() {
+    }
+
+    default void afterEachRender() {
+    }
+
+    default void afterAllRender() {
+    }
 }

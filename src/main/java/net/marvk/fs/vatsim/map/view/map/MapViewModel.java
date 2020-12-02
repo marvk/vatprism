@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -59,6 +60,7 @@ public class MapViewModel implements ViewModel {
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
+            final NotificationCenter notificationCenter,
             @Named("world") final List<Polygon> world
     ) {
         this.clientRepository = clientRepository;
@@ -79,9 +81,9 @@ public class MapViewModel implements ViewModel {
                 new PainterExecutor<>("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
                         .singleton(internationalDateLine())),
-                new PainterExecutor<>("Firs", new FirPainter(mapVariables, Color.valueOf("3B341F")
-                                                                                .deriveColor(0, 1, 1, 0.25), 0.5), this::flightInformationRegionBoundaries),
-//                new PainterExecutor<>("Filtered Firs", new FirPainter(mapVariables, Color.RED, 0.5), () -> highlightedBoundaries),
+                new PainterExecutor<>("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
+                new PainterExecutor<>("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list),
+                new PainterExecutor<>("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
                 new PainterExecutor<>("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), () -> selectedFir),
                 new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots),
                 new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports)
@@ -97,6 +99,8 @@ public class MapViewModel implements ViewModel {
         mapVariables.setViewWidth(viewWidth.get());
         viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         mapVariables.setViewHeight(viewHeight.get());
+
+        notificationCenter.subscribe("REPAINT", (key, payload) -> publish("REPAINT"));
     }
 
     public void initialize() {

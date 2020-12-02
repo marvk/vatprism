@@ -22,6 +22,7 @@ public class App extends MvvmfxGuiceApplication {
                 .fxmlView(MainView.class)
                 .load();
 
+//        primaryStage.initStyle(StageStyle.UTILITY);
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         primaryStage.show();
     }

@@ -23,8 +23,6 @@ public class ClientsView extends AbstractTableView<ClientsViewModel, Client> {
         addColumn("Name", "realName");
 //        addColumn("Type", "rawClientType");
 
-        enableFilter();
-
         table.setFixedCellSize(18);
 
 //        instantiateDetailView();

@@ -9,11 +9,14 @@ import javafx.scene.control.Label;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 
 import java.text.DecimalFormat;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import static java.math.RoundingMode.HALF_UP;
 
 public class StatusBarView implements FxmlView<StatusBarViewModel> {
+    @FXML
+    private Label playersOnline;
     @FXML
     private Label mousePosition;
     @FXML
@@ -45,5 +48,20 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
                                  .collect(Collectors.joining(", ")),
                 viewModel.getHighlightedFirs()
         ));
+
+        playersOnline.textProperty().bind(Bindings.createStringBinding(
+                this::playerStatsString, viewModel.playerStatsProperty()
+        ));
+    }
+
+    private String playerStatsString() {
+        final PlayerStats playerStats = viewModel.getPlayerStats();
+        final StringJoiner sj = new StringJoiner(", ");
+
+        sj.add(playerStats.getPilots() + " Pilots");
+        sj.add(playerStats.getControllers() + " Controllers");
+        sj.add(playerStats.getObservers() + " Observers");
+
+        return sj.toString();
     }
 }

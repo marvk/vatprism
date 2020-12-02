@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
 import java.time.DateTimeException;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class FlightPlan implements Settable<VatsimClient> {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
 
@@ -166,12 +168,14 @@ public class FlightPlan implements Settable<VatsimClient> {
     private static LocalTime parseDepartureTime(final String string) {
         return ParseUtil.parseNullSafe(string, s -> {
             try {
-                final String time = "0".repeat(4 - s.length()) + s;
+                // min because users may input more than four numbers
+                final String time = "0".repeat(4 - Math.min(s.length(), 4)) + s;
                 return LocalTime.of(
                         Integer.parseInt(time.substring(0, 2)),
                         Integer.parseInt(time.substring(2, 4))
                 );
-            } catch (final DateTimeException e) {
+            } catch (final DateTimeException | NumberFormatException e) {
+                log.warn("Failed to parse time " + string, e);
                 return null;
             }
         });

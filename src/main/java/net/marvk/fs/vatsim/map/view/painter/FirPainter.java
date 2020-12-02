@@ -9,19 +9,26 @@ import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
+import java.util.HashSet;
+import java.util.Set;
 
+public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
     private final Color color;
+    private final Color fillColor;
+
     private final double lineWidth;
     private final boolean fill;
-    private final boolean text;
+    private final boolean label;
 
-    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean text) {
+    private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();
+
+    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean label) {
         super(mapVariables);
         this.color = color;
         this.lineWidth = lineWidth;
         this.fill = fill;
-        this.text = text;
+        this.label = label;
+        this.fillColor = color.deriveColor(0, 1, 1, 0.05);
     }
 
     public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
@@ -29,36 +36,38 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
     }
 
     @Override
-    public void paint(final GraphicsContext c, final FlightInformationRegionBoundary fir) {
-        if (fir.extensionProperty().get()) {
+    public void afterAllRender() {
+        paintedFirbs.clear();
+    }
+
+    @Override
+    public void paint(final GraphicsContext c, final FlightInformationRegionBoundary firb) {
+        if (firb.isExtension()) {
             return;
         }
 
-        final Polygon polygon = fir.getPolygon();
+        if (!paintedFirbs.add(firb)) {
+            return;
+        }
 
-        final boolean firControllers = fir.hasFirControllers();
-        final boolean uirControllers = fir.hasUirControllers();
+        final Polygon polygon = firb.getPolygon();
 
-        final Color color;
-        if (firControllers) {
-            color = Color.DARKMAGENTA;
-        } else if (uirControllers) {
-            color = Color.DARKCYAN;
-        } else {
-            color = this.color;
+        if (fill) {
+            c.setFill(fillColor);
+            painterHelper.fillPolygons(c, polygon);
         }
 
         c.setStroke(color);
         c.setFill(color);
 
-        final Point2D polylabel = polygon.getPolylabel();
-        if ((firControllers || uirControllers) && polylabel != null) {
+        final Point2D polyLabel = polygon.getPolyLabel();
+        if (label && polyLabel != null) {
             c.setTextAlign(TextAlignment.CENTER);
             c.setTextBaseline(VPos.CENTER);
             c.fillText(
-                    fir.icaoProperty().get(),
-                    mapVariables.toCanvasX(polylabel.getX()),
-                    mapVariables.toCanvasY(polylabel.getY())
+                    firb.icaoProperty().get(),
+                    mapVariables.toCanvasX(polyLabel.getX()),
+                    mapVariables.toCanvasY(polyLabel.getY())
             );
         }
 
@@ -66,9 +75,5 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
         c.setLineDashes(null);
         painterHelper.strokePolygons(c, polygon);
 
-        if (fill) {
-            c.setFill(color.deriveColor(0, 1, 1, 0.05));
-            painterHelper.fillPolygons(c, polygon);
-        }
     }
 }

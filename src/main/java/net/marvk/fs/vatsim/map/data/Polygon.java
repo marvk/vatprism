@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.data.Point;
 import org.geotools.polylabel.PolyLabeller;
 import org.locationtech.jts.geom.Coordinate;
@@ -15,12 +16,14 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @ToString
+@Slf4j
 public class Polygon {
+    private static final LinearRing[] NO_HOLES = new LinearRing[0];
     private final double[] pointsX;
     private final double[] pointsY;
 
     private final Rectangle2D boundary;
-    private final Point2D polylabel;
+    private Point2D polyLabel = null;
 
     public Polygon(final List<Point> points) {
         this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), points.size());
@@ -59,11 +62,9 @@ public class Polygon {
                 return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
             }
         };
-
-        this.polylabel = extracted();
     }
 
-    private Point2D extracted() {
+    private Point2D polyLabel() {
         try {
             if (numPoints() <= 2) {
                 return null;
@@ -75,29 +76,16 @@ public class Polygon {
                     .toArray(Coordinate[]::new);
 
             final org.locationtech.jts.geom.Polygon polygon = new org.locationtech.jts.geom.Polygon(
-                    new LinearRing(new CoordinateArraySequence(objects, 2), new GeometryFactory()), new LinearRing[0], new GeometryFactory()
+                    new LinearRing(new CoordinateArraySequence(objects, 2), new GeometryFactory()), NO_HOLES, new GeometryFactory()
             );
             final org.locationtech.jts.geom.Point polylabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
 
             return new Point2D(polylabel.getX(), polylabel.getY());
         } catch (final IllegalStateException | IllegalArgumentException e) {
+            log.warn("Failed polyLabel for polygon " + this, e);
             return null;
         }
     }
-
-//    public Polygon(final MultiPolygon m) {
-//        this(m, new CoordinateExtractor<MultiPolygon>() {
-//            @Override
-//            public double extract(final MultiPolygon multiPolygon, final int index) {
-//                return 0;
-//            }
-//        }, new CoordinateExtractor<MultiPolygon>() {
-//            @Override
-//            public double extract(final MultiPolygon multiPolygon, final int index) {
-//                return 0;
-//            }
-//        }, m.getCoordinates().length);
-//    }
 
     public int size() {
         return pointsX.length;
@@ -258,7 +246,11 @@ public class Polygon {
         double extract(final T t, final int index);
     }
 
-    public Point2D getPolylabel() {
-        return polylabel;
+    public Point2D getPolyLabel() {
+        if (polyLabel == null) {
+            polyLabel = polyLabel();
+        }
+
+        return polyLabel;
     }
 }

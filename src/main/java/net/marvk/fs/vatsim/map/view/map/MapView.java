@@ -19,20 +19,27 @@ import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
 public class MapView implements FxmlView<MapViewModel> {
-    private static final double D_SCROLL = 0.25;
+    private static final double D_SCROLL = 1.5;
     private static final double D_DRAG = 1;
+    private static final int MAX_SCALE = 4096;
+    private static final int MIN_SCALE = 1;
 
     @FXML
     private StackPane stackPane;
@@ -69,6 +76,12 @@ public class MapView implements FxmlView<MapViewModel> {
                 mouseEventHandler.leftMouseDown,
                 mouseEventHandler.rightMouseDown
         ));
+
+        final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
+        final Font font = Font.loadFont(s, 12);
+
+        final GraphicsContext c = this.canvas.getGraphicsContext2D();
+        c.setFont(font);
     }
 
     public void initialize() {
@@ -90,10 +103,10 @@ public class MapView implements FxmlView<MapViewModel> {
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
 
         this.canvas.setOnScroll(event -> {
-            final double delta = event.getDeltaY() > 0 ? D_SCROLL : -D_SCROLL;
+            final double delta = event.getDeltaY() > 0 ? D_SCROLL : 1.0 / D_SCROLL;
 
             final double oldScale = viewModel.scaleProperty().get();
-            final double newScale = Math.min(Math.max(oldScale + delta, 1), 10);
+            final double newScale = Math.min(Math.max(oldScale * delta, MIN_SCALE), MAX_SCALE);
             viewModel.scaleProperty().set(newScale);
         });
 
@@ -104,6 +117,8 @@ public class MapView implements FxmlView<MapViewModel> {
         this.canvas.setOnMouseMoved(mouseEventHandler::onMove);
 
         invalidateCanvas();
+
+        viewModel.subscribe("REPAINT", (key, payload) -> invalidateCanvas());
     }
 
     private synchronized void invalidateCanvas() {
@@ -192,8 +207,11 @@ public class MapView implements FxmlView<MapViewModel> {
     }
 
     private final class RightClickMenu extends ContextMenu {
+        private final List<FlightInformationRegionBoundary> items;
+
         public RightClickMenu() {
             setSkin(createDefaultSkin());
+            this.items = new ArrayList<>();
         }
 
         @Override
@@ -215,7 +233,9 @@ public class MapView implements FxmlView<MapViewModel> {
 
         private void setupItems() {
             getItems().clear();
-            for (final FlightInformationRegionBoundary h : viewModel.highlightedBoundaries()) {
+            this.items.clear();
+            this.items.addAll(viewModel.highlightedBoundaries());
+            for (final FlightInformationRegionBoundary h : items) {
                 getItems().add(new MenuItem(h.getIcao()));
             }
 
@@ -227,7 +247,7 @@ public class MapView implements FxmlView<MapViewModel> {
                 final int finalI = i;
                 node.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
-                        viewModel.setSelectedFir(viewModel.highlightedBoundaries().get(finalI));
+                        viewModel.setSelectedFir(items.get(finalI));
                     }
                 });
             }

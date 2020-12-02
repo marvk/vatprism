@@ -33,9 +33,13 @@ public class PainterExecutor<T> {
 
     public void paint(final GraphicsContext c) {
         final long start = System.nanoTime();
+        painter.beforeAllRender();
         for (final T t : paintablesSupplier.get()) {
+            painter.beforeEachRender();
             painter.paint(c, t);
+            painter.afterEachRender();
         }
+        painter.afterAllRender();
         lastDurationNanos = System.nanoTime() - start;
     }
 

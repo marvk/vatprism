@@ -6,6 +6,7 @@ import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
+import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import net.marvk.fs.vatsim.map.data.*;
 
 public class MainViewModel implements ViewModel {
@@ -14,6 +15,7 @@ public class MainViewModel implements ViewModel {
     private final Command loadFirbs;
     private final Command loadUirs;
     private final Command loadClients;
+    private final NotificationCenter notificationCenter;
     private final Command loadInternationalDateLine;
 
     @Inject
@@ -23,7 +25,8 @@ public class MainViewModel implements ViewModel {
             final FlightInformationRegionRepository flightInformationRegionRepository,
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
-            final InternationalDateLineRepository internationalDateLineRepository
+            final InternationalDateLineRepository internationalDateLineRepository,
+            final NotificationCenter notificationCenter
     ) {
         loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
         loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
@@ -31,6 +34,7 @@ public class MainViewModel implements ViewModel {
         loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
         loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
         loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
+        this.notificationCenter = notificationCenter;
 
         new CompositeCommand(
                 loadAirports,
@@ -40,6 +44,11 @@ public class MainViewModel implements ViewModel {
                 loadUirs,
                 loadClients
         ).execute();
+
+        notificationCenter.subscribe("RELOAD_CLIENTS", (key, payload) -> {
+            loadClients.execute();
+            notificationCenter.publish("REPAINT");
+        });
     }
 
     private static final class ReloadRepositoryAction extends Action {
