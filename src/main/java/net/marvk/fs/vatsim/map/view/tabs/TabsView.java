@@ -19,8 +19,15 @@ public class TabsView implements FxmlView<TabsViewModel> {
     private Context context;
 
     public void initialize() {
-        tabPane.getTabs().add(new Tab("Map", FluentViewLoader.fxmlView(MapView.class).context(context).load().getView()));
-        tabPane.getTabs().add(new Tab("Clients", FluentViewLoader.fxmlView(ClientsView.class).context(context).load().getView()));
-        tabPane.getTabs().add(new Tab("Airports", FluentViewLoader.fxmlView(AirportsView.class).context(context).load().getView()));
+        tabPane.getTabs().clear();
+        tabPane.getTabs()
+               .add(new Tab("Map", FluentViewLoader.fxmlView(MapView.class).context(context).load().getView()));
+        tabPane.getTabs()
+               .add(new Tab("Clients", FluentViewLoader.fxmlView(ClientsView.class).context(context).load().getView()));
+        tabPane.getTabs()
+               .add(new Tab("Airports", FluentViewLoader.fxmlView(AirportsView.class)
+                                                        .context(context)
+                                                        .load()
+                                                        .getView()));
     }
 }

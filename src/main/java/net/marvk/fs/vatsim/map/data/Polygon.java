@@ -34,8 +34,8 @@ public class Polygon {
     }
 
     public <T> Polygon(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final int length) {
-        this.pointsX = new double[length];
-        this.pointsY = new double[length];
+        final double[] pointsX = new double[length];
+        final double[] pointsY = new double[length];
 
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
@@ -43,17 +43,35 @@ public class Polygon {
         double maxX = Double.NEGATIVE_INFINITY;
         double maxY = Double.NEGATIVE_INFINITY;
 
+        int duplicates = 0;
+
         for (int i = 0; i < length; i++) {
             final double x = xExtractor.extract(t, i);
             final double y = yExtractor.extract(t, i);
+
+            if (i > 0) {
+                if (pointsX[i - 1] == x && pointsY[i - 1] == y) {
+                    duplicates++;
+                    continue;
+                }
+            }
 
             minX = Math.min(minX, x);
             minY = Math.min(minY, y);
             maxX = Math.max(maxX, x);
             maxY = Math.max(maxY, y);
 
-            this.pointsX[i] = x;
-            this.pointsY[i] = y;
+            pointsX[i - duplicates] = x;
+            pointsY[i - duplicates] = y;
+        }
+
+        if (duplicates > 0) {
+            log.info("Removed " + duplicates + " duplicates ");
+            this.pointsX = Arrays.copyOf(pointsX, length - duplicates);
+            this.pointsY = Arrays.copyOf(pointsY, length - duplicates);
+        } else {
+            this.pointsX = pointsX;
+            this.pointsY = pointsY;
         }
 
         this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY) {
@@ -62,28 +80,35 @@ public class Polygon {
                 return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
             }
         };
+
+        polyLabel();
     }
 
     private Point2D polyLabel() {
+        final Coordinate[] coordinates = IntStream
+                .rangeClosed(0, numPoints())
+                .mapToObj(e -> new Coordinate(pointsX[e % numPoints()], pointsY[e % numPoints()]))
+                .toArray(Coordinate[]::new);
+
         try {
             if (numPoints() <= 2) {
                 return null;
             }
 
-            final Coordinate[] objects = IntStream
-                    .rangeClosed(0, numPoints())
-                    .mapToObj(e -> new Coordinate(pointsX[e % numPoints()], pointsY[e % numPoints()]))
-                    .toArray(Coordinate[]::new);
-
             final org.locationtech.jts.geom.Polygon polygon = new org.locationtech.jts.geom.Polygon(
-                    new LinearRing(new CoordinateArraySequence(objects, 2), new GeometryFactory()), NO_HOLES, new GeometryFactory()
+                    new LinearRing(new CoordinateArraySequence(coordinates, 2), new GeometryFactory()), NO_HOLES, new GeometryFactory()
             );
-            final org.locationtech.jts.geom.Point polylabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
 
-            return new Point2D(polylabel.getX(), polylabel.getY());
+            final org.locationtech.jts.geom.Point polyLabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
+
+            return new Point2D(polyLabel.getX(), polyLabel.getY());
         } catch (final IllegalStateException | IllegalArgumentException e) {
-            log.warn("Failed polyLabel for polygon " + this, e);
-            return null;
+            log.warn("Failed polyLabel", e);
+
+            return new Point2D(
+                    Arrays.stream(pointsX).average().getAsDouble(),
+                    Arrays.stream(pointsY).average().getAsDouble()
+            );
         }
     }
 
@@ -215,7 +240,7 @@ public class Polygon {
 
     private static void reverse(final double[] arr) {
         for (int i = 0; i < arr.length / 2; i++) {
-            double temp = arr[i];
+            final double temp = arr[i];
             arr[i] = arr[arr.length - i - 1];
             arr[arr.length - i - 1] = temp;
         }
@@ -223,14 +248,22 @@ public class Polygon {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final Polygon polygon = (Polygon) o;
 
-        if (!Arrays.equals(pointsX, polygon.pointsX)) return false;
-        if (!Arrays.equals(pointsY, polygon.pointsY)) return false;
-        return boundary != null ? boundary.equals(polygon.boundary) : polygon.boundary == null;
+        if (!Arrays.equals(pointsX, polygon.pointsX)) {
+            return false;
+        }
+        if (!Arrays.equals(pointsY, polygon.pointsY)) {
+            return false;
+        }
+        return Objects.equals(boundary, polygon.boundary);
     }
 
     @Override
@@ -248,7 +281,13 @@ public class Polygon {
 
     public Point2D getPolyLabel() {
         if (polyLabel == null) {
-            polyLabel = polyLabel();
+            if (numPoints() == 1) {
+                polyLabel = new Point2D(pointsX[0], pointsY[0]);
+            } else if (numPoints() == 2) {
+                polyLabel = new Point2D(pointsX[0], pointsY[0]).add(pointsX[1], pointsY[1]).multiply(0.5);
+            } else {
+                polyLabel = polyLabel();
+            }
         }
 
         return polyLabel;

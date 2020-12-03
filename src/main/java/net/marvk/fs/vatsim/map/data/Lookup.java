@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import java.util.*;
 import java.util.function.Function;
 
-class Lookup<ViewModel> {
+final class Lookup<ViewModel> {
     private final Map<String, List<ViewModel>> lookup = new HashMap<>();
     private final Function<ViewModel, Collection<String>> keyExtractor;
 

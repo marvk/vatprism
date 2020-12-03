@@ -13,11 +13,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
-    private final Color color;
+    @Parameter("Color")
     private final Color fillColor;
-
+    @Parameter("Fill Color")
+    private final Color color;
+    @Parameter(value = "Line Width", min = 0, max = 10)
     private final double lineWidth;
+    @Parameter("Fill")
     private final boolean fill;
+    @Parameter("Label")
     private final boolean label;
 
     private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();

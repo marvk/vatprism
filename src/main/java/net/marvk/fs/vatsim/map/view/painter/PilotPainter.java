@@ -9,10 +9,13 @@ import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class PilotPainter extends MapPainter<Pilot> {
-    private static final Color COLOR = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
-    private static final int TAIL_LENGTH = 8;
-    private static final int MULTIDRAW_BOUND = 10;
+    private static final int MULTI_DRAW_BOUND = 10;
     private static final int TEXT_OFFSET = 10;
+
+    @Parameter("Color")
+    private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
+    @Parameter(value = "Tail Length", min = 0)
+    private int tailLength = 8;
 
     public PilotPainter(final MapVariables mapVariables) {
         super(mapVariables);
@@ -24,11 +27,11 @@ public class PilotPainter extends MapPainter<Pilot> {
 
         final double centerX = mapVariables.toCanvasX(position.getX());
 
-        if (centerX - MULTIDRAW_BOUND < 0) {
+        if (centerX - MULTI_DRAW_BOUND < 0) {
             draw(c, client, 360);
         }
 
-        if (centerX + MULTIDRAW_BOUND > mapVariables.getViewWidth()) {
+        if (centerX + MULTI_DRAW_BOUND > mapVariables.getViewWidth()) {
             draw(c, client, -360);
         }
 
@@ -44,15 +47,15 @@ public class PilotPainter extends MapPainter<Pilot> {
         final int y = (int) yPrecise;
 
 //        c.setLineDashes(null);
-        c.setStroke(COLOR);
-        c.setFill(COLOR);
+        c.setStroke(color);
+        c.setFill(color);
         c.setLineWidth(1);
         c.strokeRect(x - 1.5, y - 1.5, 4, 4);
         final double heading = pilot.getHeading();
 
         final double rad = Math.toRadians(heading);
-        final int x2 = (int) (xPrecise + Math.sin(rad) * TAIL_LENGTH);
-        final int y2 = (int) (yPrecise - Math.cos(rad) * TAIL_LENGTH);
+        final int x2 = (int) (xPrecise + Math.sin(rad) * tailLength);
+        final int y2 = (int) (yPrecise - Math.cos(rad) * tailLength);
 
         c.setTextBaseline(VPos.CENTER);
         c.setTextAlign(TextAlignment.CENTER);

@@ -13,15 +13,11 @@ public class MenuBarView implements FxmlView<MenuBarViewModel> {
     private double y;
 
     public void initialize() {
-        container.sceneProperty().addListener((observable, oldValue, newValue) -> {
-            addListenersToScene(newValue);
-        });
+        container.sceneProperty().addListener((observable, oldValue, newValue) -> addListenersToScene(newValue));
     }
 
     private void addListenersToScene(final Scene scene) {
-        scene.windowProperty().addListener((observable1, oldValue1, newValue1) -> {
-            addListenersToWindow(newValue1);
-        });
+        scene.windowProperty().addListener((observable1, oldValue1, newValue1) -> addListenersToWindow(newValue1));
     }
 
     private void addListenersToWindow(final Window window) {

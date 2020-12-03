@@ -2,17 +2,18 @@ package net.marvk.fs.vatsim.map.view.statusbar;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-
-import static java.math.RoundingMode.HALF_UP;
 
 public class StatusBarView implements FxmlView<StatusBarViewModel> {
     @FXML
@@ -28,7 +29,7 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
 
     {
         df = new DecimalFormat("#.######");
-        df.setRoundingMode(HALF_UP);
+        df.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     public void initialize() {
@@ -49,19 +50,30 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
                 viewModel.getHighlightedFirs()
         ));
 
-        playersOnline.textProperty().bind(Bindings.createStringBinding(
-                this::playerStatsString, viewModel.playerStatsProperty()
-        ));
+        viewModel.playerStatsProperty().addListener((observable, oldValue, newValue) -> setPlayerStats());
+        setPlayerStats();
+
+        bindTextToTooltip(playersOnline);
+        bindTextToTooltip(highlightedFirs);
+        bindTextToTooltip(mousePosition);
     }
 
-    private String playerStatsString() {
+    private void setPlayerStats() {
         final PlayerStats playerStats = viewModel.getPlayerStats();
-        final StringJoiner sj = new StringJoiner(", ");
+        Platform.runLater(() -> {
+            final StringJoiner sj = new StringJoiner(", ");
 
-        sj.add(playerStats.getPilots() + " Pilots");
-        sj.add(playerStats.getControllers() + " Controllers");
-        sj.add(playerStats.getObservers() + " Observers");
+            sj.add(playerStats.getPilots() + " Pilots");
+            sj.add(playerStats.getControllers() + " Controllers");
+            sj.add(playerStats.getObservers() + " Observers");
 
-        return sj.toString();
+            playersOnline.setText(sj.toString());
+        });
+    }
+
+    private static void bindTextToTooltip(final Label label) {
+        final Tooltip value = new Tooltip();
+        value.textProperty().bind(label.textProperty());
+        label.setTooltip(value);
     }
 }

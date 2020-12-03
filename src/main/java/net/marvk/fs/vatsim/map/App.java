@@ -4,6 +4,7 @@ import com.google.inject.Module;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
@@ -22,9 +23,15 @@ public class App extends MvvmfxGuiceApplication {
                 .fxmlView(MainView.class)
                 .load();
 
-//        primaryStage.initStyle(StageStyle.UTILITY);
+        primaryStage.setOnCloseRequest(e -> System.exit(0));
+        primaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-32.png"));
+        primaryStage.setTitle("VATSim Map");
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         primaryStage.show();
+    }
+
+    private Image loadIcon(final String name) {
+        return new Image(getClass().getResourceAsStream("/net/marvk/fs/vatsim/map/" + name));
     }
 
     @Override

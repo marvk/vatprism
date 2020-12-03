@@ -6,6 +6,7 @@ import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class InactiveFirPainter extends MapPainter<FlightInformationRegionBoundary> {
+    @MetaPainter("FIR")
     private final FirPainter firPainter;
 
     public InactiveFirPainter(final MapVariables mapVariables) {

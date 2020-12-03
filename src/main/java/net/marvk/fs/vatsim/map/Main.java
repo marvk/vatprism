@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.api.HttpDataSource;
 import net.marvk.fs.vatsim.api.SimpleVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
-import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.Point;
 import net.marvk.fs.vatsim.api.data.*;
 import org.geotools.data.shapefile.files.ShpFiles;
@@ -56,7 +55,7 @@ public final class Main {
         ImageIO.write(image, "png", new File("out/" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + ".png"));
     }
 
-    private void paintActiveFirBoundaries(final BufferedImage image, final Color color) throws VatsimApiException {
+    private void paintActiveFirBoundaries(final BufferedImage image, final Color color) {
         final Graphics2D g = (Graphics2D) image.getGraphics();
     }
 

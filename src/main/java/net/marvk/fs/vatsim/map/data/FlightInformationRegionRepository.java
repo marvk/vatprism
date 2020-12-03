@@ -166,5 +166,4 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
             this.manyResults = result.size() > 1;
         }
     }
-
 }

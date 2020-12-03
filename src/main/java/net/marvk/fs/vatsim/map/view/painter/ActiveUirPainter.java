@@ -7,6 +7,7 @@ import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class ActiveUirPainter implements Painter<UpperInformationRegion> {
+    @MetaPainter("FIR")
     private final FirPainter firPainter;
 
     public ActiveUirPainter(final MapVariables mapVariables) {

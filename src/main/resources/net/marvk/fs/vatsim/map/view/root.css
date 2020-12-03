@@ -2,7 +2,10 @@
     -vatsim-background-color: #0E0C06;
     -vatsim-background-color-light: #17130a;
     -vatsim-background-color-very-light: #2B2313;
+    -vatsim-background-color-very-very-light: #392e19;
     -vatsim-text-color: #5f553d;
+    -vatsim-toolbar-button-size: 24px;
+    -vatsim-toolbar-button-icon-size: 20px;
 }
 
 .description {
@@ -38,6 +41,28 @@
     -fx-text-fill: -vatsim-text-color;
 }
 
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-icon-color: -vatsim-text-color;
+    -fx-pref-width: -vatsim-toolbar-button-size;
+    -fx-pref-height: -vatsim-toolbar-button-size;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.icon-button:selected {
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
+.icon-button:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.icon-button * {
+    -fx-icon-color: -vatsim-text-color;
+    -fx-icon-size: -vatsim-toolbar-button-icon-size;
+}
+
 .tab-header-background {
     -fx-background-color: -vatsim-background-color;
 }
@@ -46,10 +71,15 @@
     -fx-background-color: -vatsim-background-color-light;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-cursor: hand;
 }
 
 .tab:selected {
     -fx-background-color: -vatsim-background-color-very-light;
+}
+
+.tab:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
 }
 
 .tab * {

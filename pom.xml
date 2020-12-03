@@ -21,6 +21,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.0-BETA-1</guice.version>
+        <ikonli.version>12.0.0</ikonli.version>
     </properties>
 
     <dependencies>
@@ -103,8 +104,40 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>RELEASE</version>
+            <version>5.7.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-octicons-pack</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dlsc.preferencesfx</groupId>
+            <artifactId>preferencesfx-core</artifactId>
+            <version>11.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-fontawesome</artifactId>
+            <version>4.7.0-9.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-commons</artifactId>
+            <version>9.1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>rtree2</artifactId>
+            <version>0.9-RC1</version>
         </dependency>
     </dependencies>
 
@@ -154,6 +187,10 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>Maven Central</id>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
         <repository>
             <id>ICM</id>
             <url>http://maven.icm.edu.pl/artifactory/repo/</url>

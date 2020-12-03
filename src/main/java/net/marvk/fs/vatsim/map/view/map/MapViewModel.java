@@ -3,17 +3,18 @@ package net.marvk.fs.vatsim.map.view.map;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
-import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@ScopeProvider(StatusbarScope.class)
 public class MapViewModel implements ViewModel {
     private final DoubleProperty scale = new SimpleDoubleProperty(1);
     private final ReadOnlyObjectWrapper<Point2D> worldCenter = new ReadOnlyObjectWrapper<>(new Point2D(0, 0));
@@ -38,7 +38,7 @@ public class MapViewModel implements ViewModel {
     private final InternationalDateLineRepository internationalDateLineRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
     private final List<Polygon> world;
-    private final List<PainterExecutor<?>> painterExecutors;
+    private final ObservableList<PainterExecutor<?>> painterExecutors;
 
     private final MapVariables mapVariables = new MapVariables();
 
@@ -48,6 +48,9 @@ public class MapViewModel implements ViewModel {
 
     @InjectScope
     private StatusbarScope statusbarScope;
+
+    @InjectScope
+    private SettingsScope settingsScope;
 
     private boolean isMouseInBounds(final FlightInformationRegionBoundary fir) {
         return fir.getPolygon().boundary().contains(mouseWorldPosition.get());
@@ -76,7 +79,7 @@ public class MapViewModel implements ViewModel {
 
         this.world = world;
 
-        this.painterExecutors = List.of(
+        this.painterExecutors = FXCollections.observableArrayList(
                 new PainterExecutor<>("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
                 new PainterExecutor<>("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
                 new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
@@ -100,13 +103,25 @@ public class MapViewModel implements ViewModel {
         viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         mapVariables.setViewHeight(viewHeight.get());
 
-        notificationCenter.subscribe("REPAINT", (key, payload) -> publish("REPAINT"));
+        notificationCenter.subscribe("REPAINT", (key, payload) -> triggerRepaint());
+
+        selectedFir.addListener((ListChangeListener<FlightInformationRegionBoundary>) c -> triggerRepaint());
+        viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
+    }
+
+    private void triggerRepaint() {
+        publish("REPAINT");
     }
 
     public void initialize() {
         Bindings.bindContent(statusbarScope.highlightedFirs(), highlightedBoundaries);
         statusbarScope.mouseViewPositionProperty().bind(mouseViewPosition);
         statusbarScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
+
+        Bindings.bindContent(settingsScope.getPainters(), painterExecutors);
     }
 
     public DoubleProperty scaleProperty() {
@@ -119,7 +134,14 @@ public class MapViewModel implements ViewModel {
 
     public void setWorldCenter(final Point2D worldCenter) {
         final double x = ((worldCenter.getX() + 540) % 360) - 180;
-        this.worldCenter.set(new Point2D(x, worldCenter.getY()));
+        this.worldCenter.set(new Point2D(
+                clamp(x, -180, 180),
+                clamp(worldCenter.getY(), -90, 90)
+        ));
+    }
+
+    private static double clamp(final double value, final double min, final double max) {
+        return Math.max(Math.min(value, max), min);
     }
 
     public Point2D getWorldCenter() {
@@ -179,5 +201,9 @@ public class MapViewModel implements ViewModel {
         if (fir != null) {
             selectedFir.add(0, fir);
         }
+    }
+
+    public Point2D getMouseWorldPosition() {
+        return mouseWorldPosition.get();
     }
 }

@@ -18,15 +18,24 @@ import java.util.stream.Collectors;
 public class AirportPainter extends MapPainter<Airport> {
     private static final int TYPES_WIDTH = 9;
     private static final int APPROACH_RADIUS = 1;
-    private static final Color APPROACH_COLOR = Color.CYAN.darker().darker().darker();
-    private static final Color TYPES_LABEL_COLOR = Color.WHITE.darker();
-    private static final Color TYPES_BORDER_COLOR = Color.BLACK.brighter();
 
-    private static final Color ATIS_COLOR = Color.web("443000");
-    private static final Color DEL_COLOR = Color.web("004600");
-    private static final Color GND_COLOR = Color.web("004D72");
-    private static final Color TWR_COLOR = Color.web("760023");
-    private static final Color APP_COLOR = Color.web("17130a");
+    @Parameter("Approach Circle Color")
+    private Color appCircleColor = Color.CYAN.darker().darker().darker();
+    @Parameter("Type Label Color")
+    private Color typesLabelColor = Color.WHITE.darker();
+    @Parameter("Type Border Color")
+    private Color typesBorderColor = Color.BLACK.brighter();
+
+    @Parameter("Atis Color")
+    private Color atisColor = Color.web("443000");
+    @Parameter("Delivery Color")
+    private Color delColor = Color.web("004600");
+    @Parameter("Ground Color")
+    private Color gndColor = Color.web("004D72");
+    @Parameter("Tower Color")
+    private Color twrColor = Color.web("760023");
+    @Parameter("Approach Color")
+    private Color appColor = Color.web("17130a");
 
     public AirportPainter(final MapVariables mapVariables) {
         super(mapVariables);
@@ -61,12 +70,12 @@ public class AirportPainter extends MapPainter<Airport> {
                 final double rHalf = r / 2.0;
 
                 if (paintApproachCircle) {
-                    c.setStroke(APPROACH_COLOR);
+                    c.setStroke(appCircleColor);
                     c.strokeOval(x - rHalf, y - rHalf, r, r);
                 }
 
                 if (paintApproachLabel) {
-                    c.setFill(APPROACH_COLOR);
+                    c.setFill(appCircleColor);
                     c.fillText(icao, x, y - rHalf);
                 }
             }
@@ -85,13 +94,13 @@ public class AirportPainter extends MapPainter<Airport> {
             for (int i = 0; i < n; i++) {
                 final ControllerType type = types.get(i);
                 c.setFill(color(type));
-                c.setStroke(TYPES_BORDER_COLOR);
+                c.setStroke(typesBorderColor);
                 final double xCur = labelsX(x, n, i);
                 final double yCur = labelsY(y);
                 c.fillRect(xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
 
                 if (type != ControllerType.APP) {
-                    c.setFill(TYPES_LABEL_COLOR);
+                    c.setFill(typesLabelColor);
                     c.fillText(type.toString().substring(0, 1), xCur + TYPES_WIDTH / 2.0, yCur + TYPES_WIDTH / 2.0);
                 }
 
@@ -99,7 +108,7 @@ public class AirportPainter extends MapPainter<Airport> {
             }
 
             if (paintApproach && !paintApproachCircle) {
-                c.setStroke(APPROACH_COLOR);
+                c.setStroke(appCircleColor);
                 final double xCur = labelsX(x, n, 0);
                 final double yCur = labelsY(y);
 
@@ -116,13 +125,13 @@ public class AirportPainter extends MapPainter<Airport> {
         return 1 + x + i * (TYPES_WIDTH + 1) - (n / 2.0) * (TYPES_WIDTH + 1);
     }
 
-    private static Color color(final ControllerType type) {
+    private Color color(final ControllerType type) {
         return switch (type) {
-            case ATIS -> ATIS_COLOR;
-            case DEL -> DEL_COLOR;
-            case GND -> GND_COLOR;
-            case TWR -> TWR_COLOR;
-            case APP -> APP_COLOR;
+            case ATIS -> atisColor;
+            case DEL -> delColor;
+            case GND -> gndColor;
+            case TWR -> twrColor;
+            case APP -> appColor;
             default -> Color.GREY;
         };
     }

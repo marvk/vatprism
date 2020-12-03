@@ -14,7 +14,7 @@ public class PainterExecutor<T> {
     private long lastDurationNanos = 0L;
 
     public PainterExecutor(final Painter<T> painter) {
-        this((String) null, painter);
+        this(null, painter);
     }
 
     public PainterExecutor(final String name, final Painter<T> painter) {
@@ -45,6 +45,10 @@ public class PainterExecutor<T> {
 
     public String getName() {
         return name;
+    }
+
+    public Painter<T> getPainter() {
+        return painter;
     }
 
     public long getLastDurationNanos() {

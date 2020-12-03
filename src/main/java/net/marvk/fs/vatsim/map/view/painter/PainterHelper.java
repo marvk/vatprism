@@ -55,7 +55,7 @@ public class PainterHelper {
         }
     }
 
-    public void setPixel(final GraphicsContext c, final Color color, int x, final int y) {
+    public void setPixel(final GraphicsContext c, final Color color, final int x, final int y) {
         final int actualX;
 
         if (x < 0) {

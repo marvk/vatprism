@@ -1,9 +1,7 @@
 package net.marvk.fs.vatsim.map.view.map;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
-import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectContext;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -11,7 +9,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -20,7 +17,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -53,10 +49,7 @@ public class MapView implements FxmlView<MapViewModel> {
 
     private final Renderer renderer = new Renderer();
 
-    private RightClickMenu rightClickMenu;
-
-    @InjectContext
-    private Context context;
+    private MapContextMenu contextMenu;
 
     public MapView() {
         this.canvas = new Canvas(100, 100);
@@ -85,20 +78,10 @@ public class MapView implements FxmlView<MapViewModel> {
     }
 
     public void initialize() {
-        this.rightClickMenu = new RightClickMenu();
+        this.contextMenu = new MapContextMenu();
 
         this.viewModel.viewWidthProperty().bind(this.canvas.widthProperty());
         this.viewModel.viewHeightProperty().bind(this.canvas.heightProperty());
-
-        this.viewModel.scaleProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
-        this.viewModel.worldCenterProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
-        this.viewModel.viewWidthProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
-        this.viewModel.viewHeightProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
-
-//        this.viewModel.mouseViewPositionProperty().addListener((observable, oldValue, newValue) -> invalidateCanvas());
-
-        this.viewModel.selectedFir()
-                      .addListener((ListChangeListener<FlightInformationRegionBoundary>) c -> invalidateCanvas());
 
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
 
@@ -125,25 +108,6 @@ public class MapView implements FxmlView<MapViewModel> {
         renderer.invalidate();
     }
 
-    private void time(final Runnable runnable, final String info) {
-        final long start = System.nanoTime();
-        runnable.run();
-        log.info(info + ((System.nanoTime() - start) / 1000000.0) + "ms");
-    }
-
-    private RunnableFuture<Void> redraw() {
-        final FutureTask<Void> task = new FutureTask<>(() -> {
-            for (final PainterExecutor<?> painterExecutor : viewModel.getPainterExecutors()) {
-                painterExecutor.paint(canvas.getGraphicsContext2D());
-                log.info(painterExecutor.getName() + " finished in " + (painterExecutor.getLastDurationNanos() / 1000000.0) + "ms");
-            }
-        }, null);
-
-        Platform.runLater(task);
-
-        return task;
-    }
-
     private class MouseEventHandler {
         private double lastX = 0;
         private double lastY = 0;
@@ -159,9 +123,8 @@ public class MapView implements FxmlView<MapViewModel> {
 
             lastX = event.getX();
             lastY = event.getY();
-            invalidateCanvas();
 
-            rightClickMenu.hide();
+            contextMenu.hide();
         }
 
         public void onDrag(final MouseEvent event) {
@@ -194,7 +157,7 @@ public class MapView implements FxmlView<MapViewModel> {
                 if (mouseEventHandler.moved) {
                     moved = false;
                 } else {
-                    rightClickMenu.show(canvas, event.getScreenX(), event.getScreenY());
+                    contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
                 }
             }
 
@@ -206,10 +169,10 @@ public class MapView implements FxmlView<MapViewModel> {
         }
     }
 
-    private final class RightClickMenu extends ContextMenu {
+    private final class MapContextMenu extends javafx.scene.control.ContextMenu {
         private final List<FlightInformationRegionBoundary> items;
 
-        public RightClickMenu() {
+        public MapContextMenu() {
             setSkin(createDefaultSkin());
             this.items = new ArrayList<>();
         }
@@ -280,6 +243,19 @@ public class MapView implements FxmlView<MapViewModel> {
                     }
                 }
             });
+        }
+
+        private RunnableFuture<Void> redraw() {
+            final FutureTask<Void> task = new FutureTask<>(() -> {
+                for (final PainterExecutor<?> painterExecutor : viewModel.getPainterExecutors()) {
+                    painterExecutor.paint(canvas.getGraphicsContext2D());
+                    log.info(painterExecutor.getName() + " finished in " + (painterExecutor.getLastDurationNanos() / 1000000.0) + "ms");
+                }
+            }, null);
+
+            Platform.runLater(task);
+
+            return task;
         }
 
         public void invalidate() {
