@@ -133,11 +133,11 @@ public class Polygon {
     }
 
     public static Polygon merge(final Polygon polygon1, final Polygon polygon2) {
-        if (polygon1 == null || polygon1.numPoints() <= 2) {
+        if (isInvalid(polygon1)) {
             return polygon2;
         }
 
-        if (polygon2 == null || polygon2.numPoints() <= 2) {
+        if (isInvalid(polygon2)) {
             return polygon1;
         }
 
@@ -184,6 +184,22 @@ public class Polygon {
                 (e, i) -> e.get(i).getY(),
                 result.size()
         );
+    }
+
+    private static boolean isInvalid(final Polygon p) {
+        final boolean isNotPolygon = p == null || p.numPoints() <= 2;
+        if (isNotPolygon) {
+            return true;
+        }
+
+        final int last = p.numPoints() - 1;
+        final boolean isNot2D = p.pointsX[1] == p.pointsX[last] && p.pointsY[1] == p.pointsY[last];
+
+        if (isNot2D) {
+            log.warn("Polygons first and last edge match");
+        }
+
+        return isNot2D;
     }
 
     private static List<Point2D> mergeWithEndPointOverlap(final Polygon polygon1, final Polygon polygon2, final Map<Integer, Integer> sameMap) {

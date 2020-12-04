@@ -9,7 +9,7 @@ import net.marvk.fs.vatsim.api.data.VatsimUpperInformationRegion;
 
 import java.util.Objects;
 
-public class UpperInformationRegion implements Settable<VatsimUpperInformationRegion> {
+public class UpperInformationRegion implements Settable<VatsimUpperInformationRegion>, Data {
     private final StringProperty icao =
             new SimpleStringProperty();
 
@@ -60,5 +60,10 @@ public class UpperInformationRegion implements Settable<VatsimUpperInformationRe
 
     public ObservableList<FlightInformationRegionBoundary> getFlightInformationRegionBoundaries() {
         return flightInformationRegionBoundaries.getReadOnlyProperty();
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -8,9 +8,7 @@ import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.*;
@@ -18,8 +16,6 @@ import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MapViewModel implements ViewModel {
@@ -42,9 +38,9 @@ public class MapViewModel implements ViewModel {
 
     private final MapVariables mapVariables = new MapVariables();
 
-    private final FilteredList<FlightInformationRegionBoundary> highlightedBoundaries;
+    private final ContextMenuViewModel contextMenu = new ContextMenuViewModel();
 
-    private final ObservableList<FlightInformationRegionBoundary> selectedFir = FXCollections.observableList(new ArrayList<>(1));
+    private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
     @InjectScope
     private StatusbarScope statusbarScope;
@@ -71,45 +67,71 @@ public class MapViewModel implements ViewModel {
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.internationalDateLineRepository = internationalDateLineRepository;
         this.upperInformationRegionRepository = upperInformationRegionRepository;
-        this.highlightedBoundaries = new FilteredList<>(flightInformationRegionBoundaries(), this::isMouseInBounds);
-        this.highlightedBoundaries.predicateProperty().bind(Bindings.createObjectBinding(
-                () -> this::isMouseInBounds,
-                mouseWorldPosition
-        ));
+
+        this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
         this.world = world;
 
-        this.painterExecutors = FXCollections.observableArrayList(
-                new PainterExecutor<>("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
-                new PainterExecutor<>("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
-                new PainterExecutor<>("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), () -> Collections
-                        .singleton(internationalDateLine())),
-                new PainterExecutor<>("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
-                new PainterExecutor<>("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list),
-                new PainterExecutor<>("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
-                new PainterExecutor<>("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), () -> selectedFir),
-                new PainterExecutor<>("Pilots", new PilotPainter(mapVariables), this::pilots),
-                new PainterExecutor<>("Airports", new AirportPainter(mapVariables), this::airports)
-        );
+        this.painterExecutors = executors(upperInformationRegionRepository);
 
-        mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
+        this.mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
 
-        scale.addListener((observable, oldValue, newValue) -> mapVariables.setScale(newValue.doubleValue()));
-        mapVariables.setScale(scale.get());
-        worldCenter.addListener((observable, oldValue, newValue) -> mapVariables.setWorldCenter(newValue));
-        mapVariables.setWorldCenter(worldCenter.get());
-        viewWidth.addListener((observable, oldValue, newValue) -> mapVariables.setViewWidth(newValue.doubleValue()));
-        mapVariables.setViewWidth(viewWidth.get());
-        viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
-        mapVariables.setViewHeight(viewHeight.get());
+        this.scale.addListener((observable, oldValue, newValue) -> mapVariables.setScale(newValue.doubleValue()));
+        this.mapVariables.setScale(scale.get());
+        this.worldCenter.addListener((observable, oldValue, newValue) -> mapVariables.setWorldCenter(newValue));
+        this.mapVariables.setWorldCenter(worldCenter.get());
+        this.viewWidth.addListener((observable, oldValue, newValue) -> mapVariables.setViewWidth(newValue.doubleValue()));
+        this.mapVariables.setViewWidth(viewWidth.get());
+        this.viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
+        this.mapVariables.setViewHeight(viewHeight.get());
 
         notificationCenter.subscribe("REPAINT", (key, payload) -> triggerRepaint());
 
-        selectedFir.addListener((ListChangeListener<FlightInformationRegionBoundary>) c -> triggerRepaint());
-        viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
-        viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
-        worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
-        scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.selectedItem.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
+    }
+
+    private void setContextMenuItems(final Point2D mouseWorldPosition) {
+        contextMenu.getBoundaries()
+                   .getItems()
+                   .setAll(flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition));
+
+        contextMenu.getAirports()
+                   .getItems()
+                   .setAll(airportRepository.searchByPosition(mouseWorldPosition, 1));
+
+        contextMenu.getPilots()
+                   .getItems()
+                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, 1));
+    }
+
+    private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
+        return FXCollections.observableArrayList(
+                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
+                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
+                PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
+                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
+                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list),
+                PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
+                PainterExecutor.ofItem("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), this::selectedFirb),
+                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots),
+                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports)
+        );
+    }
+
+    private FlightInformationRegionBoundary selectedFirb() {
+        return selectedItem.get() instanceof FlightInformationRegionBoundary
+                ? (FlightInformationRegionBoundary) selectedItem.get()
+                : null;
+    }
+
+    private Airport selectedAirport() {
+        return selectedItem.get() instanceof Airport
+                ? (Airport) selectedItem.get()
+                : null;
     }
 
     private void triggerRepaint() {
@@ -117,7 +139,7 @@ public class MapViewModel implements ViewModel {
     }
 
     public void initialize() {
-        Bindings.bindContent(statusbarScope.highlightedFirs(), highlightedBoundaries);
+        Bindings.bindContent(statusbarScope.highlightedFirs(), contextMenu.getBoundaries().getItems());
         statusbarScope.mouseViewPositionProperty().bind(mouseViewPosition);
         statusbarScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
 
@@ -188,22 +210,19 @@ public class MapViewModel implements ViewModel {
         return mouseViewPosition;
     }
 
-    public FilteredList<FlightInformationRegionBoundary> highlightedBoundaries() {
-        return highlightedBoundaries;
+    public ReadOnlyObjectProperty<Data> selectedItem() {
+        return selectedItem;
     }
 
-    public ObservableList<FlightInformationRegionBoundary> selectedFir() {
-        return selectedFir;
-    }
-
-    public void setSelectedFir(final FlightInformationRegionBoundary fir) {
-        selectedFir.clear();
-        if (fir != null) {
-            selectedFir.add(0, fir);
-        }
+    public void setSelectedItem(final Data item) {
+        selectedItem.set(item);
     }
 
     public Point2D getMouseWorldPosition() {
         return mouseWorldPosition.get();
+    }
+
+    public ContextMenuViewModel getContextMenu() {
+        return contextMenu;
     }
 }

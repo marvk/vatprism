@@ -1,21 +1,32 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.github.davidmoten.rtree2.Entry;
+import com.github.davidmoten.rtree2.RTree;
+import com.github.davidmoten.rtree2.geometry.Geometries;
+import com.github.davidmoten.rtree2.geometry.Rectangle;
+import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 import net.marvk.fs.vatsim.api.data.VatsimAirspaceGeneral;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 public class FlightInformationRegionBoundaryRepository extends ProviderRepository<FlightInformationRegionBoundary, VatsimAirspace> {
     private final Lookup<FlightInformationRegionBoundary> icao = Lookup.fromProperty(FlightInformationRegionBoundary::getIcao);
+    private RTree<FlightInformationRegionBoundary, Rectangle> rTree = RTree.create();
 
     @Inject
     public FlightInformationRegionBoundaryRepository(final VatsimApi vatsimApi, final Provider<FlightInformationRegionBoundary> provider) {
@@ -56,7 +67,50 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     @Override
     public void reload() throws RepositoryException {
         super.reload();
+        mergeExtensions();
+        createRTree();
+    }
 
+    private void createRTree() {
+        final List<Entry<FlightInformationRegionBoundary, Rectangle>> entries = list()
+                .stream()
+                .map(FlightInformationRegionBoundaryRepository::entry)
+                .collect(Collectors.toList());
+
+        rTree = RTree.star().create(entries);
+    }
+
+    public List<Entry<FlightInformationRegionBoundary, Rectangle>> getByPositionAsEntries(final Point2D position) {
+        return getAllByPositionAsStream(position)
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<FlightInformationRegionBoundary> getByPosition(final Point2D position) {
+        return getAllByPositionAsStream(position)
+                .map(Entry::value)
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private Stream<Entry<FlightInformationRegionBoundary, Rectangle>> getAllByPositionAsStream(final Point2D position) {
+        return Stream.concat(
+                getByPositionAsStream(position),
+                getByPositionAsStream(position.add(360, 0))
+        );
+    }
+
+    private Stream<Entry<FlightInformationRegionBoundary, Rectangle>> getByPositionAsStream(final Point2D position) {
+        final var spliterator = rTree.search(Geometries.point(position.getX(), position.getY())).spliterator();
+        return StreamSupport.stream(spliterator, false);
+    }
+
+    private static Entry<FlightInformationRegionBoundary, Rectangle> entry(final FlightInformationRegionBoundary e) {
+        final Rectangle2D b = e.getPolygon().boundary();
+        return new EntryDefault<>(e, Geometries.rectangle(b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY()));
+    }
+
+    private void mergeExtensions() {
         final List<FlightInformationRegionBoundary> extensions =
                 list()
                         .stream()

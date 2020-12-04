@@ -19,6 +19,13 @@ public class AirportPainter extends MapPainter<Airport> {
     private static final int TYPES_WIDTH = 9;
     private static final int APPROACH_RADIUS = 1;
 
+    @Parameter("Paint Uncontrolled Airports")
+    private boolean all = false;
+
+    @Parameter("Text Color")
+    private Color textColor = Color.GREY;
+    @Parameter("Airport Color")
+    private Color airportColor = Color.GREY;
     @Parameter("Approach Circle Color")
     private Color appCircleColor = Color.CYAN.darker().darker().darker();
     @Parameter("Type Label Color")
@@ -37,13 +44,24 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Approach Color")
     private Color appColor = Color.web("17130a");
 
+    @Parameter("Paint Controllers")
+    private boolean controllers = true;
+    @Parameter("Paint Text")
+    private boolean text = true;
+
     public AirportPainter(final MapVariables mapVariables) {
         super(mapVariables);
     }
 
+    public AirportPainter(final MapVariables mapVariables, final Color textColor, final Color airportColor, final boolean paintControllers) {
+        super(mapVariables);
+        this.textColor = textColor;
+        this.airportColor = textColor;
+    }
+
     @Override
     public void paint(final GraphicsContext c, final Airport airport) {
-        if (airport.hasControllers()) {
+        if (all || airport.hasControllers()) {
             final Point2D point = airport.getPosition();
             final double x = (int) mapVariables.toCanvasX(point.getX());
             final double y = (int) mapVariables.toCanvasY(point.getY());
@@ -63,56 +81,64 @@ public class AirportPainter extends MapPainter<Airport> {
 
             final boolean paintApproachCircle = mapVariables.getScale() > 32;
             final boolean paintApproachLabel = mapVariables.getScale() > 32;
-
             final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
-            if (paintApproach) {
-                final double r = APPROACH_RADIUS * mapVariables.getScale();
-                final double rHalf = r / 2.0;
 
-                if (paintApproachCircle) {
-                    c.setStroke(appCircleColor);
-                    c.strokeOval(x - rHalf, y - rHalf, r, r);
-                }
+            if (controllers) {
+                if (paintApproach) {
+                    final double r = APPROACH_RADIUS * mapVariables.getScale();
+                    final double rHalf = r / 2.0;
 
-                if (paintApproachLabel) {
-                    c.setFill(appCircleColor);
-                    c.fillText(icao, x, y - rHalf);
+                    if (paintApproachCircle) {
+                        c.setStroke(appCircleColor);
+                        c.strokeOval(x - rHalf, y - rHalf, r, r);
+                    }
+
+                    if (paintApproachLabel && text) {
+                        c.setFill(appCircleColor);
+                        c.fillText(icao, x, y - rHalf);
+                    }
                 }
             }
 
+            c.setFill(textColor);
             c.setTextBaseline(VPos.CENTER);
-            c.setFill(Color.GREY);
-            c.fillText(icao, x, y - 6);
+
+            if (text) {
+                c.fillText(icao, x, y - 6);
+            }
+
             c.fillRect(x, y, 1, 1);
 
-            if (paintApproach && types.isEmpty() && !paintApproachCircle) {
-                types.add(ControllerType.APP);
-            }
-
-            final int n = types.size();
-
-            for (int i = 0; i < n; i++) {
-                final ControllerType type = types.get(i);
-                c.setFill(color(type));
-                c.setStroke(typesBorderColor);
-                final double xCur = labelsX(x, n, i);
-                final double yCur = labelsY(y);
-                c.fillRect(xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
-
-                if (type != ControllerType.APP) {
-                    c.setFill(typesLabelColor);
-                    c.fillText(type.toString().substring(0, 1), xCur + TYPES_WIDTH / 2.0, yCur + TYPES_WIDTH / 2.0);
+            if (controllers) {
+                if (paintApproach && types.isEmpty() && !paintApproachCircle) {
+                    types.add(ControllerType.APP);
                 }
 
-                c.strokeRect(xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
-            }
+                final int n = types.size();
 
-            if (paintApproach && !paintApproachCircle) {
-                c.setStroke(appCircleColor);
-                final double xCur = labelsX(x, n, 0);
-                final double yCur = labelsY(y);
+                for (int i = 0; i < n; i++) {
+                    final ControllerType type = types.get(i);
+                    c.setFill(color(type));
+                    c.setStroke(typesBorderColor);
+                    final double xCur = labelsX(x, n, i);
+                    final double yCur = labelsY(y);
+                    c.fillRect(xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
 
-                c.strokeRect(xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+                    if (type != ControllerType.APP) {
+                        c.setFill(typesLabelColor);
+                        c.fillText(type.toString().substring(0, 1), xCur + TYPES_WIDTH / 2.0, yCur + TYPES_WIDTH / 2.0);
+                    }
+
+                    c.strokeRect(xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
+                }
+
+                if (paintApproach && !paintApproachCircle) {
+                    c.setStroke(appCircleColor);
+                    final double xCur = labelsX(x, n, 0);
+                    final double yCur = labelsY(y);
+
+                    c.strokeRect(xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+                }
             }
         }
     }

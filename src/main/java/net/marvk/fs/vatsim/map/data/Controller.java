@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
-public class Controller extends Client {
+public class Controller extends Client implements Data {
     private final StringProperty frequency = new SimpleStringProperty();
     private final StringProperty rating = new SimpleStringProperty();
     private final StringProperty atisMessage = new SimpleStringProperty();
@@ -100,5 +100,10 @@ public class Controller extends Client {
 
     public ReadOnlyObjectProperty<UpperInformationRegion> workingUpperInformationRegionProperty() {
         return workingUpperInformationRegion.getReadOnlyProperty();
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

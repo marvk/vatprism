@@ -5,7 +5,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.marvk.fs.vatsim.api.data.Line;
 
-public class InternationalDateLine implements Settable<Line> {
+public class InternationalDateLine implements Settable<Line>, Data {
     private final ObjectProperty<Polygon> polygon = new SimpleObjectProperty<>();
 
     @Override
@@ -19,5 +19,10 @@ public class InternationalDateLine implements Settable<Line> {
 
     public ReadOnlyObjectProperty<Polygon> polygonProperty() {
         return polygon;
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

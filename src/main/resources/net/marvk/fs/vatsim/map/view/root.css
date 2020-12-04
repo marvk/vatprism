@@ -4,6 +4,7 @@
     -vatsim-background-color-very-light: #2B2313;
     -vatsim-background-color-very-very-light: #392e19;
     -vatsim-text-color: #5f553d;
+    -vatsim-text-greyed-out: #919191;
     -vatsim-toolbar-button-size: 24px;
     -vatsim-toolbar-button-icon-size: 20px;
 }
@@ -104,3 +105,41 @@
 .tab-pane:top *.tab-header-area {
     -fx-padding: 0.0em 0.166667em 0.0em 0.0em;
 }
+
+.context-menu {
+    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-padding: 0;
+}
+
+.context-menu > * > .separator > .line {
+    -fx-border-color: transparent;
+}
+
+.menu-item {
+    -fx-padding: 0;
+}
+
+.menu-item .label {
+    -fx-text-fill: -vatsim-text-greyed-out;
+}
+
+.menu-item:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.menu-item:focused {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.menu-item-header .label {
+    -fx-text-fill: -vatsim-text-color;
+}
+
+.menu-item-header:hover {
+    -fx-background-color: transparent;
+}
+
+.menu-item-header:focused {
+    -fx-background-color: transparent;
+}
+

@@ -1,17 +1,26 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.github.davidmoten.rtree2.Entry;
+import com.github.davidmoten.rtree2.RTree;
+import com.github.davidmoten.rtree2.geometry.Geometries;
+import com.github.davidmoten.rtree2.geometry.Point;
+import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Point2D;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
@@ -19,6 +28,7 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private final ReadOnlyListWrapper<Controller> controllers;
     private final AirportRepository airportRepository;
     private final CallsignParser callsignParser;
+    private RTree<Pilot, Point> rTree = RTree.create();
 
     @Inject
     public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser) {
@@ -36,7 +46,7 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
         return switch (vatsimClient.getClientType().toLowerCase(Locale.ROOT)) {
             case "atc" -> new Controller();
             case "pilot" -> new Pilot();
-            default -> new Client();
+            default -> null;
         };
     }
 
@@ -87,6 +97,33 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     @Override
     protected void onUpdate(final Client toUpdate, final VatsimClient vatsimClient) {
         onAdd(toUpdate, vatsimClient);
+    }
+
+    @Override
+    public void reload() throws RepositoryException {
+        super.reload();
+
+        final List<Entry<Pilot, Point>> list = pilots
+                .stream()
+                .filter(e -> e.getPosition().getX() >= -180)
+                .filter(e -> e.getPosition().getX() <= 180)
+                .filter(e -> e.getPosition().getY() >= -90)
+                .filter(e -> e.getPosition().getY() <= 90)
+                .map(ClientRepository::entry)
+                .collect(Collectors.toList());
+
+        rTree = RTree.star().create(list);
+    }
+
+    public List<Pilot> searchByPosition(final Point2D p, final double maxDistance) {
+        final var spliterator = rTree.nearest(Geometries.point(p.getX(), p.getY()), maxDistance, 3).spliterator();
+        return StreamSupport.stream(spliterator, false)
+                            .map(Entry::value)
+                            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static EntryDefault<Pilot, Point> entry(final Pilot e) {
+        return new EntryDefault<>(e, Geometries.pointGeographic(e.getPosition().getX(), e.getPosition().getY()));
     }
 
     public ObservableList<Pilot> pilots() {

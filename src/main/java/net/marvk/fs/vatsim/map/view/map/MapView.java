@@ -17,17 +17,18 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
+import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -85,13 +86,7 @@ public class MapView implements FxmlView<MapViewModel> {
 
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
 
-        this.canvas.setOnScroll(event -> {
-            final double delta = event.getDeltaY() > 0 ? D_SCROLL : 1.0 / D_SCROLL;
-
-            final double oldScale = viewModel.scaleProperty().get();
-            final double newScale = Math.min(Math.max(oldScale * delta, MIN_SCALE), MAX_SCALE);
-            viewModel.scaleProperty().set(newScale);
-        });
+        this.canvas.setOnScroll(mouseEventHandler::onScroll);
 
         this.canvas.setOnMouseDragged(mouseEventHandler::onDrag);
         this.canvas.setOnMousePressed(mouseEventHandler::onStart);
@@ -115,24 +110,26 @@ public class MapView implements FxmlView<MapViewModel> {
         private final BooleanProperty leftMouseDown = new SimpleBooleanProperty();
         private final BooleanProperty rightMouseDown = new SimpleBooleanProperty();
 
-        private boolean moved = false;
-
         public void onStart(final MouseEvent event) {
+            contextMenu.hide();
+            System.out.println("leftMouseDown.get() = " + leftMouseDown.get());
+            System.out.println("event.isPrimaryButtonDown() = " + event.isPrimaryButtonDown());
+            if (!leftMouseDown.get() && event.isPrimaryButtonDown()) {
+                System.out.println("show");
+                contextMenu.show(stackPane, event.getScreenX(), event.getScreenY());
+            }
+
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
 
             lastX = event.getX();
             lastY = event.getY();
-
-            contextMenu.hide();
         }
 
         public void onDrag(final MouseEvent event) {
             if (!rightMouseDown.get()) {
                 return;
             }
-
-            moved = true;
 
             final double x = event.getX();
             final double y = event.getY();
@@ -152,29 +149,45 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void onRelease(final MouseEvent event) {
             leftMouseDown.set(event.isPrimaryButtonDown());
-
-            if (rightMouseDown.get() && !event.isSecondaryButtonDown()) {
-                if (mouseEventHandler.moved) {
-                    moved = false;
-                } else {
-                    contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
-                }
-            }
-
             rightMouseDown.set(event.isSecondaryButtonDown());
         }
 
         public void onMove(final MouseEvent event) {
             viewModel.mouseViewPositionProperty().set(new Point2D(event.getX(), event.getY()));
         }
+
+        public void onScroll(final ScrollEvent event) {
+            contextMenu.hide();
+            final double delta = event.getDeltaY() > 0 ? D_SCROLL : 1.0 / D_SCROLL;
+
+            final double oldScale = viewModel.scaleProperty().get();
+            final double newScale = Math.min(Math.max(oldScale * delta, MIN_SCALE), MAX_SCALE);
+            viewModel.scaleProperty().set(newScale);
+        }
     }
 
-    private final class MapContextMenu extends javafx.scene.control.ContextMenu {
-        private final List<FlightInformationRegionBoundary> items;
+    private final class MapContextMenu extends ContextMenu {
+        private ContextMenuViewModel contextMenuViewModel = null;
+
+        private final DataVisitor<String> labelVisitor = new DataVisitor<>() {
+            @Override
+            public String visit(final Airport airport) {
+                return airport.getIcao();
+            }
+
+            @Override
+            public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+                return flightInformationRegionBoundary.getIcao();
+            }
+
+            @Override
+            public String visit(final Pilot visitor) {
+                return visitor.getCallsign();
+            }
+        };
 
         public MapContextMenu() {
             setSkin(createDefaultSkin());
-            this.items = new ArrayList<>();
         }
 
         @Override
@@ -184,33 +197,54 @@ public class MapView implements FxmlView<MapViewModel> {
 
         @Override
         public void show(final Node anchor, final double screenX, final double screenY) {
-            super.show(anchor, screenX, screenY);
             setupItems();
+            super.show(anchor, screenX, screenY);
         }
 
         @Override
         public void hide() {
-            viewModel.setSelectedFir(null);
+            viewModel.setSelectedItem(null);
             super.hide();
         }
 
         private void setupItems() {
             getItems().clear();
-            this.items.clear();
-            this.items.addAll(viewModel.highlightedBoundaries());
-            for (final FlightInformationRegionBoundary h : items) {
-                getItems().add(new MenuItem(h.getIcao()));
+
+            contextMenuViewModel = new ContextMenuViewModel(viewModel.getContextMenu());
+
+            for (int i = 0; i < contextMenuViewModel.getContextMenuItems().size(); i++) {
+                final var contextMenuItem = contextMenuViewModel.getContextMenuItems().get(i);
+                final var empty = contextMenuItem.getItems().isEmpty();
+                if (i > 0 && !empty) {
+                    getItems().add(new SeparatorMenuItem());
+                }
+                final MenuItem e = new MenuItem(contextMenuItem.getLabel());
+                e.getStyleClass().add("menu-item-header");
+                getItems().add(e);
+                if (empty) {
+                    e.setVisible(false);
+                }
+                for (final Data item : contextMenuItem.getItems()) {
+                    getItems().add(new MenuItem(labelVisitor.visit(item)));
+                }
             }
 
             final ContextMenuContent cmc = (ContextMenuContent) getSkin().getNode();
 
             final ObservableList<Node> cmcChildren = cmc.getItemsContainer().getChildren();
-            for (int i = 0; i < cmcChildren.size(); i++) {
-                final ContextMenuContent.MenuItemContainer node = (ContextMenuContent.MenuItemContainer) cmcChildren.get(i);
-                final int finalI = i;
+            int id = 0;
+            for (final Node child : cmcChildren) {
+                if (!(child instanceof ContextMenuContent.MenuItemContainer)) {
+                    continue;
+                }
+
+                final ContextMenuContent.MenuItemContainer node = (ContextMenuContent.MenuItemContainer) child;
+                final int finalId = id++;
                 node.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
-                        viewModel.setSelectedFir(items.get(finalI));
+                        final var item = contextMenuViewModel.getItem(finalId);
+
+                        viewModel.setSelectedItem(item);
                     }
                 });
             }

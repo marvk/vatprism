@@ -8,7 +8,7 @@ import javafx.geometry.Point2D;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Airport implements Settable<AirportRepository.VatsimAirportWrapper> {
+public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>, Data {
     private final StringProperty icao = new SimpleStringProperty();
     private final ReadOnlyListWrapper<String> names = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
     private final ReadOnlyListWrapper<String> iatas = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
@@ -117,5 +117,10 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
 
     public boolean hasControllers() {
         return !controllers.isEmpty();
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

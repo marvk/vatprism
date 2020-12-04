@@ -31,12 +31,6 @@ public class AppModule extends AbstractModule {
         bind(FlightInformationRegionBoundaryRepository.class).in(Singleton.class);
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
         bind(InternationalDateLineRepository.class).in(Singleton.class);
-
-        bind(Airport.class);
-        bind(Client.class);
-        bind(FlightInformationRegionBoundary.class);
-        bind(FlightInformationRegion.class);
-        bind(UpperInformationRegion.class);
     }
 
     @Provides

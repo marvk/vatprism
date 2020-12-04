@@ -1,5 +1,10 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.github.davidmoten.rtree2.Entry;
+import com.github.davidmoten.rtree2.RTree;
+import com.github.davidmoten.rtree2.geometry.Geometries;
+import com.github.davidmoten.rtree2.geometry.Point;
+import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import javafx.geometry.Point2D;
@@ -9,15 +14,18 @@ import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
 import net.marvk.fs.vatsim.map.GeomUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 public class AirportRepository extends ProviderRepository<Airport, AirportRepository.VatsimAirportWrapper> {
     private final Lookup<Airport> icaoLookup = Lookup.fromProperty(Airport::getIcao);
     private final Lookup<Airport> iataLookup = Lookup.fromCollection(Airport::getIatas);
+    private RTree<Airport, Point> rTree = RTree.create();
 
     @Inject
     public AirportRepository(final VatsimApi vatsimApi, final Provider<Airport> provider) {
@@ -52,6 +60,33 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     protected void onAdd(final Airport toAdd, final VatsimAirportWrapper vatsimAirport) {
         icaoLookup.put(toAdd);
         iataLookup.put(toAdd);
+    }
+
+    @Override
+    public void reload() throws RepositoryException {
+        super.reload();
+
+        final List<Entry<Airport, Point>> list = list()
+                .stream()
+                .filter(e -> e.getPosition().getX() >= -180)
+                .filter(e -> e.getPosition().getX() <= 180)
+                .filter(e -> e.getPosition().getY() >= -90)
+                .filter(e -> e.getPosition().getY() <= 90)
+                .map(AirportRepository::entry)
+                .collect(Collectors.toList());
+
+        rTree = RTree.star().create(list);
+    }
+
+    public List<Airport> searchByPosition(final Point2D p, final double maxDistance) {
+        final var spliterator = rTree.nearest(Geometries.point(p.getX(), p.getY()), maxDistance, 3).spliterator();
+        return StreamSupport.stream(spliterator, false)
+                            .map(Entry::value)
+                            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private static EntryDefault<Airport, Point> entry(final Airport e) {
+        return new EntryDefault<>(e, Geometries.pointGeographic(e.getPosition().getX(), e.getPosition().getY()));
     }
 
     public List<Airport> getByIcao(final String icao) {

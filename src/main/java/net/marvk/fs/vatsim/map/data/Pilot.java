@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
-public class Pilot extends Client {
+public class Pilot extends Client implements Data {
     private final FlightPlan flightPlan = new FlightPlan(this);
 
     private final StringProperty transponder = new SimpleStringProperty();
@@ -77,5 +77,10 @@ public class Pilot extends Client {
 
     public ReadOnlyDoubleProperty qnhMilliBarsProperty() {
         return qnhMilliBars;
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

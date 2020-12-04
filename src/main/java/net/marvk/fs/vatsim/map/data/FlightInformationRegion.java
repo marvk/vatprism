@@ -6,7 +6,7 @@ import net.marvk.fs.vatsim.api.data.VatsimFlightInformationRegion;
 
 import java.util.Objects;
 
-public class FlightInformationRegion implements Settable<VatsimFlightInformationRegion> {
+public class FlightInformationRegion implements Settable<VatsimFlightInformationRegion>, Data {
     private final StringProperty icao = new SimpleStringProperty();
     private final StringProperty name = new SimpleStringProperty();
     private final StringProperty prefixPosition = new SimpleStringProperty();
@@ -78,5 +78,10 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
 
     public ObservableList<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

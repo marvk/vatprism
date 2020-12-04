@@ -7,7 +7,7 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.util.Objects;
 
-public class Client implements Settable<VatsimClient> {
+public abstract class Client implements Settable<VatsimClient>, Data {
     private final StringProperty cid = new SimpleStringProperty();
     private final StringProperty callsign = new SimpleStringProperty();
     private final StringProperty realName = new SimpleStringProperty();

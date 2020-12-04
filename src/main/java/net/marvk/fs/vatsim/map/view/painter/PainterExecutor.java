@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class PainterExecutor<T> {
@@ -13,19 +14,11 @@ public class PainterExecutor<T> {
 
     private long lastDurationNanos = 0L;
 
-    public PainterExecutor(final Painter<T> painter) {
-        this(null, painter);
-    }
-
-    public PainterExecutor(final String name, final Painter<T> painter) {
+    private PainterExecutor(final String name, final Painter<T> painter) {
         this(name, painter, () -> Collections.singletonList(null));
     }
 
-    public PainterExecutor(final Painter<T> painter, final Supplier<Collection<T>> paintablesSupplier) {
-        this(null, painter, paintablesSupplier);
-    }
-
-    public PainterExecutor(final String name, final Painter<T> painter, final Supplier<Collection<T>> paintablesSupplier) {
+    private PainterExecutor(final String name, final Painter<T> painter, final Supplier<Collection<T>> paintablesSupplier) {
         this.painter = painter;
         this.paintablesSupplier = paintablesSupplier;
         this.name = name;
@@ -53,5 +46,22 @@ public class PainterExecutor<T> {
 
     public long getLastDurationNanos() {
         return lastDurationNanos;
+    }
+
+    public static <T> PainterExecutor<T> of(final String name, final Painter<T> painter) {
+        return ofCollection(name, painter, () -> Collections.singletonList(null));
+    }
+
+    public static <T> PainterExecutor<T> ofItem(final String name, final Painter<T> painter, final Supplier<T> paintablesSupplier) {
+        return new PainterExecutor<>(name, painter, () -> getPaintable(paintablesSupplier));
+    }
+
+    private static <T> List<T> getPaintable(final Supplier<T> paintablesSupplier) {
+        final var t = paintablesSupplier.get();
+        return t == null ? Collections.emptyList() : Collections.singletonList(t);
+    }
+
+    public static <T> PainterExecutor<T> ofCollection(final String name, final Painter<T> painter, final Supplier<Collection<T>> paintablesSupplier) {
+        return new PainterExecutor<>(name, painter, paintablesSupplier);
     }
 }

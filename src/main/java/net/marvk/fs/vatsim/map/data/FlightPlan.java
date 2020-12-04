@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class FlightPlan implements Settable<VatsimClient> {
+public class FlightPlan implements Settable<VatsimClient>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
 
     private final Pilot pilot;
@@ -179,5 +179,10 @@ public class FlightPlan implements Settable<VatsimClient> {
                 return null;
             }
         });
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

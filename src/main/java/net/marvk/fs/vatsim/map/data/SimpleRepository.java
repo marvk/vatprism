@@ -66,6 +66,9 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
                 final ViewModel viewModel = map.get(key);
                 if (viewModel == null) {
                     final ViewModel newViewModel = newViewModelInstance(model);
+                    if (newViewModel == null) {
+                        continue;
+                    }
                     newViewModel.setFromModel(model);
                     map.put(key, newViewModel);
                     onAdd(newViewModel, model);

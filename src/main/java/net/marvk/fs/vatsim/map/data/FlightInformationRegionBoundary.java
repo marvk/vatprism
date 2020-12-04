@@ -4,7 +4,7 @@ import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 
-public class FlightInformationRegionBoundary implements Settable<VatsimAirspace> {
+public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>, Data {
     private final StringProperty icao = new SimpleStringProperty();
     private final BooleanProperty extension = new SimpleBooleanProperty();
     private final BooleanProperty oceanic = new SimpleBooleanProperty();
@@ -94,5 +94,22 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "FlightInformationRegionBoundary{" +
+                "icao=" + icao.get() +
+                ", extension=" + extension.get() +
+                ", oceanic=" + oceanic.get() +
+                ", polygon=" + polygon.get().boundary() +
+                ", flightInformationRegions=" + flightInformationRegions.get() +
+                ", upperInformationRegions=" + upperInformationRegions.get() +
+                '}';
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

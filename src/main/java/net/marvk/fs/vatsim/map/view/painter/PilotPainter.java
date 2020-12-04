@@ -16,6 +16,8 @@ public class PilotPainter extends MapPainter<Pilot> {
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
     @Parameter(value = "Tail Length", min = 0)
     private int tailLength = 8;
+    @Parameter("label")
+    private boolean label = true;
 
     public PilotPainter(final MapVariables mapVariables) {
         super(mapVariables);
@@ -63,14 +65,16 @@ public class PilotPainter extends MapPainter<Pilot> {
 //        c.setLineDashes(1, 5);
         c.strokeLine(x + 0.5, y + 0.5, x2 + 0.5, y2 + 0.5);
 
-        final int yOffset;
+        if (label) {
+            final int yOffset;
 
-        if (heading >= 90 && heading <= 270) {
-            yOffset = -TEXT_OFFSET;
-        } else {
-            yOffset = TEXT_OFFSET;
+            if (heading >= 90 && heading <= 270) {
+                yOffset = -TEXT_OFFSET;
+            } else {
+                yOffset = TEXT_OFFSET;
+            }
+
+            c.fillText(pilot.getCallsign(), x, y + yOffset);
         }
-
-        c.fillText(pilot.getCallsign(), x, y + yOffset);
     }
 }
