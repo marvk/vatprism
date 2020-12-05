@@ -152,10 +152,14 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list),
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
-                PainterExecutor.ofItem("Selected Firs", new FirPainter(mapVariables, Color.RED, 2.5), this::selectedFirb),
-                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots),
-                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports)
+                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
+                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
+                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get)
         );
+    }
+
+    private boolean isNotSelected(final Data e) {
+        return e != selectedItem.get();
     }
 
     private FlightInformationRegionBoundary selectedFirb() {
@@ -266,7 +270,7 @@ public class MapViewModel implements ViewModel {
         return contextMenu;
     }
 
-    private class TransitionDataVisitor extends DataDefaultVisitor<Viewport> {
+    private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {
         private Optional<Viewport> defaultTarget(final Point2D position) {
             if (position == null) {
                 return Optional.empty();

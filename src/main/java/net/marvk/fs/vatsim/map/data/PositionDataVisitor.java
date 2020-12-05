@@ -4,7 +4,7 @@ import javafx.geometry.Point2D;
 
 import java.util.Optional;
 
-public class PositionDataVisitor extends DataDefaultVisitor<Point2D> {
+public class PositionDataVisitor implements OptionalDataVisitor<Point2D> {
     @Override
     public Optional<Point2D> visit(final Airport airport) {
         return Optional.ofNullable(airport.getPosition());

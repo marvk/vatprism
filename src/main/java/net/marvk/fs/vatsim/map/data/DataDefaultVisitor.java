@@ -1,55 +1,51 @@
 package net.marvk.fs.vatsim.map.data;
 
-import java.util.Optional;
+import java.util.Objects;
 
-public abstract class DataDefaultVisitor<E> implements DataVisitor<Optional<E>> {
-    private final Optional<E> defaultValue;
+public abstract class DataDefaultVisitor<E> implements DataVisitor<E> {
+    private final E defaultValue;
 
     public DataDefaultVisitor(final E defaultValue) {
-        this.defaultValue = Optional.ofNullable(defaultValue);
-    }
-
-    public DataDefaultVisitor() {
-        this(null);
+        this.defaultValue = Objects.requireNonNull(defaultValue);
     }
 
     @Override
-    public Optional<E> visit(final Airport airport) {
+    public E visit(final Airport airport) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final Controller controller) {
+    public E visit(final Controller controller) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final FlightInformationRegion flightInformationRegion) {
+    public E visit(final FlightInformationRegion flightInformationRegion) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+    public E visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final FlightPlan flightPlan) {
+    public E visit(final FlightPlan flightPlan) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final InternationalDateLine internationalDateLine) {
+    public E visit(final InternationalDateLine internationalDateLine) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final Pilot pilot) {
+    public E visit(final Pilot pilot) {
         return defaultValue;
     }
 
     @Override
-    public Optional<E> visit(final UpperInformationRegion upperInformationRegion) {
+    public E visit(final UpperInformationRegion upperInformationRegion) {
         return defaultValue;
     }
 }

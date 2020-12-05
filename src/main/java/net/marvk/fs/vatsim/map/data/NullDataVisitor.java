@@ -1,39 +1,52 @@
 package net.marvk.fs.vatsim.map.data;
 
-public interface DataVisitor<E> {
+public interface NullDataVisitor<E> extends DataVisitor<E> {
+    @Override
     default E visit(final Data data) {
+        if (data == null) {
+            return null;
+        }
+
         return data.visit(this);
     }
 
+    @Override
     default E visit(final Airport airport) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final Controller controller) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final FlightInformationRegion flightInformationRegion) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final FlightPlan flightPlan) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final InternationalDateLine internationalDateLine) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final Pilot pilot) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 
+    @Override
     default E visit(final UpperInformationRegion upperInformationRegion) {
-        throw new UnsupportedOperationException("Not implemented");
+        return null;
     }
 }

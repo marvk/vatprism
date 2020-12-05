@@ -37,8 +37,6 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
         position.textProperty().bind(BindingsUtil.position(airport.positionProperty()));
         final FlightInformationRegionBoundary firb = airport.getFlightInformationRegionBoundary();
 
-        System.out.println("firb = " + firb);
-
         if (firb == null) {
             fir.getStyleClass().remove(HYPERLINK_LABEL);
             fir.setText(null);

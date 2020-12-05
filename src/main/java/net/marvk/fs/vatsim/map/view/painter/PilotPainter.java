@@ -14,10 +14,17 @@ public class PilotPainter extends MapPainter<Pilot> {
 
     @Parameter("Color")
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
+
     @Parameter(value = "Tail Length", min = 0)
     private int tailLength = 8;
+
     @Parameter("label")
     private boolean label = true;
+
+    public PilotPainter(final MapVariables mapVariables, final Color color) {
+        super(mapVariables);
+        this.color = color;
+    }
 
     public PilotPainter(final MapVariables mapVariables) {
         super(mapVariables);

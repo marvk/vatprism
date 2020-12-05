@@ -9,8 +9,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.Airport;
-import net.marvk.fs.vatsim.map.data.DataVisitor;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
+import net.marvk.fs.vatsim.map.data.OptionalDataVisitor;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailView;
 import net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailViewModel;
@@ -44,7 +44,7 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
         paneManager = new PaneManager(context);
 
         viewModel.dataProperty().addListener((observable, oldValue, newValue) -> {
-            setPane(paneManager.visitNullSafe(newValue));
+            setPane(paneManager.visit(newValue));
         });
 
         historyBack.disableProperty().bind(viewModel.historyBackAvailableProperty().not());
@@ -82,7 +82,7 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
         viewModel.setFollow(follow.isSelected());
     }
 
-    private static class PaneManager implements DataVisitor<Parent> {
+    private static class PaneManager implements OptionalDataVisitor<Parent> {
         private final ViewTuple<PilotDetailView, DataDetailSubViewModel<Pilot>> pilotDetailView;
 
         private final ViewTuple<AirportDetailView, AirportDetailViewModel> airportDetailView;
@@ -107,21 +107,21 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
         }
 
         @Override
-        public Parent visit(final Airport airport) {
+        public Optional<Parent> visit(final Airport airport) {
             airportDetailView.getViewModel().setData(airport);
-            return airportDetailView.getView();
+            return Optional.ofNullable(airportDetailView.getView());
         }
 
         @Override
-        public Parent visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+        public Optional<Parent> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
             firbDetailView.getViewModel().setData(flightInformationRegionBoundary);
-            return firbDetailView.getView();
+            return Optional.ofNullable(firbDetailView.getView());
         }
 
         @Override
-        public Parent visit(final Pilot pilot) {
+        public Optional<Parent> visit(final Pilot pilot) {
             pilotDetailView.getViewModel().setData(pilot);
-            return pilotDetailView.getView();
+            return Optional.ofNullable(pilotDetailView.getView());
         }
     }
 }

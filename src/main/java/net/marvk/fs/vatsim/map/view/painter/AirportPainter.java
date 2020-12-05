@@ -20,7 +20,10 @@ public class AirportPainter extends MapPainter<Airport> {
     private static final int APPROACH_RADIUS = 1;
 
     @Parameter("Paint Uncontrolled Airports")
-    private boolean all = false;
+    private boolean paintAll = false;
+
+    @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
+    private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
     @Parameter("Text Color")
     private Color textColor = Color.GREY;
@@ -45,7 +48,7 @@ public class AirportPainter extends MapPainter<Airport> {
     private Color appColor = Color.web("17130a");
 
     @Parameter("Paint Controllers")
-    private boolean controllers = true;
+    private boolean paintControllers = true;
     @Parameter("Paint Text")
     private boolean text = true;
 
@@ -53,15 +56,18 @@ public class AirportPainter extends MapPainter<Airport> {
         super(mapVariables);
     }
 
-    public AirportPainter(final MapVariables mapVariables, final Color textColor, final Color airportColor, final boolean paintControllers) {
+    public AirportPainter(final MapVariables mapVariables, final Color textColor, final Color airportColor, final boolean paintAll, final boolean paintControllers) {
         super(mapVariables);
         this.textColor = textColor;
-        this.airportColor = textColor;
+        this.airportColor = airportColor;
+        this.paintAll = paintAll;
+        this.paintControllers = paintControllers;
     }
 
     @Override
     public void paint(final GraphicsContext c, final Airport airport) {
-        if (all || airport.hasControllers()) {
+        if (paintAll || airport.hasControllers() || (paintUncontrolledButDestinationsOrArrivals && (airport.hasArrivals() || airport
+                .hasDepartures()))) {
             final Point2D point = airport.getPosition();
             final double x = (int) mapVariables.toCanvasX(point.getX());
             final double y = (int) mapVariables.toCanvasY(point.getY());
@@ -83,7 +89,7 @@ public class AirportPainter extends MapPainter<Airport> {
             final boolean paintApproachLabel = mapVariables.getScale() > 32;
             final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
 
-            if (controllers) {
+            if (paintControllers) {
                 if (paintApproach) {
                     final double r = APPROACH_RADIUS * mapVariables.getScale();
                     final double rHalf = r / 2.0;
@@ -109,7 +115,7 @@ public class AirportPainter extends MapPainter<Airport> {
 
             c.fillRect(x, y, 1, 1);
 
-            if (controllers) {
+            if (paintControllers) {
                 if (paintApproach && types.isEmpty() && !paintApproachCircle) {
                     types.add(ControllerType.APP);
                 }

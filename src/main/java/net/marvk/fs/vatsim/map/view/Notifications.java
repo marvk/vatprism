@@ -6,8 +6,8 @@ import net.marvk.fs.vatsim.map.data.Data;
 import java.util.function.Consumer;
 
 public final class Notifications {
-    public static final Notification<Data> PAN_TO_DATA = new Notification<>("PAN_TO_DATA");
-    public static final Notification<Data> SET_DATA_DETAIL = new Notification<>("SET_DATA_DETAIL");
+    public static final DataNotification<Data> PAN_TO_DATA = new DataNotification<>("PAN_TO_DATA");
+    public static final DataNotification<Data> SET_DATA_DETAIL = new DataNotification<>("SET_DATA_DETAIL");
     public static final VoidNotification REPAINT = new VoidNotification("REPAINT");
     public static final VoidNotification RELOAD_CLIENTS = new VoidNotification("RELOAD_CLIENTS");
 
@@ -31,10 +31,10 @@ public final class Notifications {
         }
     }
 
-    public static class Notification<E> {
+    public static class DataNotification<E> {
         private final String message;
 
-        public Notification(final String message) {
+        public DataNotification(final String message) {
             this.message = message;
         }
 

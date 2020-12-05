@@ -2,7 +2,7 @@ package net.marvk.fs.vatsim.map.view.datadetail;
 
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.*;
-import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.view.History;
 import net.marvk.fs.vatsim.map.view.Notifications;
 
@@ -14,12 +14,12 @@ public class DataDetailViewModel implements ViewModel {
     private final ReadOnlyBooleanWrapper historyBackAvailable = new ReadOnlyBooleanWrapper();
     private final ReadOnlyBooleanWrapper historyForwardAvailable = new ReadOnlyBooleanWrapper();
 
-    private final ReadOnlyStringWrapper historyBackIdentifier = new ReadOnlyStringWrapper();
-    private final ReadOnlyStringWrapper historyForwardIdentifier = new ReadOnlyStringWrapper();
+//    private final ReadOnlyStringWrapper historyBackIdentifier = new ReadOnlyStringWrapper();
+//    private final ReadOnlyStringWrapper historyForwardIdentifier = new ReadOnlyStringWrapper();
 
     private final History<Data> history = new History<>();
 
-    private final DataToStringVisitor dataToStringVisitor = new DataToStringVisitor();
+//    private final DataToStringVisitor dataToStringVisitor = new DataToStringVisitor();
 
     private final BooleanProperty follow = new SimpleBooleanProperty();
 
@@ -52,8 +52,8 @@ public class DataDetailViewModel implements ViewModel {
     private void updateAvailableHistory() {
         historyBackAvailable.set(history.previousAvailable());
         historyForwardAvailable.set(history.nextAvailable());
-        historyBackIdentifier.set(dataToStringVisitor.visitNullSafe(history.peekPrevious()).orElse(""));
-        historyForwardIdentifier.set(dataToStringVisitor.visitNullSafe(history.peekNext()).orElse(""));
+//        historyBackIdentifier.set(dataToStringVisitor.visitNullSafe(history.peekPrevious()).orElse(""));
+//        historyForwardIdentifier.set(dataToStringVisitor.visitNullSafe(history.peekNext()).orElse(""));
     }
 
     public Data getData() {
@@ -89,40 +89,40 @@ public class DataDetailViewModel implements ViewModel {
         this.data.set(data);
     }
 
-    public String getHistoryBackIdentifier() {
-        return historyBackIdentifier.get();
-    }
-
-    public ReadOnlyStringProperty historyBackIdentifierProperty() {
-        return historyBackIdentifier.getReadOnlyProperty();
-    }
-
-    public String getHistoryForwardIdentifier() {
-        return historyForwardIdentifier.get();
-    }
-
-    public ReadOnlyStringProperty historyForwardIdentifierProperty() {
-        return historyForwardIdentifier.getReadOnlyProperty();
-    }
-
     public void setFollow(final boolean follow) {
         this.follow.set(follow);
     }
 
-    private static class DataToStringVisitor implements DataVisitor<String> {
-        @Override
-        public String visit(final Airport airport) {
-            return airport.getIcao();
-        }
+//    public String getHistoryBackIdentifier() {
+//        return historyBackIdentifier.get();
+//    }
+//
+//    public ReadOnlyStringProperty historyBackIdentifierProperty() {
+//        return historyBackIdentifier.getReadOnlyProperty();
+//    }
+//
+//    public String getHistoryForwardIdentifier() {
+//        return historyForwardIdentifier.get();
+//    }
+//
+//    public ReadOnlyStringProperty historyForwardIdentifierProperty() {
+//        return historyForwardIdentifier.getReadOnlyProperty();
+//    }
 
-        @Override
-        public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-            return flightInformationRegionBoundary.getIcao();
-        }
-
-        @Override
-        public String visit(final Pilot pilot) {
-            return pilot.getCallsign();
-        }
-    }
+//    private static class DataToStringVisitor implements DataVisitor<String> {
+//        @Override
+//        public String visit(final Airport airport) {
+//            return airport.getIcao();
+//        }
+//
+//        @Override
+//        public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+//            return flightInformationRegionBoundary.getIcao();
+//        }
+//
+//        @Override
+//        public String visit(final Pilot pilot) {
+//            return pilot.getCallsign();
+//        }
+//    }
 }
