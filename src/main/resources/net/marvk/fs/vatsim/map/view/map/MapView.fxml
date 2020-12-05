@@ -2,6 +2,11 @@
 
 
 <?import javafx.scene.layout.StackPane?>
-<StackPane styleClass="container" fx:id="stackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+<?import javafx.scene.layout.VBox?>
+<StackPane fx:id="stackPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="container"
            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="net.marvk.fs.vatsim.map.view.map.MapView"/>
+           fx:controller="net.marvk.fs.vatsim.map.view.map.MapView">
+   <children>
+      <VBox fx:id="infoPane" prefHeight="200.0" prefWidth="100.0"/>
+   </children>
+</StackPane>

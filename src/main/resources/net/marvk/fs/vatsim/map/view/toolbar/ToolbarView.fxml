@@ -3,24 +3,21 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.HBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<HBox styleClass="container" stylesheets="@../root.css" xmlns="http://javafx.com/javafx/11.0.1"
+<HBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.toolbar.ToolBarView">
     <children>
-        <Button styleClass="icon-button" onAction="#openSettings" mnemonicParsing="false" prefWidth="24"
-                prefHeight="24">
+        <Button styleClass="icon-button" onAction="#openSettings" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-gear-16" iconSize="24"/>
             </graphic>
         </Button>
-        <Button styleClass="icon-button" onAction="#refresh" mnemonicParsing="false" prefWidth="24" prefHeight="24">
+        <Button styleClass="icon-button" onAction="#refresh" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
             </graphic>
         </Button>
-        <ToggleButton fx:id="autoReload" styleClass="icon-button" onAction="#setAutoReload" mnemonicParsing="false"
-                      prefWidth="24"
-                      prefHeight="24">
+        <ToggleButton fx:id="autoReload" styleClass="icon-button" onAction="#setAutoReload" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-sync-16" iconSize="24"/>
             </graphic>

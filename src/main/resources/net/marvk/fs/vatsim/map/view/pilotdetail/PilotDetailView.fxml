@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.pilotdetail.PilotDetailView">
+    <TitledPane fx:id="pilot" animated="false" collapsible="false" styleClass="titled-pane-container" text="PILOT">
+        <VBox spacing="10.0">
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+            </padding>
+            <fx:include fx:id="client" source="../clientdetail/ClientDetailView.fxml"/>
+            <TitledPane fx:id="flight" animated="false" collapsible="false" text="Flight">
+                <GridPane hgap="2.0" vgap="2.0">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
+                                           prefWidth="75.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="75.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="10.0"/>
+                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
+                                           prefWidth="75.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0" prefWidth="75.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                        <RowConstraints vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    </rowConstraints>
+                    <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                    <Label styleClass="description" text="Squawk" GridPane.rowIndex="3"/>
+                    <Label styleClass="description" text="Heading" GridPane.rowIndex="1"/>
+                    <Label styleClass="description" text="Gnd. Speed" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                    <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
+                           GridPane.columnSpan="2147483647">
+                        <styleClass>
+                            <String fx:value="mono"/>
+                            <String fx:value="hyperlink-label"/>
+                        </styleClass>
+                    </Label>
+                    <Label fx:id="heading" styleClass="mono" text="Label" GridPane.columnIndex="1"
+                           GridPane.rowIndex="1"/>
+                    <Label fx:id="groundSpeed" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                           GridPane.rowIndex="1"/>
+                    <Label fx:id="qnhMillibars" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="2"/>
+                    <Label fx:id="qnhInchesMercury" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="3"/>
+                    <Label styleClass="description" text="Position"/>
+                    <Label fx:id="squawk" styleClass="mono" text="Label" GridPane.columnIndex="1"
+                           GridPane.rowIndex="3"/>
+                    <Label styleClass="description" text="Altitude" GridPane.rowIndex="2"/>
+                    <Label fx:id="altitude" styleClass="mono" text="Label" GridPane.columnIndex="1"
+                           GridPane.rowIndex="2"/>
+                    <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+                    </padding>
+                </GridPane>
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+            </TitledPane>
+            <fx:include fx:id="flightPlan" source="../flightplandetail/FlightPlanDetailView.fxml"/>
+        </VBox>
+    </TitledPane>
+</VBox>

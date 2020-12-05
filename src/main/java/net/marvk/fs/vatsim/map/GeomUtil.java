@@ -3,9 +3,22 @@ package net.marvk.fs.vatsim.map;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.Point;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 public final class GeomUtil {
     private GeomUtil() {
         throw new AssertionError("No instances of utility class " + GeomUtil.class);
+    }
+
+    private static final DecimalFormat df;
+
+    static {
+        df = new DecimalFormat("#.######");
+        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        df.setRoundingMode(RoundingMode.HALF_UP);
     }
 
     public static Point2D parsePoint(final String longitude, final String latitude) {
@@ -14,6 +27,20 @@ public final class GeomUtil {
         }
 
         return new Point2D(Double.parseDouble(longitude), Double.parseDouble(latitude));
+    }
+
+    public static String format(final Point2D point) {
+        if (point == null) {
+            return "";
+        }
+
+        final double x = point.getX();
+        final double y = point.getY();
+
+        final String xString = x < 0 ? "W" : "E";
+        final String yString = y < 0 ? "S" : "N";
+
+        return String.format("%s%s %s%s", df.format(Math.abs(x)), xString, df.format(Math.abs(y)), yString);
     }
 
     public static Point2D parsePoint(final Double longitude, final Double latitude) {

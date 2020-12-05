@@ -25,6 +25,9 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
     private final ObjectProperty<Duration> enrouteProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Duration> fuelProperty = new SimpleObjectProperty<>();
 
+    private final StringProperty plannedRoute = new SimpleStringProperty();
+    private final StringProperty remarks = new SimpleStringProperty();
+
     private final ReadOnlyObjectWrapper<Airport> departureAirport = RelationshipReadOnlyObjectWrapper.withOtherList(this, Airport::getDepartingWritable);
     private final ReadOnlyObjectWrapper<Airport> arrivalAirport = RelationshipReadOnlyObjectWrapper.withOtherList(this, Airport::getArrivingWritable);
     private final ReadOnlyObjectWrapper<Airport> alternativeAirport = RelationshipReadOnlyObjectWrapper.withOtherList(this, Airport::getAlternativesWritable);
@@ -44,6 +47,9 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
         trueCruiseAirspeed.set(model.getPlannedTrueAirspeedCruise());
         enrouteProperty.set(parseDuration(model.getPlannedHoursEnroute(), model.getPlannedMinutesEnroute()));
         fuelProperty.set(parseDuration(model.getPlannedHoursFuel(), model.getPlannedMinutesFuel()));
+
+        plannedRoute.set(model.getPlannedRoute());
+        remarks.set(model.getPlannedRemarks());
     }
 
     public Pilot getPilot() {
@@ -104,6 +110,22 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
 
     public ReadOnlyObjectProperty<Duration> fuelPropertyProperty() {
         return fuelProperty;
+    }
+
+    public String getPlannedRoute() {
+        return plannedRoute.get();
+    }
+
+    public ReadOnlyStringProperty plannedRouteProperty() {
+        return plannedRoute;
+    }
+
+    public String getRemarks() {
+        return remarks.get();
+    }
+
+    public ReadOnlyStringProperty remarksProperty() {
+        return remarks;
     }
 
     public Airport getDepartureAirport() {

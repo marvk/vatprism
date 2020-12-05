@@ -5,13 +5,11 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
+import net.marvk.fs.vatsim.map.view.BindingsUtil;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -25,22 +23,8 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
     @InjectViewModel
     private StatusBarViewModel viewModel;
 
-    private final DecimalFormat df;
-
-    {
-        df = new DecimalFormat("#.######");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-    }
-
     public void initialize() {
-        mousePosition.textProperty().bind(Bindings.createStringBinding(() -> {
-            final Point2D p = viewModel.mouseWorldPositionProperty().get();
-
-            final String x = df.format(p.getX()) + (p.getX() >= 0 ? "E" : "W");
-            final String y = df.format(p.getY()) + (p.getY() >= 0 ? "N" : "S");
-
-            return y + " " + x;
-        }, viewModel.mouseWorldPositionProperty()));
+        mousePosition.textProperty().bind(BindingsUtil.position(viewModel.mouseWorldPositionProperty()));
 
         highlightedFirs.textProperty().bind(Bindings.createStringBinding(() ->
                         viewModel.getHighlightedFirs()

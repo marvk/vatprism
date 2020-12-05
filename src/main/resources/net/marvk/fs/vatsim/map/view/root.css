@@ -1,16 +1,26 @@
+@font-face {
+    src: url("/net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-Regular.ttf");
+}
+
+@font-face {
+    src: url("/net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-ExtraBold.ttf");
+}
+
 * {
     -vatsim-background-color: #0E0C06;
     -vatsim-background-color-light: #17130a;
     -vatsim-background-color-very-light: #2B2313;
+    -vatsim-background-color-very-light-25: #2B231340;
     -vatsim-background-color-very-very-light: #392e19;
     -vatsim-text-color: #5f553d;
+    -vatsim-text-color-light: #76694b;
     -vatsim-text-greyed-out: #919191;
     -vatsim-toolbar-button-size: 24px;
     -vatsim-toolbar-button-icon-size: 20px;
 }
 
 .description {
-    -fx-font-weight: bold;
+    /*-fx-font-weight: bold;*/
 }
 
 .table-row-cell {
@@ -88,10 +98,6 @@
 }
 
 .button {
-
-}
-
-.button {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
@@ -119,15 +125,20 @@
     -fx-padding: 0;
 }
 
-.menu-item .label {
+.menu-item-data {
+    -fx-cursor: hand;
+}
+
+.menu-item-data .label {
+    -fx-font-family: "JetBrains Mono";
     -fx-text-fill: -vatsim-text-greyed-out;
 }
 
-.menu-item:hover {
+.menu-item-data:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
 
-.menu-item:focused {
+.menu-item-data:focused {
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
 

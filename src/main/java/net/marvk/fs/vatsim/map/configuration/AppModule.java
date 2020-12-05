@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import net.marvk.fs.vatsim.api.ExampleDataSource;
+import net.marvk.fs.vatsim.api.HttpDataSource;
 import net.marvk.fs.vatsim.api.SimpleVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiDataSource;
@@ -24,13 +24,15 @@ import java.util.List;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(VatsimApiDataSource.class).to(ExampleDataSource.class).in(Singleton.class);
+        bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);
         bind(FlightInformationRegionBoundaryRepository.class).in(Singleton.class);
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
         bind(InternationalDateLineRepository.class).in(Singleton.class);
+
+//        bind(NotificationCenter.class).toInstance(MvvmFX.getNotificationCenter());
     }
 
     @Provides
@@ -42,7 +44,7 @@ public class AppModule extends AbstractModule {
     @Provides
     @Named("shapefileUrl")
     public URL shapefileUrl() {
-        return getClass().getResource("/net/marvk/fs/vatsim/map/ne_50m_land/ne_50m_land.shp");
+        return getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_land/ne_50m_land.shp");
     }
 
     @Provides

@@ -1,8 +1,7 @@
 package net.marvk.fs.vatsim.map.view.map;
 
 import com.sun.javafx.scene.control.ContextMenuContent;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
+import de.saxsys.mvvmfx.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -15,17 +14,23 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailView;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailViewModel;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
 import java.io.InputStream;
@@ -43,14 +48,19 @@ public class MapView implements FxmlView<MapViewModel> {
 
     private final Canvas canvas;
 
-    private final MouseEventHandler mouseEventHandler = new MouseEventHandler();
+    private final InputEventHandler inputEventHandler = new InputEventHandler();
 
     @InjectViewModel
     private MapViewModel viewModel;
 
+    @InjectContext
+    private Context context;
+
     private final Renderer renderer = new Renderer();
 
     private MapContextMenu contextMenu;
+
+    private ViewTuple<DataDetailView, DataDetailViewModel> detailView;
 
     public MapView() {
         this.canvas = new Canvas(100, 100);
@@ -59,16 +69,22 @@ public class MapView implements FxmlView<MapViewModel> {
 
         this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
                 () -> {
-                    if (mouseEventHandler.leftMouseDown.get()) {
+                    if (inputEventHandler.leftMouseDown.get()) {
                         return Cursor.CROSSHAIR;
-                    } else if (mouseEventHandler.rightMouseDown.get()) {
-                        return Cursor.MOVE;
+                    } else if (inputEventHandler.rightMouseDown.get()) {
+                        if (inputEventHandler.rightMouseDrag.get()) {
+                            return Cursor.NONE;
+                        } else {
+                            return Cursor.MOVE;
+                        }
                     } else {
                         return Cursor.DEFAULT;
                     }
                 },
-                mouseEventHandler.leftMouseDown,
-                mouseEventHandler.rightMouseDown
+                inputEventHandler.leftMouseDown,
+                inputEventHandler.rightMouseDown,
+                inputEventHandler.leftMouseDrag,
+                inputEventHandler.rightMouseDrag
         ));
 
         final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
@@ -85,38 +101,65 @@ public class MapView implements FxmlView<MapViewModel> {
         this.viewModel.viewHeightProperty().bind(this.canvas.heightProperty());
 
         this.stackPane.getChildren().add(new MapCanvasPane(canvas));
+        loadDetailView();
 
-        this.canvas.setOnScroll(mouseEventHandler::onScroll);
+        this.stackPane.getChildren().add(detailViewOverlay());
 
-        this.canvas.setOnMouseDragged(mouseEventHandler::onDrag);
-        this.canvas.setOnMousePressed(mouseEventHandler::onStart);
-        this.canvas.setOnMouseReleased(mouseEventHandler::onRelease);
+        this.canvas.setOnScroll(inputEventHandler::onScroll);
 
-        this.canvas.setOnMouseMoved(mouseEventHandler::onMove);
+        this.canvas.setOnMouseDragged(inputEventHandler::onDrag);
+        this.canvas.setOnMousePressed(inputEventHandler::onStart);
+        this.canvas.setOnMouseReleased(inputEventHandler::onRelease);
+        this.canvas.setOnKeyPressed(inputEventHandler::onKeyPressed);
+        this.canvas.setOnKeyReleased(inputEventHandler::onKeyReleased);
+
+        this.canvas.setOnMouseMoved(inputEventHandler::onMove);
 
         invalidateCanvas();
 
         viewModel.subscribe("REPAINT", (key, payload) -> invalidateCanvas());
     }
 
+    private void loadDetailView() {
+        detailView = FluentViewLoader
+                .fxmlView(DataDetailView.class)
+                .context(context)
+                .load();
+
+        detailView.getViewModel().dataProperty().bindBidirectional(viewModel.selectedItemProperty());
+        detailView.getView().visibleProperty().bind(Bindings.createBooleanBinding(
+                () -> viewModel.getSelectedItem() != null,
+                viewModel.selectedItemProperty()
+        ));
+    }
+
+    private Parent detailViewOverlay() {
+        final var pane = new BorderPane();
+        pane.setPickOnBounds(false);
+        pane.setRight(detailView.getView());
+
+        return pane;
+    }
+
     private synchronized void invalidateCanvas() {
         renderer.invalidate();
     }
 
-    private class MouseEventHandler {
+    private class InputEventHandler {
         private double lastX = 0;
         private double lastY = 0;
 
         private final BooleanProperty leftMouseDown = new SimpleBooleanProperty();
+        private final BooleanProperty leftMouseDrag = new SimpleBooleanProperty();
         private final BooleanProperty rightMouseDown = new SimpleBooleanProperty();
+        private final BooleanProperty rightMouseDrag = new SimpleBooleanProperty();
+        private final BooleanProperty controlDown = new SimpleBooleanProperty();
 
         public void onStart(final MouseEvent event) {
-            contextMenu.hide();
-            System.out.println("leftMouseDown.get() = " + leftMouseDown.get());
-            System.out.println("event.isPrimaryButtonDown() = " + event.isPrimaryButtonDown());
+            contextMenu.hideAndClear();
+
             if (!leftMouseDown.get() && event.isPrimaryButtonDown()) {
-                System.out.println("show");
-                contextMenu.show(stackPane, event.getScreenX(), event.getScreenY());
+                contextMenu.show(event.getScreenX(), event.getScreenY());
             }
 
             leftMouseDown.set(event.isPrimaryButtonDown());
@@ -127,6 +170,9 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onDrag(final MouseEvent event) {
+            leftMouseDrag.set(event.isPrimaryButtonDown());
+            rightMouseDrag.set(event.isSecondaryButtonDown());
+
             if (!rightMouseDown.get()) {
                 return;
             }
@@ -150,6 +196,9 @@ public class MapView implements FxmlView<MapViewModel> {
         public void onRelease(final MouseEvent event) {
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
+
+            leftMouseDrag.set(event.isPrimaryButtonDown());
+            rightMouseDrag.set(event.isSecondaryButtonDown());
         }
 
         public void onMove(final MouseEvent event) {
@@ -157,12 +206,24 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onScroll(final ScrollEvent event) {
-            contextMenu.hide();
+            contextMenu.hideAndClear();
             final double delta = event.getDeltaY() > 0 ? D_SCROLL : 1.0 / D_SCROLL;
 
             final double oldScale = viewModel.scaleProperty().get();
             final double newScale = Math.min(Math.max(oldScale * delta, MIN_SCALE), MAX_SCALE);
             viewModel.scaleProperty().set(newScale);
+        }
+
+        public void onKeyPressed(final KeyEvent keyEvent) {
+            if (keyEvent.getCode() == KeyCode.CONTROL) {
+                controlDown.set(true);
+            }
+        }
+
+        public void onKeyReleased(final KeyEvent keyEvent) {
+            if (keyEvent.getCode() == KeyCode.CONTROL) {
+                controlDown.set(false);
+            }
         }
     }
 
@@ -201,10 +262,8 @@ public class MapView implements FxmlView<MapViewModel> {
             super.show(anchor, screenX, screenY);
         }
 
-        @Override
-        public void hide() {
-            viewModel.setSelectedItem(null);
-            super.hide();
+        public void show(final double screenX, final double screenY) {
+            show(stackPane, screenX, screenY);
         }
 
         private void setupItems() {
@@ -212,20 +271,32 @@ public class MapView implements FxmlView<MapViewModel> {
 
             contextMenuViewModel = new ContextMenuViewModel(viewModel.getContextMenu());
 
+            boolean addSeparator = false;
+
             for (int i = 0; i < contextMenuViewModel.getContextMenuItems().size(); i++) {
                 final var contextMenuItem = contextMenuViewModel.getContextMenuItems().get(i);
                 final var empty = contextMenuItem.getItems().isEmpty();
-                if (i > 0 && !empty) {
+                if (addSeparator) {
                     getItems().add(new SeparatorMenuItem());
                 }
-                final MenuItem e = new MenuItem(contextMenuItem.getLabel());
-                e.getStyleClass().add("menu-item-header");
-                getItems().add(e);
+                final MenuItem header = new MenuItem(contextMenuItem.getLabel());
+                header.getStyleClass().add("menu-item-header");
+                getItems().add(header);
                 if (empty) {
-                    e.setVisible(false);
+                    header.setVisible(false);
+                } else {
+                    addSeparator = true;
                 }
                 for (final Data item : contextMenuItem.getItems()) {
-                    getItems().add(new MenuItem(labelVisitor.visit(item)));
+                    final MenuItem data = new MenuItem(labelVisitor.visit(item));
+                    data.getStyleClass().add("menu-item-data");
+                    getItems().add(data);
+                    data.setOnAction(e -> {
+                        hide();
+                        if (inputEventHandler.controlDown.get()) {
+                            viewModel.goToItem();
+                        }
+                    });
                 }
             }
 
@@ -247,6 +318,13 @@ public class MapView implements FxmlView<MapViewModel> {
                         viewModel.setSelectedItem(item);
                     }
                 });
+            }
+        }
+
+        public void hideAndClear() {
+            if (isShowing()) {
+                viewModel.setSelectedItem(null);
+                hide();
             }
         }
     }

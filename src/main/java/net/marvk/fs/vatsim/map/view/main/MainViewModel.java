@@ -9,6 +9,7 @@ import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
@@ -131,7 +132,7 @@ public class MainViewModel implements ViewModel {
 
             @Override
             protected Void call() {
-                this.command.execute();
+                Platform.runLater(this.command::execute);
                 return null;
             }
         }

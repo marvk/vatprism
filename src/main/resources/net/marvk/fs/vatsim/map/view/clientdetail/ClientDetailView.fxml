@@ -1,145 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../root.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.clientdetail.ClientDetailView">
-    <TitledPane animated="false" collapsible="false">
-        <graphic>
-            <VBox>
-                <Label fx:id="callsign" styleClass="callsign" text="CALLSIGN" />
-                <Label fx:id="name" styleClass="realname" text="NAME" />
-                <Label fx:id="cid" text="CID" />
-            </VBox>
-        </graphic>
-        <VBox>
-            <TitledPane animated="false" collapsible="false" text="General">
-                <GridPane hgap="2.0" vgap="2.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <Label styleClass="description" text="Online for" />
-                    <Label styleClass="description" text="Server" GridPane.rowIndex="1" />
-                    <Label fx:id="onlineSince" text="Label" GridPane.columnIndex="2" />
-                    <Label fx:id="server" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                </GridPane>
-            </TitledPane>
-        </VBox>
+<VBox fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+      minWidth="-Infinity" stylesheets="@../root.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.clientdetail.ClientDetailView">
+    <TitledPane animated="false" collapsible="false" text="General">
+        <GridPane hgap="2.0" vgap="2.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="75.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <Label styleClass="description" text="Online Since"/>
+            <Label styleClass="description" text="Server" GridPane.rowIndex="1"/>
+            <Label fx:id="onlineSince" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
+            <Label fx:id="server" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <padding>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+            </padding>
+        </GridPane>
+        <VBox.margin>
+            <Insets/>
+        </VBox.margin>
     </TitledPane>
-    <TitledPane fx:id="pilot" animated="false" collapsible="false" text="PILOT">
-        <VBox spacing="10.0">
-            <TitledPane animated="false" collapsible="false" text="Flight">
-                <GridPane hgap="2.0" vgap="2.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                        <RowConstraints vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                    <Label styleClass="description" text="Squawk" GridPane.rowIndex="4"/>
-                    <Label styleClass="description" text="Heading" GridPane.rowIndex="1"/>
-                    <Label styleClass="description" text="Longitude" GridPane.columnIndex="3"/>
-                    <Label styleClass="description" text="Ground speed" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                    <Label fx:id="latitude" text="Label" GridPane.columnIndex="1"/>
-                    <Label fx:id="heading" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                    <Label fx:id="longitude" text="Label" GridPane.columnIndex="4"/>
-                    <Label fx:id="groundSpeed" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
-                    <Label fx:id="qnhMillibars" text="Label" GridPane.columnIndex="4" GridPane.columnSpan="2147483647"
-                           GridPane.rowIndex="4"/>
-                    <Label fx:id="qnhInchesMercury" text="Label" GridPane.columnIndex="4"
-                           GridPane.columnSpan="2147483647" GridPane.rowIndex="5"/>
-                    <Label styleClass="description" text="Latitude"/>
-                    <Label fx:id="squawk" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                    <Label styleClass="description" text="Altitude" GridPane.rowIndex="2"/>
-                    <Label fx:id="altitude" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                </GridPane>
-            </TitledPane>
-            <TitledPane collapsible="false" text="Flight Plan">
-                <VBox spacing="5.0">
-                    <GridPane hgap="2.0" vgap="2.0">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                        <Label styleClass="description" text="Departure" GridPane.rowIndex="2" />
-                        <Label styleClass="description" text="Arrival" GridPane.rowIndex="3" />
-                        <Label styleClass="description" text="Flight Rules" />
-                        <Label styleClass="description" text="Aircraft Type" GridPane.rowIndex="1" />
-                        <Label styleClass="description" text="True Air Speed" GridPane.columnIndex="3" />
-                        <Label styleClass="description" text="Cruise Altitude" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <Label fx:id="flightRules" text="Label" GridPane.columnIndex="1" />
-                        <Label fx:id="aircraftType" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="trueAirSpeed" text="Label" GridPane.columnIndex="4" />
-                        <Label fx:id="cruiseAltitude" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                        <Label fx:id="departure" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
-                        <Label fx:id="arrival" text="Label" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
-                    </GridPane>
-               <VBox>
-                  <children>
-                     <Label styleClass="description" text="Path" />
-                          <TextArea fx:id="flightPlan" editable="false" prefHeight="100.0" prefWidth="0.0" wrapText="true" />
-                  </children>
-               </VBox>
-               <VBox>
-                  <children>
-                     <Label styleClass="description" text="Remarks" />
-                     <TextArea fx:id="remarks" editable="false" prefHeight="100.0" prefWidth="0.0" wrapText="true" />
-                  </children>
-               </VBox>
-                </VBox>
-            </TitledPane>
-        </VBox>
-    </TitledPane>
-    <TitledPane fx:id="atc" animated="false" collapsible="false" text="ATC">
-        <VBox spacing="10.0">
-            <TitledPane animated="false" collapsible="false" text="Location">
-                <GridPane hgap="2.0" vgap="2.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <Label styleClass="description" text="UIR" GridPane.rowIndex="2" />
-                    <Label styleClass="description" text="Airport" />
-                    <Label styleClass="description" text="FIR" GridPane.rowIndex="1" />
-                    <Label fx:id="airport" text="Label" GridPane.columnIndex="2" />
-                    <Label fx:id="fir" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                    <Label fx:id="uir" text="Label" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                </GridPane>
-            </TitledPane>
-            <TitledPane animated="false" collapsible="false" text="ATIS">
-                <TextArea fx:id="atis" editable="false" prefHeight="150.0" prefWidth="0.0" wrapText="true" />
-            </TitledPane>
-        </VBox>
-    </TitledPane>
-    <Region VBox.vgrow="ALWAYS" />
+    <Region VBox.vgrow="ALWAYS"/>
 </VBox>

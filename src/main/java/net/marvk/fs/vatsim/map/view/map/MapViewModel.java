@@ -5,12 +5,16 @@ import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
@@ -33,6 +37,8 @@ public class MapViewModel implements ViewModel {
 
     private final InternationalDateLineRepository internationalDateLineRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
+    private final NotificationCenter notificationCenter;
+    private final PositionDataVisitor positionDataVisitor;
     private final List<Polygon> world;
     private final ObservableList<PainterExecutor<?>> painterExecutors;
 
@@ -48,9 +54,7 @@ public class MapViewModel implements ViewModel {
     @InjectScope
     private SettingsScope settingsScope;
 
-    private boolean isMouseInBounds(final FlightInformationRegionBoundary fir) {
-        return fir.getPolygon().boundary().contains(mouseWorldPosition.get());
-    }
+    private WorldPanTransition panTransition = null;
 
     @Inject
     public MapViewModel(
@@ -60,6 +64,7 @@ public class MapViewModel implements ViewModel {
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final NotificationCenter notificationCenter,
+            final PositionDataVisitor positionDataVisitor,
             @Named("world") final List<Polygon> world
     ) {
         this.clientRepository = clientRepository;
@@ -67,6 +72,8 @@ public class MapViewModel implements ViewModel {
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.internationalDateLineRepository = internationalDateLineRepository;
         this.upperInformationRegionRepository = upperInformationRegionRepository;
+        this.notificationCenter = notificationCenter;
+        this.positionDataVisitor = positionDataVisitor;
 
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
@@ -86,12 +93,42 @@ public class MapViewModel implements ViewModel {
         this.mapVariables.setViewHeight(viewHeight.get());
 
         notificationCenter.subscribe("REPAINT", (key, payload) -> triggerRepaint());
+        notificationCenter.subscribe("PAN_TO_POSITION", (key, payload) -> panToPosition(payload));
 
         this.selectedItem.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
+    }
+
+    private void panToPosition(final Object[] payload) {
+        if (payload.length > 0) {
+            if (payload[0] instanceof Point2D) {
+                final Point2D p = ((Point2D) payload[0]).multiply(-1);
+                panToPosition(new WorldPanTransition(
+                        p,
+                        p,
+                        1,
+                        32
+                ));
+            }
+        }
+    }
+
+    private void panToPosition(final WorldPanTransition transition) {
+        fireTransition(transition);
+    }
+
+    private void fireTransition(final WorldPanTransition transition) {
+        if (panTransition != null) {
+            if (panTransition.getStatus() == Animation.Status.RUNNING) {
+                panTransition.stop();
+            }
+        }
+
+        panTransition = transition;
+        panTransition.playFromStart();
     }
 
     private void setContextMenuItems(final Point2D mouseWorldPosition) {
@@ -210,12 +247,16 @@ public class MapViewModel implements ViewModel {
         return mouseViewPosition;
     }
 
-    public ReadOnlyObjectProperty<Data> selectedItem() {
-        return selectedItem;
+    public Data getSelectedItem() {
+        return selectedItem.get();
     }
 
     public void setSelectedItem(final Data item) {
         selectedItem.set(item);
+    }
+
+    public ObjectProperty<Data> selectedItemProperty() {
+        return selectedItem;
     }
 
     public Point2D getMouseWorldPosition() {
@@ -224,5 +265,100 @@ public class MapViewModel implements ViewModel {
 
     public ContextMenuViewModel getContextMenu() {
         return contextMenu;
+    }
+
+    public void goToItem() {
+        positionDataVisitor.visit(getSelectedItem()).ifPresent(p -> panToPosition(new WorldPanTransition(
+                getWorldCenter(),
+                p.multiply(-1),
+                scale.get(),
+                32
+        )));
+    }
+
+    private class WorldPanTransition extends Transition {
+        private final Point2D startingWorldCenter;
+        private final double startingScale;
+
+        private final Point2D targetWorldCenter;
+        private final double targetScale;
+
+        public WorldPanTransition(final Point2D startingWorldCenter, final Point2D targetWorldCenter, final double startingScale, final double targetScale) {
+            super(30);
+            setCycleDuration(Duration.seconds(1));
+            setCycleCount(1);
+            setInterpolator(Interpolator.EASE_BOTH);
+            this.targetWorldCenter = targetWorldCenter;
+            this.targetScale = targetScale;
+
+            this.startingWorldCenter = startingWorldCenter;
+            this.startingScale = startingScale;
+        }
+
+        @Override
+        protected void interpolate(final double frac) {
+//            worldCenter.set(position(frac));
+//            scale.set(scale(frac));
+            final double f1 = frac;
+            worldCenter.set(position(f1));
+
+            scale.set(scale(f1 * f1));
+        }
+
+//        private double scale(final double frac) {
+//            final double s = startingScale;
+//            final double t = targetScale;
+//
+//            final double u;
+//
+////            System.out.println("s = " + s);
+////            System.out.println("t = " + t);
+//
+//            if (s == t && t - 1 != 0) {
+//                u = 1. / 2;
+//            } else {
+//                final double p = Math.sqrt((s - 1) * (t - 1)) + s - 1;
+//                if (s - t != 0 && -p != 0) {
+//                    u = (-p) / (s - t);
+//                } else if (p != 0) {
+//                    u = p / (s - t);
+//                } else {
+//                    throw new IllegalStateException();
+//                }
+//            }
+//
+////            System.out.println("u = " + u);
+//
+//            final double x;
+//            final double y;
+//            final double z;
+//            if (s == 0) {
+//                x = t - 1;
+//                y = 0;
+//                z = 1;
+//            } else {
+//                x = (s - 1) / (u * u);
+//                y = (2 - 2 * s) / (u);
+//                z = s;
+//            }
+//
+////            System.out.println("x = " + x);
+////            System.out.println("y = " + y);
+////            System.out.println("z = " + z);
+//
+//            final double r = frac * frac * x + frac * y + z;
+////            System.out.println("r = " + r);
+//            return r;
+//        }
+
+        private double scale(final double f1) {
+            final double f0 = 1 - f1;
+            return f0 * startingScale + f1 * targetScale;
+        }
+
+        private Point2D position(final double f1) {
+            final double f0 = 1 - f1;
+            return startingWorldCenter.multiply(f0).add(targetWorldCenter.multiply(f1));
+        }
     }
 }

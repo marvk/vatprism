@@ -1,0 +1,80 @@
+.titled-pane {
+    -fx-background-color: -vatsim-background-color-light;
+    -fx-border-color: -vatsim-background-color-light;
+}
+
+.titled-pane > * {
+    -fx-background-color: transparent;
+    -fx-box-border: transparent;
+}
+
+.titled-pane > *.content {
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
+.titled-pane-container > *.content {
+    -fx-background-color: -vatsim-background-color-very-light-25;
+}
+
+/*.text-area {*/
+/*    -fx-focus-color: transparent;*/
+/*    -fx-faint-focus-color: transparent;*/
+/*    -fx-box-border: -vatsim-background-color-light;*/
+/*    -fx-text-box-border: none;*/
+/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
+/*}*/
+
+/*.text-area .content {*/
+/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
+/*}*/
+
+/*.text-area:focused .content {*/
+/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
+/*}*/
+
+
+.text-area .content {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-radius: 0;
+}
+
+.text-area {
+    -fx-background-color: -vatsim-background-color-light;
+    -fx-text-box-border: transparent;
+    -fx-background-insets: 0;
+    -fx-highlight-fill: transparent;
+    -fx-highlight-text-fill: transparent;
+    -fx-prompt-text-fill: transparent;
+    -fx-padding: 0;
+    -fx-background-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-box-border: none;
+}
+
+.text-area:focused {
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+    -fx-highlight-fill: transparent;
+    -fx-highlight-text-fill: transparent;
+    -fx-prompt-text-fill: transparent;
+    -fx-padding: 0;
+    -fx-background-radius: 0;
+}
+
+.mono {
+    -fx-font-family: "JetBrains Mono";
+}
+
+.detail-view-container {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+}
+
+.hyperlink-label {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.hyperlink-label:hover {
+    -fx-text-fill: -vatsim-text-color-light;
+}

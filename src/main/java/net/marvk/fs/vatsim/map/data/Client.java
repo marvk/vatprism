@@ -5,6 +5,7 @@ import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.map.GeomUtil;
 
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public abstract class Client implements Settable<VatsimClient>, Data {
@@ -14,6 +15,7 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     private final StringProperty server = new SimpleStringProperty();
 
     private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
+    private final ObjectProperty<ZonedDateTime> logonTime = new SimpleObjectProperty<>();
 
     @Override
     public void setFromModel(final VatsimClient model) {
@@ -22,8 +24,9 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         cid.set(model.getCid());
         callsign.set(model.getCallsign());
         realName.set(model.getRealName());
-        server.set(model.getRealName());
+        server.set(model.getServer());
         position.set(GeomUtil.parsePoint(model.getLongitude(), model.getLatitude()));
+        logonTime.set(model.getTimeLogon());
     }
 
     public String getCid() {
@@ -64,5 +67,13 @@ public abstract class Client implements Settable<VatsimClient>, Data {
 
     public ReadOnlyObjectProperty<Point2D> positionProperty() {
         return position;
+    }
+
+    public ZonedDateTime getLogonTime() {
+        return logonTime.get();
+    }
+
+    public ReadOnlyObjectProperty<ZonedDateTime> logonTimeProperty() {
+        return logonTime;
     }
 }

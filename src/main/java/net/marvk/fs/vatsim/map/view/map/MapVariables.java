@@ -35,13 +35,6 @@ public class MapVariables {
         this.yBuf = new double[bufferSize];
     }
 
-    public double toCanvasX(final double modelX) {
-        final double zeroStart = (modelX + worldCenterX) * scale + WORLD_HALF_WIDTH;
-        final double normalized = zeroStart / WORLD_WIDTH;
-
-        return normalized * viewWidth + 0.5;
-    }
-
     public Point2D toWorld(final Point2D canvas) {
         return new Point2D(
                 toWorldX(canvas.getX()),
@@ -56,8 +49,11 @@ public class MapVariables {
         );
     }
 
-    public double toWorldX(final double canvasX) {
-        return ((((canvasX - 0.5) / viewWidth) * WORLD_WIDTH - WORLD_HALF_WIDTH) / scale) - worldCenterX;
+    public double toCanvasX(final double modelX) {
+        final double zeroStart = (modelX + worldCenterX) * scale + WORLD_HALF_WIDTH;
+        final double normalized = zeroStart / WORLD_WIDTH;
+
+        return normalized * viewWidth + 0.5;
     }
 
     public double toCanvasY(final double modelY) {
@@ -65,6 +61,10 @@ public class MapVariables {
         final double normalized = zeroStart / WORLD_HEIGHT;
 
         return viewHeight - normalized * viewHeight + 0.5;
+    }
+
+    public double toWorldX(final double canvasX) {
+        return ((((canvasX - 0.5) / viewWidth) * WORLD_WIDTH - WORLD_HALF_WIDTH) / scale) - worldCenterX;
     }
 
     public double toWorldY(final double canvasY) {
