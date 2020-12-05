@@ -8,13 +8,13 @@ import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.application.Platform;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
@@ -29,9 +29,8 @@ public class MainViewModel implements ViewModel {
     private final Command loadClients;
     private final Command loadInternationalDateLine;
 
-    private final NotificationCenter notificationCenter;
     private static final Duration RELOAD_PERIOD = Duration.minutes(2);
-    private final ScheduledService<Void> clientReloadService;
+    private final ReloadService clientReloadService;
 
     @InjectScope
     private ToolbarScope toolbarScope;
@@ -43,8 +42,7 @@ public class MainViewModel implements ViewModel {
             final FlightInformationRegionRepository flightInformationRegionRepository,
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
-            final InternationalDateLineRepository internationalDateLineRepository,
-            final NotificationCenter notificationCenter
+            final InternationalDateLineRepository internationalDateLineRepository
     ) {
         this.loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
         this.loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
@@ -52,18 +50,17 @@ public class MainViewModel implements ViewModel {
         this.loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
         this.loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
         this.loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
-        this.notificationCenter = notificationCenter;
 
         new CompositeCommand(
-                loadAirports,
                 loadInternationalDateLine,
                 loadFirbs,
                 loadFirs,
                 loadUirs,
+                loadAirports,
                 loadClients
         ).execute();
 
-        notificationCenter.subscribe("RELOAD_CLIENTS", (key, payload) -> {
+        Notifications.RELOAD_CLIENTS.subscribe(() -> {
             loadClients.execute();
             triggerRepaint();
         });
@@ -75,7 +72,7 @@ public class MainViewModel implements ViewModel {
     }
 
     private void triggerRepaint() {
-        notificationCenter.publish("REPAINT");
+        Notifications.REPAINT.publish();
     }
 
     public void initialize() {
@@ -84,13 +81,14 @@ public class MainViewModel implements ViewModel {
 
     private void setServiceRunning(final boolean running) {
         if (running) {
+            clientReloadService.setStopping(false);
             if (!clientReloadService.isRunning()) {
                 log.info("Starting reload service");
                 clientReloadService.start();
             }
         } else {
             log.info("Resetting reload service");
-            clientReloadService.reset();
+            clientReloadService.setStopping(true);
         }
     }
 
@@ -114,25 +112,27 @@ public class MainViewModel implements ViewModel {
     private static class ReloadService extends ScheduledService<Void> {
         private final Command command;
 
+        private boolean stopping = false;
+
         public ReloadService(final Command command) {
             this.command = command;
         }
 
         @Override
         protected Task<Void> createTask() {
-            return new ReloadTask(command);
+            return new ReloadTask();
         }
 
-        private static class ReloadTask extends Task<Void> {
-            private final Command command;
+        public void setStopping(final boolean stopping) {
+            this.stopping = stopping;
+        }
 
-            public ReloadTask(final Command command) {
-                this.command = command;
-            }
-
+        private class ReloadTask extends Task<Void> {
             @Override
             protected Void call() {
-                Platform.runLater(this.command::execute);
+                if (!stopping) {
+                    Platform.runLater(command::execute);
+                }
                 return null;
             }
         }

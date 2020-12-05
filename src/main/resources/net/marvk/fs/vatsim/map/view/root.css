@@ -12,6 +12,7 @@
     -vatsim-background-color-very-light: #2B2313;
     -vatsim-background-color-very-light-25: #2B231340;
     -vatsim-background-color-very-very-light: #392e19;
+    -vatsim-background-color-very-very-very-light: #42351D;
     -vatsim-text-color: #5f553d;
     -vatsim-text-color-light: #76694b;
     -vatsim-text-greyed-out: #919191;
@@ -58,6 +59,7 @@
     -fx-pref-width: -vatsim-toolbar-button-size;
     -fx-pref-height: -vatsim-toolbar-button-size;
     -fx-padding: 0;
+    -fx-background-radius: 0;
     -fx-cursor: hand;
 }
 

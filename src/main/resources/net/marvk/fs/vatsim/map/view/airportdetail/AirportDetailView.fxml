@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.String?>
-<TitledPane collapsible="false" text="AIRPORT" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
+<TitledPane collapsible="false" text="FIR" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailView">
    <content>
       <VBox>
@@ -19,6 +17,7 @@
                <rowConstraints>
                   <RowConstraints/>
                   <RowConstraints/>
+                  <RowConstraints/>
                </rowConstraints>
                <children>
                   <Label styleClass="description" text="Name"/>
@@ -26,6 +25,14 @@
                   <Label text="Position" GridPane.rowIndex="1"/>
                   <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                          GridPane.rowIndex="1">
+                     <styleClass>
+                        <String fx:value="mono"/>
+                        <String fx:value="hyperlink-label"/>
+                     </styleClass>
+                  </Label>
+                  <Label styleClass="description" text="FIR" GridPane.rowIndex="2"/>
+                  <Label fx:id="fir" onMouseClicked="#setToFir" text="Label" GridPane.columnIndex="1"
+                         GridPane.rowIndex="2">
                      <styleClass>
                         <String fx:value="mono"/>
                         <String fx:value="hyperlink-label"/>

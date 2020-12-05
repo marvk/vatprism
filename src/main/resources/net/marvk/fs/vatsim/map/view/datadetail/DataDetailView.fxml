@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <VBox styleClass="detail-view-container" pickOnBounds="false" prefHeight="500.0" stylesheets="@datadetail.css"
@@ -9,23 +10,24 @@
     <children>
         <HBox styleClass="container">
             <children>
+                <ToggleButton fx:id="follow" mnemonicParsing="false" styleClass="icon-button" onAction="#toggleFollow">
+                    <graphic>
+                        <FontIcon iconLiteral="oct-pin-16" iconSize="24"/>
+                    </graphic>
+                </ToggleButton>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="historyBack" mnemonicParsing="false" styleClass="icon-button" prefWidth="24"
-                        prefHeight="24"
-                        onAction="#historyBack">
+                <Button fx:id="historyBack" mnemonicParsing="false" styleClass="icon-button" onAction="#historyBack">
                     <graphic>
                         <FontIcon iconLiteral="oct-arrow-left-16" iconSize="24"/>
                     </graphic>
                 </Button>
-                <Button fx:id="historyForward" mnemonicParsing="false" styleClass="icon-button" prefWidth="24"
-                        prefHeight="24"
+                <Button fx:id="historyForward" mnemonicParsing="false" styleClass="icon-button"
                         onAction="#historyForward">
                     <graphic>
                         <FontIcon iconLiteral="oct-arrow-right-16" iconSize="24"/>
                     </graphic>
                 </Button>
-                <Button mnemonicParsing="false" styleClass="icon-button" prefWidth="24" prefHeight="24"
-                        onAction="#hide">
+                <Button mnemonicParsing="false" styleClass="icon-button" onAction="#hide">
                     <graphic>
                         <FontIcon iconLiteral="oct-x-16" iconSize="24"/>
                     </graphic>

@@ -42,8 +42,8 @@
     -fx-background-color: -vatsim-background-color-light;
     -fx-text-box-border: transparent;
     -fx-background-insets: 0;
-    -fx-highlight-fill: transparent;
-    -fx-highlight-text-fill: transparent;
+    -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
+    -fx-highlight-text-fill: -vatsim-text-color-light;
     -fx-prompt-text-fill: transparent;
     -fx-padding: 0;
     -fx-background-radius: 0;
@@ -55,8 +55,6 @@
 .text-area:focused {
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0;
-    -fx-highlight-fill: transparent;
-    -fx-highlight-text-fill: transparent;
     -fx-prompt-text-fill: transparent;
     -fx-padding: 0;
     -fx-background-radius: 0;

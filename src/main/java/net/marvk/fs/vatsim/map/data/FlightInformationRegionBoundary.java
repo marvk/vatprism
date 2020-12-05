@@ -10,6 +10,9 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     private final BooleanProperty oceanic = new SimpleBooleanProperty();
     private final ObjectProperty<Polygon> polygon = new SimpleObjectProperty<>();
 
+    private final ReadOnlyListWrapper<Airport> airports =
+            RelationshipReadOnlyListWrapper.withOtherProperty(this, Airport::flightInformationRegionBoundaryPropertyWritable);
+
     private final ReadOnlyListWrapper<FlightInformationRegion> flightInformationRegions =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightInformationRegion::boundaryPropertyWritable);
 
@@ -74,6 +77,14 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
 
     public ObservableList<UpperInformationRegion> getUpperInformationRegions() {
         return upperInformationRegions.getReadOnlyProperty();
+    }
+
+    ObservableList<Airport> getAirportsWritable() {
+        return airports;
+    }
+
+    public ObservableList<Airport> getAirports() {
+        return airports.getReadOnlyProperty();
     }
 
     public boolean hasUirControllers() {

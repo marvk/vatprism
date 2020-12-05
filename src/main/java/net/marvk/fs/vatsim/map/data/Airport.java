@@ -15,6 +15,9 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
     private final BooleanProperty pseudo = new SimpleBooleanProperty();
     private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
 
+    private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundary =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::getAirportsWritable);
+
     private final ReadOnlyListWrapper<Controller> controllers =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingAirportPropertyWritable);
 
@@ -101,6 +104,18 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
 
     public ObservableList<FlightPlan> alternativesProperty() {
         return alternatives.getReadOnlyProperty();
+    }
+
+    public FlightInformationRegionBoundary getFlightInformationRegionBoundary() {
+        return flightInformationRegionBoundary.get();
+    }
+
+    ObjectProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaryPropertyWritable() {
+        return flightInformationRegionBoundary;
+    }
+
+    public ReadOnlyObjectProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaryProperty() {
+        return flightInformationRegionBoundary.getReadOnlyProperty();
     }
 
     public boolean hasArrivals() {

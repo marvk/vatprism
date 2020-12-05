@@ -14,10 +14,7 @@ import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
 import net.marvk.fs.vatsim.map.GeomUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,11 +22,13 @@ import java.util.stream.StreamSupport;
 public class AirportRepository extends ProviderRepository<Airport, AirportRepository.VatsimAirportWrapper> {
     private final Lookup<Airport> icaoLookup = Lookup.fromProperty(Airport::getIcao);
     private final Lookup<Airport> iataLookup = Lookup.fromCollection(Airport::getIatas);
+    private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
     private RTree<Airport, Point> rTree = RTree.create();
 
     @Inject
-    public AirportRepository(final VatsimApi vatsimApi, final Provider<Airport> provider) {
+    public AirportRepository(final VatsimApi vatsimApi, final Provider<Airport> provider, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository) {
         super(vatsimApi, provider);
+        this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
     }
 
     @Override
@@ -60,12 +59,34 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     protected void onAdd(final Airport toAdd, final VatsimAirportWrapper vatsimAirport) {
         icaoLookup.put(toAdd);
         iataLookup.put(toAdd);
+
+        findFirb(vatsimAirport.getFir())
+                .ifPresent(e -> toAdd.flightInformationRegionBoundaryPropertyWritable().set(e));
+    }
+
+    private Optional<FlightInformationRegionBoundary> findFirb(final String icao) {
+        final List<FlightInformationRegionBoundary> firbs = flightInformationRegionBoundaryRepository.getByIcao(icao);
+
+        final Optional<FlightInformationRegionBoundary> nonOceanic = firbs
+                .stream()
+                .filter(e -> !e.isOceanic())
+                .findFirst();
+
+        if (nonOceanic.isPresent()) {
+            return nonOceanic;
+        }
+
+        return firbs.stream().findFirst();
     }
 
     @Override
     public void reload() throws RepositoryException {
         super.reload();
 
+        createRTree();
+    }
+
+    private void createRTree() {
         final List<Entry<Airport, Point>> list = list()
                 .stream()
                 .filter(e -> e.getPosition().getX() >= -180)

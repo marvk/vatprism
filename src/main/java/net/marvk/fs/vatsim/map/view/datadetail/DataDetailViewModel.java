@@ -1,11 +1,10 @@
 package net.marvk.fs.vatsim.map.view.datadetail;
 
-import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.History;
+import net.marvk.fs.vatsim.map.view.Notifications;
 
 import java.util.Objects;
 
@@ -22,23 +21,32 @@ public class DataDetailViewModel implements ViewModel {
 
     private final DataToStringVisitor dataToStringVisitor = new DataToStringVisitor();
 
-    @Inject
-    public DataDetailViewModel(final NotificationCenter notificationCenter) {
-        data.addListener((observable, oldValue, newValue) -> {
+    private final BooleanProperty follow = new SimpleBooleanProperty();
+
+    public DataDetailViewModel() {
+        this.data.addListener((observable, oldValue, newValue) -> {
             if (!Objects.equals(history.current(), newValue)) {
                 history.clear();
                 history.add(newValue);
             }
             updateAvailableHistory();
-        });
 
-        notificationCenter.subscribe("SET_DATA_DETAIL", (key, payload) -> {
-            if (payload.length > 0) {
-                if (payload[0] instanceof Data) {
-                    addData((Data) payload[0]);
-                }
+            if (follow.get()) {
+                panToData(data.get());
             }
         });
+
+        Notifications.SET_DATA_DETAIL.subscribe(this::addData);
+
+        follow.addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                panToData(data.get());
+            }
+        });
+    }
+
+    private void panToData(final Data data) {
+        Notifications.PAN_TO_DATA.publish(data);
     }
 
     private void updateAvailableHistory() {
@@ -95,6 +103,10 @@ public class DataDetailViewModel implements ViewModel {
 
     public ReadOnlyStringProperty historyForwardIdentifierProperty() {
         return historyForwardIdentifier.getReadOnlyProperty();
+    }
+
+    public void setFollow(final boolean follow) {
+        this.follow.set(follow);
     }
 
     private static class DataToStringVisitor implements DataVisitor<String> {

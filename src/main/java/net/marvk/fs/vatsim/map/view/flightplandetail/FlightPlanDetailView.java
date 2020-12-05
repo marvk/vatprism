@@ -105,12 +105,12 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     }
 
     @FXML
-    protected void goToDeparture(final MouseEvent event) {
-        viewModel.goToDeparture();
+    protected void setToDeparture(final MouseEvent event) {
+        viewModel.setToArrival();
     }
 
     @FXML
-    private void goToArrival(final MouseEvent event) {
-        viewModel.goToArrival();
+    private void setToArrival(final MouseEvent event) {
+        viewModel.setToDeparture();
     }
 }

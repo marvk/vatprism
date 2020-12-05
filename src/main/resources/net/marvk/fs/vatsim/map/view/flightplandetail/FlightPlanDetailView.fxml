@@ -34,14 +34,14 @@
             <Label fx:id="trueAirSpeed" styleClass="mono" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
             <Label fx:id="cruiseAltitude" styleClass="mono" text="Label" GridPane.columnIndex="1"
                    GridPane.rowIndex="1"/>
-            <Label fx:id="departure" onMouseClicked="#goToDeparture" text="Label" GridPane.columnIndex="1"
+            <Label fx:id="departure" onMouseClicked="#setToDeparture" text="Label" GridPane.columnIndex="1"
                    GridPane.columnSpan="2147483647">
                 <styleClass>
                     <String fx:value="mono"/>
                     <String fx:value="hyperlink-label"/>
                 </styleClass>
             </Label>
-            <Label fx:id="arrival" onMouseClicked="#goToArrival" text="Label" GridPane.columnIndex="4"
+            <Label fx:id="arrival" onMouseClicked="#setToArrival" text="Label" GridPane.columnIndex="4"
                    GridPane.columnSpan="2147483647">
                 <styleClass>
                     <String fx:value="mono"/>

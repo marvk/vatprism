@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
-import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -13,14 +12,17 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MapViewModel implements ViewModel {
     private final DoubleProperty scale = new SimpleDoubleProperty(1);
@@ -37,7 +39,6 @@ public class MapViewModel implements ViewModel {
 
     private final InternationalDateLineRepository internationalDateLineRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
-    private final NotificationCenter notificationCenter;
     private final PositionDataVisitor positionDataVisitor;
     private final List<Polygon> world;
     private final ObservableList<PainterExecutor<?>> painterExecutors;
@@ -56,6 +57,8 @@ public class MapViewModel implements ViewModel {
 
     private WorldPanTransition panTransition = null;
 
+    private final TransitionDataVisitor transitionDataVisitor = new TransitionDataVisitor();
+
     @Inject
     public MapViewModel(
             final ClientRepository clientRepository,
@@ -63,7 +66,6 @@ public class MapViewModel implements ViewModel {
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
-            final NotificationCenter notificationCenter,
             final PositionDataVisitor positionDataVisitor,
             @Named("world") final List<Polygon> world
     ) {
@@ -72,7 +74,6 @@ public class MapViewModel implements ViewModel {
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.internationalDateLineRepository = internationalDateLineRepository;
         this.upperInformationRegionRepository = upperInformationRegionRepository;
-        this.notificationCenter = notificationCenter;
         this.positionDataVisitor = positionDataVisitor;
 
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
@@ -92,8 +93,8 @@ public class MapViewModel implements ViewModel {
         this.viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         this.mapVariables.setViewHeight(viewHeight.get());
 
-        notificationCenter.subscribe("REPAINT", (key, payload) -> triggerRepaint());
-        notificationCenter.subscribe("PAN_TO_POSITION", (key, payload) -> panToPosition(payload));
+        Notifications.REPAINT.subscribe(this::triggerRepaint);
+        Notifications.PAN_TO_DATA.subscribe(this::panToData);
 
         this.selectedItem.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
@@ -102,22 +103,20 @@ public class MapViewModel implements ViewModel {
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
     }
 
-    private void panToPosition(final Object[] payload) {
-        if (payload.length > 0) {
-            if (payload[0] instanceof Point2D) {
-                final Point2D p = ((Point2D) payload[0]).multiply(-1);
-                panToPosition(new WorldPanTransition(
-                        p,
-                        p,
-                        1,
-                        32
-                ));
-            }
-        }
+    private void panToData(final Data data) {
+        transitionDataVisitor
+                .visit(data)
+                .ifPresent(e -> panToData(new WorldPanTransition(new Viewport(e.getWorldCenter(), 1), e)));
     }
 
-    private void panToPosition(final WorldPanTransition transition) {
+    private void panToData(final WorldPanTransition transition) {
         fireTransition(transition);
+    }
+
+    public void goToItem() {
+        transitionDataVisitor
+                .visit(getSelectedItem())
+                .ifPresent(e -> panToData(new WorldPanTransition(new Viewport(getWorldCenter().multiply(-1), scale.get()), e)));
     }
 
     private void fireTransition(final WorldPanTransition transition) {
@@ -267,32 +266,63 @@ public class MapViewModel implements ViewModel {
         return contextMenu;
     }
 
-    public void goToItem() {
-        positionDataVisitor.visit(getSelectedItem()).ifPresent(p -> panToPosition(new WorldPanTransition(
-                getWorldCenter(),
-                p.multiply(-1),
-                scale.get(),
-                32
-        )));
+    private class TransitionDataVisitor extends DataDefaultVisitor<Viewport> {
+        private Optional<Viewport> defaultTarget(final Point2D position) {
+            if (position == null) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new Viewport(position, 32));
+        }
+
+        @Override
+        public Optional<Viewport> visit(final Airport airport) {
+            return defaultTarget(airport.getPosition());
+        }
+
+        @Override
+        public Optional<Viewport> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+            final Rectangle2D boundary = flightInformationRegionBoundary.getPolygon().boundary();
+
+            final double targetScale = mapVariables.scaleForRectFit(boundary.getWidth() * 1.1, boundary.getHeight() * 1.1);
+
+            final double x = boundary.getMinX() + boundary.getWidth() / 2.0;
+            final double y = boundary.getMinY() + boundary.getHeight() / 2.0;
+
+            final Point2D targetWorldCenter = new Point2D(x, y);
+
+            return Optional.of(new Viewport(targetWorldCenter, targetScale));
+        }
+
+        @Override
+        public Optional<Viewport> visit(final Pilot pilot) {
+            return defaultTarget(pilot.getPosition());
+        }
+    }
+
+    @lombok.Data
+    private static class Viewport {
+        private final Point2D worldCenter;
+        private final double scale;
     }
 
     private class WorldPanTransition extends Transition {
         private final Point2D startingWorldCenter;
-        private final double startingScale;
-
         private final Point2D targetWorldCenter;
+
+        private final double startingScale;
         private final double targetScale;
 
-        public WorldPanTransition(final Point2D startingWorldCenter, final Point2D targetWorldCenter, final double startingScale, final double targetScale) {
+        public WorldPanTransition(final Viewport starting, final Viewport target) {
             super(30);
             setCycleDuration(Duration.seconds(1));
             setCycleCount(1);
             setInterpolator(Interpolator.EASE_BOTH);
-            this.targetWorldCenter = targetWorldCenter;
-            this.targetScale = targetScale;
+            this.targetWorldCenter = target.worldCenter.multiply(-1);
+            this.startingWorldCenter = starting.worldCenter.multiply(-1);
 
-            this.startingWorldCenter = startingWorldCenter;
-            this.startingScale = startingScale;
+            this.targetScale = target.scale;
+            this.startingScale = starting.scale;
         }
 
         @Override

@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 
@@ -31,6 +32,10 @@ public abstract class DataDetailSubView<DataDetailViewModel extends DataDetailSu
 
     protected static StringBinding positionLabel(final ObservableObjectValue<Point2D> position) {
         return BindingsUtil.position(position);
+    }
+
+    protected static String positionLabel(final Point2D position) {
+        return GeomUtil.format(position);
     }
 
     public void initialize() {

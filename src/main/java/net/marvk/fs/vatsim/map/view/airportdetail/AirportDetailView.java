@@ -3,15 +3,19 @@ package net.marvk.fs.vatsim.map.view.airportdetail;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubViewModel;
 
 import java.util.Collections;
 import java.util.List;
 
-public class AirportDetailView extends DataDetailSubView<DataDetailSubViewModel<Airport>, Airport> {
+public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel, Airport> {
+    private static final String HYPERLINK_LABEL = "hyperlink-label";
+    @FXML
+    private Label fir;
     @FXML
     private Label position;
     @FXML
@@ -31,5 +35,21 @@ public class AirportDetailView extends DataDetailSubView<DataDetailSubViewModel<
     protected void setData(final Airport airport) {
         name.setText(airport.getNames().get(0));
         position.textProperty().bind(BindingsUtil.position(airport.positionProperty()));
+        final FlightInformationRegionBoundary firb = airport.getFlightInformationRegionBoundary();
+
+        System.out.println("firb = " + firb);
+
+        if (firb == null) {
+            fir.getStyleClass().remove(HYPERLINK_LABEL);
+            fir.setText(null);
+        } else {
+            fir.getStyleClass().add(HYPERLINK_LABEL);
+            fir.setText(firb.getIcao());
+        }
+    }
+
+    @FXML
+    private void setToFir(final MouseEvent event) {
+        viewModel.setToFir();
     }
 }

@@ -102,6 +102,22 @@ public class MapVariables {
         this.worldCenterY = y;
     }
 
+    double scaleForRectFit(final double worldWidth, final double worldHeight) {
+        return Math.min(scaleForWorldHeight(worldHeight), scaleForWorldWidth(worldWidth));
+    }
+
+    double scaleForWorldHeight(final double worldHeight) {
+        final double ratio = worldHeight * aspectScaleY / WORLD_HEIGHT;
+
+        return 1.0 / ratio;
+    }
+
+    double scaleForWorldWidth(final double worldWidth) {
+        final double ratio = worldWidth / WORLD_WIDTH;
+
+        return 1.0 / ratio;
+    }
+
     void setWorldCenter(final Point2D worldCenter) {
         setWorldCenter(worldCenter.getX(), worldCenter.getY());
     }
