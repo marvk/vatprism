@@ -6,10 +6,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.geometry.Side;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -18,8 +16,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +32,6 @@ import net.marvk.fs.vatsim.map.view.datadetail.DataDetailViewModel;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -121,6 +123,15 @@ public class MapView implements FxmlView<MapViewModel> {
         invalidateCanvas();
 
         viewModel.subscribe("REPAINT", (key, payload) -> invalidateCanvas());
+
+        addContextMenuShadow();
+    }
+
+    private void addContextMenuShadow() {
+        final AnchorPane anchorPane = new AnchorPane();
+        anchorPane.getChildren().add(contextMenu.getShadowHolder());
+        anchorPane.setMouseTransparent(true);
+        stackPane.getChildren().add(anchorPane);
     }
 
     private void loadDetailView() {
@@ -165,35 +176,21 @@ public class MapView implements FxmlView<MapViewModel> {
                 if (controlDown.get()) {
                     viewModel.openClosest();
                 } else {
-                    contextMenu.show(event.getScreenX(), event.getScreenY(), viewModel.showingContextMenu());
+                    contextMenu.show(event.getX(), event.getY(), event.getScreenX(), event.getScreenY(), viewModel.showingContextMenu());
                 }
             }
 
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
 
-            System.out.println("InputEventHandler.onStart");
-            status();
-
             lastX = event.getX();
             lastY = event.getY();
-        }
-
-        private void status() {
-            System.out.println("leftMouseDown  " + leftMouseDown.get());
-            System.out.println("leftMouseDrag  " + leftMouseDrag.get());
-            System.out.println("rightMouseDown " + rightMouseDown.get());
-            System.out.println("rightMouseDrag " + rightMouseDrag.get());
-            System.out.println("controlDown    " + controlDown.get());
-            System.out.println();
         }
 
         public void onDrag(final MouseEvent event) {
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
 
-            System.out.println("InputEventHandler.onDrag");
-            status();
             if (!rightMouseDown.get()) {
                 return;
             }
@@ -220,16 +217,10 @@ public class MapView implements FxmlView<MapViewModel> {
 
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
-
-            System.out.println("InputEventHandler.onRelease");
-            status();
         }
 
         public void onMove(final MouseEvent event) {
             viewModel.mouseViewPositionProperty().set(new Point2D(event.getX(), event.getY()));
-
-            System.out.println("InputEventHandler.onMove");
-            status();
         }
 
         public void onScroll(final ScrollEvent event) {
@@ -273,66 +264,14 @@ public class MapView implements FxmlView<MapViewModel> {
                 return visitor.getCallsign();
             }
         };
-
-        private final List<EventType<MouseEvent>> transparentEventTypes = List.of(
-                MouseEvent.MOUSE_ENTERED,
-                MouseEvent.MOUSE_ENTERED_TARGET,
-                MouseEvent.MOUSE_EXITED,
-                MouseEvent.MOUSE_EXITED_TARGET
-        );
+        private final Region shadowHolder = new Region();
 
         public MapContextMenu() {
             setSkin(createDefaultSkin());
+            shadowHolder.prefWidthProperty().bind(widthProperty());
+            shadowHolder.prefHeightProperty().bind(heightProperty());
 
-            addEventFilter(MouseEvent.ANY, this::onEvent);
-
-            getSkin().getNode().cursorProperty().bind(cursorProperty);
-        }
-
-        private void onEvent(final MouseEvent event) {
-            if (event.getTarget() instanceof ContextMenuContent) {
-                if (!transparentEventTypes.contains(event.getEventType())) {
-                    final Point2D inStackPane = stackPane.screenToLocal(event.getScreenX(), event.getScreenY());
-                    final Point2D inCanvas = canvas.parentToLocal(inStackPane);
-
-                    final Point2D canvasSceneOffset = canvas.localToScene(0, 0);
-                    final MouseEvent e = new MouseEvent(
-                            this,
-                            canvas,
-                            event.getEventType(),
-                            inCanvas.getX(),
-                            inCanvas.getY() + canvasSceneOffset.getY(),
-                            event.getScreenX(),
-                            event.getScreenY(),
-                            event.getButton(),
-                            event.getClickCount(),
-                            event.isShiftDown(),
-                            event.isControlDown(),
-                            event.isAltDown(),
-                            event.isMetaDown(),
-                            event.isPrimaryButtonDown(),
-                            event.isMiddleButtonDown(),
-                            event.isSecondaryButtonDown(),
-                            event.isBackButtonDown(),
-                            event.isForwardButtonDown(),
-                            event.isSynthesized(),
-                            event.isPopupTrigger(),
-                            event.isStillSincePress(),
-                            null
-                    );
-                    canvas.fireEvent(e);
-                    event.consume();
-
-                    if (event.getButton() == MouseButton.PRIMARY) {
-                        inputEventHandler.leftMouseDown.set(false);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void show(final Node anchor, final Side side, final double dx, final double dy) {
-            super.show(anchor, side, dx, dy);
+//            shadowHolder.visibleProperty().bind(showingProperty());
         }
 
         @Override
@@ -340,13 +279,19 @@ public class MapView implements FxmlView<MapViewModel> {
             super.show(anchor, screenX, screenY);
         }
 
-        public void show(final double screenX, final double screenY, final ContextMenuViewModel items) {
+        public void show(final double x, final double y, final double screenX, final double screenY, final ContextMenuViewModel items) {
+            shadowHolder.setTranslateX(x);
+            shadowHolder.setTranslateY(y);
+            shadowHolder.setVisible(true);
+
             setupItems(items);
+
             show(stackPane, screenX, screenY);
         }
 
         @Override
         public void hide() {
+            shadowHolder.setVisible(false);
             viewModel.hideContextMenu();
             super.hide();
         }
@@ -427,6 +372,11 @@ public class MapView implements FxmlView<MapViewModel> {
                 viewModel.setSelectedItem(null);
                 hide();
             }
+        }
+
+        public Node getShadowHolder() {
+            shadowHolder.getStyleClass().add("context-menu-drop-shadow-holder");
+            return shadowHolder;
         }
     }
 

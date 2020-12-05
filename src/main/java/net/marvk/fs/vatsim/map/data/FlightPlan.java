@@ -43,7 +43,7 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
         aircraft.set(model.getPlannedAircraft());
         flightType.set(FlightType.fromString(model.getPlannedFlightType()));
         departureTime.set(parseDepartureTime(model.getPlannedDepartureTime()));
-        altitude.set(model.getPlannedAltitude());
+        altitude.set(parseAltitude(model.getPlannedAltitude()));
         trueCruiseAirspeed.set(model.getPlannedTrueAirspeedCruise());
         enrouteProperty.set(parseDuration(model.getPlannedHoursEnroute(), model.getPlannedMinutesEnroute()));
         fuelProperty.set(parseDuration(model.getPlannedHoursFuel(), model.getPlannedMinutesFuel()));
@@ -172,7 +172,7 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
         );
     }
 
-    private static Integer parseAltitude(final String altitude) {
+    private static String parseAltitude(final String altitude) {
         return ParseUtil.parseNullSafe(altitude, s -> {
             final Matcher matcher = ALTITUDE_PATTERN.matcher(altitude);
             if (matcher.matches()) {
@@ -181,7 +181,7 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
 
                 final int multiplier = prefix == null ? 1 : 100;
 
-                return Integer.parseInt(amount) * multiplier;
+                return String.valueOf(Integer.parseInt(amount) * multiplier);
             }
             return null;
         });

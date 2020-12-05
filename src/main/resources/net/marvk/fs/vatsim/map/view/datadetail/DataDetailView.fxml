@@ -35,6 +35,6 @@
             </children>
         </HBox>
         <VBox fx:id="container"/>
-        <Region VBox.vgrow="ALWAYS"/>
+        <Region VBox.vgrow="ALWAYS" mouseTransparent="true"/>
     </children>
 </VBox>

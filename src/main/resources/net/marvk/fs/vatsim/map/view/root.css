@@ -20,6 +20,11 @@
     -vatsim-toolbar-button-icon-size: 20px;
 }
 
+.context-menu-drop-shadow-holder {
+    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+}
+
 .description {
     /*-fx-font-weight: bold;*/
 }
@@ -117,6 +122,7 @@
 .context-menu {
     -fx-background-color: -vatsim-background-color-very-light;
     -fx-padding: 0;
+    -fx-effect: none;
 }
 
 .context-menu > * > .separator > .line {
