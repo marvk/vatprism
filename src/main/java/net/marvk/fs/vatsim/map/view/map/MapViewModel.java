@@ -49,6 +49,8 @@ public class MapViewModel implements ViewModel {
 
     private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
+    private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
+
     @InjectScope
     private StatusbarScope statusbarScope;
 
@@ -101,6 +103,7 @@ public class MapViewModel implements ViewModel {
         this.viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.selectionShape.addListener((observable, oldValue, newValue) -> triggerRepaint());
     }
 
     private void panToData(final Data data) {
@@ -117,6 +120,10 @@ public class MapViewModel implements ViewModel {
         transitionDataVisitor
                 .visit(getSelectedItem())
                 .ifPresent(e -> panToData(new WorldPanTransition(new Viewport(getWorldCenter().multiply(-1), scale.get()), e)));
+    }
+
+    public void openClosest() {
+        selectedItem.set(contextMenu.closest().orElse(null));
     }
 
     private void fireTransition(final WorldPanTransition transition) {
@@ -137,11 +144,15 @@ public class MapViewModel implements ViewModel {
 
         contextMenu.getAirports()
                    .getItems()
-                   .setAll(airportRepository.searchByPosition(mouseWorldPosition, 1));
+                   .setAll(airportRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 3));
 
         contextMenu.getPilots()
                    .getItems()
-                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, 1));
+                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 3));
+    }
+
+    private double selectionDistance() {
+        return 10 / scale.get();
     }
 
     private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
@@ -154,24 +165,13 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
-                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get)
+                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
+                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get)
         );
     }
 
     private boolean isNotSelected(final Data e) {
         return e != selectedItem.get();
-    }
-
-    private FlightInformationRegionBoundary selectedFirb() {
-        return selectedItem.get() instanceof FlightInformationRegionBoundary
-                ? (FlightInformationRegionBoundary) selectedItem.get()
-                : null;
-    }
-
-    private Airport selectedAirport() {
-        return selectedItem.get() instanceof Airport
-                ? (Airport) selectedItem.get()
-                : null;
     }
 
     private void triggerRepaint() {
@@ -266,8 +266,15 @@ public class MapViewModel implements ViewModel {
         return mouseWorldPosition.get();
     }
 
-    public ContextMenuViewModel getContextMenu() {
+    public ContextMenuViewModel showingContextMenu() {
+        selectionShape.set(
+                new Circle2D(mouseViewPosition.get(), selectionDistance())
+        );
         return contextMenu;
+    }
+
+    public void hideContextMenu() {
+        selectionShape.set(null);
     }
 
     private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {

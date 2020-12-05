@@ -6,6 +6,7 @@ import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.Pilot;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ContextMenuViewModel {
     private final ContextMenuItems<Pilot> pilots;
@@ -43,6 +44,23 @@ public class ContextMenuViewModel {
                 airports,
                 boundaries
         );
+    }
+
+    public Optional<? extends Data> closest() {
+        // TODO move filter to settings
+        final Optional<Airport> airport = airports.getItems().stream().filter(Airport::hasControllers).findFirst();
+
+        if (airport.isPresent()) {
+            return airport;
+        }
+
+        final Optional<Pilot> pilot = pilots.getItems().stream().findFirst();
+
+        if (pilot.isPresent()) {
+            return pilot;
+        }
+
+        return boundaries.getItems().stream().findFirst();
     }
 
     public ContextMenuItems<FlightInformationRegionBoundary> getBoundaries() {
@@ -102,7 +120,7 @@ public class ContextMenuViewModel {
 
         final var n = numberOfItems();
 
-        throw new IndexOutOfBoundsException("Index: " + i + ", Size: " + n);
+        return null;
     }
 
     private int numberOfItems() {

@@ -58,7 +58,8 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
         final Category painters = Category
                 .of("Painters")
-                .subCategories(categories.toArray(Category[]::new));
+                .subCategories(categories.toArray(Category[]::new))
+                .expand();
 
         final PreferencesFx preferencesFx = PreferencesFx.of(
                 App.class,

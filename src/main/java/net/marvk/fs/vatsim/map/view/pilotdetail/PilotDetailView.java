@@ -1,8 +1,5 @@
 package net.marvk.fs.vatsim.map.view.pilotdetail;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -63,8 +60,8 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
     @Override
     protected void setData(final Pilot pilot) {
         position.textProperty().bind(positionLabel(pilot.positionProperty()));
-        heading.textProperty().bind(doubleToIntString(pilot.headingProperty()));
-        groundSpeed.textProperty().bind(doubleToIntString(pilot.groundSpeedProperty()));
+        heading.textProperty().bind(doubleToIntString(pilot.headingProperty(), "°"));
+        groundSpeed.textProperty().bind(doubleToIntString(pilot.groundSpeedProperty(), "kts"));
         qnhMillibars.textProperty().bind(doubleToIntString(pilot.qnhMilliBarsProperty(), "mbar"));
         qnhInchesMercury.textProperty().bind(pilot.qnhInchesMercuryProperty().asString().concat("inHg"));
         squawk.textProperty().bind(pilot.transponderProperty());
@@ -72,16 +69,5 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         flightPlanController.getViewModel().setData(pilot.getFlightPlan());
         clientController.getViewModel().setData(pilot);
         clientController.getViewModel().setData(pilot);
-    }
-
-    private static StringBinding doubleToIntString(final ReadOnlyDoubleProperty property, final String suffix) {
-        return Bindings.createStringBinding(
-                () -> property.intValue() + suffix,
-                property
-        );
-    }
-
-    private static StringBinding doubleToIntString(final ReadOnlyDoubleProperty property) {
-        return doubleToIntString(property, "");
     }
 }

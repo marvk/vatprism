@@ -118,6 +118,10 @@ public class MapVariables {
         return 1.0 / ratio;
     }
 
+    public double worldWidthToViewWidth(final double worldWidth) {
+        return (worldWidth / (WORLD_WIDTH / scale)) * viewWidth;
+    }
+
     void setWorldCenter(final Point2D worldCenter) {
         setWorldCenter(worldCenter.getX(), worldCenter.getY());
     }

@@ -3,21 +3,30 @@ package net.marvk.fs.vatsim.map.view.flightplandetail;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
+import net.marvk.fs.vatsim.map.data.FlightType;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubView;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailViewModel, FlightPlan> {
+    @FXML
+    private HBox noFlightPlan;
+    @FXML
+    private VBox content;
     @FXML
     private TitledPane flightPlan;
     @FXML
@@ -36,6 +45,17 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     private TextArea path;
     @FXML
     private TextArea remarks;
+
+    private void setFlightPlanPanes(final Boolean newValue) {
+        final ObservableList<Node> children = ((VBox) flightPlan.getContent()).getChildren();
+        children.clear();
+
+        if (newValue) {
+            children.add(content);
+        } else {
+            children.add(noFlightPlan);
+        }
+    }
 
     @Override
     protected List<TextArea> textAreas() {
@@ -62,12 +82,25 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         flightRules.textProperty().bind(flightPlan.flightTypeProperty().asString());
         aircraftType.textProperty().bind(flightPlan.aircraftProperty());
         aircraftType.setTooltip(createTooltip(aircraftType.textProperty(), Duration.millis(500)));
-        trueAirSpeed.textProperty().bind(flightPlan.trueCruiseAirspeedProperty());
-        cruiseAltitude.textProperty().bind(flightPlan.altitudeProperty());
+        trueAirSpeed.textProperty().bind(stringToString(flightPlan.trueCruiseAirspeedProperty(), "kts"));
+        cruiseAltitude.textProperty().bind(stringToString(flightPlan.altitudeProperty(), "ft"));
         bindToAirport(departure, flightPlan.departureAirportProperty());
         bindToAirport(arrival, flightPlan.arrivalAirportProperty());
         path.textProperty().bind(flightPlan.plannedRouteProperty());
         remarks.textProperty().bind(flightPlan.remarksProperty());
+
+        setFlightPlanPanes(isFlightPlanAvailable(flightPlan));
+    }
+
+    private static boolean isFlightPlanAvailable(final FlightPlan flightPlan) {
+        final FlightType flightType = flightPlan.flightTypeProperty().get();
+        return flightType != FlightType.UNKNOWN && flightType != null;
+    }
+
+    @Override
+    protected void clear() {
+        super.clear();
+        setFlightPlanPanes(false);
     }
 
     private static void bindToAirport(final Label label, final ReadOnlyObjectProperty<Airport> airportProperty) {

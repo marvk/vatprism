@@ -12,7 +12,11 @@ import java.util.function.Consumer;
 public class SelectedPainter extends CompositeMapPainter<Data> {
     @MetaPainter("FIR")
     private final FirPainter firPainter = new FirPainter(mapVariables, Color.RED, 2.5);
+
+    @MetaPainter("Pilot")
     private final PilotPainter pilotPainter = new PilotPainter(mapVariables, Color.RED);
+
+    @MetaPainter("Airport")
     private final AirportPainter airportPainter = new AirportPainter(mapVariables, Color.RED, Color.RED, true, true);
 
     private final PainterVisitor painterVisitor = new PainterVisitor();

@@ -2,7 +2,10 @@ package net.marvk.fs.vatsim.map.view.datadetail;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -83,4 +86,32 @@ public abstract class DataDetailSubView<DataDetailViewModel extends DataDetailSu
     protected abstract List<Label> labels();
 
     protected abstract void setData(final ViewModel data);
+
+    protected static StringBinding doubleToIntString(final ReadOnlyDoubleProperty property, final String suffix) {
+        return Bindings.createStringBinding(
+                () -> property.intValue() + suffix,
+                property
+        );
+    }
+
+    protected static StringBinding doubleToIntString(final ReadOnlyDoubleProperty property) {
+        return doubleToIntString(property, "");
+    }
+
+    protected static StringBinding stringToString(final ReadOnlyStringProperty property) {
+        return stringToString(property, "");
+    }
+
+    protected static StringBinding stringToString(final ReadOnlyStringProperty property, final String suffix) {
+        return Bindings.createStringBinding(
+                () -> {
+                    if (property.get() == null) {
+                        return "";
+                    }
+
+                    return property.get() + suffix;
+                },
+                property
+        );
+    }
 }
