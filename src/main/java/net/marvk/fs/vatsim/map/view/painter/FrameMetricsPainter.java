@@ -15,6 +15,9 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     @Parameter("Show")
     private boolean show = true;
 
+    @Parameter("Show Averages")
+    private boolean showAverages = true;
+
     private static Color[] COLORS = new Color[]{
             Color.web("#C6C6C6"),
             Color.web("#FDB2C1"),
@@ -30,7 +33,9 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
             Color.web("#F5B2E5")
     };
 
+    @Parameter(value = "Height", min = 0)
     private double chartHeight = 300;
+
     private int x = 10;
     private int y = 10;
     private int borderWidth = 20;
@@ -62,9 +67,9 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         final int chartWidth = frameMetrics.getMaxFrames();
 
         c.setFill(Color.GRAY.darker().darker());
-        c.fillRect(x, y, frameMetrics.getMaxFrames() + borderWidth * 15, chartHeight + borderWidth * 2);
+        c.fillRect(x, y, frameMetrics.getMaxFrames() + borderWidth * (5 + (showAverages ? 10 : 0)), getChartHeight() + borderWidth * 2);
         c.setFill(Color.GRAY);
-        c.fillRect(xOffset, yOffset, chartWidth, chartHeight);
+        c.fillRect(xOffset, yOffset, chartWidth, getChartHeight());
 
         c.setFill(Color.PINK);
 
@@ -104,32 +109,34 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
 
         final double averageDrawNanos = averages(metrics).sum();
 
-        final double max = averages(metrics).max().orElse(0);
+        if (showAverages) {
+            final double max = averages(metrics).max().orElse(0);
 
-        for (int i = 0; i < metrics.size(); i++) {
-            final FrameMetrics.Metric metric = metrics.get(i);
-            final double value;
-            final Color color;
-            final String name;
-            if ("Total".equals(metric.getName())) {
-                name = "Residual";
-                value = metric.average() - averageDrawNanos;
-                color = COLORS[i];
-            } else {
-                name = metric.getName();
-                value = metric.average();
-                color = new Color(0.5 + 0.5 * (value / max), 0.5, 0.5, 1);
+            for (int i = 0; i < metrics.size(); i++) {
+                final FrameMetrics.Metric metric = metrics.get(i);
+                final double value;
+                final Color color;
+                final String name;
+                if ("Total".equals(metric.getName())) {
+                    name = "Residual";
+                    value = metric.average() - averageDrawNanos;
+                    color = COLORS[i];
+                } else {
+                    name = metric.getName();
+                    value = metric.average();
+                    color = new Color(0.5 + 0.5 * (value / max), 0.5, 0.5, 1);
+                }
+
+                c.setTextAlign(TextAlignment.RIGHT);
+                c.setFill(COLORS[i]);
+                final double yCur = yOffset + metrics.size() * 20 - i * 20;
+                final double xCur = borderWidth * 10;
+                c.fillText(name, xOffset + chartWidth + xCur, yCur);
+
+                c.setTextAlign(TextAlignment.LEFT);
+                c.setFill(color);
+                c.fillText(nanoString(value), xOffset + chartWidth + xCur + 2, yCur);
             }
-
-            c.setTextAlign(TextAlignment.RIGHT);
-            c.setFill(COLORS[i]);
-            final double yCur = yOffset + metrics.size() * 20 - i * 20;
-            final double xCur = borderWidth * 10;
-            c.fillText(name, xOffset + chartWidth + xCur, yCur);
-
-            c.setTextAlign(TextAlignment.LEFT);
-            c.setFill(color);
-            c.fillText(nanoString(value), xOffset + chartWidth + xCur + 2, yCur);
         }
 
         c.setFill(Color.GRAY);
@@ -159,6 +166,10 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         drawLine(c, averageDrawNanos, maxNanos, xOffset, yOffset, chartWidth, Color.BLACK);
     }
 
+    private double getChartHeight() {
+        return showAverages ? Math.max(250, chartHeight) : chartHeight;
+    }
+
     private static DoubleStream averages(final List<FrameMetrics.Metric> metrics) {
         return metrics
                 .stream()
@@ -184,11 +195,11 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     }
 
     private double heightInCanvas(final double yOffset, final double currentHeight) {
-        return yOffset + this.chartHeight - currentHeight;
+        return yOffset + getChartHeight() - currentHeight;
     }
 
     private double height(final double maxNanos, final double nanos) {
-        return (toMillis(nanos) / toMillis(maxNanos)) * this.chartHeight;
+        return (toMillis(nanos) / toMillis(maxNanos)) * getChartHeight();
     }
 
     private static void drawLabel(final GraphicsContext c, final double nanos, final double x, final double y) {

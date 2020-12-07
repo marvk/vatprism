@@ -171,9 +171,9 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
                 PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
                 PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
-                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
-                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list),
-                PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries),
+                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
                 PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
@@ -315,6 +315,10 @@ public class MapViewModel implements ViewModel {
         public Optional<Viewport> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
             final Rectangle2D boundary = flightInformationRegionBoundary.getPolygon().boundary();
 
+            return fromRect(boundary);
+        }
+
+        private Optional<Viewport> fromRect(final Rectangle2D boundary) {
             final double targetScale = mapVariables.scaleForRectFit(boundary.getWidth() * 1.1, boundary.getHeight() * 1.1);
 
             final double x = boundary.getMinX() + boundary.getWidth() / 2.0;
@@ -328,6 +332,11 @@ public class MapViewModel implements ViewModel {
         @Override
         public Optional<Viewport> visit(final Pilot pilot) {
             return defaultTarget(pilot.getPosition());
+        }
+
+        @Override
+        public Optional<Viewport> visit(final UpperInformationRegion upperInformationRegion) {
+            return fromRect(upperInformationRegion.getBounds());
         }
     }
 
@@ -363,7 +372,7 @@ public class MapViewModel implements ViewModel {
             final double f1 = frac;
             worldCenter.set(position(f1));
 
-            scale.set(smoothScale(frac));
+            scale.set(scale(frac));
         }
 
         private double smoothScale(final double x) {
@@ -376,8 +385,6 @@ public class MapViewModel implements ViewModel {
             final double w = s;
 
             final double y = u * x * x + v * x + w;
-
-            System.out.println("y = " + y);
 
             return y;
         }

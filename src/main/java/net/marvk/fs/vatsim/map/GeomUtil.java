@@ -1,11 +1,13 @@
 package net.marvk.fs.vatsim.map;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import net.marvk.fs.vatsim.api.data.Point;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
 import java.util.Locale;
 
 public final class GeomUtil {
@@ -82,5 +84,30 @@ public final class GeomUtil {
 
     public static Point2D parsePoint(final Point position) {
         return parsePoint(position.getX(), position.getY());
+    }
+
+    public static Point2D center(final Rectangle2D rectangle) {
+        return new Point2D(rectangle.getMinX() + rectangle.getWidth() / 2.0, rectangle.getMinY() + rectangle.getHeight() / 2.0);
+    }
+
+    public static Rectangle2D boundingRect(final Collection<Rectangle2D> rectangles) {
+        if (rectangles.isEmpty()) {
+            return new Rectangle2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0, 0);
+        }
+
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+
+        for (final Rectangle2D rectangle : rectangles) {
+            minX = Math.min(minX, rectangle.getMinX());
+            minY = Math.min(minY, rectangle.getMinY());
+            maxX = Math.max(maxX, rectangle.getMaxX());
+            maxY = Math.max(maxY, rectangle.getMaxY());
+        }
+
+        return new Rectangle2D(minX, minY, maxX - minX, maxY - minY);
     }
 }

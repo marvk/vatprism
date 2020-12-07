@@ -15,10 +15,10 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter("Color")
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
 
-    @Parameter(value = "Tail Length", min = 0)
+    @Parameter(value = "Head Length", min = 0)
     private int tailLength = 8;
 
-    @Parameter("label")
+    @Parameter("Show Label")
     private boolean label = true;
 
     public PilotPainter(final MapVariables mapVariables, final Color color) {
@@ -62,15 +62,13 @@ public class PilotPainter extends MapPainter<Pilot> {
         c.strokeRect(x - 1.5, y - 1.5, 4, 4);
         final double heading = pilot.getHeading();
 
-        final double rad = Math.toRadians(heading);
-        final int x2 = (int) (xPrecise + Math.sin(rad) * tailLength);
-        final int y2 = (int) (yPrecise - Math.cos(rad) * tailLength);
+        if (tailLength > 0) {
+            final double rad = Math.toRadians(heading);
+            final int x2 = (int) (xPrecise + Math.sin(rad) * tailLength);
+            final int y2 = (int) (yPrecise - Math.cos(rad) * tailLength);
 
-        c.setTextBaseline(VPos.CENTER);
-        c.setTextAlign(TextAlignment.CENTER);
-
-//        c.setLineDashes(1, 5);
-        c.strokeLine(x + 0.5, y + 0.5, x2 + 0.5, y2 + 0.5);
+            c.strokeLine(x + 0.5, y + 0.5, x2 + 0.5, y2 + 0.5);
+        }
 
         if (label) {
             final int yOffset;
@@ -81,6 +79,8 @@ public class PilotPainter extends MapPainter<Pilot> {
                 yOffset = TEXT_OFFSET;
             }
 
+            c.setTextBaseline(VPos.CENTER);
+            c.setTextAlign(TextAlignment.CENTER);
             c.fillText(pilot.getCallsign(), x, y + yOffset);
         }
     }

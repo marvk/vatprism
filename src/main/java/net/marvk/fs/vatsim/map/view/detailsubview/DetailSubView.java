@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.view.datadetail;
+package net.marvk.fs.vatsim.map.view.detailsubview;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
@@ -7,30 +7,25 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ObservableObjectValue;
-import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.GeomUtil;
-import net.marvk.fs.vatsim.map.data.Data;
+import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 
 import java.util.List;
 
-public abstract class DataDetailSubView<DataDetailViewModel extends DataDetailSubViewModel<ViewModel>, ViewModel extends Data> implements FxmlView<DataDetailViewModel> {
+public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<ViewModel>, ViewModel> implements FxmlView<DetailViewModel> {
     @InjectViewModel
-    protected DataDetailViewModel viewModel;
+    protected DetailViewModel viewModel;
 
     private List<Label> labels;
     private List<TextArea> textAreas;
 
-    public DataDetailViewModel getViewModel() {
+    public DetailViewModel getViewModel() {
         return viewModel;
-    }
-
-    @FXML
-    public void goTo() {
-        viewModel.goTo();
     }
 
     protected static StringBinding positionLabel(final ObservableObjectValue<Point2D> position) {
@@ -113,5 +108,32 @@ public abstract class DataDetailSubView<DataDetailViewModel extends DataDetailSu
                 },
                 property
         );
+    }
+
+    protected static String webColor(final Color color) {
+        return color.toString().substring(2);
+    }
+
+    protected static String colorKey(final Controller controller) {
+        if (controller.getWorkingAirport() != null) {
+            return switch (controller.getControllerType()) {
+                case ATIS -> "airports.atis_color";
+                case DEL -> "airports.delivery_color";
+                case GND -> "airports.ground_color";
+                case TWR -> "airports.tower_color";
+                case APP, DEP -> "airports.approach_circle_color";
+                default -> null;
+            };
+        }
+
+        if (controller.getWorkingFlightInformationRegion() != null) {
+            return "active_firs.fir.color";
+        }
+
+        if (controller.getWorkingUpperInformationRegion() != null) {
+            return "active_uirs.fir.color";
+        }
+
+        return null;
     }
 }

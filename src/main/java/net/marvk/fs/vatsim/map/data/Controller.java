@@ -24,7 +24,9 @@ public class Controller extends Client implements Data {
         super.setFromModel(model);
         frequency.set(model.getFrequency());
         rating.set(model.getRating());
-        atisMessage.set(model.getAtisMessage());
+        if (model.getAtisMessage() != null) {
+            atisMessage.set(model.getAtisMessage().replaceAll("\\^§", " "));
+        }
     }
 
     public void setFromCallsignParserResult(final CallsignParser.Result result) {
@@ -32,6 +34,22 @@ public class Controller extends Client implements Data {
         workingAirport.set(result.getAirport());
         workingFlightInformationRegion.set(result.getFlightInformationRegion());
         workingUpperInformationRegion.set(result.getUpperInformationRegion());
+    }
+
+    public Data getWorkingArea() {
+        if (getWorkingAirport() != null) {
+            return getWorkingAirport();
+        }
+
+        if (getWorkingFlightInformationRegion() != null) {
+            return getWorkingFlightInformationRegion();
+        }
+
+        if (getWorkingAirport() != null) {
+            return getWorkingUpperInformationRegion();
+        }
+
+        return null;
     }
 
     public String getFrequency() {

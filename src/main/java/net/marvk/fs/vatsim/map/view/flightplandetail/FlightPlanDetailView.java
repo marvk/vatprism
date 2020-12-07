@@ -16,7 +16,7 @@ import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
 import net.marvk.fs.vatsim.map.data.FlightType;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
 
 import java.util.List;
 import java.util.stream.Collectors;

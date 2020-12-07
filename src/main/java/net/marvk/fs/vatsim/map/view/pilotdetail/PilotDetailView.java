@@ -6,8 +6,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.clientdetail.ClientDetailView;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubViewModel;
+import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
 import net.marvk.fs.vatsim.map.view.flightplandetail.FlightPlanDetailView;
 
 import java.util.Collections;
@@ -34,10 +34,10 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
     private Label altitude;
 
     @FXML
-    private FlightPlanDetailView flightPlanController;
+    private ClientDetailView clientController;
 
     @FXML
-    private ClientDetailView clientController;
+    private FlightPlanDetailView flightPlanController;
 
     @Override
     protected List<TextArea> textAreas() {
@@ -68,6 +68,12 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         altitude.textProperty().bind(doubleToIntString(pilot.altitudeProperty(), "ft"));
         flightPlanController.getViewModel().setData(pilot.getFlightPlan());
         clientController.getViewModel().setData(pilot);
-        clientController.getViewModel().setData(pilot);
+    }
+
+    @Override
+    protected void clear(final Pilot oldValue) {
+        super.clear(oldValue);
+        flightPlanController.getViewModel().setData(null);
+        clientController.getViewModel().setData(null);
     }
 }

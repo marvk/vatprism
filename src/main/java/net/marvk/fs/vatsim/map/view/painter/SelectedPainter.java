@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class SelectedPainter extends CompositeMapPainter<Data> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter = new FirPainter(mapVariables, Color.RED, 2.5);
+    private final FirPainter firPainter = new FirPainter(mapVariables, Color.RED, 2.5, true, true);
 
     @MetaPainter("Pilot")
     private final PilotPainter pilotPainter = new PilotPainter(mapVariables, Color.RED);
@@ -42,6 +42,11 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
         }
 
         @Override
+        public Consumer<GraphicsContext> visit(final UpperInformationRegion upperInformationRegion) {
+            return c -> firPainter.paint(c, upperInformationRegion.getFlightInformationRegionBoundaries());
+        }
+
+        @Override
         public Consumer<GraphicsContext> visit(final Airport airport) {
             return c -> airportPainter.paint(c, airport);
         }
@@ -54,6 +59,11 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
         @Override
         public Consumer<GraphicsContext> visit(final Pilot pilot) {
             return c -> pilotPainter.paint(c, pilot);
+        }
+
+        @Override
+        public Consumer<GraphicsContext> visit(final Controller controller) {
+            return c -> visit(controller.getWorkingArea());
         }
     }
 }

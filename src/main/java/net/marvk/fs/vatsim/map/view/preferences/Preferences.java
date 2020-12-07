@@ -20,6 +20,8 @@ import net.marvk.fs.vatsim.map.view.painter.MetaPainter;
 import net.marvk.fs.vatsim.map.view.painter.Painter;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 import net.marvk.fs.vatsim.map.view.painter.Parameter;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.octicons.Octicons;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -83,6 +85,36 @@ public class Preferences {
     private PreferencesFx createPreferencesDialog() {
         final ObservableList<PainterExecutor<?>> executors = settingsScope.getPainters();
 
+        return PreferencesFx.of(App.class, general(), painters(executors))
+                            .saveSettings(false);
+    }
+
+    private Category general() {
+        final BooleanProperty debug = booleanProperty("general.debug");
+        debug.addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                booleanProperty("metrics.show").set(false);
+            }
+        });
+        debug.set(true);
+
+        return Category.of(
+                "General",
+                FontIcon.of(Octicons.GEAR_16),
+                Setting.of("Enable Debug Mode", debug)
+        );
+    }
+
+    private Category painters(final ObservableList<PainterExecutor<?>> executors) throws IllegalAccessException {
+        final Category[] painters = paintersCategories(executors);
+
+        return Category
+                .of("Painters", FontIcon.of(Octicons.PAINTBRUSH_16))
+                .subCategories(painters)
+                .expand();
+    }
+
+    private Category[] paintersCategories(final ObservableList<PainterExecutor<?>> executors) throws IllegalAccessException {
         final List<Category> categories = new ArrayList<>();
 
         for (final PainterExecutor<?> executor : executors) {
@@ -94,14 +126,7 @@ public class Preferences {
             final Category category = Category.of(executor.getName(), settings);
             categories.add(category);
         }
-
-        final Category painters = Category
-                .of("Painters")
-                .subCategories(categories.toArray(Category[]::new))
-                .expand();
-
-        return PreferencesFx.of(App.class, painters)
-                            .saveSettings(false);
+        return categories.toArray(Category[]::new);
     }
 
     private Setting<?, ?>[] getSettings(final Painter<?> painter, final String prefix) throws IllegalAccessException {
@@ -118,7 +143,7 @@ public class Preferences {
                 final MetaPainter metaPainter = field.getAnnotation(MetaPainter.class);
 
                 final Painter<?> thePainter = (Painter<?>) field.get(painter);
-                settings.addAll(Arrays.asList(getSettings(thePainter, metaPainter.value() + prefix)));
+                settings.addAll(Arrays.asList(getSettings(thePainter, prefix + "." + metaPainter.value())));
             } else {
                 settings.add(extracted(painter, field, prefix));
             }

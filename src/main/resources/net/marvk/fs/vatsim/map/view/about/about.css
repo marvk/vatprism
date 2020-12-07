@@ -1,0 +1,17 @@
+.about-container {
+    -fx-background-color: #2B2313;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+}
+
+.label {
+    -fx-text-fill: #5f553d;
+    -fx-font-family: "JetBrains Mono";
+}
+
+.h2 {
+    -fx-font-size: 18;
+}
+
+.h1 {
+    -fx-font-size: 30;
+}

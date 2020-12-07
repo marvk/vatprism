@@ -6,8 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import net.marvk.fs.vatsim.map.data.Client;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.datadetail.DataDetailSubViewModel;
+import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;

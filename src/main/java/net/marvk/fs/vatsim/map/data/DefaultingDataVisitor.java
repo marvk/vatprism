@@ -10,6 +10,15 @@ public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
     }
 
     @Override
+    public E visit(final Data data) {
+        if (data != null) {
+            return data.visit(this);
+        }
+
+        return defaultValue;
+    }
+
+    @Override
     public E visit(final Airport airport) {
         return defaultValue;
     }

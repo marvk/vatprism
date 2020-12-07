@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import org.kordamp.ikonli.javafx.*?>
-<HBox stylesheets="@toolbar.css" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
+<HBox fx:id="container" stylesheets="@toolbar.css" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.toolbar.ToolBarView">
     <children>
@@ -34,7 +34,7 @@
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
-        <Button styleClass="icon-button" onAction="#setAutoReload" mnemonicParsing="false">
+        <Button styleClass="icon-button" onAction="#showAbout" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-info-16" iconSize="24"/>
             </graphic>

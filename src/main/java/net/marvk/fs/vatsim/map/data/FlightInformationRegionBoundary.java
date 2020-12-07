@@ -1,8 +1,12 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
+
+import java.util.ArrayList;
 
 public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>, Data {
     private final StringProperty icao = new SimpleStringProperty();
@@ -19,12 +23,44 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     private final ReadOnlyListWrapper<UpperInformationRegion> upperInformationRegions =
             RelationshipReadOnlyListWrapper.withOtherList(this, UpperInformationRegion::getFlightInformationRegionBoundariesWritable);
 
+    private final ReadOnlyListWrapper<Controller> controllers = new ReadOnlyListWrapper<>(FXCollections.observableList(new ArrayList<>(0)));
+
     @Override
     public void setFromModel(final VatsimAirspace airspace) {
         icao.set(airspace.getGeneral().getIcao());
         extension.set(airspace.getGeneral().getExtension());
         oceanic.set(airspace.getGeneral().getOceanic());
         polygon.set(new Polygon(airspace.getAirspacePoints()));
+
+        upperInformationRegions.addListener((ListChangeListener<UpperInformationRegion>) c -> {
+            while (c.next()) {
+                for (final UpperInformationRegion upperInformationRegion : c.getAddedSubList()) {
+                    addListener(upperInformationRegion.getControllers());
+                }
+            }
+        });
+
+        flightInformationRegions.addListener((ListChangeListener<FlightInformationRegion>) c -> {
+            while (c.next()) {
+                for (final FlightInformationRegion flightInformationRegion : c.getAddedSubList()) {
+                    addListener(flightInformationRegion.getControllers());
+                }
+            }
+        });
+    }
+
+    private void addListener(final ObservableList<Controller> controllers) {
+        controllers.addListener(this::controllersChanged);
+    }
+
+    private void controllersChanged(final ListChangeListener.Change<? extends Controller> c) {
+        while (c.next()) {
+            controllers.addAll(c.getAddedSubList());
+
+            for (final Controller controller : c.getRemoved()) {
+                controllers.remove(controller);
+            }
+        }
     }
 
     public String getIcao() {
@@ -85,6 +121,10 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
 
     public ObservableList<Airport> getAirports() {
         return airports.getReadOnlyProperty();
+    }
+
+    public ObservableList<Controller> getControllers() {
+        return controllers.getReadOnlyProperty();
     }
 
     public boolean hasUirControllers() {
