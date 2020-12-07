@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
+import java.util.Comparator;
 import java.util.Locale;
 
 public enum ControllerType {
@@ -23,4 +24,7 @@ public enum ControllerType {
             default -> defaultControllerType;
         };
     }
+
+    // TODO
+    public static final Comparator<ControllerType> COMPARATOR = Enum::compareTo;
 }

@@ -5,13 +5,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import net.marvk.fs.vatsim.map.data.Airport;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
-import net.marvk.fs.vatsim.map.data.OptionalDataVisitor;
-import net.marvk.fs.vatsim.map.data.Pilot;
+import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailView;
 import net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailViewModel;
 import net.marvk.fs.vatsim.map.view.flightinformationregionboundarydetail.FlightInformationRegionBoundaryDetailView;
@@ -20,6 +20,9 @@ import net.marvk.fs.vatsim.map.view.pilotdetail.PilotDetailView;
 import java.util.Optional;
 
 public class DataDetailView implements FxmlView<DataDetailViewModel> {
+    @FXML
+    private Label type;
+
     @FXML
     private ToggleButton follow;
 
@@ -38,6 +41,8 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
     @InjectContext
     private Context context;
 
+    private final TypeVisitor typeVisitor = new TypeVisitor();
+
     private PaneManager paneManager;
 
     public void initialize() {
@@ -45,12 +50,25 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 
         viewModel.dataProperty().addListener((observable, oldValue, newValue) -> {
             setPane(paneManager.visit(newValue));
+            type.setText(typeVisitor.visit(newValue));
         });
 
         historyBack.disableProperty().bind(viewModel.historyBackAvailableProperty().not());
         historyForward.disableProperty().bind(viewModel.historyForwardAvailableProperty().not());
 
         container.setOnKeyPressed(this::handleKeyEvent);
+
+        container.setOnMouseClicked(this::handleMousePressed);
+    }
+
+    private void handleMousePressed(final MouseEvent event) {
+        // TODO
+
+        if (event.getButton() == MouseButton.FORWARD) {
+            historyForward(null);
+        } else if (event.getButton() == MouseButton.BACK) {
+            historyBack(null);
+        }
     }
 
     private void handleKeyEvent(final KeyEvent event) {
@@ -61,9 +79,9 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 //        }
     }
 
-    private void setPane(final Optional<Parent> visit) {
+    private void setPane(final Optional<Parent> maybePane) {
         container.getChildren().clear();
-        visit.ifPresent(e -> container.getChildren().add(e));
+        maybePane.ifPresent(e -> container.getChildren().add(e));
     }
 
     public void hide(final ActionEvent actionEvent) {
@@ -80,6 +98,27 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 
     public void toggleFollow(final ActionEvent actionEvent) {
         viewModel.setFollow(follow.isSelected());
+    }
+
+    private static class TypeVisitor extends DefaultingDataVisitor<String> {
+        public TypeVisitor() {
+            super("Unknown");
+        }
+
+        @Override
+        public String visit(final Airport airport) {
+            return "Airport";
+        }
+
+        @Override
+        public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
+            return "FIR";
+        }
+
+        @Override
+        public String visit(final Pilot pilot) {
+            return "Flight";
+        }
     }
 
     private static class PaneManager implements OptionalDataVisitor<Parent> {

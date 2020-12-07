@@ -31,7 +31,7 @@ public class DataDetailSubViewModel<D extends Data> implements ViewModel {
         }
     }
 
-    protected void setDataDetail(final Data data) {
+    public void setDataDetail(final Data data) {
         if (data != null) {
             Notifications.SET_DATA_DETAIL.publish(data);
         }

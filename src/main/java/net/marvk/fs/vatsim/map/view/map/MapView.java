@@ -398,7 +398,9 @@ public class MapView implements FxmlView<MapViewModel> {
                         log.info("Drawing frame");
                         final long start = System.nanoTime();
                         redraw().get();
-                        final double frameTimeMillis = (System.nanoTime() - start) / 1000000.;
+                        final long frameTimeNanos = System.nanoTime() - start;
+                        viewModel.onFrameCompleted(frameTimeNanos);
+                        final double frameTimeMillis = frameTimeNanos / 1000000.;
                         lastFrameTimeMillis.set(frameTimeMillis);
                         log.info("Frame time was " + frameTimeMillis + "ms");
                     } catch (final InterruptedException | ExecutionException e) {

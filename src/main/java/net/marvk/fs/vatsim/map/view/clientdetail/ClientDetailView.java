@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ClientDetailView extends DataDetailSubView<DataDetailSubViewModel<Client>, Client> {
     @FXML
+    private Label callsign;
+    @FXML
     private Label onlineSince;
     @FXML
     private Label server;
@@ -31,8 +33,9 @@ public class ClientDetailView extends DataDetailSubView<DataDetailSubViewModel<C
     @Override
     protected List<Label> labels() {
         return List.of(
-                this.onlineSince,
-                server
+                onlineSince,
+                server,
+                callsign
         );
     }
 
@@ -49,5 +52,6 @@ public class ClientDetailView extends DataDetailSubView<DataDetailSubViewModel<C
                 client.logonTimeProperty()
         ));
         server.textProperty().bind(client.serverProperty());
+        callsign.textProperty().bind(client.callsignProperty());
     }
 }

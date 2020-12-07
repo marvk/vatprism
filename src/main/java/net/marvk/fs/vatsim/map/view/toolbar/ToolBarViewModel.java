@@ -1,30 +1,33 @@
 package net.marvk.fs.vatsim.map.view.toolbar;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
-import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.map.view.Notifications;
-import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
-import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 public class ToolBarViewModel implements ViewModel {
-    @InjectScope
-    private SettingsScope settingsScope;
 
+    private final Preferences preferences;
     @InjectScope
     private ToolbarScope toolbarScope;
+
+    @Inject
+    public ToolBarViewModel(final Preferences preferences) {
+        this.preferences = preferences;
+    }
 
     public void refresh() {
         Notifications.RELOAD_CLIENTS.publish();
     }
 
-    public void setAutoReload(final boolean autoReload) {
-        toolbarScope.setAutoReload(autoReload);
+    public Preferences getPreferences() {
+        return preferences;
     }
 
-    public ObservableList<PainterExecutor<?>> getPainterExecutors() {
-        return settingsScope.getPainters();
+    public void setAutoReload(final boolean autoReload) {
+        toolbarScope.setAutoReload(autoReload);
     }
 
     public void triggerRepaint() {

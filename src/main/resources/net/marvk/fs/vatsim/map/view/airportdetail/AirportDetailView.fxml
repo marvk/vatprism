@@ -1,49 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.String?>
-<TitledPane collapsible="false" text="FIR" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailView">
-   <content>
-      <VBox>
-         <children>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="75.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints/>
-                  <RowConstraints/>
-                  <RowConstraints/>
-               </rowConstraints>
-               <children>
-                  <Label styleClass="description" text="Name"/>
-                  <Label fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
-                  <Label text="Position" GridPane.rowIndex="1"/>
-                  <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
-                         GridPane.rowIndex="1">
-                     <styleClass>
+<?import java.lang.*?>
+<VBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.airportdetail.AirportDetailView">
+    <children>
+        <VBox>
+            <children>
+                <HBox>
+                    <children>
+                        <Label fx:id="icao" text="Label"/>
+                    </children>
+                    <styleClass>
+                        <String fx:value="header-pane"/>
                         <String fx:value="mono"/>
-                        <String fx:value="hyperlink-label"/>
-                     </styleClass>
-                  </Label>
-                  <Label styleClass="description" text="FIR" GridPane.rowIndex="2"/>
-                  <Label fx:id="fir" onMouseClicked="#setToFir" text="Label" GridPane.columnIndex="1"
-                         GridPane.rowIndex="2">
-                     <styleClass>
-                        <String fx:value="mono"/>
-                        <String fx:value="hyperlink-label"/>
-                     </styleClass>
-                  </Label>
-               </children>
-            </GridPane>
-         </children>
-         <padding>
-            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
-         </padding>
-      </VBox>
-   </content>
-</TitledPane>
+                    </styleClass>
+                </HBox>
+                <GridPane>
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="75.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                        <RowConstraints/>
+                    </rowConstraints>
+                    <children>
+                        <Label styleClass="description" text="Name"/>
+                        <Label fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
+                        <Label text="Position" GridPane.rowIndex="1"/>
+                        <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
+                               GridPane.rowIndex="1">
+                            <styleClass>
+                                <String fx:value="mono"/>
+                                <String fx:value="hyperlink-label"/>
+                            </styleClass>
+                        </Label>
+                        <Label styleClass="description" text="FIR" GridPane.rowIndex="2"/>
+                        <Label fx:id="fir" onMouseClicked="#setToFir" text="Label" GridPane.columnIndex="1"
+                               GridPane.rowIndex="2">
+                            <styleClass>
+                                <String fx:value="mono"/>
+                                <String fx:value="hyperlink-label"/>
+                            </styleClass>
+                        </Label>
+                    </children>
+                </GridPane>
+            </children>
+        </VBox>
+        <VBox fx:id="controllersContainer">
+            <children>
+                <HBox styleClass="header-pane">
+                    <children>
+                        <Label text="Controllers"/>
+                    </children>
+                </HBox>
+                <HBox fx:id="noControllers" alignment="CENTER" minHeight="0.0" minWidth="0.0">
+                    <children>
+                        <Label styleClass="mono" text="No Controllers"/>
+                    </children>
+                </HBox>
+                <GridPane fx:id="controllersGrid" hgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES"/>
+                        <ColumnConstraints hgrow="SOMETIMES"/>
+                        <ColumnConstraints hgrow="SOMETIMES"/>
+                    </columnConstraints>
+                </GridPane>
+            </children>
+        </VBox>
+    </children>
+</VBox>

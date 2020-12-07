@@ -42,18 +42,18 @@ public abstract class DataDetailSubView<DataDetailViewModel extends DataDetailSu
     }
 
     public void initialize() {
-        viewModel.dataProperty().addListener((observable, oldValue, newValue) -> setDataNullable(newValue));
+        viewModel.dataProperty().addListener((observable, oldValue, newValue) -> setDataNullable(oldValue, newValue));
     }
 
-    private void setDataNullable(final ViewModel data) {
-        if (data == null) {
-            clear();
+    private void setDataNullable(final ViewModel oldValue, final ViewModel newValue) {
+        if (newValue == null) {
+            clear(oldValue);
         } else {
-            setData(data);
+            setData(newValue);
         }
     }
 
-    protected void clear() {
+    protected void clear(final ViewModel oldValue) {
         for (final Label label : getLabels()) {
             label.textProperty().unbind();
             label.setText("");

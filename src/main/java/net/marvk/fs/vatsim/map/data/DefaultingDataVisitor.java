@@ -2,10 +2,10 @@ package net.marvk.fs.vatsim.map.data;
 
 import java.util.Objects;
 
-public abstract class DataDefaultVisitor<E> implements DataVisitor<E> {
+public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
     private final E defaultValue;
 
-    public DataDefaultVisitor(final E defaultValue) {
+    public DefaultingDataVisitor(final E defaultValue) {
         this.defaultValue = Objects.requireNonNull(defaultValue);
     }
 

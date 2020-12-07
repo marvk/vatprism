@@ -35,7 +35,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
         return List.of(firPainter);
     }
 
-    private class PainterVisitor extends DataDefaultVisitor<Consumer<GraphicsContext>> {
+    private class PainterVisitor extends DefaultingDataVisitor<Consumer<GraphicsContext>> {
         public PainterVisitor() {
             super(c -> {
             });

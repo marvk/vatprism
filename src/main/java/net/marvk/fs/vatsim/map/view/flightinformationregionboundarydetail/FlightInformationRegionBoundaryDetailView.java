@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView<DataDetailSubViewModel<FlightInformationRegionBoundary>, FlightInformationRegionBoundary> {
     @FXML
+    private Label icao;
+    @FXML
     private Label name;
     @FXML
     private Label position;
@@ -33,7 +35,8 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
     protected List<Label> labels() {
         return List.of(
                 name,
-                position
+                position,
+                icao
         );
     }
 
@@ -46,5 +49,6 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
                 .collect(Collectors.joining("\n"));
         name.setText(names);
         position.setText(positionLabel(data.getPolygon().getPolyLabel()));
+        icao.setText(data.getIcao());
     }
 }

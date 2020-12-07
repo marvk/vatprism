@@ -5,7 +5,6 @@ import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.animation.Animation;
-import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -21,8 +20,10 @@ import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusbarScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MapViewModel implements ViewModel {
     private final DoubleProperty scale = new SimpleDoubleProperty(1);
@@ -50,6 +51,8 @@ public class MapViewModel implements ViewModel {
     private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
+
+    private final FrameMetrics frameMetrics;
 
     @InjectScope
     private StatusbarScope statusbarScope;
@@ -84,6 +87,14 @@ public class MapViewModel implements ViewModel {
 
         this.painterExecutors = executors(upperInformationRegionRepository);
 
+        final ArrayList<String> names = painterExecutors
+                .stream()
+                .map(PainterExecutor::getName)
+                .collect(Collectors.toCollection(ArrayList::new));
+        names.add(0, "Total");
+
+        this.frameMetrics = new FrameMetrics(names, 250);
+
         this.mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
 
         this.scale.addListener((observable, oldValue, newValue) -> mapVariables.setScale(newValue.doubleValue()));
@@ -109,7 +120,7 @@ public class MapViewModel implements ViewModel {
     private void panToData(final Data data) {
         transitionDataVisitor
                 .visit(data)
-                .ifPresent(e -> panToData(new WorldPanTransition(new Viewport(e.getWorldCenter(), 1), e)));
+                .ifPresent(e -> panToData(new WorldPanTransition(new Viewport(getWorldCenter().multiply(-1), scale.get()), e)));
     }
 
     private void panToData(final WorldPanTransition transition) {
@@ -166,7 +177,8 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
                 PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
-                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get)
+                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
+                PainterExecutor.ofItem("Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
         );
     }
 
@@ -277,6 +289,14 @@ public class MapViewModel implements ViewModel {
         selectionShape.set(null);
     }
 
+    public void onFrameCompleted(final long totalFrameTimeNanos) {
+        for (final PainterExecutor<?> painterExecutor : painterExecutors) {
+            frameMetrics.getMetric(painterExecutor.getName()).append(painterExecutor.getLastDurationNanos());
+        }
+
+        frameMetrics.getMetric("Total").append(totalFrameTimeNanos);
+    }
+
     private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {
         private Optional<Viewport> defaultTarget(final Point2D position) {
             if (position == null) {
@@ -328,12 +348,12 @@ public class MapViewModel implements ViewModel {
             super(30);
             setCycleDuration(Duration.seconds(1));
             setCycleCount(1);
-            setInterpolator(Interpolator.EASE_BOTH);
+//            setInterpolator(Interpolator.EASE_BOTH);
             this.targetWorldCenter = target.worldCenter.multiply(-1);
             this.startingWorldCenter = starting.worldCenter.multiply(-1);
 
             this.targetScale = target.scale;
-            this.startingScale = starting.scale;
+            this.startingScale = starting.scale + (starting.scale == 1 ? 0.000000001 : 0);
         }
 
         @Override
@@ -343,54 +363,24 @@ public class MapViewModel implements ViewModel {
             final double f1 = frac;
             worldCenter.set(position(f1));
 
-            scale.set(scale(f1 * f1));
+            scale.set(smoothScale(frac));
         }
 
-//        private double scale(final double frac) {
-//            final double s = startingScale;
-//            final double t = targetScale;
-//
-//            final double u;
-//
-////            System.out.println("s = " + s);
-////            System.out.println("t = " + t);
-//
-//            if (s == t && t - 1 != 0) {
-//                u = 1. / 2;
-//            } else {
-//                final double p = Math.sqrt((s - 1) * (t - 1)) + s - 1;
-//                if (s - t != 0 && -p != 0) {
-//                    u = (-p) / (s - t);
-//                } else if (p != 0) {
-//                    u = p / (s - t);
-//                } else {
-//                    throw new IllegalStateException();
-//                }
-//            }
-//
-////            System.out.println("u = " + u);
-//
-//            final double x;
-//            final double y;
-//            final double z;
-//            if (s == 0) {
-//                x = t - 1;
-//                y = 0;
-//                z = 1;
-//            } else {
-//                x = (s - 1) / (u * u);
-//                y = (2 - 2 * s) / (u);
-//                z = s;
-//            }
-//
-////            System.out.println("x = " + x);
-////            System.out.println("y = " + y);
-////            System.out.println("z = " + z);
-//
-//            final double r = frac * frac * x + frac * y + z;
-////            System.out.println("r = " + r);
-//            return r;
-//        }
+        private double smoothScale(final double x) {
+            final double s = startingScale;
+            final double t = targetScale;
+
+            final double a = (-Math.sqrt(s * t - s - t + 1) + s - 1) / (s - t);
+            final double u = (s - 1) / (a * a);
+            final double v = (2 - 2 * s) / a;
+            final double w = s;
+
+            final double y = u * x * x + v * x + w;
+
+            System.out.println("y = " + y);
+
+            return y;
+        }
 
         private double scale(final double f1) {
             final double f0 = 1 - f1;

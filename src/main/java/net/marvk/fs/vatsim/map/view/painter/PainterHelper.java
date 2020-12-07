@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Polygon;
@@ -36,23 +37,37 @@ public class PainterHelper {
         drawPolygon(c, polygon, 0, polyline, fill);
     }
 
-    private void drawPolygon(final GraphicsContext c, final Polygon points, final double offsetX, final boolean polyline, final boolean fill) {
-        for (int i = 0; i < points.size(); i++) {
-            mapVariables.getXBuf()[i] = mapVariables.toCanvasX(points.getPointsX()[i] + offsetX);
-            mapVariables.getYBuf()[i] = mapVariables.toCanvasY(points.getPointsY()[i]);
+    private void drawPolygon(final GraphicsContext c, final Polygon polygon, final double offsetX, final boolean polyline, final boolean fill) {
+        if (!mapVariables.isIntersectingWorldView(shiftedBounds(polygon, offsetX))) {
+            return;
+        }
+
+        for (int i = 0; i < polygon.size(); i++) {
+            mapVariables.getXBuf()[i] = mapVariables.toCanvasX(polygon.getPointsX()[i] + offsetX);
+            mapVariables.getYBuf()[i] = mapVariables.toCanvasY(polygon.getPointsY()[i]);
         }
 
         if (polyline) {
             if (!fill) {
-                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), points.size());
+                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
             }
         } else {
             if (fill) {
-                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), points.size());
+                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
             } else {
-                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), points.size());
+                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
             }
         }
+    }
+
+    private static Rectangle2D shiftedBounds(final Polygon polygon, final double offsetX) {
+        final Rectangle2D boundary = polygon.boundary();
+        return new Rectangle2D(
+                boundary.getMinX() + offsetX,
+                boundary.getMinY(),
+                boundary.getWidth(),
+                boundary.getHeight()
+        );
     }
 
     public void setPixel(final GraphicsContext c, final Color color, final int x, final int y) {

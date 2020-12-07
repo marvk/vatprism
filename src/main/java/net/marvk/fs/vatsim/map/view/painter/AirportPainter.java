@@ -11,7 +11,6 @@ import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +65,11 @@ public class AirportPainter extends MapPainter<Airport> {
 
     @Override
     public void paint(final GraphicsContext c, final Airport airport) {
+        final Point2D position = airport.getPosition();
+        if (!mapVariables.isContainedInExpandedWorldView(position)) {
+            return;
+        }
+
         if (paintAll || airport.hasControllers() || (paintUncontrolledButDestinationsOrArrivals && (airport.hasArrivals() || airport
                 .hasDepartures()))) {
             final Point2D point = airport.getPosition();
@@ -77,7 +81,7 @@ public class AirportPainter extends MapPainter<Airport> {
                     .stream()
                     .map(Controller::getControllerType)
                     .distinct()
-                    .sorted(Comparator.comparingInt(Enum::ordinal))
+                    .sorted(ControllerType.COMPARATOR)
                     .collect(Collectors.toCollection(ArrayList::new));
 
             c.setTextAlign(TextAlignment.CENTER);

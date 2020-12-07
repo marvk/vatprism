@@ -1,19 +1,37 @@
-.titled-pane {
-    -fx-background-color: -vatsim-background-color-light;
-    -fx-border-color: -vatsim-background-color-light;
+/*.titled-pane {*/
+/*    -fx-background-color: -vatsim-background-color-light;*/
+/*    -fx-border-color: -vatsim-background-color-light;*/
+/*}*/
+
+/*.titled-pane > * {*/
+/*    -fx-background-color: transparent;*/
+/*    -fx-box-border: transparent;*/
+/*}*/
+
+/*.titled-pane > *.content {*/
+/*    -fx-background-color: -vatsim-background-color-very-light;*/
+/*}*/
+
+/*.titled-pane-container > *.content {*/
+/*    -fx-background-color: -vatsim-background-color-very-light-25;*/
+/*}*/
+
+.button-bar {
+    -fx-background-color: -vatsim-background-color;
 }
 
-.titled-pane > * {
-    -fx-background-color: transparent;
-    -fx-box-border: transparent;
-}
-
-.titled-pane > *.content {
+.container {
     -fx-background-color: -vatsim-background-color-very-light;
 }
 
-.titled-pane-container > *.content {
-    -fx-background-color: -vatsim-background-color-very-light-25;
+.header-pane {
+    -fx-background-color: -vatsim-background-color-light;
+    -fx-alignment: center;
+    -fx-pref-height: 25;
+}
+
+.header-pane .label {
+    -fx-font-size: 14;
 }
 
 /*.text-area {*/

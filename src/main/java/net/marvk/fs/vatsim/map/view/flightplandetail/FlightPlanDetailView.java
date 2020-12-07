@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -24,11 +23,11 @@ import java.util.stream.Collectors;
 
 public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailViewModel, FlightPlan> {
     @FXML
+    private VBox container;
+    @FXML
     private HBox noFlightPlan;
     @FXML
     private VBox content;
-    @FXML
-    private TitledPane flightPlan;
     @FXML
     private Label flightRules;
     @FXML
@@ -47,8 +46,8 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     private TextArea remarks;
 
     private void setFlightPlanPanes(final Boolean newValue) {
-        final ObservableList<Node> children = ((VBox) flightPlan.getContent()).getChildren();
-        children.clear();
+        final ObservableList<Node> children = container.getChildren();
+        children.setAll(children.get(0));
 
         if (newValue) {
             children.add(content);
@@ -79,6 +78,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
 
     @Override
     protected void setData(final FlightPlan flightPlan) {
+        // TODO flight plan available not updating
         flightRules.textProperty().bind(flightPlan.flightTypeProperty().asString());
         aircraftType.textProperty().bind(flightPlan.aircraftProperty());
         aircraftType.setTooltip(createTooltip(aircraftType.textProperty(), Duration.millis(500)));
@@ -88,7 +88,6 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         bindToAirport(arrival, flightPlan.arrivalAirportProperty());
         path.textProperty().bind(flightPlan.plannedRouteProperty());
         remarks.textProperty().bind(flightPlan.remarksProperty());
-
         setFlightPlanPanes(isFlightPlanAvailable(flightPlan));
     }
 
@@ -98,8 +97,8 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     }
 
     @Override
-    protected void clear() {
-        super.clear();
+    protected void clear(final FlightPlan oldValue) {
+        super.clear(oldValue);
         setFlightPlanPanes(false);
     }
 
