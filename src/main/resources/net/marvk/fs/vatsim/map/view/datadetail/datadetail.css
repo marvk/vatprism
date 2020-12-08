@@ -28,6 +28,7 @@
     -fx-background-color: -vatsim-background-color-light;
     -fx-alignment: center;
     -fx-pref-height: 25;
+    -fx-max-height: infinity;
 }
 
 .header-pane .label {

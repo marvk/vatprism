@@ -4,10 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import net.marvk.fs.vatsim.api.HttpDataSource;
-import net.marvk.fs.vatsim.api.SimpleVatsimApi;
-import net.marvk.fs.vatsim.api.VatsimApi;
-import net.marvk.fs.vatsim.api.VatsimApiDataSource;
+import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import org.geotools.data.shapefile.files.ShpFiles;
@@ -25,6 +22,7 @@ import java.util.List;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(VatsimApiUrlProvider.class).to(UrlProviderV1.class).in(Singleton.class);
         bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);

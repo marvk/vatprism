@@ -1,8 +1,10 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import lombok.ToString;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 
+@ToString
 public class Controller extends Client implements Data {
     private final StringProperty frequency = new SimpleStringProperty();
     private final StringProperty rating = new SimpleStringProperty();
@@ -42,10 +44,10 @@ public class Controller extends Client implements Data {
         }
 
         if (getWorkingFlightInformationRegion() != null) {
-            return getWorkingFlightInformationRegion();
+            return getWorkingFlightInformationRegion().getBoundary();
         }
 
-        if (getWorkingAirport() != null) {
+        if (getWorkingUpperInformationRegion() != null) {
             return getWorkingUpperInformationRegion();
         }
 

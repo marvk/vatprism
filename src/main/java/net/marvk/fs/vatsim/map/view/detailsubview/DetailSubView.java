@@ -15,6 +15,9 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<ViewModel>, ViewModel> implements FxmlView<DetailViewModel> {
@@ -135,5 +138,10 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
         }
 
         return null;
+    }
+
+    protected static String onlineForString(final ZonedDateTime logonTime) {
+        final Duration between = Duration.between(logonTime, ZonedDateTime.now(ZoneId.of("Z")));
+        return String.format("%02d:%02d", between.toHoursPart(), between.toMinutesPart());
     }
 }

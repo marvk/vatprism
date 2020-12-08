@@ -101,7 +101,12 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             callsign.getStyleClass().add("hyperlink-label");
             controllersGrid.add(callsign, 2, i);
             callsign.setOnMouseClicked(e -> viewModel.setDataDetail(controller));
-            GridPane.setHgrow(callsign, Priority.ALWAYS);
+            GridPane.setHgrow(callsign, Priority.NEVER);
+
+            final Label onlineFor = new Label(onlineForString(controller.getLogonTime()));
+            onlineFor.getStyleClass().add("mono");
+            controllersGrid.add(onlineFor, 3, i);
+            GridPane.setHgrow(onlineFor, Priority.ALWAYS);
         }
     }
 }

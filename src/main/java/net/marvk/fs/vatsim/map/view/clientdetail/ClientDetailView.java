@@ -4,16 +4,20 @@ import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 
-public class ClientDetailView extends DataDetailSubView<DataDetailSubViewModel<Client>, Client> {
+public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, Client> {
+    @FXML
+    private Label realName;
+    @FXML
+    private Label cid;
     @FXML
     private Label callsign;
     @FXML
@@ -47,11 +51,18 @@ public class ClientDetailView extends DataDetailSubView<DataDetailSubViewModel<C
                         return "";
                     }
 
-                    return FORMATTER.format(client.getLogonTime());
+                    return "%s (%s)".formatted(FORMATTER.format(client.getLogonTime()), onlineForString(client.getLogonTime()));
                 },
                 client.logonTimeProperty()
         ));
         server.textProperty().bind(client.serverProperty());
         callsign.textProperty().bind(client.callsignProperty());
+        cid.textProperty().bind(client.cidProperty());
+        realName.textProperty().bind(client.realNameProperty());
+    }
+
+    @FXML
+    private void openStats(final MouseEvent event) {
+        viewModel.openStats();
     }
 }

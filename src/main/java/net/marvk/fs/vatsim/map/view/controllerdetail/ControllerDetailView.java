@@ -62,6 +62,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
 
         type.setStyle("-fx-text-fill: #" + webColor(color("airports.type_label_color")));
         typeBackground.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));
+
         controlling.setText(icaoVisitor.visit(controller.getWorkingArea()));
         controllingDescription.setText(nameVisitor.visit(controller.getWorkingArea()));
         controlling.setOnMouseClicked(event -> viewModel.setDataDetail(controller.getWorkingArea()));
@@ -80,5 +81,4 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         super.clear(oldValue);
         clientController.getViewModel().setData(null);
     }
-
 }
