@@ -29,6 +29,12 @@
             </graphic>
         </ToggleButton>
         <Region HBox.hgrow="ALWAYS"/>
+        <ToggleButton fx:id="fullScreen" styleClass="icon-button" onAction="#setAutoReload" mnemonicParsing="false">
+            <graphic>
+                <FontIcon fx:id="fullScreenIcon" iconLiteral="oct-screen-normal-16" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="enableDebug" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>

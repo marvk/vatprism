@@ -1,18 +1,29 @@
 package net.marvk.fs.vatsim.map.view.toolbar;
 
 import de.saxsys.mvvmfx.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.about.AboutView;
+import org.kordamp.ikonli.Ikon;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.octicons.Octicons;
 
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
+    @FXML
+    private ToggleButton fullScreen;
+    @FXML
+    private FontIcon fullScreenIcon;
     @FXML
     private HBox container;
     @FXML
@@ -37,14 +48,62 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     }
 
     public void initialize() {
-        bindBoolean(enableDebug, viewModel.getPreferences().booleanProperty("metrics.show"));
-        bindBoolean(enablePilotCallsign, viewModel.getPreferences().booleanProperty("pilots.show_label"));
+        container.sceneProperty().addListener((observable, oldValue, newValue) -> setupWindowBindings(newValue));
 
-        enableDebug.visibleProperty().bind(viewModel.getPreferences().booleanProperty("general.debug"));
+        bindBooleanBidirectional(enableDebug, "metrics.show");
+        bindBooleanBidirectional(enablePilotCallsign, "pilots.show_label");
+
+        enableDebug.visibleProperty().bind(booleanProperty("general.debug"));
     }
 
-    private static void bindBoolean(final Toggle button, final Property<Boolean> other) {
-        button.selectedProperty().bindBidirectional(other);
+    private void setupWindowBindings(final Scene scene) {
+        scene.windowProperty()
+             .addListener((observable, oldValue, newValue) -> setupFullScreenBindings((Stage) newValue));
+    }
+
+    private void setupFullScreenBindings(final Stage stage) {
+        final BooleanProperty fullScreenProperty = booleanProperty("general.fullscreen");
+        stage.fullScreenProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    fullScreenProperty.set(newValue);
+                }
+        );
+
+        fullScreenProperty.addListener((observable, oldValue, newValue) -> stage.setFullScreen(newValue));
+
+        fullScreenIcon.iconCodeProperty().bind(Bindings.<Ikon>createObjectBinding(
+                () -> ikon(fullScreenProperty.get()), fullScreenProperty
+        ));
+
+        bindBooleanBidirectional(fullScreen, fullScreenProperty);
+    }
+
+    private static Octicons ikon(final boolean fullscreen) {
+        if (fullscreen) {
+            return Octicons.SCREEN_NORMAL_16;
+        }
+
+        return Octicons.SCREEN_FULL_16;
+    }
+
+    private BooleanProperty booleanProperty(final String key) {
+        return viewModel.getPreferences().booleanProperty(key);
+    }
+
+    private void bindBooleanBidirectional(final Toggle button, final String key) {
+        bindBooleanBidirectional(button.selectedProperty(), key);
+    }
+
+    private void bindBooleanBidirectional(final Property<Boolean> property, final String key) {
+        bindBooleanBidirectional(property, booleanProperty(key));
+    }
+
+    private static void bindBooleanBidirectional(final Toggle button, final Property<Boolean> property) {
+        bindBooleanBidirectional(button.selectedProperty(), property);
+    }
+
+    private static void bindBooleanBidirectional(final Property<Boolean> property1, final Property<Boolean> property2) {
+        property1.bindBidirectional(property2);
     }
 
     @SneakyThrows

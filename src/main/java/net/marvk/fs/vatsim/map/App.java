@@ -5,6 +5,8 @@ import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
@@ -24,6 +26,11 @@ public class App extends MvvmfxGuiceApplication {
                 .load();
 
         primaryStage.setOnCloseRequest(e -> System.exit(0));
+        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (KeyCode.F11 == event.getCode()) {
+                primaryStage.setFullScreen(!primaryStage.isFullScreen());
+            }
+        });
         primaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-32.png"));
         primaryStage.setTitle("VATSim Map");
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
