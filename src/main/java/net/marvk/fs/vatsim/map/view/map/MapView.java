@@ -170,6 +170,7 @@ public class MapView implements FxmlView<MapViewModel> {
         private final BooleanProperty controlDown = new SimpleBooleanProperty();
 
         public void onStart(final MouseEvent event) {
+            controlDown.set(event.isControlDown());
             contextMenu.hideAndClear();
 
             if (!leftMouseDown.get() && event.isPrimaryButtonDown()) {
@@ -188,6 +189,7 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onDrag(final MouseEvent event) {
+            controlDown.set(event.isControlDown());
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
 
@@ -212,6 +214,7 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onRelease(final MouseEvent event) {
+            controlDown.set(event.isControlDown());
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
 
@@ -220,6 +223,7 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onMove(final MouseEvent event) {
+            controlDown.set(event.isControlDown());
             viewModel.mouseViewPositionProperty().set(new Point2D(event.getX(), event.getY()));
         }
 

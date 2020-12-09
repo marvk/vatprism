@@ -58,7 +58,7 @@
 }
 
 .text-area {
-    -fx-background-color: -vatsim-background-color-light;
+    -fx-background-color: -vatsim-background-color-very-very-light;
     -fx-text-box-border: transparent;
     -fx-background-insets: 0;
     -fx-highlight-fill: -vatsim-background-color-very-very-very-light;

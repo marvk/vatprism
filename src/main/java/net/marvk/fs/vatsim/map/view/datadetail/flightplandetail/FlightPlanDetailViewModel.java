@@ -2,7 +2,7 @@ package net.marvk.fs.vatsim.map.view.datadetail.flightplandetail;
 
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 
 import java.util.function.Supplier;
 

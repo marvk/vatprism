@@ -16,10 +16,10 @@ import net.marvk.fs.vatsim.map.view.datadetail.airportdetail.AirportDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.airportdetail.AirportDetailViewModel;
 import net.marvk.fs.vatsim.map.view.datadetail.controllerdetail.ControllerDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.controllerdetail.ControllerDetailViewModel;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 import net.marvk.fs.vatsim.map.view.datadetail.flightinformationregionboundarydetail.FlightInformationRegionBoundaryDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.pilotdetail.PilotDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail.UpperInformationRegionDetailView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
 
 import java.util.Optional;
 

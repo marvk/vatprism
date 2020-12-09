@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import javafx.application.HostServices;
 import net.marvk.fs.vatsim.api.VatsimApiUrlProvider;
 import net.marvk.fs.vatsim.map.data.Client;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 
 public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
     private final HostServices hostServices;

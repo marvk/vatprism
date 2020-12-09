@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<VBox styleClass="detail-view-container" pickOnBounds="false" prefHeight="500.0" stylesheets="@datadetail.css"
+<VBox styleClass="detail-view-container" pickOnBounds="false" prefHeight="500.0"
+      stylesheets="@datadetail.css, @scrollbar.css"
       xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.DataDetailView">
     <children>

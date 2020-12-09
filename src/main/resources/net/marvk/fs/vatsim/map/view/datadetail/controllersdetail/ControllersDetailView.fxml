@@ -16,9 +16,10 @@
         </HBox>
         <GridPane fx:id="controllersGrid" hgap="10">
             <columnConstraints>
-                <ColumnConstraints hgrow="NEVER"/>
-                <ColumnConstraints hgrow="NEVER"/>
                 <ColumnConstraints hgrow="ALWAYS"/>
+                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="NEVER"/>
             </columnConstraints>
         </GridPane>
     </children>

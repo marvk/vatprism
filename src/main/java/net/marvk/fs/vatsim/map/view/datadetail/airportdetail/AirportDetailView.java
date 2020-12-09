@@ -8,7 +8,7 @@ import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
 import java.util.Collections;
 import java.util.List;

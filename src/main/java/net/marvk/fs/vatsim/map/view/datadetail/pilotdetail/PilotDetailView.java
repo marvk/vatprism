@@ -6,9 +6,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 import net.marvk.fs.vatsim.map.view.datadetail.flightplandetail.FlightPlanDetailView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
 
 import java.util.Collections;
 import java.util.List;

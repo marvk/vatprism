@@ -7,7 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import net.marvk.fs.vatsim.map.data.Client;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;

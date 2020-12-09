@@ -34,7 +34,7 @@
                             <RowConstraints vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <children>
-                            <Label styleClass="description" fx:id="controllingDescription" text="Controlling"/>
+                            <Label fx:id="controllingDescription" styleClass="description" text="Controlling"/>
                             <Label styleClass="description" text="Frequency" GridPane.columnIndex="3"/>
                             <Label fx:id="controlling" text="Label" GridPane.columnIndex="1">
                                 <styleClass>
@@ -48,18 +48,23 @@
                                    GridPane.rowIndex="1"/>
                         </children>
                     </GridPane>
-                    <VBox>
-                        <children>
-                            <Label text="Atis"/>
-                            <TextArea styleClass="mono" fx:id="atis" prefHeight="100.0" prefWidth="0.0" wrapText="true">
-                                <VBox.margin>
-                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
-                                </VBox.margin>
-                            </TextArea>
-                        </children>
-                    </VBox>
                 </children>
             </VBox>
+        </children>
+    </VBox>
+    <VBox>
+        <children>
+            <HBox styleClass="header-pane">
+                <children>
+                    <Label styleClass="mono" text="ATIS"/>
+                </children>
+            </HBox>
+            <TextArea fx:id="atis" editable="false" prefHeight="100.0" prefWidth="0.0" promptText="No Atis"
+                      styleClass="mono" wrapText="true">
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+            </TextArea>
         </children>
     </VBox>
 </VBox>

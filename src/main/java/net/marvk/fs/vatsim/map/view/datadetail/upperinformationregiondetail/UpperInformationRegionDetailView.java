@@ -11,8 +11,8 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.detailsubview.DataDetailSubViewModel;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 
 import java.util.Collections;
 import java.util.List;

@@ -133,6 +133,19 @@
     -fx-padding: 0;
 }
 
+.menu-item .label {
+    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: -vatsim-text-greyed-out;
+}
+
+.menu-item:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.menu-item:focused {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
 .menu-item-data {
     -fx-cursor: hand;
 }

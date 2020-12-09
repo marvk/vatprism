@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.view.detailsubview;
+package net.marvk.fs.vatsim.map.view.datadetail.detailsubview;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
