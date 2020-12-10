@@ -74,4 +74,6 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     public ReadOnlyObjectProperty<ZonedDateTime> lastUpdatedTimeProperty() {
         return lastUpdatedTime;
     }
+
+    public abstract ClientType clientType();
 }

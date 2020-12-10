@@ -1,5 +1,7 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -111,14 +113,9 @@ public class AirportPainter extends MapPainter<Airport> {
             }
 
             c.setFill(textColor);
-            c.setTextBaseline(VPos.CENTER);
-
-            if (text) {
-                c.fillText(icao, x, y - 6);
-            }
-
             c.fillRect(x, y, 1, 1);
 
+            c.setTextBaseline(VPos.CENTER);
             if (paintControllers) {
                 if (paintApproach && types.isEmpty() && !paintApproachCircle) {
                     types.add(ControllerType.APP);
@@ -149,6 +146,19 @@ public class AirportPainter extends MapPainter<Airport> {
 
                     c.strokeRect(xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
                 }
+            }
+
+            c.setTextBaseline(VPos.BOTTOM);
+            if (text) {
+                final FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(c.getFont());
+
+                c.setFill(textColor.deriveColor(0, 1, 0.5, 0.5));
+                final int width = (int) Math.round(icao.chars().mapToDouble(e -> fm.getCharWidth((char) e)).sum());
+                final int height = Math.round(fm.getAscent() + fm.getDescent());
+                c.fillRect(Math.floor(x - width / 2.0), Math.ceil(y - 1 - height), width + 1, height);
+
+                c.setFill(textColor);
+                c.fillText(icao, x, y - 1);
             }
         }
     }

@@ -153,9 +153,14 @@ public class MapViewModel implements ViewModel {
                    .getItems()
                    .setAll(flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition));
 
+        final List<Airport> col = airportRepository
+                .streamSearchByPosition(mouseWorldPosition, selectionDistance(), Integer.MAX_VALUE)
+                .filter(Airport::hasControllers)
+                .limit(10)
+                .collect(Collectors.toList());
         contextMenu.getAirports()
                    .getItems()
-                   .setAll(airportRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 3));
+                   .setAll(col);
 
         contextMenu.getPilots()
                    .getItems()

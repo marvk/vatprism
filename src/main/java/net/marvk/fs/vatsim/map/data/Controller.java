@@ -34,6 +34,11 @@ public class Controller extends Client implements Data {
         setAtisMessage(controller.getTextAtis());
     }
 
+    @Override
+    public ClientType clientType() {
+        return ClientType.CONTROLLER;
+    }
+
     private void setAtisMessage(final List<String> textAtis) {
         if (textAtis != null) {
             final String msg = String

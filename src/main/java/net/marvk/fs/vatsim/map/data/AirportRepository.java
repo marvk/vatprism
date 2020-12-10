@@ -16,6 +16,7 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Slf4j
@@ -100,11 +101,15 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     }
 
     public List<Airport> searchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
+        return streamSearchByPosition(p, maxDistance, maxCount)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public Stream<Airport> streamSearchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
         final var spliterator = rTree.nearest(Geometries.point(p.getX(), p.getY()), maxDistance, maxCount)
                                      .spliterator();
         return StreamSupport.stream(spliterator, false)
-                            .map(Entry::value)
-                            .collect(Collectors.toCollection(ArrayList::new));
+                            .map(Entry::value);
     }
 
     private static EntryDefault<Airport, Point> entry(final Airport e) {

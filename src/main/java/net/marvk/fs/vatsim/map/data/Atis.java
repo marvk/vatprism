@@ -16,6 +16,11 @@ public class Atis extends Controller {
         atisCode.set(atis.getAtisCode());
     }
 
+    @Override
+    public ClientType clientType() {
+        return ClientType.ATIS;
+    }
+
     public String getAtisCode() {
         return atisCode.get();
     }

@@ -30,13 +30,15 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private final ReadOnlyListWrapper<Controller> controllers;
     private final AirportRepository airportRepository;
     private final CallsignParser callsignParser;
+    private final ClientTypeMapper clientTypeMapper;
     private RTree<Pilot, Point> rTree = RTree.create();
 
     @Inject
-    public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser) {
+    public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser, final ClientTypeMapper clientTypeMapper) {
         super(vatsimApi);
         this.airportRepository = airportRepository;
         this.callsignParser = callsignParser;
+        this.clientTypeMapper = clientTypeMapper;
 
         // yikes, but it works, sooo...
         pilots = new ReadOnlyListWrapper<Pilot>(new FilteredList(list(), e -> e instanceof Pilot));
@@ -55,12 +57,12 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
 
     @Override
     protected String keyFromModel(final VatsimClient vatsimClient) {
-        return vatsimClient.getCid() + "_" + vatsimClient.getCallsign();
+        return vatsimClient.getCid() + vatsimClient.getCallsign() + clientTypeMapper.map(vatsimClient.getClientType());
     }
 
     @Override
     protected String keyFromViewModel(final Client client) {
-        return client.getCid() + "_" + client.getCallsign();
+        return client.getCid() + client.getCallsign() + client.clientType();
     }
 
     @Override
@@ -70,9 +72,10 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
 
     @Override
     protected void onAdd(final Client toAdd, final VatsimClient vatsimClient) {
-        if (toAdd instanceof Controller) {
+        final ClientType type = toAdd.clientType();
+        if (type == ClientType.CONTROLLER || type == ClientType.ATIS) {
             ((Controller) toAdd).setFromCallsignParserResult(callsignParser.parse((VatsimController) vatsimClient));
-        } else if (toAdd instanceof Pilot) {
+        } else if (type == ClientType.PILOT) {
             final Pilot pilot = (Pilot) toAdd;
             final VatsimFlightPlan flightPlan = ((VatsimPilot) vatsimClient).getFlightPlan();
             if (flightPlan != null) {

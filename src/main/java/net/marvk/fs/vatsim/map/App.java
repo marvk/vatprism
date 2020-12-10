@@ -29,12 +29,20 @@ public class App extends MvvmfxGuiceApplication {
 
         // TODO Ugly hack to stay in front...
         primaryStage.focusedProperty()
-                    .addListener((observable, oldValue, newValue) -> Platform.runLater(primaryStage::toFront));
+                    .addListener((observable, oldValue, newValue) -> {
+                        if (!newValue && primaryStage.isFullScreen()) {
+                            Platform.runLater(primaryStage::toFront);
+                        }
+                    });
 
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (KeyCode.F11 == event.getCode()) {
                 primaryStage.setFullScreen(!primaryStage.isFullScreen());
             }
+        });
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
         });
         primaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-32.png"));
         primaryStage.setTitle("VATSim Map");

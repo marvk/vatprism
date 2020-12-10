@@ -33,6 +33,11 @@ public class Pilot extends Client implements Data {
         position.set(GeomUtil.parsePoint(pilot.getLongitude(), pilot.getLatitude()));
     }
 
+    @Override
+    public ClientType clientType() {
+        return ClientType.PILOT;
+    }
+
     public FlightPlan getFlightPlan() {
         return flightPlan;
     }
