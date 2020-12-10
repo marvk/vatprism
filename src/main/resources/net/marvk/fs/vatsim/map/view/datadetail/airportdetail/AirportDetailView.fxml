@@ -2,21 +2,13 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.*?>
+<?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
+<?import java.lang.String?>
 <VBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.airportdetail.AirportDetailView">
     <children>
-        <VBox>
-            <children>
-                <HBox>
-                    <children>
-                        <Label fx:id="icao" text="Label"/>
-                    </children>
-                    <styleClass>
-                        <String fx:value="header-pane"/>
-                        <String fx:value="mono"/>
-                    </styleClass>
-                </HBox>
+        <DataDetailPane fx:id="status" headerMonospace="true">
+            <contentNode>
                 <GridPane>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="75.0"/>
@@ -48,8 +40,8 @@
                         </Label>
                     </children>
                 </GridPane>
-            </children>
-        </VBox>
+            </contentNode>
+        </DataDetailPane>
         <fx:include fx:id="controllers" source="../controllersdetail/ControllersDetailView.fxml"/>
     </children>
 </VBox>

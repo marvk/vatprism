@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
@@ -19,17 +20,17 @@ import java.util.List;
 
 public class UpperInformationRegionDetailView extends DataDetailSubView<DataDetailSubViewModel<UpperInformationRegion>, UpperInformationRegion> {
     @FXML
+    private DataDetailPane status;
+    @FXML
     private VBox container;
     @FXML
     private Label name;
     @FXML
     private Label position;
     @FXML
-    private Label icao;
-    @FXML
     private GridPane firsGrid;
     @FXML
-    private VBox firsContainer;
+    private DataDetailPane firsContainer;
     @FXML
     private ControllersDetailView controllersController;
 
@@ -41,14 +42,14 @@ public class UpperInformationRegionDetailView extends DataDetailSubView<DataDeta
     @Override
     protected List<Label> labels() {
         return List.of(
-                name, position, icao
+                name, position
         );
     }
 
     @Override
     protected void setData(final UpperInformationRegion uir) {
         name.setText(uir.getName());
-        icao.setText(uir.getIcao());
+        status.setHeaderText(uir.getIcao());
         position.setText(positionLabel(GeomUtil.center(uir.getBounds())));
 
         controllersController.getViewModel().setData(uir.getControllers());

@@ -47,12 +47,11 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
 
     private void setFlightPlanPanes(final Boolean newValue) {
         final ObservableList<Node> children = container.getChildren();
-        children.setAll(children.get(0));
 
         if (newValue) {
-            children.add(content);
+            children.setAll(content);
         } else {
-            children.add(noFlightPlan);
+            children.setAll(noFlightPlan);
         }
     }
 

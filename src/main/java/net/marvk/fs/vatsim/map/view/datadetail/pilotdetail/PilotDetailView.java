@@ -3,7 +3,6 @@ package net.marvk.fs.vatsim.map.view.datadetail.pilotdetail;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TitledPane;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
@@ -14,10 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pilot>, Pilot> {
-    @FXML
-    private TitledPane pilot;
-    @FXML
-    private TitledPane flight;
     @FXML
     private Label position;
     @FXML

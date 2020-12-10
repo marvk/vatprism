@@ -3,17 +3,13 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.String?>
 <VBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.pilotdetail.PilotDetailView">
     <fx:include fx:id="client" source="../clientdetail/ClientDetailView.fxml"/>
-    <VBox>
-        <children>
-            <HBox styleClass="header-pane">
-                <children>
-                    <Label text="Status"/>
-                </children>
-            </HBox>
+    <DataDetailPane headerText="Status">
+        <contentNode>
             <GridPane hgap="2.0" vgap="2.0">
                 <columnConstraints>
                     <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
@@ -53,7 +49,7 @@
                 <Label styleClass="description" text="Altitude" GridPane.rowIndex="2"/>
                 <Label fx:id="altitude" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
             </GridPane>
-        </children>
-    </VBox>
+        </contentNode>
+    </DataDetailPane>
     <fx:include fx:id="flightPlan" source="../flightplandetail/FlightPlanDetailView.fxml"/>
 </VBox>

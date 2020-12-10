@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegion;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
@@ -20,13 +21,13 @@ import java.util.stream.Collectors;
 
 public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView<DataDetailSubViewModel<FlightInformationRegionBoundary>, FlightInformationRegionBoundary> {
     @FXML
+    private DataDetailPane status;
+    @FXML
     private VBox container;
     @FXML
-    private VBox uirsContainer;
+    private DataDetailPane uirsContainer;
     @FXML
     private GridPane uirsGrid;
-    @FXML
-    private Label icao;
     @FXML
     private Label name;
     @FXML
@@ -49,8 +50,7 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
     protected List<Label> labels() {
         return List.of(
                 name,
-                position,
-                icao
+                position
         );
     }
 
@@ -89,7 +89,7 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
                 .collect(Collectors.joining("\n"));
         name.setText(names);
         position.setText(positionLabel(firb.getPolygon().getPolyLabel()));
-        icao.setText(firb.getIcao());
+        status.setHeaderText(firb.getIcao());
         firb.getUpperInformationRegions().addListener(this::uirsChanged);
         uirsChanged(null);
         controllersController.getViewModel().setData(firb.getControllers());

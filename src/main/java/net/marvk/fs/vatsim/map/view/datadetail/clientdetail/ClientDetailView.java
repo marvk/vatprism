@@ -5,8 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import net.marvk.fs.vatsim.map.data.Client;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
 import java.time.format.DateTimeFormatter;
@@ -19,13 +19,11 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     @FXML
     private Label cid;
     @FXML
-    private Label callsign;
-    @FXML
     private Label onlineSince;
     @FXML
     private Label server;
     @FXML
-    private Pane root;
+    private DataDetailPane root;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mmVV");
 
@@ -38,8 +36,7 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     protected List<Label> labels() {
         return List.of(
                 onlineSince,
-                server,
-                callsign
+                server
         );
     }
 
@@ -56,7 +53,7 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
                 client.logonTimeProperty()
         ));
         server.textProperty().bind(client.serverProperty());
-        callsign.textProperty().bind(client.callsignProperty());
+        root.headerTextProperty().bind(client.callsignProperty());
         cid.textProperty().bind(client.cidProperty());
         realName.textProperty().bind(client.realNameProperty());
     }

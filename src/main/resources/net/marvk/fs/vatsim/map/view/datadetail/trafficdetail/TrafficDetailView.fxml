@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.MasterDetailPane?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="net.marvk.fs.vatsim.map.view.datadetail.trafficdetail.TrafficDetailView"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <MasterDetailPane dividerSizeHint="">
+        <masterNode>
+
+        </masterNode>
+    </MasterDetailPane>
+    <VBox>
+        <children>
+
+        </children>
+    </VBox>
+</AnchorPane>

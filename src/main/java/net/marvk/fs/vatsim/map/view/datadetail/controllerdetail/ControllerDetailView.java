@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.datadetail.controllerdetail;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -10,6 +11,7 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Atis;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.data.IcaoVisitor;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.NameVisitor;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
@@ -17,8 +19,6 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import java.util.List;
 
 public class ControllerDetailView extends DataDetailSubView<ControllerDetailViewModel, Controller> {
-    @FXML
-    private Label atisHeader;
     @FXML
     private Label controllingDescription;
     @FXML
@@ -33,6 +33,8 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     private Label rating;
     @FXML
     private TextArea atis;
+    @FXML
+    private DataDetailPane atisPane;
 
     @FXML
     private ClientDetailView clientController;
@@ -66,7 +68,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         atis.textProperty().bind(Bindings.createStringBinding(() -> {
                     final String msg = controller.getAtisMessage();
                     if (msg == null || msg.isEmpty()) {
-                        return null;
+                        return "No ATIS available";
                     }
 
                     return msg;
@@ -84,9 +86,11 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     }
 
     private void setAtisHeaderBindings(final Controller controller) {
+        final StringProperty atisHeaderProperty = atisPane.headerTextProperty();
+
         if (controller instanceof Atis) {
             final ReadOnlyStringProperty atisProperty = ((Atis) controller).atisCodeProperty();
-            atisHeader.textProperty().bind(Bindings.createStringBinding(
+            atisHeaderProperty.bind(Bindings.createStringBinding(
                     () -> {
                         if (atisProperty.get() != null) {
                             return "ATIS (%s)".formatted(atisProperty.get());
@@ -97,8 +101,8 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
                     atisProperty
             ));
         } else {
-            atisHeader.textProperty().unbind();
-            atisHeader.textProperty().set("ATIS");
+            atisHeaderProperty.unbind();
+            atisHeaderProperty.set("ATIS");
         }
     }
 

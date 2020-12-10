@@ -3,12 +3,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.String?>
 <VBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.controllerdetail.ControllerDetailView">
     <fx:include fx:id="client" source="../clientdetail/ClientDetailView.fxml"/>
-    <VBox>
-        <children>
+    <DataDetailPane headerMonospace="true">
+        <headerNode>
             <StackPane styleClass="header-pane">
                 <children>
                     <HBox fx:id="typeBackground" styleClass="header-pane">
@@ -19,6 +20,8 @@
                     <Label fx:id="type" styleClass="mono" text="Label"/>
                 </children>
             </StackPane>
+        </headerNode>
+        <contentNode>
             <VBox spacing="5.0">
                 <children>
                     <GridPane hgap="2.0" vgap="2.0">
@@ -50,21 +53,16 @@
                     </GridPane>
                 </children>
             </VBox>
-        </children>
-    </VBox>
-    <VBox>
-        <children>
-            <HBox styleClass="header-pane">
-                <children>
-                    <Label fx:id="atisHeader" styleClass="mono" text="ATIS"/>
-                </children>
-            </HBox>
-            <TextArea fx:id="atis" editable="false" prefHeight="100.0" prefWidth="0.0" promptText="No Atis"
-                      styleClass="mono" wrapText="true">
+        </contentNode>
+    </DataDetailPane>
+    <DataDetailPane fx:id="atisPane" headerMonospace="true" headerText="ATIS">
+        <contentNode>
+            <TextArea fx:id="atis" editable="false" prefHeight="100.0" prefWidth="0.0" styleClass="mono"
+                      wrapText="true">
                 <VBox.margin>
                     <Insets/>
                 </VBox.margin>
             </TextArea>
-        </children>
-    </VBox>
+        </contentNode>
+    </DataDetailPane>
 </VBox>

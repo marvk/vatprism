@@ -7,6 +7,7 @@ import javafx.scene.input.MouseEvent;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
@@ -17,7 +18,7 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
     private static final String HYPERLINK_LABEL = "hyperlink-label";
 
     @FXML
-    private Label icao;
+    private DataDetailPane status;
     @FXML
     private Label fir;
     @FXML
@@ -35,14 +36,14 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
 
     @Override
     protected List<Label> labels() {
-        return List.of(position, name, icao);
+        return List.of(position, name);
     }
 
     @Override
     protected void setData(final Airport airport) {
         name.setText(airport.getNames().get(0));
         position.textProperty().bind(BindingsUtil.position(airport.positionProperty()));
-        icao.setText(airport.getIcao());
+        status.setHeaderText(airport.getIcao());
         final FlightInformationRegionBoundary firb = airport.getFlightInformationRegionBoundary();
 
         if (firb == null) {

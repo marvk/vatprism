@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
+<?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.String?>
 <VBox fx:id="container" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.flightinformationregionboundarydetail.FlightInformationRegionBoundaryDetailView">
     <children>
-        <VBox>
-            <children>
-                <HBox styleClass="header-pane">
-                    <children>
-                        <Label fx:id="icao" text="Label"/>
-                    </children>
-                </HBox>
+        <DataDetailPane fx:id="status">
+            <contentNode>
                 <GridPane>
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="75.0"/>
@@ -36,23 +32,18 @@
                         </Label>
                     </children>
                 </GridPane>
-            </children>
-        </VBox>
+            </contentNode>
+        </DataDetailPane>
         <fx:include fx:id="controllers" source="../controllersdetail/ControllersDetailView.fxml"/>
-        <VBox fx:id="uirsContainer">
-            <children>
-                <HBox styleClass="header-pane">
-                    <children>
-                        <Label text="UIRs"/>
-                    </children>
-                </HBox>
+        <DataDetailPane fx:id="uirsContainer" headerText="UIRs">
+            <contentNode>
                 <GridPane fx:id="uirsGrid" hgap="10">
                     <columnConstraints>
                         <ColumnConstraints hgrow="NEVER"/>
                         <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
                 </GridPane>
-            </children>
-        </VBox>
+            </contentNode>
+        </DataDetailPane>
     </children>
 </VBox>
