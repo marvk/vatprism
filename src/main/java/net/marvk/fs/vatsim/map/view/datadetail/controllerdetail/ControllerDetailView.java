@@ -1,8 +1,6 @@
 package net.marvk.fs.vatsim.map.view.datadetail.controllerdetail;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -57,12 +55,6 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
 
     @Override
     protected void setData(final Controller controller) {
-        atis.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable, final String oldValue, final String newValue) {
-                System.out.println("observable = " + observable + ", oldValue = " + oldValue + ", newValue = " + newValue);
-            }
-        });
         clientController.getViewModel().setData(controller);
         type.setText(controller.getControllerType().toString());
         frequency.textProperty().bind(controller.frequencyProperty());
@@ -76,8 +68,6 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
                     return msg;
                 }, controller.atisMessageProperty()
         ));
-
-        System.out.println("atis.getText() = " + atis.getText());
 
         type.setStyle("-fx-text-fill: #" + webColor(color("airports.type_label_color")));
         typeBackground.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));

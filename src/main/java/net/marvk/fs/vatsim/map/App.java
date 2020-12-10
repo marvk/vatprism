@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map;
 import com.google.inject.Module;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -15,6 +16,7 @@ import net.marvk.fs.vatsim.map.view.main.MainView;
 import java.util.List;
 
 public class App extends MvvmfxGuiceApplication {
+
     public static void main(final String[] args) {
         launch(args);
     }
@@ -25,7 +27,10 @@ public class App extends MvvmfxGuiceApplication {
                 .fxmlView(MainView.class)
                 .load();
 
-        primaryStage.setOnCloseRequest(e -> System.exit(0));
+        // TODO Ugly hack to stay in front...
+        primaryStage.focusedProperty()
+                    .addListener((observable, oldValue, newValue) -> Platform.runLater(primaryStage::toFront));
+
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (KeyCode.F11 == event.getCode()) {
                 primaryStage.setFullScreen(!primaryStage.isFullScreen());
