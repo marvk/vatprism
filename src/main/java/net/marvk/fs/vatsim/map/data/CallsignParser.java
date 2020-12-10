@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import javafx.geometry.Point2D;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
-import net.marvk.fs.vatsim.map.GeomUtil;
+import net.marvk.fs.vatsim.api.data.VatsimClientType;
+import net.marvk.fs.vatsim.api.data.VatsimController;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -30,18 +30,22 @@ public class CallsignParser {
         this.upperInformationRegionRepository = upperInformationRegionRepository;
     }
 
-    public Result parse(final VatsimClient vatsimClient) {
-        if (vatsimClient == null || vatsimClient.getCallsign() == null || !"ATC".equals(vatsimClient.getClientType())) {
+    public Result parse(final VatsimController controller) {
+        if (controller == null ||
+                controller.getCallsign() == null ||
+                controller.getClientType() == null ||
+                controller.getClientType() == VatsimClientType.PILOT
+        ) {
             return Result.EMPTY;
         }
 
-        final String callsign = vatsimClient.getCallsign();
-        final String cid = vatsimClient.getCid();
+        final String callsign = controller.getCallsign();
+        final String cid = controller.getCid();
 
         final String[] sections = callsign.split("_");
         final int n = sections.length;
 
-        final ControllerType defaultControllerType = "ATC".equals(vatsimClient.getClientType()) ? ControllerType.OBS : ControllerType.NONE;
+        final ControllerType defaultControllerType = ControllerType.OBS;
 
         final String identifier;
         final String infix;
@@ -75,7 +79,7 @@ public class CallsignParser {
             uir = null;
         } else {
             if (controllerType != ControllerType.CTR && controllerType != ControllerType.FSS) {
-                airport = getAirport(vatsimClient, identifier);
+                airport = getAirport(controller, identifier);
 
                 if (airport == null) {
                     log.warn("UNKNOWN AIRPORT: " + identifier + " Full callsign: " + callsign + ", cid " + cid);
@@ -85,10 +89,10 @@ public class CallsignParser {
                 fir = null;
             } else {
                 airport = null;
-                uir = getUir(vatsimClient, identifier);
+                uir = getUir(controller, identifier);
 
                 if (uir == null) {
-                    fir = getFir(vatsimClient, identifier, infix);
+                    fir = getFir(controller, identifier, infix);
 
                     if (fir == null) {
                         log.warn("UNKNOWN UIR or FIR: " + identifier + " Full callsign: " + callsign + ", cid " + cid);
@@ -157,28 +161,12 @@ public class CallsignParser {
             return null;
         }
 
-        if (viewModels.size() == 1) {
-            return viewModels.get(0);
-        }
-
-        final Point2D other = vatsimClientPosition(vatsimClient);
-
-        return viewModels
-                .stream()
-                .min(Comparator.comparingDouble(e -> GeomUtil.distanceOnMsl(positionExtractor.apply(e), other)))
-                .get();
-
-    }
-
-    private static Point2D vatsimClientPosition(final VatsimClient vatsimClient) {
-        return GeomUtil.parsePoint(
-                vatsimClient.getLongitude(),
-                vatsimClient.getLatitude()
-        );
+        log.warn("Multiple models");
+        return viewModels.get(0);
     }
 
     public static class Result {
-        public static final Result EMPTY = new Result(null, null, null, null);
+        public static final Result EMPTY = new Result(null, null, null, ControllerType.NONE);
 
         private final Airport airport;
         private final FlightInformationRegion flightInformationRegion;

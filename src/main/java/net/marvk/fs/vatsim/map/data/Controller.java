@@ -3,6 +3,9 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.beans.property.*;
 import lombok.ToString;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.api.data.VatsimController;
+
+import java.util.List;
 
 @ToString
 public class Controller extends Client implements Data {
@@ -22,12 +25,20 @@ public class Controller extends Client implements Data {
             RelationshipReadOnlyObjectWrapper.withOtherList(this, UpperInformationRegion::getControllersWritable);
 
     @Override
-    public void setFromModel(final VatsimClient model) {
-        super.setFromModel(model);
-        frequency.set(model.getFrequency());
-        rating.set(model.getRating());
-        if (model.getAtisMessage() != null) {
-            atisMessage.set(model.getAtisMessage().replaceAll("\\^§", " "));
+    public void setFromModel(final VatsimClient client) {
+        final VatsimController controller = (VatsimController) client;
+        super.setFromModel(controller);
+
+        frequency.set(controller.getFrequency());
+        rating.set("%s (%s)".formatted(controller.getRating().getLongName(), controller.getRating().getShortName()));
+        setAtisMessage(controller.getTextAtis());
+    }
+
+    private void setAtisMessage(final List<String> textAtis) {
+        if (textAtis != null) {
+            final String msg = String
+                    .join(" ", textAtis);
+            this.atisMessage.set(msg);
         }
     }
 

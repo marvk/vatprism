@@ -1,7 +1,10 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.api.data.VatsimPilot;
+import net.marvk.fs.vatsim.map.GeomUtil;
 
 public class Pilot extends Client implements Data {
     private final FlightPlan flightPlan = new FlightPlan(this);
@@ -12,19 +15,22 @@ public class Pilot extends Client implements Data {
     private final DoubleProperty heading = new SimpleDoubleProperty();
     private final DoubleProperty qnhInchesMercury = new SimpleDoubleProperty();
     private final DoubleProperty qnhMilliBars = new SimpleDoubleProperty();
+    private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
 
     @Override
-    public void setFromModel(final VatsimClient model) {
-        super.setFromModel(model);
+    public void setFromModel(final VatsimClient client) {
+        final VatsimPilot pilot = (VatsimPilot) client;
+        super.setFromModel(client);
 
-        flightPlan.setFromModel(model);
+        flightPlan.setFromModel(((VatsimPilot) client).getFlightPlan());
 
-        transponder.set(model.getTransponder());
-        altitude.set(Double.parseDouble(model.getAltitude()));
-        groundSpeed.set(Double.parseDouble(model.getGroundSpeed()));
-        heading.set(Double.parseDouble(model.getHeading()));
-        qnhInchesMercury.set(Double.parseDouble(model.getQnhInchesMercury()));
-        qnhMilliBars.set(Double.parseDouble(model.getQnhMillibars()));
+        transponder.set(pilot.getTransponder());
+        altitude.set(Double.parseDouble(pilot.getAltitude()));
+        groundSpeed.set(Double.parseDouble(pilot.getGroundSpeed()));
+        heading.set(Double.parseDouble(pilot.getHeading()));
+        qnhInchesMercury.set(Double.parseDouble(pilot.getQnhInchesMercury()));
+        qnhMilliBars.set(Double.parseDouble(pilot.getQnhMillibars()));
+        position.set(GeomUtil.parsePoint(pilot.getLongitude(), pilot.getLatitude()));
     }
 
     public FlightPlan getFlightPlan() {
@@ -77,6 +83,14 @@ public class Pilot extends Client implements Data {
 
     public ReadOnlyDoubleProperty qnhMilliBarsProperty() {
         return qnhMilliBars;
+    }
+
+    public Point2D getPosition() {
+        return position.get();
+    }
+
+    public ReadOnlyObjectProperty<Point2D> positionProperty() {
+        return position;
     }
 
     @Override

@@ -1,9 +1,7 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
-import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -14,19 +12,19 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     private final StringProperty realName = new SimpleStringProperty();
     private final StringProperty server = new SimpleStringProperty();
 
-    private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
     private final ObjectProperty<ZonedDateTime> logonTime = new SimpleObjectProperty<>();
+    private final ObjectProperty<ZonedDateTime> lastUpdatedTime = new SimpleObjectProperty<>();
 
     @Override
-    public void setFromModel(final VatsimClient model) {
-        Objects.requireNonNull(model);
+    public void setFromModel(final VatsimClient client) {
+        Objects.requireNonNull(client);
 
-        cid.set(model.getCid());
-        callsign.set(model.getCallsign());
-        realName.set(model.getRealName());
-        server.set(model.getServer());
-        position.set(GeomUtil.parsePoint(model.getLongitude(), model.getLatitude()));
-        logonTime.set(model.getTimeLogon());
+        cid.set(client.getCid());
+        callsign.set(client.getCallsign());
+        realName.set(client.getName());
+        server.set(client.getServer().getName());
+        logonTime.set(client.getLogon());
+        lastUpdatedTime.set(client.getLastUpdate());
     }
 
     public String getCid() {
@@ -61,19 +59,19 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         return server;
     }
 
-    public Point2D getPosition() {
-        return position.get();
-    }
-
-    public ReadOnlyObjectProperty<Point2D> positionProperty() {
-        return position;
-    }
-
     public ZonedDateTime getLogonTime() {
         return logonTime.get();
     }
 
     public ReadOnlyObjectProperty<ZonedDateTime> logonTimeProperty() {
         return logonTime;
+    }
+
+    public ZonedDateTime getLastUpdatedTime() {
+        return lastUpdatedTime.get();
+    }
+
+    public ReadOnlyObjectProperty<ZonedDateTime> lastUpdatedTimeProperty() {
+        return lastUpdatedTime;
     }
 }

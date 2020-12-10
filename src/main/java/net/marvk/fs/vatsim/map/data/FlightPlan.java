@@ -2,17 +2,16 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import lombok.extern.slf4j.Slf4j;
-import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.api.data.VatsimFlightPlan;
 
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class FlightPlan implements Settable<VatsimClient>, Data {
+public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
 
     private final Pilot pilot;
@@ -37,19 +36,21 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
     }
 
     @Override
-    public void setFromModel(final VatsimClient model) {
-        Objects.requireNonNull(model);
+    public void setFromModel(final VatsimFlightPlan model) {
+        if (model == null) {
+            return;
+        }
 
-        aircraft.set(model.getPlannedAircraft());
-        flightType.set(FlightType.fromString(model.getPlannedFlightType()));
-        departureTime.set(parseDepartureTime(model.getPlannedDepartureTime()));
-        altitude.set(parseAltitude(model.getPlannedAltitude()));
-        trueCruiseAirspeed.set(model.getPlannedTrueAirspeedCruise());
-        enrouteProperty.set(parseDuration(model.getPlannedHoursEnroute(), model.getPlannedMinutesEnroute()));
-        fuelProperty.set(parseDuration(model.getPlannedHoursFuel(), model.getPlannedMinutesFuel()));
+        aircraft.set(model.getAircraft());
+        flightType.set(FlightType.fromString(model.getFlightRules()));
+        departureTime.set(parseDepartureTime(model.getDepartureTime()));
+        altitude.set(parseAltitude(model.getAltitude()));
+        trueCruiseAirspeed.set(model.getCruiseTas());
+        enrouteProperty.set(parseDuration(model.getEnrouteTime()));
+        fuelProperty.set(parseDuration(model.getFuelTime()));
 
-        plannedRoute.set(model.getPlannedRoute());
-        remarks.set(model.getPlannedRemarks());
+        plannedRoute.set(model.getRoute());
+        remarks.set(model.getRemarks());
     }
 
     public Pilot getPilot() {
@@ -164,11 +165,11 @@ public class FlightPlan implements Settable<VatsimClient>, Data {
         return alternativeAirport.getReadOnlyProperty();
     }
 
-    private static Duration parseDuration(final String hours, final String minutes) {
+    private static Duration parseDuration(final String hoursMinutes) {
         return ParseUtil.parseNullSafe(
-                hours,
-                minutes,
-                (h, m) -> Duration.ofMinutes(Integer.parseInt(m)).plusHours(Integer.parseInt(h))
+                hoursMinutes,
+                (hm) -> Duration.ofHours(Integer.parseInt(hoursMinutes.substring(0, 2)))
+                                .plusMinutes(Integer.parseInt(hoursMinutes.substring(2, 4)))
         );
     }
 

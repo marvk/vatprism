@@ -1,11 +1,13 @@
 package net.marvk.fs.vatsim.map.view.datadetail.controllerdetail;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import net.marvk.fs.vatsim.map.data.Atis;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.data.IcaoVisitor;
 import net.marvk.fs.vatsim.map.view.datadetail.NameVisitor;
@@ -15,6 +17,8 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import java.util.List;
 
 public class ControllerDetailView extends DataDetailSubView<ControllerDetailViewModel, Controller> {
+    @FXML
+    private Label atisHeader;
     @FXML
     private Label controllingDescription;
     @FXML
@@ -75,6 +79,27 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         controlling.setText(icaoVisitor.visit(controller.getWorkingArea()));
         controllingDescription.setText(nameVisitor.visit(controller.getWorkingArea()));
         controlling.setOnMouseClicked(event -> viewModel.setDataDetail(controller.getWorkingArea()));
+
+        setAtisHeaderBindings(controller);
+    }
+
+    private void setAtisHeaderBindings(final Controller controller) {
+        if (controller instanceof Atis) {
+            final ReadOnlyStringProperty atisProperty = ((Atis) controller).atisCodeProperty();
+            atisHeader.textProperty().bind(Bindings.createStringBinding(
+                    () -> {
+                        if (atisProperty.get() != null) {
+                            return "ATIS (%s)".formatted(atisProperty.get());
+                        }
+
+                        return "ATIS";
+                    },
+                    atisProperty
+            ));
+        } else {
+            atisHeader.textProperty().unbind();
+            atisHeader.textProperty().set("ATIS");
+        }
     }
 
     private Color color(final String key) {
@@ -89,5 +114,6 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     protected void clear(final Controller oldValue) {
         super.clear(oldValue);
         clientController.getViewModel().setData(null);
+        setAtisHeaderBindings(null);
     }
 }

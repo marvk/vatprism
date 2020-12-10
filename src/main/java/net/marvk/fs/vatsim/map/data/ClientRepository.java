@@ -14,11 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.api.data.VatsimController;
+import net.marvk.fs.vatsim.api.data.VatsimFlightPlan;
+import net.marvk.fs.vatsim.api.data.VatsimPilot;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -43,9 +45,10 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
 
     @Override
     protected Client newViewModelInstance(final VatsimClient vatsimClient) {
-        return switch (vatsimClient.getClientType().toLowerCase(Locale.ROOT)) {
-            case "atc" -> new Controller();
-            case "pilot" -> new Pilot();
+        return switch (vatsimClient.getClientType()) {
+            case CONTROLLER -> new Controller();
+            case PILOT -> new Pilot();
+            case ATIS -> new Atis();
             default -> null;
         };
     }
@@ -68,19 +71,26 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     @Override
     protected void onAdd(final Client toAdd, final VatsimClient vatsimClient) {
         if (toAdd instanceof Controller) {
-            ((Controller) toAdd).setFromCallsignParserResult(callsignParser.parse(vatsimClient));
+            ((Controller) toAdd).setFromCallsignParserResult(callsignParser.parse((VatsimController) vatsimClient));
         } else if (toAdd instanceof Pilot) {
             final Pilot pilot = (Pilot) toAdd;
-            pilot.getFlightPlan()
-                 .departureAirportPropertyWritable()
-                 .set(getAirport(vatsimClient.getPlannedDepartureAirport()));
-            pilot.getFlightPlan()
-                 .arrivalAirportPropertyWritable()
-                 .set(getAirport(vatsimClient.getPlannedDestinationAirport()));
-            pilot.getFlightPlan()
-                 .alternativeAirportPropertyWritable()
-                 .set(getAirport(vatsimClient.getPlannedAlternativeAirport()));
+            final VatsimFlightPlan flightPlan = ((VatsimPilot) vatsimClient).getFlightPlan();
+            if (flightPlan != null) {
+                setAirports(pilot, flightPlan);
+            }
         }
+    }
+
+    private void setAirports(final Pilot pilot, final VatsimFlightPlan flightPlan) {
+        pilot.getFlightPlan()
+             .departureAirportPropertyWritable()
+             .set(getAirport(flightPlan.getDepartureAirport()));
+        pilot.getFlightPlan()
+             .arrivalAirportPropertyWritable()
+             .set(getAirport(flightPlan.getArrivalAirport()));
+        pilot.getFlightPlan()
+             .alternativeAirportPropertyWritable()
+             .set(getAirport(flightPlan.getAlternateAirport()));
     }
 
     @Override

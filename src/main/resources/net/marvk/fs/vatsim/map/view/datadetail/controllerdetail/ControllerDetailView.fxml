@@ -45,7 +45,7 @@
                             <Label fx:id="frequency" styleClass="mono" text="Label" GridPane.columnIndex="4"/>
                             <Label styleClass="description" text="Rating" GridPane.rowIndex="1"/>
                             <Label fx:id="rating" styleClass="mono" text="Label" GridPane.columnIndex="1"
-                                   GridPane.rowIndex="1"/>
+                                   GridPane.columnSpan="2147483647" GridPane.rowIndex="1"/>
                         </children>
                     </GridPane>
                 </children>
@@ -56,7 +56,7 @@
         <children>
             <HBox styleClass="header-pane">
                 <children>
-                    <Label styleClass="mono" text="ATIS"/>
+                    <Label fx:id="atisHeader" styleClass="mono" text="ATIS"/>
                 </children>
             </HBox>
             <TextArea fx:id="atis" editable="false" prefHeight="100.0" prefWidth="0.0" promptText="No Atis"
