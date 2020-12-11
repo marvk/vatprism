@@ -6,10 +6,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Controller;
@@ -18,13 +21,16 @@ import net.marvk.fs.vatsim.map.view.BindingsUtil;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<ViewModel>, ViewModel> implements FxmlView<DetailViewModel> {
     @InjectViewModel
     protected DetailViewModel viewModel;
 
-    private List<Label> labels;
+    private List<StringProperty> stringProperties;
     private List<TextArea> textAreas;
 
     public DetailViewModel getViewModel() {
@@ -52,36 +58,39 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
     }
 
     protected void clear(final ViewModel oldValue) {
-        for (final Label label : getLabels()) {
-            label.textProperty().unbind();
-            label.setText("");
-        }
-
-        for (final TextArea textArea : getTextAreas()) {
-            textArea.textProperty().unbind();
-            textArea.setText("");
+        for (final StringProperty stringProperty : getStringProperties()) {
+            stringProperty.unbind();
+            stringProperty.set("");
         }
     }
 
-    private List<Label> getLabels() {
-        if (labels == null) {
-            labels = labels();
+    private List<StringProperty> getStringProperties() {
+        if (stringProperties == null) {
+            stringProperties = Stream
+                    .of(
+                            labels().stream().map(Labeled::textProperty),
+                            textAreas().stream().map(TextInputControl::textProperty),
+                            stringProperties().stream()
+                    )
+                    .reduce(Stream::concat)
+                    .get()
+                    .collect(Collectors.toList());
         }
 
-        return labels;
+        return stringProperties;
     }
 
-    private List<TextArea> getTextAreas() {
-        if (textAreas == null) {
-            textAreas = textAreas();
-        }
-
-        return textAreas;
+    protected List<TextArea> textAreas() {
+        return Collections.emptyList();
     }
 
-    protected abstract List<TextArea> textAreas();
+    protected List<Label> labels() {
+        return Collections.emptyList();
+    }
 
-    protected abstract List<Label> labels();
+    protected List<StringProperty> stringProperties() {
+        return Collections.emptyList();
+    }
 
     protected abstract void setData(final ViewModel data);
 

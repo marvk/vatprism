@@ -21,7 +21,7 @@
                     </rowConstraints>
                     <children>
                         <Label styleClass="description" text="Name(s)"/>
-                        <Label fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
+                        <Label wrapText="true" fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
                         <Label text="Position" GridPane.rowIndex="1"/>
                         <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="1">

@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -16,7 +15,6 @@ import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,16 +42,6 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
         }
 
         return viewModel.getPreferences().colorProperty(key).get();
-    }
-
-    @Override
-    protected List<TextArea> textAreas() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    protected List<Label> labels() {
-        return Collections.emptyList();
     }
 
     @Override

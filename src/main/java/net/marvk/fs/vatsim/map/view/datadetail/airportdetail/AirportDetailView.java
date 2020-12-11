@@ -1,9 +1,8 @@
 package net.marvk.fs.vatsim.map.view.datadetail.airportdetail;
 
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
@@ -11,7 +10,6 @@ import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
-import java.util.Collections;
 import java.util.List;
 
 public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel, Airport> {
@@ -30,13 +28,13 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
     private ControllersDetailView controllersController;
 
     @Override
-    protected List<TextArea> textAreas() {
-        return Collections.emptyList();
+    protected List<Label> labels() {
+        return List.of(position, name, fir);
     }
 
     @Override
-    protected List<Label> labels() {
-        return List.of(position, name);
+    protected List<StringProperty> stringProperties() {
+        return List.of(status.headerTextProperty());
     }
 
     @Override
@@ -66,7 +64,7 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
     }
 
     @FXML
-    private void setToFir(final MouseEvent event) {
+    private void setToFir() {
         viewModel.setToFir();
     }
 }

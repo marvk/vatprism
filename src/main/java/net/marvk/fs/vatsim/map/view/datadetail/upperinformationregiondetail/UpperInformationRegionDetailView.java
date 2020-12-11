@@ -1,10 +1,10 @@
 package net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail;
 
+import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.GeomUtil;
@@ -15,35 +15,34 @@ import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDeta
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 
-import java.util.Collections;
 import java.util.List;
 
 public class UpperInformationRegionDetailView extends DataDetailSubView<DataDetailSubViewModel<UpperInformationRegion>, UpperInformationRegion> {
     @FXML
     private DataDetailPane status;
     @FXML
-    private VBox container;
+    private DataDetailPane firsContainer;
     @FXML
     private Label name;
     @FXML
     private Label position;
     @FXML
+    private VBox container;
+    @FXML
     private GridPane firsGrid;
     @FXML
-    private DataDetailPane firsContainer;
-    @FXML
     private ControllersDetailView controllersController;
-
-    @Override
-    protected List<TextArea> textAreas() {
-        return Collections.emptyList();
-    }
 
     @Override
     protected List<Label> labels() {
         return List.of(
                 name, position
         );
+    }
+
+    @Override
+    protected List<StringProperty> stringProperties() {
+        return List.of(status.headerTextProperty());
     }
 
     @Override

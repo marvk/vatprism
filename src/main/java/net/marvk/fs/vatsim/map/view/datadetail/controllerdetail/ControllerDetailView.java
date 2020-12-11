@@ -20,9 +20,9 @@ import java.util.List;
 
 public class ControllerDetailView extends DataDetailSubView<ControllerDetailViewModel, Controller> {
     @FXML
-    private Label controllingDescription;
+    private DataDetailPane atisPane;
     @FXML
-    private Pane typeBackground;
+    private Label controllingDescription;
     @FXML
     private Label type;
     @FXML
@@ -34,7 +34,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     @FXML
     private TextArea atis;
     @FXML
-    private DataDetailPane atisPane;
+    private Pane typeBackground;
 
     @FXML
     private ClientDetailView clientController;
@@ -52,11 +52,17 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     @Override
     protected List<Label> labels() {
         return List.of(
+                controllingDescription,
                 type,
                 controlling,
                 frequency,
                 rating
         );
+    }
+
+    @Override
+    protected List<StringProperty> stringProperties() {
+        return List.of(atisPane.headerTextProperty());
     }
 
     @Override
@@ -66,8 +72,8 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         frequency.textProperty().bind(controller.frequencyProperty());
         rating.textProperty().bind(controller.ratingProperty());
         atis.textProperty().bind(Bindings.createStringBinding(() -> {
-                    final String msg = controller.getAtisMessage();
-                    if (msg == null || msg.isEmpty()) {
+            final String msg = controller.getAtisMessage();
+            if (msg == null || msg.isEmpty()) {
                         return "No ATIS available";
                     }
 

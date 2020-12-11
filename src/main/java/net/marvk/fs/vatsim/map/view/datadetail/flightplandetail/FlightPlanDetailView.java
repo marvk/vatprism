@@ -23,12 +23,6 @@ import java.util.stream.Collectors;
 
 public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailViewModel, FlightPlan> {
     @FXML
-    private VBox container;
-    @FXML
-    private HBox noFlightPlan;
-    @FXML
-    private VBox content;
-    @FXML
     private Label flightRules;
     @FXML
     private Label aircraftType;
@@ -44,16 +38,12 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     private TextArea path;
     @FXML
     private TextArea remarks;
-
-    private void setFlightPlanPanes(final Boolean newValue) {
-        final ObservableList<Node> children = container.getChildren();
-
-        if (newValue) {
-            children.setAll(content);
-        } else {
-            children.setAll(noFlightPlan);
-        }
-    }
+    @FXML
+    private VBox container;
+    @FXML
+    private HBox noFlightPlan;
+    @FXML
+    private VBox content;
 
     @Override
     protected List<TextArea> textAreas() {
@@ -73,6 +63,16 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                 departure,
                 arrival
         );
+    }
+
+    private void setFlightPlanPanes(final Boolean newValue) {
+        final ObservableList<Node> children = container.getChildren();
+
+        if (newValue) {
+            children.setAll(content);
+        } else {
+            children.setAll(noFlightPlan);
+        }
     }
 
     @Override
