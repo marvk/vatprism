@@ -1,0 +1,17 @@
+.list-cell {
+    -fx-padding: 0px;
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
+.list-cell:even {
+    -fx-background-color: derive(-vatsim-background-color-very-light, 1%);
+}
+
+.list-view,
+.list-view:focused {
+    -fx-padding: 0;
+    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+

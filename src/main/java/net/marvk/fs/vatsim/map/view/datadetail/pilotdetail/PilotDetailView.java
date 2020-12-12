@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.datadetail.pilotdetail;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -13,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pilot>, Pilot> {
+    @FXML
+    private Label verticalSpeed;
     @FXML
     private Label position;
     @FXML
@@ -48,7 +51,8 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
                 qnhMillibars,
                 qnhInchesMercury,
                 squawk,
-                altitude
+                altitude,
+                verticalSpeed
         );
     }
 
@@ -63,6 +67,20 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         altitude.textProperty().bind(doubleToIntString(pilot.altitudeProperty(), "ft"));
         flightPlanController.getViewModel().setData(pilot.getFlightPlan());
         clientController.getViewModel().setData(pilot);
+        verticalSpeed.textProperty().bind(Bindings.createStringBinding(
+                () -> fpmString(pilot),
+                pilot.verticalSpeedProperty())
+        );
+    }
+
+    private static String fpmString(final Pilot pilot) {
+        final double vs = pilot.getVerticalSpeed();
+        if (Double.compare(vs, Double.NaN) == 0) {
+            return "Unknown";
+        }
+
+        final String prefix = Math.signum(vs) >= 1 ? "+" : "";
+        return prefix + Math.round(vs) + "fpm";
     }
 
     @Override

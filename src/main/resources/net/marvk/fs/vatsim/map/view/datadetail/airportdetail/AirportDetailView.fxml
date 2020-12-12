@@ -43,5 +43,7 @@
             </contentNode>
         </DataDetailPane>
         <fx:include fx:id="controllers" source="../controllersdetail/ControllersDetailView.fxml"/>
+        <fx:include fx:id="arrivals" source="../trafficdetail/TrafficDetailView.fxml"/>
+        <fx:include fx:id="departures" source="../trafficdetail/TrafficDetailView.fxml"/>
     </children>
 </VBox>

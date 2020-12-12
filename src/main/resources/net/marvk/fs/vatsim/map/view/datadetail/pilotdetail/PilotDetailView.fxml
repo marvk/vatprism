@@ -23,11 +23,13 @@
                 <rowConstraints>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
                 <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-                <Label styleClass="description" text="Squawk" GridPane.rowIndex="3"/>
+                <Label styleClass="description" text="V/S" GridPane.rowIndex="3"/>
+                <Label styleClass="description" text="Squawk" GridPane.rowIndex="4"/>
                 <Label styleClass="description" text="Heading" GridPane.rowIndex="1"/>
                 <Label styleClass="description" text="Gnd. Speed" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
                 <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
@@ -45,7 +47,9 @@
                 <Label fx:id="qnhInchesMercury" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="3"/>
                 <Label styleClass="description" text="Position"/>
-                <Label fx:id="squawk" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label fx:id="verticalSpeed" styleClass="mono" text="Label" GridPane.columnIndex="1"
+                       GridPane.rowIndex="3"/>
+                <Label fx:id="squawk" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                 <Label styleClass="description" text="Altitude" GridPane.rowIndex="2"/>
                 <Label fx:id="altitude" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
             </GridPane>

@@ -312,6 +312,11 @@ public class MapViewModel implements ViewModel {
         }
 
         @Override
+        public Optional<Viewport> visit(final FlightPlan flightPlan) {
+            return visit(flightPlan.getPilot());
+        }
+
+        @Override
         public Optional<Viewport> visit(final Airport airport) {
             return defaultTarget(airport.getPosition());
         }

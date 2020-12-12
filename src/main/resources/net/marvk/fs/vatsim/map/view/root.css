@@ -138,6 +138,10 @@
     -fx-text-fill: -vatsim-text-greyed-out;
 }
 
+.default-font {
+    -fx-font-family: none;
+}
+
 .menu-item:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
@@ -175,3 +179,16 @@
     -fx-background-color: transparent;
 }
 
+.search-box-text-field,
+.search-box {
+    -fx-pref-width: 200;
+    -fx-max-width: 200;
+    -fx-icon-color: -vatsim-text-color;
+}
+
+.search-box-text-field {
+    -fx-background-color: -vatsim-background-color-very-very-very-light;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-min-height: 0;
+}

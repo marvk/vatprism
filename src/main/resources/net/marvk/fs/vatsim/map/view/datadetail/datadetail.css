@@ -31,7 +31,7 @@
     -fx-max-height: infinity;
 }
 
-.header-pane .label {
+.header-pane .header-label {
     -fx-font-size: 14;
 }
 

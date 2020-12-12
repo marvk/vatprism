@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
@@ -19,9 +20,22 @@ import net.marvk.fs.vatsim.map.data.FlightType;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailViewModel, FlightPlan> {
+    @FXML
+    private Label departureName;
+    @FXML
+    private Label arrivalName;
+    @FXML
+    private Label alternateName;
+
+    @FXML
+    private Label departureIcao;
+    @FXML
+    private Label arrivalIcao;
+    @FXML
+    private Label alternateIcao;
+
     @FXML
     private Label flightRules;
     @FXML
@@ -31,10 +45,6 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     @FXML
     private Label cruiseAltitude;
     @FXML
-    private Label departure;
-    @FXML
-    private Label arrival;
-    @FXML
     private TextArea path;
     @FXML
     private TextArea remarks;
@@ -43,7 +53,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     @FXML
     private HBox noFlightPlan;
     @FXML
-    private VBox content;
+    private GridPane content;
 
     @Override
     protected List<TextArea> textAreas() {
@@ -60,9 +70,19 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                 aircraftType,
                 trueAirSpeed,
                 cruiseAltitude,
-                departure,
-                arrival
+                departureIcao,
+                arrivalIcao,
+                alternateIcao,
+                departureName,
+                arrivalName,
+                alternateName
         );
+    }
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        path.setOnMouseClicked(container::fireEvent);
     }
 
     private void setFlightPlanPanes(final Boolean newValue) {
@@ -83,8 +103,9 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         aircraftType.setTooltip(createTooltip(aircraftType.textProperty(), Duration.millis(500)));
         trueAirSpeed.textProperty().bind(stringToString(flightPlan.trueCruiseAirspeedProperty(), "kts"));
         cruiseAltitude.textProperty().bind(stringToString(flightPlan.altitudeProperty(), "ft"));
-        bindToAirport(departure, flightPlan.departureAirportProperty());
-        bindToAirport(arrival, flightPlan.arrivalAirportProperty());
+        bindToAirport(departureIcao, departureName, flightPlan.departureAirportProperty());
+        bindToAirport(arrivalIcao, arrivalName, flightPlan.arrivalAirportProperty());
+        bindToAirport(alternateIcao, alternateName, flightPlan.alternativeAirportProperty());
         path.textProperty().bind(flightPlan.plannedRouteProperty());
         remarks.textProperty().bind(flightPlan.remarksProperty());
         setFlightPlanPanes(isFlightPlanAvailable(flightPlan));
@@ -101,8 +122,8 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         setFlightPlanPanes(false);
     }
 
-    private static void bindToAirport(final Label label, final ReadOnlyObjectProperty<Airport> airportProperty) {
-        label.textProperty().bind(Bindings.createStringBinding(
+    private static void bindToAirport(final Label icao, final Label name, final ReadOnlyObjectProperty<Airport> airportProperty) {
+        icao.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     if (airportProperty.get() == null) {
                         return "";
@@ -112,16 +133,16 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                 },
                 airportProperty
         ));
-        final Tooltip tooltip = createTooltip(Bindings.createStringBinding(
+        name.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     if (airportProperty.get() == null) {
                         return "";
                     }
-                    return airportProperty.get().getNames().stream().collect(Collectors.joining("\n"));
+
+                    return airportProperty.get().getNames().get(0);
                 },
                 airportProperty
         ));
-        label.setTooltip(tooltip);
     }
 
     private static Tooltip createTooltip(final ObservableValue<String> textProperty) {

@@ -17,7 +17,12 @@
                             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
                         </StackPane.margin>
                     </HBox>
-                    <Label fx:id="type" styleClass="mono" text="Label"/>
+                    <Label fx:id="type" text="Label">
+                        <styleClass>
+                            <String fx:value="mono"/>
+                            <String fx:value="header-label"/>
+                        </styleClass>
+                    </Label>
                 </children>
             </StackPane>
         </headerNode>

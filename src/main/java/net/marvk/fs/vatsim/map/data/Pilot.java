@@ -6,7 +6,14 @@ import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimPilot;
 import net.marvk.fs.vatsim.map.GeomUtil;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Pilot extends Client implements Data {
+    private static final Pattern FLIGHT_NUMBER_PARSER = Pattern.compile("^(?<icao>[A-Z]{3})(?<number>[0-9][A-Z0-9]*)$");
     private final FlightPlan flightPlan = new FlightPlan(this);
 
     private final StringProperty transponder = new SimpleStringProperty();
@@ -17,9 +24,23 @@ public class Pilot extends Client implements Data {
     private final DoubleProperty qnhMilliBars = new SimpleDoubleProperty();
     private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
 
+    private final DoubleProperty verticalSpeed = new SimpleDoubleProperty(Double.NaN);
+
+    private final ObjectProperty<Airline> airline = new SimpleObjectProperty<>();
+    private final StringProperty flightNumber = new SimpleStringProperty();
+    private final BooleanProperty flightNumberAvailable = new SimpleBooleanProperty();
+
+    public Pilot() {
+        flightNumberAvailable.bind(airline.isNotNull().and(flightNumber.isNotNull()));
+    }
+
     @Override
     public void setFromModel(final VatsimClient client) {
         final VatsimPilot pilot = (VatsimPilot) client;
+
+        final ZonedDateTime previousUpdatedTime = getLastUpdatedTime();
+        final double previousAltitude = getAltitude();
+
         super.setFromModel(client);
 
         flightPlan.setFromModel(((VatsimPilot) client).getFlightPlan());
@@ -31,6 +52,34 @@ public class Pilot extends Client implements Data {
         qnhInchesMercury.set(Double.parseDouble(pilot.getQnhInchesMercury()));
         qnhMilliBars.set(Double.parseDouble(pilot.getQnhMillibars()));
         position.set(GeomUtil.parsePoint(pilot.getLongitude(), pilot.getLatitude()));
+
+        parseAirlineAndFlightNumber(client.getCallsign());
+        if (!Objects.equals(previousUpdatedTime, getLastUpdatedTime())) {
+            if (previousUpdatedTime != null && getLastUpdatedTime() != null) {
+                final double ftDiff = getAltitude() - previousAltitude;
+                final Duration durationSinceLastUpdate = Duration.between(previousUpdatedTime, getLastUpdatedTime());
+                final double minutesSinceLastUpdate = durationSinceLastUpdate.toSeconds() / 60.0;
+                final double fpm = ftDiff / minutesSinceLastUpdate;
+                verticalSpeed.set(fpm);
+            } else {
+                verticalSpeed.set(Double.NaN);
+            }
+        }
+    }
+
+    private void parseAirlineAndFlightNumber(final String callsign) {
+        final Matcher matcher = FLIGHT_NUMBER_PARSER.matcher(callsign);
+
+        if (matcher.matches()) {
+            final String icao = matcher.group("icao");
+            final String number = matcher.group("number");
+
+            airline.set(new Airline(icao));
+            flightNumber.set(number);
+        } else {
+            airline.set(null);
+            flightNumber.set(null);
+        }
     }
 
     @Override
@@ -96,6 +145,38 @@ public class Pilot extends Client implements Data {
 
     public ReadOnlyObjectProperty<Point2D> positionProperty() {
         return position;
+    }
+
+    public Airline getAirline() {
+        return airline.get();
+    }
+
+    public ReadOnlyObjectProperty<Airline> airlineProperty() {
+        return airline;
+    }
+
+    public String getFlightNumber() {
+        return flightNumber.get();
+    }
+
+    public ReadOnlyStringProperty flightNumberProperty() {
+        return flightNumber;
+    }
+
+    public boolean isFlightNumberAvailable() {
+        return flightNumberAvailable.get();
+    }
+
+    public ReadOnlyBooleanProperty flightNumberAvailableProperty() {
+        return flightNumberAvailable;
+    }
+
+    public double getVerticalSpeed() {
+        return verticalSpeed.get();
+    }
+
+    public ReadOnlyDoubleProperty verticalSpeedProperty() {
+        return verticalSpeed;
     }
 
     @Override

@@ -72,6 +72,7 @@ public class DataDetailPane extends Control {
     public static class DataDetailPaneSkin implements Skin<DataDetailPane> {
         private static final String MONO_CLASS = "mono";
         private static final String HEADER_PANE_STYLE_CLASS = "header-pane";
+        private static final String HEADER_PANE_LABEL_STYLE_CLASS = "header-label";
         private DataDetailPane dataDetailPane;
         private VBox node;
         private StackPane headerHolder;
@@ -134,6 +135,7 @@ public class DataDetailPane extends Control {
         private Node createHeaderLabel() {
             final Label label = new Label();
             label.textProperty().bind(dataDetailPane.headerTextProperty());
+            label.getStyleClass().add(HEADER_PANE_LABEL_STYLE_CLASS);
             return label;
         }
 

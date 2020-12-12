@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
+import net.marvk.fs.vatsim.api.data.VatsimServer;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -22,7 +23,10 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         cid.set(client.getCid());
         callsign.set(client.getCallsign());
         realName.set(client.getName());
-        server.set(client.getServer().getName());
+        final VatsimServer server = client.getServer();
+        if (server != null) {
+            this.server.set(server.getName());
+        }
         logonTime.set(client.getLogon());
         lastUpdatedTime.set(client.getLastUpdate());
     }

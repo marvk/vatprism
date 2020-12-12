@@ -67,7 +67,11 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
 
     @Override
     protected Collection<VatsimClient> extractModelList(final VatsimApi api) throws VatsimApiException {
-        return api.data().getClients();
+        try {
+            return api.data().getClients();
+        } catch (final Throwable t) {
+            throw new VatsimApiException("Failed to load items", t);
+        }
     }
 
     @Override

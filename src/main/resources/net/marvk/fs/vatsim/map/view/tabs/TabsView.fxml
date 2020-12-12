@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE"
-         xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-         fx:controller="net.marvk.fs.vatsim.map.view.tabs.TabsView">
-    <Tab text="Test">
-        <AnchorPane/>
-    </Tab>
-</TabPane>
+<?import javafx.scene.layout.StackPane?>
+<StackPane fx:id="tabPaneHolder"
+           xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="net.marvk.fs.vatsim.map.view.tabs.TabsView">
+</StackPane>

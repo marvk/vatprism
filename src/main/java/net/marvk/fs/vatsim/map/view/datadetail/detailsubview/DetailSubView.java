@@ -31,7 +31,6 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
     protected DetailViewModel viewModel;
 
     private List<StringProperty> stringProperties;
-    private List<TextArea> textAreas;
 
     public DetailViewModel getViewModel() {
         return viewModel;
