@@ -10,10 +10,14 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class PilotPainter extends MapPainter<Pilot> {
     private static final int MULTI_DRAW_BOUND = 10;
-    private static final int TEXT_OFFSET = 10;
+    private static final int TEXT_OFFSET = 11;
+    private static final int RECT_SIZE = 4;
 
     @Parameter("Color")
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
+
+    @Parameter("Background Color")
+    private Color backgroundColor;
 
     @Parameter(value = "Head Length", min = 0)
     private int tailLength = 8;
@@ -21,13 +25,23 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter("Show Label")
     private boolean label = true;
 
-    public PilotPainter(final MapVariables mapVariables, final Color color) {
+    @Parameter("Background")
+    private boolean paintBackground = false;
+
+    public PilotPainter(final MapVariables mapVariables, final Color color, final boolean paintBackground) {
         super(mapVariables);
         this.color = color;
+        this.paintBackground = paintBackground;
+        setBackgroundColor();
     }
 
     public PilotPainter(final MapVariables mapVariables) {
         super(mapVariables);
+        setBackgroundColor();
+    }
+
+    private void setBackgroundColor() {
+        backgroundColor = color.deriveColor(0, 1, 0.5, 1);
     }
 
     @Override
@@ -59,7 +73,7 @@ public class PilotPainter extends MapPainter<Pilot> {
         c.setStroke(color);
         c.setFill(color);
         c.setLineWidth(1);
-        c.strokeRect(x - 1.5, y - 1.5, 4, 4);
+        c.strokeRect(x - 1.5, y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
         if (tailLength > 0) {
@@ -79,9 +93,17 @@ public class PilotPainter extends MapPainter<Pilot> {
                 yOffset = TEXT_OFFSET;
             }
 
-            c.setTextBaseline(VPos.CENTER);
             c.setTextAlign(TextAlignment.CENTER);
-            c.fillText(pilot.getCallsign(), x, y + yOffset);
+            painterHelper.fillTextWithBackground(
+                    c,
+                    x,
+                    y + yOffset,
+                    pilot.getCallsign(),
+                    paintBackground,
+                    VPos.CENTER,
+                    color,
+                    backgroundColor
+            );
         }
     }
 }

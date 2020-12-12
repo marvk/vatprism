@@ -1,0 +1,41 @@
+.search-box-text-field,
+.search-box {
+    -fx-pref-width: 200;
+    -fx-max-width: 200;
+}
+
+.search-box .ikonli-font-icon {
+    -fx-icon-color: -vatsim-text-color-dark;
+}
+
+.search-box .clear-icon {
+    -fx-icon-color: -vatsim-text-color;
+}
+
+.search-box .clear-icon:hover {
+    -fx-icon-color: -vatsim-text-color-light;
+}
+
+.search-box-text-field {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-min-height: 0;
+    -fx-text-fill: -vatsim-text-color;
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
+    -fx-highlight-text-fill: -vatsim-text-color-light;
+    -fx-prompt-text-fill: -vatsim-text-color-dark;
+}
+
+.search-box-results-holder {
+    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-effect: -vatsim-dropshadow;
+}
+
+.search-box-progress-indicator {
+    -fx-progress-color: -vatsim-text-color;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}

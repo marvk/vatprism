@@ -16,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
-import net.marvk.fs.vatsim.map.view.StatusbarScope;
+import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 
-@ScopeProvider({StatusbarScope.class, ToolbarScope.class, SettingsScope.class})
+@ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class})
 @Slf4j
 public class MainViewModel implements ViewModel {
     private final Command loadAirports;

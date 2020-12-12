@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="container" maxWidth="200" pickOnBounds="false" spacing="1" styleClass="search-box"
+      stylesheets="@search.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.search.SearchView">
+    <children>
+        <StackPane fx:id="searchBoxHolder">
+            <children>
+                <TextField fx:id="searchBox" alignment="TOP_LEFT" styleClass="search-box-text-field"/>
+            </children>
+        </StackPane>
+        <VBox fx:id="resultsHolder" styleClass="search-box-results-holder">
+            <HBox fx:id="progressIndicatorHolder" alignment="CENTER">
+                <ProgressIndicator maxHeight="30.0" maxWidth="30.0"
+                                   styleClass="search-box-progress-indicator">
+                    <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </HBox.margin>
+                </ProgressIndicator>
+            </HBox>
+            <ListView fx:id="resultsList">
+                <placeholder>
+                    <Label styleClass="vatsim-font" text="No Results"/>
+                </placeholder>
+            </ListView>
+        </VBox>
+        <Region pickOnBounds="false" VBox.vgrow="ALWAYS"/>
+    </children>
+</VBox>

@@ -1,6 +1,6 @@
 .about-container {
     -fx-background-color: #2B2313;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+    -fx-effect: -vatsim-dropshadow;
 }
 
 .label {

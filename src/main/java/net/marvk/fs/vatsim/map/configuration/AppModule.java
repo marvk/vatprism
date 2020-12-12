@@ -6,7 +6,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.view.SettingsScope;
 import org.geotools.data.shapefile.files.ShpFiles;
 import org.geotools.data.shapefile.shp.ShapefileReader;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -23,15 +22,13 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(VatsimApiUrlProvider.class).to(UrlProviderV1.class).in(Singleton.class);
-        bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
+        bind(VatsimApiDataSource.class).to(ExampleDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);
         bind(FlightInformationRegionBoundaryRepository.class).in(Singleton.class);
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
         bind(InternationalDateLineRepository.class).in(Singleton.class);
-
-        bind(SettingsScope.class).toInstance(new SettingsScope());
     }
 
     @Provides

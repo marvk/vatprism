@@ -47,7 +47,10 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Obs
         container.setOnKeyTyped(this::handleKeyTyped);
         container.setOnKeyPressed(this::handleKeyPressed);
 
-        list.setOnMouseClicked(e -> container.requestFocus());
+        list.setOnMouseClicked(e -> {
+            container.requestFocus();
+            container.fireEvent(e);
+        });
 
         container.setHeaderNode(setupStackPane());
         viewModel.queryProperty().bind(queryTextField.textProperty());

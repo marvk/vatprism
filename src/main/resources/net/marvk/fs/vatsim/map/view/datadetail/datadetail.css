@@ -63,7 +63,6 @@
     -fx-background-insets: 0;
     -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
     -fx-highlight-text-fill: -vatsim-text-color-light;
-    -fx-prompt-text-fill: transparent;
     -fx-padding: 0;
     -fx-background-radius: 0;
     -fx-focus-color: transparent;
@@ -74,7 +73,6 @@
 .text-area:focused {
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0;
-    -fx-prompt-text-fill: transparent;
     -fx-padding: 0;
     -fx-background-radius: 0;
 }
@@ -84,7 +82,7 @@
 }
 
 .detail-view-container {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+    -fx-effect: -vatsim-dropshadow;
 }
 
 .hyperlink-label {

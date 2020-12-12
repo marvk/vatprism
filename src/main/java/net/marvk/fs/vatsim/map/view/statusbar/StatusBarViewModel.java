@@ -15,7 +15,7 @@ import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.data.ClientRepository;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
-import net.marvk.fs.vatsim.map.view.StatusbarScope;
+import net.marvk.fs.vatsim.map.view.StatusScope;
 
 public class StatusBarViewModel implements ViewModel {
     private final ObjectProperty<Point2D> mouseWorldPosition = new SimpleObjectProperty<>();
@@ -25,7 +25,7 @@ public class StatusBarViewModel implements ViewModel {
     private final ClientRepository clientRepository;
 
     @InjectScope
-    private StatusbarScope statusbarScope;
+    private StatusScope statusScope;
 
     @Inject
     public StatusBarViewModel(final ClientRepository clientRepository) {
@@ -33,9 +33,9 @@ public class StatusBarViewModel implements ViewModel {
     }
 
     public void initialize() {
-        mouseWorldPosition.bind(statusbarScope.mouseWorldPositionProperty());
+        mouseWorldPosition.bind(statusScope.mouseWorldPositionProperty());
 
-        Bindings.bindContent(highlightedFirs, statusbarScope.highlightedFirs());
+        Bindings.bindContent(highlightedFirs, statusScope.highlightedFirs());
         clientRepository.list().addListener((ListChangeListener<Client>) c -> updatePlayerStats());
         updatePlayerStats();
     }

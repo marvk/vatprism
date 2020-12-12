@@ -11,13 +11,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.skin.TabPaneSkin;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.airports.AirportsView;
 import net.marvk.fs.vatsim.map.view.clients.ClientsView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.octicons.Octicons;
+import net.marvk.fs.vatsim.map.view.search.SearchView;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -25,6 +25,9 @@ import java.util.Arrays;
 public class TabsView implements FxmlView<TabsViewModel> {
     @FXML
     private StackPane tabPaneHolder;
+
+    @FXML
+    private SearchView searchController;
 
     @InjectViewModel
     private TabsViewModel viewModel;
@@ -34,24 +37,13 @@ public class TabsView implements FxmlView<TabsViewModel> {
     private TextField searchBox;
 
     public void initialize() {
-        final StackPane searchBoxHolder = new StackPane();
-        StackPane.setAlignment(searchBoxHolder, Pos.TOP_LEFT);
-        searchBoxHolder.getStyleClass().add("search-box");
-
-        searchBox = new TextField();
-        StackPane.setAlignment(searchBox, Pos.TOP_LEFT);
-        searchBox.setPromptText("Search");
-        searchBox.getStyleClass().add("search-box-text-field");
-
-        final FontIcon icon = FontIcon.of(Octicons.SEARCH_16);
-        StackPane.setMargin(icon, new Insets(0, 3, 0, 0));
-        StackPane.setAlignment(icon, Pos.CENTER_RIGHT);
-
-        searchBoxHolder.getChildren().addAll(searchBox, icon);
+        final Pane searchBoxContainer = searchController.getContainer();
+        final Pane searchBoxHolder = searchController.getSearchBoxHolder();
         final CustomTabPane tabPane = new CustomTabPane(searchBoxHolder.widthProperty());
         searchBoxHolder.prefHeightProperty().bind(tabPane.headersRegion().heightProperty().subtract(1));
         searchBoxHolder.maxHeightProperty().bind(searchBoxHolder.prefHeightProperty());
-        tabPaneHolder.getChildren().addAll(tabPane, searchBoxHolder);
+        tabPaneHolder.getChildren().add(0, tabPane);
+        StackPane.setAlignment(searchBoxContainer, Pos.TOP_LEFT);
         tabPane.getTabs().clear();
         tabPane.getTabs().add(createTab("Map", MapView.class));
         tabPane.getTabs().add(createTab("Clients", ClientsView.class));

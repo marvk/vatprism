@@ -13,24 +13,25 @@ import java.util.stream.DoubleStream;
 public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private static final double NANOS_IN_MILLI = 1000000.;
     @Parameter("Show")
-    private boolean show = true;
+    private boolean show = false;
 
     @Parameter("Show Averages")
     private boolean showAverages = true;
 
     private static Color[] COLORS = new Color[]{
-            Color.web("#C6C6C6"),
-            Color.web("#FDB2C1"),
-            Color.web("#F4B9A1"),
-            Color.web("#DEC38B"),
-            Color.web("#C0CD89"),
-            Color.web("#9AD59B"),
-            Color.web("#77D8B9"),
-            Color.web("#6CD7D7"),
-            Color.web("#88D0EF"),
-            Color.web("#B4C5FA"),
-            Color.web("#DBB9F7"),
-            Color.web("#F5B2E5")
+            Color.web("#E18E9F"),
+            Color.web("#D99680"),
+            Color.web("#C79F65"),
+            Color.web("#AEA958"),
+            Color.web("#8CB163"),
+            Color.web("#63B77D"),
+            Color.web("#31BA9C"),
+            Color.web("#12B8B9"),
+            Color.web("#4BB2D0"),
+            Color.web("#81A8DD"),
+            Color.web("#AD9CDF"),
+            Color.web("#CC91D4"),
+            Color.web("#DD8CBF")
     };
 
     @Parameter(value = "Height", min = 0)

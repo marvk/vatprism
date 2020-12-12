@@ -1,7 +1,5 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import com.sun.javafx.tk.FontMetrics;
-import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -28,6 +26,8 @@ public class AirportPainter extends MapPainter<Airport> {
 
     @Parameter("Text Color")
     private Color textColor = Color.GREY;
+    @Parameter("Text Background Color")
+    private Color backgroundColor;
     @Parameter("Airport Color")
     private Color airportColor = Color.GREY;
     @Parameter("Approach Circle Color")
@@ -50,19 +50,28 @@ public class AirportPainter extends MapPainter<Airport> {
 
     @Parameter("Paint Controllers")
     private boolean paintControllers = true;
+    @Parameter("Paint Background")
+    private boolean paintBackground = true;
     @Parameter("Paint Text")
     private boolean text = true;
 
     public AirportPainter(final MapVariables mapVariables) {
         super(mapVariables);
+        setBackgroundColor();
     }
 
-    public AirportPainter(final MapVariables mapVariables, final Color textColor, final Color airportColor, final boolean paintAll, final boolean paintControllers) {
+    public AirportPainter(final MapVariables mapVariables, final Color textColor, final Color airportColor, final boolean paintAll, final boolean paintControllers, final boolean paintBackground) {
         super(mapVariables);
         this.textColor = textColor;
         this.airportColor = airportColor;
         this.paintAll = paintAll;
         this.paintControllers = paintControllers;
+        this.paintBackground = paintBackground;
+        setBackgroundColor();
+    }
+
+    private void setBackgroundColor() {
+        backgroundColor = textColor.deriveColor(0, 1, 0.5, 1);
     }
 
     @Override
@@ -148,17 +157,17 @@ public class AirportPainter extends MapPainter<Airport> {
                 }
             }
 
-            c.setTextBaseline(VPos.BOTTOM);
             if (text) {
-                final FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(c.getFont());
-
-                c.setFill(textColor.deriveColor(0, 1, 0.5, 0.5));
-                final int width = (int) Math.round(icao.chars().mapToDouble(e -> fm.getCharWidth((char) e)).sum());
-                final int height = Math.round(fm.getAscent() + fm.getDescent());
-                c.fillRect(Math.floor(x - width / 2.0), Math.ceil(y - 1 - height), width + 1, height);
-
-                c.setFill(textColor);
-                c.fillText(icao, x, y - 1);
+                painterHelper.fillTextWithBackground(
+                        c,
+                        x,
+                        y - 10,
+                        icao,
+                        paintBackground,
+                        VPos.CENTER,
+                        textColor,
+                        backgroundColor
+                );
             }
         }
     }

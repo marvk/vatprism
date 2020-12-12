@@ -57,4 +57,14 @@ public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
     public E visit(final UpperInformationRegion upperInformationRegion) {
         return defaultValue;
     }
+
+    @Override
+    public E visit(final Atis atis) {
+        return null;
+    }
+
+    @Override
+    public E visit(final Client client) {
+        return null;
+    }
 }

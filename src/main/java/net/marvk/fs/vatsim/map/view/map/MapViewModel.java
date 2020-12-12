@@ -17,7 +17,7 @@ import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
-import net.marvk.fs.vatsim.map.view.StatusbarScope;
+import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
 import java.util.ArrayList;
@@ -40,9 +40,7 @@ public class MapViewModel implements ViewModel {
 
     private final InternationalDateLineRepository internationalDateLineRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
-    private final PositionDataVisitor positionDataVisitor;
     private final List<Polygon> world;
-    private final ObservableList<PainterExecutor<?>> painterExecutors;
 
     private final MapVariables mapVariables = new MapVariables();
 
@@ -52,10 +50,12 @@ public class MapViewModel implements ViewModel {
 
     private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
 
-    private final FrameMetrics frameMetrics;
+    private ObservableList<PainterExecutor<?>> painterExecutors;
+
+    private FrameMetrics frameMetrics;
 
     @InjectScope
-    private StatusbarScope statusbarScope;
+    private StatusScope statusScope;
 
     @InjectScope
     private SettingsScope settingsScope;
@@ -71,7 +71,6 @@ public class MapViewModel implements ViewModel {
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
-            final PositionDataVisitor positionDataVisitor,
             @Named("world") final List<Polygon> world
     ) {
         this.clientRepository = clientRepository;
@@ -79,21 +78,10 @@ public class MapViewModel implements ViewModel {
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.internationalDateLineRepository = internationalDateLineRepository;
         this.upperInformationRegionRepository = upperInformationRegionRepository;
-        this.positionDataVisitor = positionDataVisitor;
 
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
         this.world = world;
-
-        this.painterExecutors = executors(upperInformationRegionRepository);
-
-        final ArrayList<String> names = painterExecutors
-                .stream()
-                .map(PainterExecutor::getName)
-                .collect(Collectors.toCollection(ArrayList::new));
-        names.add(0, "Total");
-
-        this.frameMetrics = new FrameMetrics(names, 250);
 
         this.mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
 
@@ -106,15 +94,34 @@ public class MapViewModel implements ViewModel {
         this.viewHeight.addListener((observable, oldValue, newValue) -> mapVariables.setViewHeight(newValue.doubleValue()));
         this.mapVariables.setViewHeight(viewHeight.get());
 
-        Notifications.REPAINT.subscribe(this::triggerRepaint);
-        Notifications.PAN_TO_DATA.subscribe(this::panToData);
-
         this.selectedItem.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.viewHeight.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.viewWidth.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.selectionShape.addListener((observable, oldValue, newValue) -> triggerRepaint());
+
+    }
+
+    public void initialize() {
+        this.painterExecutors = executors(upperInformationRegionRepository);
+
+        final ArrayList<String> names = painterExecutors
+                .stream()
+                .map(PainterExecutor::getName)
+                .collect(Collectors.toCollection(ArrayList::new));
+        names.add(0, "Total");
+
+        this.frameMetrics = new FrameMetrics(names, 250);
+
+        Bindings.bindContent(statusScope.highlightedFirs(), contextMenu.getBoundaries().getItems());
+        statusScope.mouseViewPositionProperty().bind(mouseViewPosition);
+        statusScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
+
+        Bindings.bindContent(settingsScope.getPainters(), painterExecutors);
+
+        Notifications.REPAINT.subscribe(this::triggerRepaint);
+        Notifications.PAN_TO_DATA.subscribe(this::panToData);
     }
 
     private void panToData(final Data data) {
@@ -181,6 +188,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
+                PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
                 PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
                 PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
                 PainterExecutor.ofItem("Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
@@ -193,14 +201,6 @@ public class MapViewModel implements ViewModel {
 
     private void triggerRepaint() {
         publish("REPAINT");
-    }
-
-    public void initialize() {
-        Bindings.bindContent(statusbarScope.highlightedFirs(), contextMenu.getBoundaries().getItems());
-        statusbarScope.mouseViewPositionProperty().bind(mouseViewPosition);
-        statusbarScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
-
-        Bindings.bindContent(settingsScope.getPainters(), painterExecutors);
     }
 
     public DoubleProperty scaleProperty() {

@@ -17,7 +17,7 @@ public interface NullDataVisitor<E> extends DataVisitor<E> {
 
     @Override
     default E visit(final Controller controller) {
-        return null;
+        return visit((Client) controller);
     }
 
     @Override
@@ -42,11 +42,21 @@ public interface NullDataVisitor<E> extends DataVisitor<E> {
 
     @Override
     default E visit(final Pilot pilot) {
-        return null;
+        return visit((Client) pilot);
     }
 
     @Override
     default E visit(final UpperInformationRegion upperInformationRegion) {
+        return null;
+    }
+
+    @Override
+    default E visit(final Atis atis) {
+        return visit((Controller) atis);
+    }
+
+    @Override
+    default E visit(final Client client) {
         return null;
     }
 }

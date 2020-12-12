@@ -1,6 +1,9 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import com.sun.javafx.tk.FontMetrics;
+import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Polygon;
@@ -88,4 +91,34 @@ public class PainterHelper {
         );
     }
 
+    public void fillTextWithBackground(final GraphicsContext c, final double x, final double y, final String text, final boolean background, final VPos baseline, final Color textColor, final Color backgroundColor) {
+        if (background) {
+            c.setTextBaseline(baseline);
+            final FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(c.getFont());
+
+            c.setFill(backgroundColor);
+            final int width = (int) Math.round(text.chars().mapToDouble(e -> fm.getCharWidth((char) e)).sum());
+            final int height = Math.round(fm.getLineHeight());
+
+            final double baselineOffset = switch (baseline) {
+                case BOTTOM -> 0;
+                case CENTER -> height / 2.0;
+                default -> throw new IllegalArgumentException("Illegal baseline " + baseline);
+            };
+
+            System.out.println("baselineOffset = " + baselineOffset);
+
+            final double xRect = Math.floor(x - width / 2.0);
+            final double yRect = Math.ceil(y - 1 - baselineOffset) + 1;
+            c.fillRect(xRect, yRect, width + 1, height);
+        }
+
+        fillText(c, x, y, text, textColor, baseline);
+    }
+
+    public void fillText(final GraphicsContext c, final double x, final double y, final String text, final Color color, final VPos baseline) {
+        c.setFill(color);
+        c.setTextBaseline(baseline);
+        c.fillText(text, x, y);
+    }
 }

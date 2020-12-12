@@ -13,16 +13,22 @@
     -vatsim-background-color-very-light-25: #2B231340;
     -vatsim-background-color-very-very-light: #392e19;
     -vatsim-background-color-very-very-very-light: #42351D;
+    -vatsim-text-color-dark: #52482F;
     -vatsim-text-color: #5f553d;
-    -vatsim-text-color-light: #76694b;
+    -vatsim-text-color-light: #746A53;
     -vatsim-text-greyed-out: #919191;
     -vatsim-toolbar-button-size: 24px;
     -vatsim-toolbar-button-icon-size: 20px;
+    -vatsim-dropshadow: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+}
+
+.vatsim-font {
+    -fx-text-fill: -vatsim-text-color;
 }
 
 .context-menu-drop-shadow-holder {
     -fx-background-color: -vatsim-background-color-very-light;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+    -fx-effect: -vatsim-dropshadow;
 }
 
 .description {
@@ -177,18 +183,4 @@
 
 .menu-item-header:focused {
     -fx-background-color: transparent;
-}
-
-.search-box-text-field,
-.search-box {
-    -fx-pref-width: 200;
-    -fx-max-width: 200;
-    -fx-icon-color: -vatsim-text-color;
-}
-
-.search-box-text-field {
-    -fx-background-color: -vatsim-background-color-very-very-very-light;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-min-height: 0;
 }

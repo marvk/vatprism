@@ -36,4 +36,12 @@ public interface DataVisitor<E> {
     default E visit(final UpperInformationRegion upperInformationRegion) {
         throw new UnsupportedOperationException("Not implemented");
     }
+
+    default E visit(final Atis atis) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    default E visit(final Client client) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

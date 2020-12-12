@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.view.painter;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.*;
 import javafx.scene.text.TextAlignment;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.Polygon;
@@ -78,6 +78,22 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
         c.setLineWidth(lineWidth);
         c.setLineDashes(null);
         painterHelper.strokePolygons(c, polygon);
+    }
 
+    private Paint hatched(final FlightInformationRegionBoundary firb) {
+        final double cx = mapVariables.toCanvasX(firb.getPolygon().boundary().getMinX());
+        final double cy = mapVariables.toCanvasY(firb.getPolygon().boundary().getMinY());
+        return new LinearGradient(
+                cx,
+                cy,
+                cx + 10,
+                cy + 10,
+                false,
+                CycleMethod.REPEAT,
+                new Stop(0, fillColor),
+                new Stop(0.5, fillColor),
+                new Stop(0.5, fillColor.darker()),
+                new Stop(1, fillColor.darker())
+        );
     }
 }

@@ -11,18 +11,27 @@ import java.util.function.Consumer;
 
 public class SelectedPainter extends CompositeMapPainter<Data> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter = new FirPainter(mapVariables, Color.RED, 2.5, true, true);
+    private final FirPainter firPainter;
 
     @MetaPainter("Pilot")
-    private final PilotPainter pilotPainter = new PilotPainter(mapVariables, Color.RED);
+    private final PilotPainter pilotPainter;
 
     @MetaPainter("Airport")
-    private final AirportPainter airportPainter = new AirportPainter(mapVariables, Color.RED, Color.RED, true, true);
+    private final AirportPainter airportPainter;
 
-    private final PainterVisitor painterVisitor = new PainterVisitor();
+    private final PainterVisitor painterVisitor;
 
     public SelectedPainter(final MapVariables mapVariables) {
+        this(mapVariables, Color.RED, false);
+    }
+
+    public SelectedPainter(final MapVariables mapVariables, final Color color, final boolean backgrounds) {
         super(mapVariables);
+
+        this.painterVisitor = new PainterVisitor();
+        this.airportPainter = new AirportPainter(this.mapVariables, color, color, true, true, true);
+        this.pilotPainter = new PilotPainter(this.mapVariables, color, backgrounds);
+        this.firPainter = new FirPainter(this.mapVariables, color, 2.5, true, true);
     }
 
     @Override
