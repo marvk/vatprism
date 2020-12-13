@@ -7,15 +7,18 @@ import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import net.marvk.fs.vatsim.map.data.ClientRepository;
-import net.marvk.fs.vatsim.map.data.Data;
+import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SearchViewModel implements ViewModel {
     private final StringProperty query = new SimpleStringProperty();
@@ -32,8 +35,6 @@ public class SearchViewModel implements ViewModel {
     }
 
     public void initialize() {
-        System.out.println("statusScope = " + statusScope);
-
         results.addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 statusScope.getSearchedData().clear();
@@ -88,10 +89,21 @@ public class SearchViewModel implements ViewModel {
 
     private static class SearchActionSupplier {
         private final ClientRepository clientRepository;
+        private final AirportRepository airportRepository;
+        private final FlightInformationRegionBoundaryRepository firbRepository;
+        private final UpperInformationRegionRepository uirRepository;
 
         @Inject
-        public SearchActionSupplier(final ClientRepository clientRepository) {
+        public SearchActionSupplier(
+                final ClientRepository clientRepository,
+                final AirportRepository airportRepository,
+                final FlightInformationRegionBoundaryRepository firbRepository,
+                final UpperInformationRegionRepository uirRepository
+        ) {
             this.clientRepository = clientRepository;
+            this.airportRepository = airportRepository;
+            this.firbRepository = firbRepository;
+            this.uirRepository = uirRepository;
         }
 
         public Action createAction(final String query, final ObjectProperty<ObservableList<Data>> result) {
@@ -109,11 +121,52 @@ public class SearchViewModel implements ViewModel {
 
             @Override
             protected void action() throws Exception {
-                final FilteredList<? extends Data> filtered = clientRepository
+                final FilteredList<? extends Data> clients = clientRepository
                         .list()
-                        .filtered(e -> StringUtils.containsIgnoreCase(e.getCallsign(), query));
+                        .filtered(this::containsQuery);
 
-                result.set((ObservableList<Data>) filtered);
+                final FilteredList<Airport> airports = airportRepository
+                        .list()
+                        .filtered(this::containsQuery);
+
+                final FilteredList<FlightInformationRegionBoundary> firs = firbRepository
+                        .list()
+                        .filtered(this::containsQuery);
+
+                final FilteredList<UpperInformationRegion> uirs = uirRepository
+                        .list()
+                        .filtered(this::containsQuery);
+
+                final List<? extends Data> result = Stream
+                        .of(clients, airports)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+                this.result.set((ObservableList<Data>) result);
+            }
+
+            private boolean containsQuery(final Client client) {
+                return StringUtils.containsIgnoreCase(client.getCallsign(), query);
+            }
+
+            private boolean containsQuery(final FlightInformationRegionBoundary firb) {
+                final boolean namesContainQuery = firb
+                        .getFlightInformationRegions()
+                        .stream()
+                        .map(FlightInformationRegion::getName)
+                        .anyMatch(e -> StringUtils.containsIgnoreCase(e, query));
+
+                return StringUtils.containsIgnoreCase(firb.getIcao(), query) || namesContainQuery;
+            }
+
+            private boolean containsQuery(final UpperInformationRegion uir) {
+                return StringUtils.containsIgnoreCase(uir.getIcao(), query) ||
+                        StringUtils.containsIgnoreCase(uir.getName(), query);
+            }
+
+            private boolean containsQuery(final Airport airport) {
+                return StringUtils.containsIgnoreCase(airport.getIcao(), query) ||
+                        airport.getNames().stream().anyMatch(name -> StringUtils.containsIgnoreCase(name, query));
             }
         }
     }

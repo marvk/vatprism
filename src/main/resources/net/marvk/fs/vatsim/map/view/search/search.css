@@ -39,3 +39,7 @@
 .list-cell:filled:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+}

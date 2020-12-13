@@ -20,9 +20,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import net.marvk.fs.vatsim.map.data.Client;
-import net.marvk.fs.vatsim.map.data.Data;
-import net.marvk.fs.vatsim.map.data.OptionalDataVisitor;
+import net.marvk.fs.vatsim.map.data.*;
+import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
@@ -37,6 +36,17 @@ public class SearchView implements FxmlView<SearchViewModel> {
     private static final Font BOLD = Font.font(
             Font.getDefault().getFamily(),
             FontWeight.BOLD,
+            Font.getDefault().getSize()
+    );
+
+    private static final Font BOLD_MONO = Font.font(
+            "JetBrains Mono",
+            FontWeight.BOLD,
+            Font.getDefault().getSize()
+    );
+
+    private static final Font MONO = Font.font(
+            "JetBrains Mono",
             Font.getDefault().getSize()
     );
 
@@ -113,14 +123,18 @@ public class SearchView implements FxmlView<SearchViewModel> {
     }
 
     private class ResultCell extends ListCell<Data> implements OptionalDataVisitor<TextFlow> {
+        private final Pattern replacing = Pattern.compile("%[rm]");
+
         private final ReadOnlyStringProperty query;
         private final ObjectProperty<Pattern> pattern = new SimpleObjectProperty<>();
         private final ObjectProperty<Data> data = new SimpleObjectProperty<>();
+        private final HBox holder;
+        private TextFlow textFlow;
 
         public ResultCell(final ReadOnlyStringProperty query) {
             this.query = query;
             this.pattern.bind(Bindings.createObjectBinding(
-                    () -> Pattern.compile(query.get(), Pattern.CASE_INSENSITIVE),
+                    () -> Pattern.compile(Pattern.quote(query.get()), Pattern.CASE_INSENSITIVE),
                     query
             ));
             setStyle("-fx-padding: 0 0 0 5");
@@ -130,6 +144,9 @@ public class SearchView implements FxmlView<SearchViewModel> {
                     () -> data.get() == null ? Cursor.DEFAULT : Cursor.HAND,
                     data
             ));
+
+            this.holder = new HBox();
+            this.holder.setAlignment(Pos.CENTER_LEFT);
         }
 
         @Override
@@ -144,18 +161,83 @@ public class SearchView implements FxmlView<SearchViewModel> {
                 setText(null);
                 setGraphic(null);
             } else {
-                setGraphic(maybeTextFlow.get());
+                textFlow = maybeTextFlow.get();
+                textFlow.setMaxHeight(USE_PREF_SIZE);
+                textFlow.maxWidthProperty().bind(widthProperty().subtract(20));
+                holder.getChildren().setAll(textFlow);
+                setGraphic(holder);
             }
         }
 
         @Override
-        public Optional<TextFlow> visit(final Client client) {
-            return Optional.of(
-                    new TextFlow(createHighlightedText(client.getCallsign()).toArray(Text[]::new))
-            );
+        public Optional<TextFlow> visit(final UpperInformationRegion uir) {
+            return Optional.of(new TextFlow(textFlows("%m (%r)", uir.getIcao(), uir.getName())));
         }
 
-        private List<Text> createHighlightedText(final String s) {
+        @Override
+        public Optional<TextFlow> visit(final FlightInformationRegionBoundary firb) {
+            final String firName = firb
+                    .getFlightInformationRegions()
+                    .stream()
+                    .map(FlightInformationRegion::getName)
+                    .filter(e -> StringUtils.containsIgnoreCase(e, query.get()))
+                    .findFirst()
+                    .orElse(firb.getFlightInformationRegions().get(0).getName());
+
+            return Optional.of(new TextFlow(textFlows("%m (%r)", firb.getIcao(), firName)));
+        }
+
+        @Override
+        public Optional<TextFlow> visit(final Client client) {
+            return Optional.of(new TextFlow(textFlows("%m (%r)", client.getCallsign(), client.getRealName())));
+        }
+
+        @Override
+        public Optional<TextFlow> visit(final Airport airport) {
+            final String name = airport
+                    .getNames()
+                    .stream()
+                    .filter(e -> StringUtils.containsIgnoreCase(e, query.get()))
+                    .findFirst()
+                    .orElse(airport.getNames().get(0));
+
+            return Optional.of(new TextFlow(textFlows("%m (%r)", airport.getIcao(), name)));
+        }
+
+        private Text[] textFlows(final String s, final String... items) {
+            final List<MatchResult> matches = replacing.matcher(s).results().collect(Collectors.toList());
+
+            if (matches.size() != items.length) {
+                throw new IndexOutOfBoundsException();
+            }
+
+            if (matches.isEmpty()) {
+                return new Text[]{defaultText(s)};
+            }
+
+            final ArrayList<Text> result = new ArrayList<>();
+
+            int index = 0;
+            for (int i = 0; i < matches.size(); i++) {
+                final MatchResult match = matches.get(i);
+
+                final String prefix = s.substring(index, match.start());
+                if (!prefix.isBlank()) {
+                    result.add(defaultText(prefix));
+                }
+                result.addAll(createHighlightedText(items[i], "%m".equals(s.substring(match.start(), match.end()))));
+
+                index = match.end();
+            }
+
+            if (index < s.length()) {
+                result.add(defaultText(s.substring(index)));
+            }
+
+            return result.toArray(Text[]::new);
+        }
+
+        private List<Text> createHighlightedText(final String s, final boolean mono) {
             final Pattern pattern = this.pattern.get();
 
             final List<MatchResult> matches = pattern.matcher(s).results().collect(Collectors.toList());
@@ -166,30 +248,41 @@ public class SearchView implements FxmlView<SearchViewModel> {
             for (final MatchResult match : matches) {
                 final String prefix = s.substring(index, match.start());
                 if (!prefix.isBlank()) {
-                    result.add(defaultText(prefix));
+                    result.add(defaultText(prefix, mono));
                 }
-                result.add(highlightedText(s.substring(match.start(), match.end())));
+                result.add(highlightedText(s.substring(match.start(), match.end()), mono));
                 index = match.end();
             }
 
             if (index < s.length()) {
-                result.add(defaultText(s.substring(index)));
+                result.add(defaultText(s.substring(index), mono));
             }
 
             return result;
         }
 
-        private Text highlightedText(final String s) {
+        private Text highlightedText(final String s, final boolean mono) {
             final Text text = new Text(s);
             text.setStyle("-fx-fill: -vatsim-text-color-light");
-            text.setFont(BOLD);
+            text.setFont(mono ? BOLD_MONO : BOLD);
+            return text;
+        }
+
+        private Text highlightedText(final String s) {
+            return highlightedText(s, false);
+        }
+
+        private Text defaultText(final String s, final boolean mono) {
+            final Text text = new Text(s);
+            text.setStyle("-fx-fill: -vatsim-text-color");
+            if (mono) {
+                text.setFont(MONO);
+            }
             return text;
         }
 
         private Text defaultText(final String s) {
-            final Text text = new Text(s);
-            text.setStyle("-fx-fill: -vatsim-text-color");
-            return text;
+            return defaultText(s, false);
         }
     }
 }

@@ -22,7 +22,7 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(VatsimApiUrlProvider.class).to(UrlProviderV1.class).in(Singleton.class);
-        bind(VatsimApiDataSource.class).to(ExampleDataSource.class).in(Singleton.class);
+        bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);

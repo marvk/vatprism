@@ -106,8 +106,6 @@ public class PainterHelper {
                 default -> throw new IllegalArgumentException("Illegal baseline " + baseline);
             };
 
-            System.out.println("baselineOffset = " + baselineOffset);
-
             final double xRect = Math.floor(x - width / 2.0);
             final double yRect = Math.ceil(y - 1 - baselineOffset) + 1;
             c.fillRect(xRect, yRect, width + 1, height);

@@ -4,7 +4,7 @@
 }
 
 .list-cell:even {
-    -fx-background-color: derive(-vatsim-background-color-very-light, 1%);
+    -fx-background-color: derive(-vatsim-background-color-very-light, 2%);
 }
 
 .list-view,
@@ -14,4 +14,3 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
-
