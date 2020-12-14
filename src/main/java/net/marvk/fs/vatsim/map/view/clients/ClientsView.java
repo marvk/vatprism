@@ -1,10 +1,12 @@
 package net.marvk.fs.vatsim.map.view.clients;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.Context;
 import de.saxsys.mvvmfx.InjectContext;
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import net.marvk.fs.vatsim.map.data.Client;
+import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.table.AbstractTableView;
 
 public class ClientsView extends AbstractTableView<ClientsViewModel, Client> {
@@ -14,35 +16,16 @@ public class ClientsView extends AbstractTableView<ClientsViewModel, Client> {
     @InjectContext
     private Context context;
 
+    @Inject
+    public ClientsView(final TextFlowHighlighter textFlowHighlighter) {
+        super(textFlowHighlighter);
+    }
+
     @Override
     public void initialize() {
         super.initialize();
-        addColumn("Callsign", "callsign");
-        addColumn("CID", "cid");
-//        addColumn("ControllerType", e -> e.controllerData().controllerTypeProperty().asString());
-        addColumn("Name", "realName");
-//        addColumn("Type", "rawClientType");
-
-        table.setFixedCellSize(18);
-
-//        instantiateDetailView();
+        addColumnWithStringFactory("CID", Client::cidProperty, true);
+        addColumnWithStringFactory("Callsign", Client::callsignProperty, true);
+        addColumnWithStringFactory("Name", Client::realNameProperty, false);
     }
-
-//    private void instantiateDetailView() {
-//        final var viewTuple =
-//                FluentViewLoader.fxmlView(ClientDetailView.class)
-//                                .context(context)
-//                                .load();
-//
-//        viewTuple.getViewModel().getClient().modelProperty().bind(Bindings.createObjectBinding(
-//                () -> {
-//                    if (viewModel.getSelectedItem() != null) {
-//                        return viewModel.getSelectedItem().getModel();
-//                    }
-//                    return null;
-//                }, viewModel.selectedItemProperty()
-//        ));
-//
-//        splitPane.getItems().add(viewTuple.getView());
-//    }
 }

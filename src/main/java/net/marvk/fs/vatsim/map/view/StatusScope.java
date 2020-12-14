@@ -4,6 +4,8 @@ import com.google.inject.Singleton;
 import de.saxsys.mvvmfx.Scope;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -15,6 +17,7 @@ public class StatusScope implements Scope {
     private final ObjectProperty<Point2D> mouseWorldPosition = new SimpleObjectProperty<>();
     private final ObjectProperty<Point2D> mouseViewPosition = new SimpleObjectProperty<>();
     private final ObservableList<Data> searchedData = FXCollections.observableArrayList();
+    private final StringProperty searchQuery = new SimpleStringProperty();
 
     private final ObservableList<FlightInformationRegionBoundary> highlightedFirs = FXCollections.observableArrayList();
 
@@ -48,5 +51,17 @@ public class StatusScope implements Scope {
 
     public ObservableList<Data> getSearchedData() {
         return searchedData;
+    }
+
+    public String getSearchQuery() {
+        return searchQuery.get();
+    }
+
+    public StringProperty searchQueryProperty() {
+        return searchQuery;
+    }
+
+    public void setSearchQuery(final String searchQuery) {
+        this.searchQuery.set(searchQuery);
     }
 }

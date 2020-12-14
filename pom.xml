@@ -77,12 +77,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>11.0.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>de.saxsys</groupId>
             <artifactId>mvvmfx</artifactId>
             <version>${mvvmfx.version}</version>
@@ -91,11 +85,6 @@
             <groupId>eu.lestard</groupId>
             <artifactId>easy-di</artifactId>
             <version>0.3.0</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.lestard</groupId>
-            <artifactId>advanced-bindings</artifactId>
-            <version>0.4.0</version>
         </dependency>
 
         <dependency>

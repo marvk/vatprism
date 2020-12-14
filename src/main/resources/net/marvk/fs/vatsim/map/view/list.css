@@ -1,16 +1,36 @@
+/*.table-cell,*/
+.table-row-cell,
 .list-cell {
+    -fx-text-fill: -vatsim-text-color;
     -fx-padding: 0px;
     -fx-background-color: -vatsim-background-color-very-light;
 }
 
+/*.table-cell:even,*/
+.table-row-cell:even,
 .list-cell:even {
     -fx-background-color: derive(-vatsim-background-color-very-light, 2%);
 }
 
+.table-view,
+.table-view:focused,
 .list-view,
 .list-view:focused {
     -fx-padding: 0;
     -fx-background-color: -vatsim-background-color-very-light;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
+}
+
+.table-view .column-header,
+.table-view .column-header-background .filler {
+    -fx-background-color: -vatsim-background-color-light;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -vatsim-text-color;
+}
+
+.table-row-cell {
+    -fx-table-cell-border-color: -vatsim-background-color;
 }

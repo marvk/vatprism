@@ -3,7 +3,6 @@ package net.marvk.fs.vatsim.map.view.search;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import de.saxsys.mvvmfx.InjectScope;
-import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.beans.property.*;
@@ -11,16 +10,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SearchViewModel implements ViewModel {
+public class SearchViewModel extends BaseViewModel {
     private final StringProperty query = new SimpleStringProperty();
     private final ReadOnlyObjectWrapper<ObservableList<Data>> results = new ReadOnlyObjectWrapper<>();
     private final DelegateCommand searchCommand;
@@ -43,6 +42,15 @@ public class SearchViewModel implements ViewModel {
             }
 
             Notifications.REPAINT.publish();
+        });
+        statusScope.searchQueryProperty().bind(query);
+
+        query.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isBlank()) {
+                search();
+            } else {
+                clear();
+            }
         });
     }
 
@@ -77,12 +85,6 @@ public class SearchViewModel implements ViewModel {
         return results.getReadOnlyProperty();
     }
 
-    public void setDataDetail(final Data data) {
-        if (data != null) {
-            Notifications.SET_DATA_DETAIL.publish(data);
-        }
-    }
-
     public DelegateCommand getSearchCommand() {
         return searchCommand;
     }
@@ -111,62 +113,38 @@ public class SearchViewModel implements ViewModel {
         }
 
         private class SearchAction extends Action {
-            private final String query;
             private final ObjectProperty<ObservableList<Data>> result;
+            private final DataVisitor<Boolean> predicateSupplier;
 
             public SearchAction(final String query, final ObjectProperty<ObservableList<Data>> result) {
-                this.query = query;
                 this.result = result;
+                this.predicateSupplier = new SimplePredicatesDataVisitor(query);
             }
 
             @Override
-            protected void action() throws Exception {
+            protected void action() {
                 final FilteredList<? extends Data> clients = clientRepository
                         .list()
-                        .filtered(this::containsQuery);
+                        .filtered(predicateSupplier::visit);
 
                 final FilteredList<Airport> airports = airportRepository
                         .list()
-                        .filtered(this::containsQuery);
+                        .filtered(predicateSupplier::visit);
 
                 final FilteredList<FlightInformationRegionBoundary> firs = firbRepository
                         .list()
-                        .filtered(this::containsQuery);
+                        .filtered(predicateSupplier::visit);
 
                 final FilteredList<UpperInformationRegion> uirs = uirRepository
                         .list()
-                        .filtered(this::containsQuery);
+                        .filtered(predicateSupplier::visit);
 
-                final List<? extends Data> result = Stream
+                final ObservableList<Data> result = Stream
                         .of(clients, airports)
                         .flatMap(Collection::stream)
                         .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-                this.result.set((ObservableList<Data>) result);
-            }
-
-            private boolean containsQuery(final Client client) {
-                return StringUtils.containsIgnoreCase(client.getCallsign(), query);
-            }
-
-            private boolean containsQuery(final FlightInformationRegionBoundary firb) {
-                final boolean namesContainQuery = firb
-                        .getFlightInformationRegions()
-                        .stream()
-                        .map(FlightInformationRegion::getName)
-                        .anyMatch(e -> StringUtils.containsIgnoreCase(e, query));
-
-                return StringUtils.containsIgnoreCase(firb.getIcao(), query) || namesContainQuery;
-            }
-
-            private boolean containsQuery(final UpperInformationRegion uir) {
-                return StringUtils.containsIgnoreCase(uir.getIcao(), query) ||
-                        StringUtils.containsIgnoreCase(uir.getName(), query);
-            }
-
-            private boolean containsQuery(final Airport airport) {
-                return StringUtils.containsIgnoreCase(airport.getIcao(), query) ||
-                        airport.getNames().stream().anyMatch(name -> StringUtils.containsIgnoreCase(name, query));
+                this.result.set(result);
             }
         }
     }

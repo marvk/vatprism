@@ -1,0 +1,4 @@
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-cursor: hand;
+}

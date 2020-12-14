@@ -1,24 +1,24 @@
 package net.marvk.fs.vatsim.map.view.table;
 
-import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import net.marvk.fs.vatsim.map.view.BaseViewModel;
 
-public abstract class AbstractTableViewModel<TableViewViewModel> implements ViewModel {
-    private final ObjectProperty<TableViewViewModel> selectedItem = new SimpleObjectProperty<>();
+public abstract class AbstractTableViewModel<Model> extends BaseViewModel {
+    private final ObjectProperty<Model> selectedItem = new SimpleObjectProperty<>();
 
-    public abstract ObservableList<TableViewViewModel> items();
+    public abstract ObservableList<Model> items();
 
-    public TableViewViewModel getSelectedItem() {
+    public Model getSelectedItem() {
         return selectedItem.get();
     }
 
-    public ObjectProperty<TableViewViewModel> selectedItemProperty() {
+    public ObjectProperty<Model> selectedItemProperty() {
         return selectedItem;
     }
 
-    public void setSelectedItem(final TableViewViewModel selectedItem) {
+    public void setSelectedItem(final Model selectedItem) {
         this.selectedItem.set(selectedItem);
     }
 }

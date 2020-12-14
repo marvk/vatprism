@@ -133,7 +133,7 @@ public class Preferences {
         final Collection<Setting<?, ?>> settings = new ArrayList<>();
 
         final List<Field> fields = Arrays
-                .stream(painter.getClass().getDeclaredFields())
+                .stream(fields(painter))
                 .filter(e -> e.isAnnotationPresent(Parameter.class) || e.isAnnotationPresent(MetaPainter.class))
                 .peek(e -> e.setAccessible(true))
                 .collect(Collectors.toList());
@@ -152,6 +152,22 @@ public class Preferences {
         settings.removeIf(Objects::isNull);
 
         return settings.toArray(Setting[]::new);
+    }
+
+    private static Field[] fields(final Painter<?> painter) {
+        Class<?> clazz = painter.getClass();
+
+        final ArrayList<Field> result = new ArrayList<>();
+
+        while (clazz != Object.class) {
+            final Field[] declaredFields = clazz.getDeclaredFields();
+            for (int i = 0; i < declaredFields.length; i++) {
+                result.add(i, declaredFields[i]);
+            }
+            clazz = clazz.getSuperclass();
+        }
+
+        return result.toArray(Field[]::new);
     }
 
     private Setting<?, ?> extracted(final Painter<?> painter, final Field field, final String prefix) throws IllegalAccessException {

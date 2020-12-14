@@ -1,15 +1,9 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import net.marvk.fs.vatsim.map.view.map.MapVariables;
-
 import java.util.Collection;
 
-public abstract class CompositeMapPainter<T> extends MapPainter<T> {
+public abstract class CompositeMapPainter<T> extends DisableablePainter<T> {
     private Collection<Painter<?>> painters = null;
-
-    public CompositeMapPainter(final MapVariables mapVariables) {
-        super(mapVariables);
-    }
 
     protected abstract Collection<Painter<?>> painters();
 

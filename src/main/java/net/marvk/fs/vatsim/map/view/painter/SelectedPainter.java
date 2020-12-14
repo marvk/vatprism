@@ -26,12 +26,10 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
     }
 
     public SelectedPainter(final MapVariables mapVariables, final Color color, final boolean backgrounds) {
-        super(mapVariables);
-
         this.painterVisitor = new PainterVisitor();
-        this.airportPainter = new AirportPainter(this.mapVariables, color, color, true, true, true);
-        this.pilotPainter = new PilotPainter(this.mapVariables, color, backgrounds);
-        this.firPainter = new FirPainter(this.mapVariables, color, 2.5, true, true);
+        this.airportPainter = new AirportPainter(mapVariables, color, color, true, true, true);
+        this.pilotPainter = new PilotPainter(mapVariables, color, backgrounds);
+        this.firPainter = new FirPainter(mapVariables, color, 2.5, true, true);
     }
 
     @Override

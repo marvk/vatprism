@@ -36,4 +36,6 @@ public interface Painter<T> {
 
     default void afterAllRender() {
     }
+
+    boolean isEnabled();
 }

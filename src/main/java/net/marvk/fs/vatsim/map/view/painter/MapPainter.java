@@ -4,7 +4,8 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.util.Objects;
 
-public abstract class MapPainter<T> implements Painter<T> {
+public abstract class MapPainter<T> extends DisableablePainter<T> {
+
     protected final MapVariables mapVariables;
     protected final PainterHelper painterHelper;
 
@@ -12,4 +13,5 @@ public abstract class MapPainter<T> implements Painter<T> {
         this.mapVariables = Objects.requireNonNull(mapVariables);
         this.painterHelper = new PainterHelper(mapVariables);
     }
+
 }

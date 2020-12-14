@@ -30,11 +30,13 @@ public final class PainterExecutor<T> {
     public void paint(final GraphicsContext c) {
         final long start = System.nanoTime();
         painter.beforeAllRender();
-        for (final T t : paintablesSupplier.get()) {
-            if (filter.test(t)) {
-                painter.beforeEachRender();
-                painter.paint(c, t);
-                painter.afterEachRender();
+        if (painter.isEnabled()) {
+            for (final T t : paintablesSupplier.get()) {
+                if (filter.test(t)) {
+                    painter.beforeEachRender();
+                    painter.paint(c, t);
+                    painter.afterEachRender();
+                }
             }
         }
         painter.afterAllRender();

@@ -1,11 +1,10 @@
 package net.marvk.fs.vatsim.map.view.search;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,40 +15,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SearchView implements FxmlView<SearchViewModel> {
-    private static final Font BOLD = Font.font(
-            Font.getDefault().getFamily(),
-            FontWeight.BOLD,
-            Font.getDefault().getSize()
-    );
 
-    private static final Font BOLD_MONO = Font.font(
-            "JetBrains Mono",
-            FontWeight.BOLD,
-            Font.getDefault().getSize()
-    );
-
-    private static final Font MONO = Font.font(
-            "JetBrains Mono",
-            Font.getDefault().getSize()
-    );
-
+    private final TextFlowHighlighter textFlowHighlighter;
     @FXML
     private VBox resultsHolder;
     @FXML
@@ -63,8 +41,15 @@ public class SearchView implements FxmlView<SearchViewModel> {
     @FXML
     private TextField searchBox;
 
+    private final BooleanProperty resultsVisible = new SimpleBooleanProperty();
+
     @InjectViewModel
     private SearchViewModel viewModel;
+
+    @Inject
+    public SearchView(final TextFlowHighlighter textFlowHighlighter) {
+        this.textFlowHighlighter = textFlowHighlighter;
+    }
 
     public void initialize() {
         viewModel.queryProperty().bindBidirectional(searchBox.textProperty());
@@ -75,7 +60,9 @@ public class SearchView implements FxmlView<SearchViewModel> {
                  .addListener((observable, oldValue, newValue) -> searchingChanged(newValue));
         resultsHolder.getChildren().clear();
         resultsHolder.visibleProperty()
-                     .bind(viewModel.resultsProperty().isNotNull().or(viewModel.getSearchCommand().runningProperty()));
+                     .bind(resultsVisible.and(viewModel.resultsProperty()
+                                                       .isNotNull()
+                                                       .or(viewModel.getSearchCommand().runningProperty())));
 
         resultsList.itemsProperty().bind(viewModel.resultsProperty());
         resultsList.setCellFactory(e -> new ResultCell(viewModel.queryProperty()));
@@ -122,9 +109,19 @@ public class SearchView implements FxmlView<SearchViewModel> {
         return searchBox;
     }
 
-    private class ResultCell extends ListCell<Data> implements OptionalDataVisitor<TextFlow> {
-        private final Pattern replacing = Pattern.compile("%[rm]");
+    public boolean isResultsVisible() {
+        return resultsVisible.get();
+    }
 
+    public BooleanProperty resultsVisibleProperty() {
+        return resultsVisible;
+    }
+
+    public void setResultsVisible(final boolean resultsVisible) {
+        this.resultsVisible.set(resultsVisible);
+    }
+
+    private class ResultCell extends ListCell<Data> implements OptionalDataVisitor<TextFlow> {
         private final ReadOnlyStringProperty query;
         private final ObjectProperty<Pattern> pattern = new SimpleObjectProperty<>();
         private final ObjectProperty<Data> data = new SimpleObjectProperty<>();
@@ -171,7 +168,7 @@ public class SearchView implements FxmlView<SearchViewModel> {
 
         @Override
         public Optional<TextFlow> visit(final UpperInformationRegion uir) {
-            return Optional.of(new TextFlow(textFlows("%m (%r)", uir.getIcao(), uir.getName())));
+            return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), uir.getIcao(), uir.getName())));
         }
 
         @Override
@@ -184,12 +181,13 @@ public class SearchView implements FxmlView<SearchViewModel> {
                     .findFirst()
                     .orElse(firb.getFlightInformationRegions().get(0).getName());
 
-            return Optional.of(new TextFlow(textFlows("%m (%r)", firb.getIcao(), firName)));
+            return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), firb.getIcao(), firName)));
         }
 
         @Override
         public Optional<TextFlow> visit(final Client client) {
-            return Optional.of(new TextFlow(textFlows("%m (%r)", client.getCallsign(), client.getRealName())));
+            return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), client.getCallsign(), client
+                    .getRealName())));
         }
 
         @Override
@@ -201,88 +199,7 @@ public class SearchView implements FxmlView<SearchViewModel> {
                     .findFirst()
                     .orElse(airport.getNames().get(0));
 
-            return Optional.of(new TextFlow(textFlows("%m (%r)", airport.getIcao(), name)));
-        }
-
-        private Text[] textFlows(final String s, final String... items) {
-            final List<MatchResult> matches = replacing.matcher(s).results().collect(Collectors.toList());
-
-            if (matches.size() != items.length) {
-                throw new IndexOutOfBoundsException();
-            }
-
-            if (matches.isEmpty()) {
-                return new Text[]{defaultText(s)};
-            }
-
-            final ArrayList<Text> result = new ArrayList<>();
-
-            int index = 0;
-            for (int i = 0; i < matches.size(); i++) {
-                final MatchResult match = matches.get(i);
-
-                final String prefix = s.substring(index, match.start());
-                if (!prefix.isBlank()) {
-                    result.add(defaultText(prefix));
-                }
-                result.addAll(createHighlightedText(items[i], "%m".equals(s.substring(match.start(), match.end()))));
-
-                index = match.end();
-            }
-
-            if (index < s.length()) {
-                result.add(defaultText(s.substring(index)));
-            }
-
-            return result.toArray(Text[]::new);
-        }
-
-        private List<Text> createHighlightedText(final String s, final boolean mono) {
-            final Pattern pattern = this.pattern.get();
-
-            final List<MatchResult> matches = pattern.matcher(s).results().collect(Collectors.toList());
-
-            int index = 0;
-
-            final List<Text> result = new ArrayList<>();
-            for (final MatchResult match : matches) {
-                final String prefix = s.substring(index, match.start());
-                if (!prefix.isBlank()) {
-                    result.add(defaultText(prefix, mono));
-                }
-                result.add(highlightedText(s.substring(match.start(), match.end()), mono));
-                index = match.end();
-            }
-
-            if (index < s.length()) {
-                result.add(defaultText(s.substring(index), mono));
-            }
-
-            return result;
-        }
-
-        private Text highlightedText(final String s, final boolean mono) {
-            final Text text = new Text(s);
-            text.setStyle("-fx-fill: -vatsim-text-color-light");
-            text.setFont(mono ? BOLD_MONO : BOLD);
-            return text;
-        }
-
-        private Text highlightedText(final String s) {
-            return highlightedText(s, false);
-        }
-
-        private Text defaultText(final String s, final boolean mono) {
-            final Text text = new Text(s);
-            text.setStyle("-fx-fill: -vatsim-text-color");
-            if (mono) {
-                text.setFont(MONO);
-            }
-            return text;
-        }
-
-        private Text defaultText(final String s) {
-            return defaultText(s, false);
+            return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), airport.getIcao(), name)));
         }
     }
 }

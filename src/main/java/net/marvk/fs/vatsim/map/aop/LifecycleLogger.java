@@ -23,11 +23,11 @@ public class LifecycleLogger implements MethodInterceptor {
             log.info("Starting " + identifier);
         }
         try {
-            final Object proceed = methodInvocation.proceed();
+            final Object result = methodInvocation.proceed();
             if (logLifecycle.logCompleted()) {
                 log.info("Completed " + identifier + " in " + duration(start));
             }
-            return proceed;
+            return result;
         } catch (final Throwable t) {
             if (logLifecycle.logFailed()) {
                 log.error("Failed " + identifier + " in " + duration(start));

@@ -6,18 +6,26 @@ import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class ActiveUirPainter implements Painter<UpperInformationRegion> {
+import java.util.Collection;
+import java.util.List;
+
+public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion> {
     @MetaPainter("FIR")
     private final FirPainter firPainter;
 
     public ActiveUirPainter(final MapVariables mapVariables) {
-        firPainter = new FirPainter(
+        this.firPainter = new FirPainter(
                 mapVariables,
                 Color.DARKCYAN,
                 0.5,
                 true,
                 true
         );
+    }
+
+    @Override
+    protected Collection<Painter<?>> painters() {
+        return List.of(firPainter);
     }
 
     @Override

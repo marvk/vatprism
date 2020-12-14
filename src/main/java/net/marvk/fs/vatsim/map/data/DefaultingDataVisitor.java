@@ -2,7 +2,7 @@ package net.marvk.fs.vatsim.map.data;
 
 import java.util.Objects;
 
-public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
+public class DefaultingDataVisitor<E> implements DataVisitor<E> {
     private final E defaultValue;
 
     public DefaultingDataVisitor(final E defaultValue) {
@@ -25,7 +25,7 @@ public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
 
     @Override
     public E visit(final Controller controller) {
-        return defaultValue;
+        return visit((Client) controller);
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
 
     @Override
     public E visit(final Pilot pilot) {
-        return defaultValue;
+        return visit((Client) pilot);
     }
 
     @Override
@@ -60,11 +60,11 @@ public abstract class DefaultingDataVisitor<E> implements DataVisitor<E> {
 
     @Override
     public E visit(final Atis atis) {
-        return null;
+        return visit((Controller) atis);
     }
 
     @Override
     public E visit(final Client client) {
-        return null;
+        return defaultValue;
     }
 }

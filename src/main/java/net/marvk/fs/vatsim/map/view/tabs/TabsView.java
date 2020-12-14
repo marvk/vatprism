@@ -14,6 +14,7 @@ import javafx.scene.control.skin.TabPaneSkin;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import lombok.SneakyThrows;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.airports.AirportsView;
 import net.marvk.fs.vatsim.map.view.clients.ClientsView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
@@ -49,7 +50,14 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPane.getTabs().add(createTab("Clients", ClientsView.class));
         tabPane.getTabs().add(createTab("Airports", AirportsView.class));
 
+        searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
+                () -> tabPane.getSelectionModel().getSelectedIndex() == 0,
+                tabPane.getSelectionModel().selectedIndexProperty()
+        ));
+
         tabPane.layout();
+
+        Notifications.SWITCH_TO_TAB.subscribe(i -> tabPane.getSelectionModel().select(i));
     }
 
     private Tab createTab(final String map, final Class<? extends FxmlView<?>> clazz) {

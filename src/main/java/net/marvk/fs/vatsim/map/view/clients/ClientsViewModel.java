@@ -10,4 +10,9 @@ public class ClientsViewModel extends SimpleTableViewModel<Client> {
     public ClientsViewModel(final ClientRepository clientRepository) {
         super(clientRepository);
     }
+
+    @Override
+    protected boolean matchesQuery(final Client e) {
+        return false;
+    }
 }

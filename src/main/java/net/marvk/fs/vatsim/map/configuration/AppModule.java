@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.MultiPolygon;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +35,9 @@ public class AppModule extends AbstractModule {
     @Provides
     @Singleton
     public VatsimApi vatsimApi(final VatsimApiDataSource dataSource) {
-        return new SimpleVatsimApi(dataSource);
+        final SimpleVatsimApi api = new SimpleVatsimApi(dataSource);
+        final CachedVatsimApi cached = new CachedVatsimApi(api, Duration.ofSeconds(3));
+        return cached;
     }
 
     @Provides

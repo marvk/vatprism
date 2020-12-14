@@ -10,4 +10,9 @@ public class AirportsViewModel extends SimpleTableViewModel<Airport> {
     public AirportsViewModel(final AirportRepository airportRepository) {
         super(airportRepository);
     }
+
+    @Override
+    protected boolean matchesQuery(final Airport e) {
+        return false;
+    }
 }
