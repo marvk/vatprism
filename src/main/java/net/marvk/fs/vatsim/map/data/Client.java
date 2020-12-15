@@ -8,7 +8,8 @@ import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public abstract class Client implements Settable<VatsimClient>, Data {
-    private final StringProperty cid = new SimpleStringProperty();
+    private final IntegerProperty cid = new SimpleIntegerProperty();
+    private final StringProperty cidString = new SimpleStringProperty();
     private final StringProperty callsign = new SimpleStringProperty();
     private final StringProperty realName = new SimpleStringProperty();
     private final StringProperty server = new SimpleStringProperty();
@@ -16,11 +17,15 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     private final ObjectProperty<ZonedDateTime> logonTime = new SimpleObjectProperty<>();
     private final ObjectProperty<ZonedDateTime> lastUpdatedTime = new SimpleObjectProperty<>();
 
+    public Client() {
+        cidString.bind(cid.asString());
+    }
+
     @Override
     public void setFromModel(final VatsimClient client) {
         Objects.requireNonNull(client);
 
-        cid.set(client.getCid());
+        cid.set(Integer.parseInt(client.getCid()));
         callsign.set(client.getCallsign());
         realName.set(client.getName());
         final VatsimServer server = client.getServer();
@@ -31,12 +36,20 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         lastUpdatedTime.set(client.getLastUpdate());
     }
 
-    public String getCid() {
+    public int getCid() {
         return cid.get();
     }
 
-    public ReadOnlyStringProperty cidProperty() {
+    public ReadOnlyIntegerProperty cidProperty() {
         return cid;
+    }
+
+    public String getCidString() {
+        return cidString.get();
+    }
+
+    public ReadOnlyStringProperty cidStringProperty() {
+        return cidString;
     }
 
     public String getCallsign() {

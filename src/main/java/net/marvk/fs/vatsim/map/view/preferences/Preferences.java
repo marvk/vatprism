@@ -92,6 +92,10 @@ public class Preferences {
     private Category general() {
         final IntegerProperty fontSize = integerProperty("general.font_size");
         fontSize.set(12);
+
+        final DoubleProperty scrollSpeed = doubleProperty("general.scroll_speed");
+        scrollSpeed.set(2.25);
+
         final BooleanProperty debug = booleanProperty("general.debug");
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -104,7 +108,8 @@ public class Preferences {
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Setting.of("Enable Debug Mode", debug),
-                Setting.of("Font Size", fontSize)
+                Setting.of("Font Size", fontSize, 4, 72),
+                Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
         );
     }
 

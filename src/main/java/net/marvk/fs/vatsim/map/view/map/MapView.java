@@ -36,7 +36,6 @@ import java.util.concurrent.*;
 
 @Slf4j
 public class MapView implements FxmlView<MapViewModel> {
-    private static final double D_SCROLL = 1.5;
     private static final double D_DRAG = 1;
     private static final int MAX_SCALE = 4096;
     private static final int MIN_SCALE = 1;
@@ -229,11 +228,27 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void onScroll(final ScrollEvent event) {
             contextMenu.hideAndClear();
-            final double delta = event.getDeltaY() > 0 ? D_SCROLL : 1.0 / D_SCROLL;
+            final boolean scollingIn = event.getDeltaY() > 0;
+            final double fScroll = Math.pow(viewModel.getScrollSpeed(), 1. / 4);
+            final double delta = scollingIn ? fScroll : 1.0 / fScroll;
 
             final double oldScale = viewModel.scaleProperty().get();
             final double newScale = Math.min(Math.max(oldScale * delta, MIN_SCALE), MAX_SCALE);
+
+            if (Double.compare(oldScale, newScale) == 0) {
+                return;
+            }
+
             viewModel.scaleProperty().set(newScale);
+            final Point2D worldCenter = viewModel.getWorldCenter();
+            final Point2D mouseWorldPosition = viewModel.getMouseWorldPosition().multiply(-1);
+            final double f = 1.0 / fScroll;
+            if (scollingIn) {
+                viewModel.setWorldCenter(mouseWorldPosition.multiply(1 - f).add(worldCenter.multiply(f)));
+            } else {
+                viewModel.setWorldCenter(worldCenter.subtract(mouseWorldPosition.multiply(1 - f))
+                                                    .multiply(1.0 / f));
+            }
         }
 
         public void onKeyPressed(final KeyEvent keyEvent) {

@@ -21,9 +21,10 @@ public class ClientsTableView extends AbstractTableView<ClientsTableViewModel, C
 
     @Override
     protected void initializeColumns() {
-        this.<String>newColumnBuilder()
+        this.<Number>newColumnBuilder()
                 .title("CID")
-                .stringObservableValueFactory(Client::cidProperty)
+                .objectObservableValueFactory(Client::cidProperty)
+                .toStringMapper(Object::toString)
                 .sortable()
                 .build();
 

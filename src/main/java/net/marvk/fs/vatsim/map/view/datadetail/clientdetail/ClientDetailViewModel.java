@@ -18,7 +18,7 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
 
     public void openStats() {
         if (getData() != null) {
-            hostServices.showDocument(urlProvider.stats(getData().getCid()));
+            hostServices.showDocument(urlProvider.stats(getData().getCidString()));
         }
     }
 }

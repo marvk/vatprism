@@ -55,7 +55,7 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
         ));
         server.textProperty().bind(client.serverProperty());
         root.headerTextProperty().bind(client.callsignProperty());
-        cid.textProperty().bind(client.cidProperty());
+        cid.textProperty().bind(client.cidStringProperty());
         realName.textProperty().bind(client.realNameProperty());
     }
 

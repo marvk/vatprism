@@ -39,7 +39,7 @@ public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> 
     public Boolean visit(final Client client) {
         return StringUtils.containsIgnoreCase(client.getCallsign(), query) ||
                 StringUtils.containsIgnoreCase(client.getRealName(), query) ||
-                StringUtils.containsIgnoreCase(client.getCid(), query);
+                StringUtils.containsIgnoreCase(client.getCidString(), query);
     }
 
     public static DataVisitor<Boolean> nullOrBlankIsTrue(final String query) {

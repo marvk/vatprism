@@ -19,6 +19,7 @@ import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class MapViewModel implements ViewModel {
 
     private final ObjectProperty<Point2D> mouseViewPosition = new SimpleObjectProperty<>(new Point2D(0, 0));
     private final ObjectProperty<Point2D> mouseWorldPosition = new SimpleObjectProperty<>(new Point2D(0, 0));
+
+    private final ReadOnlyDoubleWrapper scrollSpeed = new ReadOnlyDoubleWrapper();
 
     private final ClientRepository clientRepository;
     private final AirportRepository airportRepository;
@@ -49,6 +52,7 @@ public class MapViewModel implements ViewModel {
     private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
+    private final Preferences preferences;
 
     private ObservableList<PainterExecutor<?>> painterExecutors;
 
@@ -71,6 +75,7 @@ public class MapViewModel implements ViewModel {
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
+            final Preferences preferences,
             @Named("world") final List<Polygon> world
     ) {
         this.clientRepository = clientRepository;
@@ -78,6 +83,10 @@ public class MapViewModel implements ViewModel {
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
         this.internationalDateLineRepository = internationalDateLineRepository;
         this.upperInformationRegionRepository = upperInformationRegionRepository;
+
+        this.preferences = preferences;
+
+        this.scrollSpeed.bind(preferences.doubleProperty("general.scroll_speed"));
 
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
@@ -281,6 +290,14 @@ public class MapViewModel implements ViewModel {
 
     public Point2D getMouseWorldPosition() {
         return mouseWorldPosition.get();
+    }
+
+    public double getScrollSpeed() {
+        return scrollSpeed.get();
+    }
+
+    public ReadOnlyDoubleProperty scrollSpeedProperty() {
+        return scrollSpeed.getReadOnlyProperty();
     }
 
     public ContextMenuViewModel showingContextMenu() {

@@ -2,7 +2,6 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
@@ -57,11 +56,11 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         return icao;
     }
 
-    public ObservableList<ReadOnlyStringProperty> getNames() {
+    public ReadOnlyListProperty<ReadOnlyStringProperty> getNames() {
         return names.getReadOnlyProperty();
     }
 
-    public ObservableList<String> getIatas() {
+    public ReadOnlyListProperty<String> getIatas() {
         return iatas.getReadOnlyProperty();
     }
 
@@ -81,35 +80,35 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         return position;
     }
 
-    ObservableList<FlightPlan> getDepartingWritable() {
+    SimpleListProperty<FlightPlan> getDepartingWritable() {
         return departing;
     }
 
-    public ObservableList<FlightPlan> getDeparting() {
+    public ReadOnlyListProperty<FlightPlan> getDeparting() {
         return departing.getReadOnlyProperty();
     }
 
-    ObservableList<FlightPlan> getArrivingWritable() {
+    SimpleListProperty<FlightPlan> getArrivingWritable() {
         return arriving;
     }
 
-    public ObservableList<FlightPlan> getArriving() {
+    public ReadOnlyListProperty<FlightPlan> getArriving() {
         return arriving.getReadOnlyProperty();
     }
 
-    ObservableList<Controller> getControllersWritable() {
+    SimpleListProperty<Controller> getControllersWritable() {
         return controllers;
     }
 
-    public ObservableList<Controller> getControllers() {
+    public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
     }
 
-    ObservableList<FlightPlan> getAlternativesWritable() {
+    SimpleListProperty<FlightPlan> getAlternativesWritable() {
         return alternatives;
     }
 
-    public ObservableList<FlightPlan> alternativesProperty() {
+    public ReadOnlyListProperty<FlightPlan> alternativesProperty() {
         return alternatives.getReadOnlyProperty();
     }
 

@@ -1,7 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.api.data.VatsimFlightInformationRegion;
 
 import java.util.Objects;
@@ -72,11 +71,11 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
         return boundary.getReadOnlyProperty();
     }
 
-    ObservableList<Controller> getControllersWritable() {
+    SimpleListProperty<Controller> getControllersWritable() {
         return controllers;
     }
 
-    public ObservableList<Controller> getControllers() {
+    public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
     }
 
