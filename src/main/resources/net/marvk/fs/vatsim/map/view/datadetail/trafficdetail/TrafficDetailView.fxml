@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
+<?import net.marvk.fs.vatsim.map.view.datadetail.PlaceholderBox?>
 <DataDetailPane stylesheets="@trafficdetail.css" fx:id="container" xmlns="http://javafx.com/javafx"
                 xmlns:fx="http://javafx.com/fxml"
                 fx:controller="net.marvk.fs.vatsim.map.view.datadetail.trafficdetail.TrafficDetailView">
     <contentNode>
-        <ListView fx:id="list" prefHeight="100"/>
+        <PlaceholderBox minHeight="60" fx:id="trafficHolder">
+            <content>
+                <GridPane fx:id="trafficGrid" hgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                        <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="NEVER"/>
+                    </columnConstraints>
+                </GridPane>
+            </content>
+        </PlaceholderBox>
     </contentNode>
 </DataDetailPane>

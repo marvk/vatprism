@@ -1,6 +1,5 @@
 package net.marvk.fs.vatsim.map.view.datatable;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
@@ -49,13 +48,6 @@ public class ColumnBuilderFactory<Model extends Data> {
 
         private Builder() {
             this.result = new TableColumn<>();
-            System.out.println(result.prefWidthProperty());
-            result.prefWidthProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) {
-                    System.out.println("result.prefWidthProperty() = " + result.prefWidthProperty());
-                }
-            });
         }
 
         @Override

@@ -35,6 +35,8 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
         columnBuilder = new ColumnBuilderFactory<>(viewModel, textFlowHighlighter, c -> table.getColumns().add(c));
 //        table.setFixedCellSize(18);
 
+        getStyleClass().add("clickable-rows");
+
         final SortedList<Model> value = new SortedList<>(viewModel.items());
         value.comparatorProperty().bind(table.comparatorProperty());
         table.setItems(value);

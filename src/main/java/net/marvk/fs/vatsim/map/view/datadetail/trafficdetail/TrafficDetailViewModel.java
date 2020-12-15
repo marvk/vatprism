@@ -1,9 +1,9 @@
 package net.marvk.fs.vatsim.map.view.datadetail.trafficdetail;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ListExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import net.marvk.fs.vatsim.map.data.Airline;
@@ -13,7 +13,7 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubViewModel;
 import java.util.Comparator;
 import java.util.Locale;
 
-public class TrafficDetailViewModel extends DetailSubViewModel<ObservableList<FlightPlan>> {
+public class TrafficDetailViewModel extends DetailSubViewModel<ListExpression<FlightPlan>> {
     private static final Comparator<FlightPlan> CALLSIGN_COMPARATOR;
 
     static {
@@ -35,7 +35,7 @@ public class TrafficDetailViewModel extends DetailSubViewModel<ObservableList<Fl
         CALLSIGN_COMPARATOR = airline.thenComparing(flightNumber).thenComparing(callsign);
     }
 
-    private final ReadOnlyObjectWrapper<ObservableList<FlightPlan>> filteredSortedData = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyListWrapper<FlightPlan> filteredSortedData = new ReadOnlyListWrapper<>();
 
     private final StringProperty query = new ReadOnlyStringWrapper();
 
@@ -95,11 +95,7 @@ public class TrafficDetailViewModel extends DetailSubViewModel<ObservableList<Fl
         this.type.set(type);
     }
 
-    public ObservableList<FlightPlan> getFilteredSortedData() {
-        return filteredSortedData.get();
-    }
-
-    public ReadOnlyObjectProperty<ObservableList<FlightPlan>> filteredSortedDataProperty() {
+    public ReadOnlyListProperty<FlightPlan> getFilteredSortedData() {
         return filteredSortedData.getReadOnlyProperty();
     }
 

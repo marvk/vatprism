@@ -117,7 +117,7 @@
         <dependency>
             <groupId>com.dlsc.preferencesfx</groupId>
             <artifactId>preferencesfx-core</artifactId>
-            <version>11.3.2</version>
+            <version>11.7.0</version>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>

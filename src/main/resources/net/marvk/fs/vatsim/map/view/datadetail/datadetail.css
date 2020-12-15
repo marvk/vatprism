@@ -32,7 +32,7 @@
 }
 
 .header-pane .header-label {
-    -fx-font-size: 14;
+    -fx-font-size: 120%;
 }
 
 /*.text-area {*/

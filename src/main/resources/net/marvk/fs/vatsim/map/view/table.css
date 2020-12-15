@@ -1,4 +1,10 @@
-.table-view:row-selection .table-row-cell:filled:hover {
+.clickable-rows .table-view:row-selection .table-row-cell:filled:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
     -fx-cursor: hand;
+}
+
+.no-header .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
 }
