@@ -15,8 +15,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.Notifications;
-import net.marvk.fs.vatsim.map.view.airports.AirportsView;
-import net.marvk.fs.vatsim.map.view.clients.ClientsView;
+import net.marvk.fs.vatsim.map.view.datatable.airportstable.AirportsTableView;
+import net.marvk.fs.vatsim.map.view.datatable.clientstable.ClientsTableView;
+import net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundariestable.FlightInformationRegionBoundariesTableView;
+import net.marvk.fs.vatsim.map.view.datatable.upperinformationregionstable.UpperInformationRegionsTableView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
 import net.marvk.fs.vatsim.map.view.search.SearchView;
 
@@ -40,55 +42,51 @@ public class TabsView implements FxmlView<TabsViewModel> {
     public void initialize() {
         final Pane searchBoxContainer = searchController.getContainer();
         final Pane searchBoxHolder = searchController.getSearchBoxHolder();
+        final TextField searchBox = searchController.getSearchBox();
         final CustomTabPane tabPane = new CustomTabPane(searchBoxHolder.widthProperty());
+
         searchBoxHolder.prefHeightProperty().bind(tabPane.headersRegion().heightProperty().subtract(1));
         searchBoxHolder.maxHeightProperty().bind(searchBoxHolder.prefHeightProperty());
         tabPaneHolder.getChildren().add(0, tabPane);
         StackPane.setAlignment(searchBoxContainer, Pos.TOP_LEFT);
         tabPane.getTabs().clear();
-        tabPane.getTabs().add(createTab("Map", MapView.class));
-        tabPane.getTabs().add(createTab("Clients", ClientsView.class));
-        tabPane.getTabs().add(createTab("Airports", AirportsView.class));
+        tabPane.getTabs().add(createFxmlViewTab("Map", MapView.class));
+        tabPane.getTabs().add(createJavaViewTab("Clients", ClientsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("Airports", AirportsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("FIRs", FlightInformationRegionBoundariesTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("UIRs", UpperInformationRegionsTableView.class));
 
         searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
                 () -> tabPane.getSelectionModel().getSelectedIndex() == 0,
                 tabPane.getSelectionModel().selectedIndexProperty()
         ));
 
-        tabPane.layout();
-
         Notifications.SWITCH_TO_TAB.subscribe(i -> tabPane.getSelectionModel().select(i));
     }
 
-    private Tab createTab(final String map, final Class<? extends FxmlView<?>> clazz) {
-        return new Tab(map, loadView(clazz));
+    private Tab createFxmlViewTab(final String map, final Class<? extends FxmlView<?>> clazz) {
+        return new Tab(map, loadFxmlView(clazz));
     }
 
-    private Parent loadView(final Class<? extends FxmlView<?>> clazz) {
+    private Tab createJavaViewTab(final String map, final Class<? extends JavaView<?>> clazz) {
+        return new Tab(map, loadJavaView(clazz));
+    }
+
+    private Parent loadFxmlView(final Class<? extends FxmlView<?>> clazz) {
         return FluentViewLoader.fxmlView(clazz)
                                .context(context)
                                .load()
                                .getView();
     }
 
-    private static class SearchBoxHolderTab extends Tab {
-        public SearchBoxHolderTab(final ReadOnlyDoubleProperty height) {
-            final TextField textField = new TextField();
-            textField.getStyleClass().add("search-box-text-field");
-            textField.setPrefWidth(200);
-            textField.setPromptText("Search...");
-            setGraphic(textField);
-            setDisable(true);
-            getStyleClass().add("search-box-holder-tab");
-            textField.prefHeightProperty().bind(height);
-        }
+    private Parent loadJavaView(final Class<? extends JavaView<?>> clazz) {
+        return FluentViewLoader.javaView(clazz)
+                               .context(context)
+                               .load()
+                               .getView();
     }
 
     private static class CustomTabPane extends TabPane {
-//        private final StackPane headerBackground;
-//        private final StackPane headersRegion;
-//        private final StackPane tabHeaderArea;
-
         @SneakyThrows
         public CustomTabPane(final ReadOnlyDoubleProperty paddingLeft) {
             setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);

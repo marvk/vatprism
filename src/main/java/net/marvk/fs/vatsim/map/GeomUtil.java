@@ -36,13 +36,15 @@ public final class GeomUtil {
             return "";
         }
 
-        final double x = point.getX();
-        final double y = point.getY();
+        return String.format("%s %s", formatLon(point.getY()), formatLat(point.getX()));
+    }
 
-        final String xString = x < 0 ? "W" : "E";
-        final String yString = y < 0 ? "S" : "N";
+    public static String formatLon(final double lon) {
+        return df.format(Math.abs(lon)) + (lon < 0 ? "S" : "N");
+    }
 
-        return String.format("%s%s %s%s", df.format(Math.abs(x)), xString, df.format(Math.abs(y)), yString);
+    public static String formatLat(final double lat) {
+        return df.format(Math.abs(lat)) + (lat < 0 ? "W" : "E");
     }
 
     public static Point2D parsePoint(final Double longitude, final Double latitude) {

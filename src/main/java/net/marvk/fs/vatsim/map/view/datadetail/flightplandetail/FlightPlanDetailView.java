@@ -139,7 +139,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                         return "";
                     }
 
-                    return airportProperty.get().getNames().get(0);
+                    return airportProperty.get().getNames().get(0).get();
                 },
                 airportProperty
         ));

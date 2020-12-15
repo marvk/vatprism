@@ -1,5 +1,6 @@
-package net.marvk.fs.vatsim.map.view.table;
+package net.marvk.fs.vatsim.map.view.datatable;
 
+import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -14,7 +15,6 @@ import net.marvk.fs.vatsim.map.view.StatusScope;
 import java.util.regex.Pattern;
 
 public abstract class SimpleTableViewModel<ViewModel extends Data> extends AbstractTableViewModel<ViewModel> {
-    private final Repository<ViewModel> clientRepository;
     private final ReadOnlyStringWrapper query = new ReadOnlyStringWrapper();
     private final ReadOnlyObjectWrapper<Pattern> pattern = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<DataVisitor<Boolean>> predicate = new SimpleObjectProperty<>();
@@ -23,9 +23,9 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
     @InjectScope
     private StatusScope statusScope;
 
-    public SimpleTableViewModel(final Repository<ViewModel> clientRepository) {
-        this.clientRepository = clientRepository;
-        this.filteredItems = new FilteredList<>(clientRepository.list());
+    @Inject
+    public SimpleTableViewModel(final Repository<ViewModel> dataRepository) {
+        this.filteredItems = new FilteredList<>(dataRepository.list());
     }
 
     public void initialize() {
@@ -59,8 +59,6 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
     public ReadOnlyObjectProperty<Pattern> patternProperty() {
         return pattern.getReadOnlyProperty();
     }
-
-    protected abstract boolean matchesQuery(final ViewModel e);
 
     @Override
     public ObservableList<ViewModel> items() {

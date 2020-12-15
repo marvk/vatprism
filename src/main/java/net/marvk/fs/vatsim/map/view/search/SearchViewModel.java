@@ -118,7 +118,7 @@ public class SearchViewModel extends BaseViewModel {
 
             public SearchAction(final String query, final ObjectProperty<ObservableList<Data>> result) {
                 this.result = result;
-                this.predicateSupplier = new SimplePredicatesDataVisitor(query);
+                this.predicateSupplier = SimplePredicatesDataVisitor.nullOrBlankIsTrue(query);
             }
 
             @Override

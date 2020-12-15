@@ -90,9 +90,12 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             controllersGrid.add(callsign, 2, i);
             callsign.setOnMouseClicked(e -> viewModel.setDataDetail(controller));
 
+            final Label name = new Label(controller.getRealName());
+            controllersGrid.add(name, 3, i);
+
             final Label onlineFor = new Label(onlineForString(controller.getLogonTime()));
             onlineFor.getStyleClass().add("mono");
-            controllersGrid.add(onlineFor, 3, i);
+            controllersGrid.add(onlineFor, 4, i);
         }
     }
 }

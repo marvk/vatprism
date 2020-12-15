@@ -51,7 +51,7 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
 
     @Override
     protected void setData(final Airport airport) {
-        name.setText(airport.getNames().get(0));
+        name.setText(airport.getNames().get(0).get());
         position.textProperty().bind(BindingsUtil.position(airport.positionProperty()));
         status.setHeaderText(airport.getIcao());
         final FlightInformationRegionBoundary firb = airport.getFlightInformationRegionBoundary();

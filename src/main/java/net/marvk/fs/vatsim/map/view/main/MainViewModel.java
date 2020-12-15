@@ -18,6 +18,7 @@ import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 @ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class})
 @Slf4j
@@ -27,6 +28,7 @@ public class MainViewModel implements ViewModel {
     private final Command loadFirbs;
     private final Command loadUirs;
     private final Command loadClients;
+    private final Preferences preferences;
     private final Command loadInternationalDateLine;
 
     private static final Duration RELOAD_PERIOD = Duration.minutes(2);
@@ -42,7 +44,8 @@ public class MainViewModel implements ViewModel {
             final FlightInformationRegionRepository flightInformationRegionRepository,
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
-            final InternationalDateLineRepository internationalDateLineRepository
+            final InternationalDateLineRepository internationalDateLineRepository,
+            final Preferences preferences
     ) {
         this.loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
         this.loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
@@ -50,6 +53,7 @@ public class MainViewModel implements ViewModel {
         this.loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
         this.loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
         this.loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
+        this.preferences = preferences;
 
         new CompositeCommand(
                 loadInternationalDateLine,
@@ -90,6 +94,10 @@ public class MainViewModel implements ViewModel {
             log.info("Resetting reload service");
             clientReloadService.setStopping(true);
         }
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
     }
 
     private static final class ReloadRepositoryAction extends Action {

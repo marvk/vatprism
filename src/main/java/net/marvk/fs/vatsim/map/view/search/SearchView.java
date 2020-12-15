@@ -5,6 +5,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,8 +27,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class SearchView implements FxmlView<SearchViewModel> {
-
     private final TextFlowHighlighter textFlowHighlighter;
+
     @FXML
     private VBox resultsHolder;
     @FXML
@@ -195,9 +196,10 @@ public class SearchView implements FxmlView<SearchViewModel> {
             final String name = airport
                     .getNames()
                     .stream()
-                    .filter(e -> StringUtils.containsIgnoreCase(e, query.get()))
+                    .filter(e -> StringUtils.containsIgnoreCase(e.get(), query.get()))
                     .findFirst()
-                    .orElse(airport.getNames().get(0));
+                    .map(ObservableObjectValue::get)
+                    .orElse(airport.getNames().get(0).get());
 
             return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), airport.getIcao(), name)));
         }

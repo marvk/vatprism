@@ -7,10 +7,11 @@ import javafx.geometry.Point2D;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>, Data {
     private final StringProperty icao = new SimpleStringProperty();
-    private final ReadOnlyListWrapper<String> names = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
+    private final ReadOnlyListWrapper<ReadOnlyStringProperty> names = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
     private final ReadOnlyListWrapper<String> iatas = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
     private final BooleanProperty pseudo = new SimpleBooleanProperty();
     private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
@@ -35,7 +36,13 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         Objects.requireNonNull(model);
 
         icao.set(model.getIcao());
-        names.setAll(model.getNames());
+        names.setAll(model
+                .getNames()
+                .stream()
+                .distinct()
+                .map(ImmutableStringProperty::new)
+                .collect(Collectors.toList())
+        );
         iatas.setAll(model.getIatas());
         pseudo.set(model.isPseudo());
 
@@ -50,7 +57,7 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         return icao;
     }
 
-    public ObservableList<String> getNames() {
+    public ObservableList<ReadOnlyStringProperty> getNames() {
         return names.getReadOnlyProperty();
     }
 

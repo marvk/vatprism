@@ -16,7 +16,7 @@ public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> 
                 airport
                         .getNames()
                         .stream()
-                        .anyMatch(name -> StringUtils.containsIgnoreCase(name, query));
+                        .anyMatch(name -> StringUtils.containsIgnoreCase(name.get(), query));
     }
 
     @Override
@@ -37,7 +37,9 @@ public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> 
 
     @Override
     public Boolean visit(final Client client) {
-        return StringUtils.containsIgnoreCase(client.getCallsign(), query);
+        return StringUtils.containsIgnoreCase(client.getCallsign(), query) ||
+                StringUtils.containsIgnoreCase(client.getRealName(), query) ||
+                StringUtils.containsIgnoreCase(client.getCid(), query);
     }
 
     public static DataVisitor<Boolean> nullOrBlankIsTrue(final String query) {

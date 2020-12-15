@@ -17,6 +17,7 @@
                     <ColumnConstraints hgrow="NEVER"/>
                     <ColumnConstraints hgrow="NEVER"/>
                     <ColumnConstraints hgrow="NEVER"/>
+                    <ColumnConstraints hgrow="NEVER"/>
                 </columnConstraints>
             </GridPane>
         </VBox>

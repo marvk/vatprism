@@ -90,6 +90,8 @@ public class Preferences {
     }
 
     private Category general() {
+        final IntegerProperty fontSize = integerProperty("general.font_size");
+        fontSize.set(12);
         final BooleanProperty debug = booleanProperty("general.debug");
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -101,7 +103,8 @@ public class Preferences {
         return Category.of(
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
-                Setting.of("Enable Debug Mode", debug)
+                Setting.of("Enable Debug Mode", debug),
+                Setting.of("Font Size", fontSize)
         );
     }
 

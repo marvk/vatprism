@@ -1,7 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import net.marvk.fs.vatsim.api.data.VatsimUpperInformationRegion;
 import net.marvk.fs.vatsim.map.GeomUtil;
@@ -67,19 +66,19 @@ public class UpperInformationRegion implements Settable<VatsimUpperInformationRe
         return bounds;
     }
 
-    ObservableList<Controller> getControllersWritable() {
+    SimpleListProperty<Controller> getControllersWritable() {
         return controllers;
     }
 
-    public ObservableList<Controller> getControllers() {
+    public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
     }
 
-    ObservableList<FlightInformationRegionBoundary> getFlightInformationRegionBoundariesWritable() {
+    SimpleListProperty<FlightInformationRegionBoundary> getFlightInformationRegionBoundariesWritable() {
         return flightInformationRegionBoundaries;
     }
 
-    public ObservableList<FlightInformationRegionBoundary> getFlightInformationRegionBoundaries() {
+    public ReadOnlyListProperty<FlightInformationRegionBoundary> getFlightInformationRegionBoundaries() {
         return flightInformationRegionBoundaries.getReadOnlyProperty();
     }
 

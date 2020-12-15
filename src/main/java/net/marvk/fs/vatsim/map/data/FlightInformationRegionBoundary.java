@@ -99,31 +99,31 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
         polygon.set(Polygon.merge(getPolygon(), extension.getPolygon()));
     }
 
-    ObservableList<FlightInformationRegion> getFlightInformationRegionsWritable() {
-        return flightInformationRegions.get();
+    SimpleListProperty<FlightInformationRegion> getFlightInformationRegionsWritable() {
+        return flightInformationRegions;
     }
 
-    public ObservableList<FlightInformationRegion> getFlightInformationRegions() {
+    public ReadOnlyListProperty<FlightInformationRegion> getFlightInformationRegions() {
         return flightInformationRegions.getReadOnlyProperty();
     }
 
-    ObservableList<UpperInformationRegion> getUpperInformationRegionsWritable() {
+    SimpleListProperty<UpperInformationRegion> getUpperInformationRegionsWritable() {
         return upperInformationRegions;
     }
 
-    public ObservableList<UpperInformationRegion> getUpperInformationRegions() {
+    public ReadOnlyListProperty<UpperInformationRegion> getUpperInformationRegions() {
         return upperInformationRegions.getReadOnlyProperty();
     }
 
-    ObservableList<Airport> getAirportsWritable() {
+    SimpleListProperty<Airport> getAirportsWritable() {
         return airports;
     }
 
-    public ObservableList<Airport> getAirports() {
+    public ReadOnlyListProperty<Airport> getAirports() {
         return airports.getReadOnlyProperty();
     }
 
-    public ObservableList<Controller> getControllers() {
+    public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
     }
 

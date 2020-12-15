@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.view.table;
+package net.marvk.fs.vatsim.map.view.datatable;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
