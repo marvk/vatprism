@@ -9,8 +9,14 @@ import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.*;
@@ -20,9 +26,13 @@ import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
+import java.util.Arrays;
+
 @ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class})
 @Slf4j
 public class MainViewModel implements ViewModel {
+    private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();
+
     private final Command loadAirports;
     private final Command loadFirs;
     private final Command loadFirbs;
@@ -81,6 +91,62 @@ public class MainViewModel implements ViewModel {
 
     public void initialize() {
         toolbarScope.autoReloadProperty().addListener((observable, oldValue, newValue) -> setServiceRunning(newValue));
+        final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
+        final ObjectProperty<Color> baseColor = preferences.colorProperty("world.color");
+
+        style.bind(Bindings.createStringBinding(this::style, fontSize, baseColor));
+    }
+
+    private String style() {
+        final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
+        final Color baseColor = preferences.colorProperty("world.color").get();
+
+        final String fontSizeStyle = "-fx-font-size: %spx;".formatted(fontSize.get());
+
+        if (baseColor == null) {
+            return fontSizeStyle;
+        } else {
+            final double b = baseColor.getBrightness();
+            return fontSizeStyle + """
+                    -vatsim-background-color: #%s;
+                    -vatsim-background-color-light: #%s;
+                    -vatsim-background-color-very-light: #%s;
+                    -vatsim-background-color-very-light-25: #%s;
+                    -vatsim-background-color-very-very-light: #%s;
+                    -vatsim-background-color-very-very-very-light: #%s;
+                                        
+                    -vatsim-text-color-dark: #%s;
+                    -vatsim-text-color: #%s;
+                    -vatsim-text-color-light: #%s;
+                    -vatsim-text-greyed-out: #%s;
+                    """.formatted(
+                    (Object[]) fixColorStrings(
+                            baseColor,
+                            baseColor.deriveColor(0, 1, mapBrightnessFactor(b, 1.5), 1),
+                            baseColor.deriveColor(0, 0.95, mapBrightnessFactor(b, 2), 1),
+                            baseColor.deriveColor(0, 0.95, mapBrightnessFactor(b, 2), 0.25),
+                            baseColor.deriveColor(0, 0.9, mapBrightnessFactor(b, 2.5), 1),
+                            baseColor.deriveColor(0, 0.85, mapBrightnessFactor(b, 3), 1),
+
+                            baseColor.deriveColor(0, 0.7, mapBrightnessFactor(b, 4), 1),
+                            baseColor.deriveColor(0, 0.6, mapBrightnessFactor(b, 4.5), 1),
+                            baseColor.deriveColor(0, 0.5, mapBrightnessFactor(b, 5), 1),
+                            baseColor.deriveColor(0, 0, mapBrightnessFactor(b, 4.5), 1)
+                    )
+            );
+        }
+    }
+
+    private static double mapBrightnessFactor(final double brightness, final double value) {
+        if (brightness > 0.5) {
+            return 1.0 / value;
+        } else {
+            return value;
+        }
+    }
+
+    private String[] fixColorStrings(final Color... colors) {
+        return Arrays.stream(colors).map(Color::toString).map(e -> e.substring(2, 8)).toArray(String[]::new);
     }
 
     private void setServiceRunning(final boolean running) {
@@ -96,8 +162,12 @@ public class MainViewModel implements ViewModel {
         }
     }
 
-    public Preferences getPreferences() {
-        return preferences;
+    public String getStyle() {
+        return style.get();
+    }
+
+    public ReadOnlyStringProperty styleProperty() {
+        return style.getReadOnlyProperty();
     }
 
     private static final class ReloadRepositoryAction extends Action {

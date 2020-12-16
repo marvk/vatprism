@@ -118,7 +118,8 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
             trafficGrid.add(callsign, 0, i);
 
             final Label icao = new Label(extractFromOppositeAirport(flightPlan, Airport::getIcao));
-            icao.getStyleClass().add("mono");
+            icao.getStyleClass().addAll("mono", "hyperlink-label");
+            icao.setOnMouseClicked(e -> viewModel.setDataDetail(oppositeAirport(flightPlan)));
             trafficGrid.add(icao, 1, i);
 
             final Label airportName = new Label(extractFromOppositeAirport(flightPlan, e -> e.getNames().get(0).get()));

@@ -3,13 +3,10 @@ package net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundaries
 import com.google.inject.Inject;
 import javafx.beans.property.ReadOnlyStringProperty;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
-import net.marvk.fs.vatsim.map.data.ImmutableStringProperty;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.datatable.AbstractTableView;
 
 public class FlightInformationRegionBoundariesTableView extends AbstractTableView<FlightInformationRegionBoundariesTableViewModel, FlightInformationRegionBoundary> {
-    private static final ReadOnlyStringProperty EMPTY = new ImmutableStringProperty("");
-
     @Inject
     public FlightInformationRegionBoundariesTableView(final TextFlowHighlighter textFlowHighlighter) {
         super(textFlowHighlighter);
@@ -42,7 +39,7 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
         this.<Number>newColumnBuilder()
                 .title("# of Controllers")
                 .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
-                .toStringMapper(e -> e.intValue() == 0 ? "" : e.toString())
+                .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
                 .build();

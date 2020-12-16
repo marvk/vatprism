@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.datatable.airportstable;
 
 import com.google.inject.Inject;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.value.ObservableStringValue;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.map.GeomUtil;
@@ -30,7 +31,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .title("Name")
                 .stringObservableValueFactory(AirportsTableView::airportName)
                 .sortable()
-                .mono(true)
+                .mono(false)
                 .build();
 
         this.<Point2D>newColumnBuilder()
@@ -48,6 +49,38 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .sortable(Comparator.comparingDouble(Point2D::getY))
                 .mono(true)
                 .build();
+
+        this.<Number>newColumnBuilder()
+                .title("Departures")
+                .objectObservableValueFactory(e -> e.getDeparting().sizeProperty())
+                .toStringMapper(AbstractTableView::emptyIfZero)
+                .sortable()
+                .mono(true)
+                .build();
+
+        this.<Number>newColumnBuilder()
+                .title("Arrivals")
+                .objectObservableValueFactory(e -> e.getArriving().sizeProperty())
+                .toStringMapper(AbstractTableView::emptyIfZero)
+                .sortable()
+                .mono(true)
+                .build();
+
+        this.<String>newColumnBuilder()
+                .title("FIR")
+                .stringObservableValueFactory(this::firIcao)
+                .sortable()
+                .mono(true)
+                .build();
+
+    }
+
+    private ReadOnlyStringProperty firIcao(final Airport e) {
+        if (e.getFlightInformationRegionBoundary() == null) {
+            return EMPTY;
+        }
+
+        return e.getFlightInformationRegionBoundary().icaoProperty();
     }
 
     private static ObservableStringValue airportName(final Airport airport, final ObservableStringValue query) {
@@ -57,6 +90,5 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .filter(e -> StringUtils.containsIgnoreCase(e.get(), query.get()))
                 .findFirst()
                 .orElse(airport.getNames().get(0));
-
     }
 }

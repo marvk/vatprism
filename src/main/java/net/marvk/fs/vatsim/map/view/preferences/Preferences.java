@@ -44,27 +44,57 @@ public class Preferences {
     }
 
     public void show() {
-        getPreferencesDialog().show();
+        getPreferencesDialog().show(true);
     }
 
     public BooleanProperty booleanProperty(final String key) {
         return property(key, () -> new SimpleBooleanProperty(null, key));
     }
 
+    public BooleanProperty booleanProperty(final String key, final boolean initialValue) {
+        final BooleanProperty booleanProperty = booleanProperty(key);
+        booleanProperty.set(initialValue);
+        return booleanProperty;
+    }
+
     public StringProperty stringProperty(final String key) {
         return property(key, () -> new SimpleStringProperty(null, key));
+    }
+
+    public StringProperty stringProperty(final String key, final String defaultValue) {
+        final StringProperty stringProperty = stringProperty(key);
+        stringProperty.set(defaultValue);
+        return stringProperty;
     }
 
     public ObjectProperty<Color> colorProperty(final String key) {
         return property(key, () -> new SimpleObjectProperty<>(null, key));
     }
 
+    public ObjectProperty<Color> colorProperty(final String key, final Color initialValue) {
+        final ObjectProperty<Color> colorProperty = colorProperty(key);
+        colorProperty.set(initialValue);
+        return colorProperty;
+    }
+
     public IntegerProperty integerProperty(final String key) {
         return property(key, () -> new SimpleIntegerProperty(null, key));
     }
 
+    public IntegerProperty integerProperty(final String key, final int defaultValue) {
+        final IntegerProperty integerProperty = integerProperty(key);
+        integerProperty.set(defaultValue);
+        return integerProperty;
+    }
+
     public DoubleProperty doubleProperty(final String key) {
         return property(key, () -> new SimpleDoubleProperty(null, key));
+    }
+
+    public DoubleProperty doubleProperty(final String key, final double initialValue) {
+        final DoubleProperty doubleProperty = doubleProperty(key);
+        doubleProperty.set(initialValue);
+        return doubleProperty;
     }
 
     @SuppressWarnings("unchecked")
@@ -83,19 +113,16 @@ public class Preferences {
 
     @SneakyThrows
     private PreferencesFx createPreferencesDialog() {
-        final ObservableList<PainterExecutor<?>> executors = settingsScope.getPainters();
 
-        return PreferencesFx.of(App.class, general(), painters(executors))
+        return PreferencesFx.of(App.class, general(), style(), painters())
                             .saveSettings(false);
     }
 
+    private Category style() {
+        return Category.of("Style");
+    }
+
     private Category general() {
-        final IntegerProperty fontSize = integerProperty("general.font_size");
-        fontSize.set(12);
-
-        final DoubleProperty scrollSpeed = doubleProperty("general.scroll_speed");
-        scrollSpeed.set(2.25);
-
         final BooleanProperty debug = booleanProperty("general.debug");
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -108,13 +135,13 @@ public class Preferences {
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Setting.of("Enable Debug Mode", debug),
-                Setting.of("Font Size", fontSize, 4, 72),
-                Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
+                Setting.of("Font Size", integerProperty("general.font_size", 12), 4, 72),
+                Setting.of("Scroll Speed", doubleProperty("general.scroll_speed", 2.25), 1.1, 16, 2)
         );
     }
 
-    private Category painters(final ObservableList<PainterExecutor<?>> executors) throws IllegalAccessException {
-        final Category[] painters = paintersCategories(executors);
+    private Category painters() throws IllegalAccessException {
+        final Category[] painters = paintersCategories(settingsScope.getPainters());
 
         return Category
                 .of("Painters", FontIcon.of(Octicons.PAINTBRUSH_16))

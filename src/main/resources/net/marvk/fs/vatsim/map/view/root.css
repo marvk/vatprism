@@ -1,12 +1,12 @@
-@font-face {
-    src: url("/net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-Regular.ttf");
-}
+/*@font-face {*/
+/*    src: url("net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-Regular.ttf");*/
+/*}*/
 
-@font-face {
-    src: url("/net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-ExtraBold.ttf");
-}
+/*@font-face {*/
+/*    src: url("net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-ExtraBold.ttf");*/
+/*}*/
 
-* {
+.root {
     -vatsim-background-color: #0E0C06;
     -vatsim-background-color-light: #17130a;
     -vatsim-background-color-very-light: #2B2313;

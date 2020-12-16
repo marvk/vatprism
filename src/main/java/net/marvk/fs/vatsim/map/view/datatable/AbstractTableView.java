@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.view.datatable;
 import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.SelectionMode;
@@ -10,9 +11,12 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import net.marvk.fs.vatsim.map.data.Data;
+import net.marvk.fs.vatsim.map.data.ImmutableStringProperty;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 
 public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<Model>, Model extends Data> extends TableView<Model> implements JavaView<ViewModel> {
+    protected static final ReadOnlyStringProperty EMPTY = new ImmutableStringProperty("");
+
     private final TextFlowHighlighter textFlowHighlighter;
     private ColumnBuilderFactory<Model> columnBuilder;
     @FXML
@@ -48,6 +52,10 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
         viewModel.selectedItemProperty().bind(selectionModel.selectedItemProperty());
 
         initializeColumns();
+    }
+
+    protected static String emptyIfZero(final Number e) {
+        return e.intValue() == 0 ? "" : e.toString();
     }
 
     protected abstract void initializeColumns();
