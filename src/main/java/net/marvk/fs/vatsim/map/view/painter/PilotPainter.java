@@ -12,6 +12,9 @@ public class PilotPainter extends MapPainter<Pilot> {
     private static final int MULTI_DRAW_BOUND = 10;
     private static final int TEXT_OFFSET = 11;
     private static final int RECT_SIZE = 4;
+    private static final int SPEED_THRESHOLD = 25;
+    private static final double MAX_SPEED = 600.0;
+    private static final double SCALE_SCALE = 32.0;
 
     @Parameter("Color")
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
@@ -19,8 +22,17 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter("Background Color")
     private Color backgroundColor;
 
-    @Parameter(value = "Head Length", min = 0)
-    private int tailLength = 8;
+    @Parameter(value = "Head Max Length", min = 0)
+    private int headLength = 8;
+
+    @Parameter(value = "Tail Max Length", min = 0)
+    private int tailLength = 50;
+
+    @Parameter(value = "Head/Tail length scale fixed")
+    private boolean headTailFixed = false;
+
+    @Parameter(value = "Head/Tail length scaled with speed")
+    private boolean headTailScaledWithSpeed = true;
 
     @Parameter("Show Label")
     private boolean label = true;
@@ -64,24 +76,27 @@ public class PilotPainter extends MapPainter<Pilot> {
     private void draw(final GraphicsContext c, final Pilot pilot, final int xOffset) {
         final Point2D point = pilot.getPosition();
 
-        final double xPrecise = mapVariables.toCanvasX(point.getX() + xOffset);
-        final int x = (int) xPrecise;
-        final double yPrecise = mapVariables.toCanvasY(point.getY());
-        final int y = (int) yPrecise;
+        final double x = mapVariables.toCanvasX(point.getX() + xOffset);
+        final double y = mapVariables.toCanvasY(point.getY());
 
-//        c.setLineDashes(null);
+        c.setLineDashes();
         c.setStroke(color);
         c.setFill(color);
         c.setLineWidth(1);
-        c.strokeRect(x - 1.5, y - 1.5, RECT_SIZE, RECT_SIZE);
+        c.strokeRect((int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
-        if (tailLength > 0) {
-            final double rad = Math.toRadians(heading);
-            final int x2 = (int) (xPrecise + Math.sin(rad) * tailLength);
-            final int y2 = (int) (yPrecise - Math.cos(rad) * tailLength);
+        final double speedScale = speedScale(pilot);
+        final double actualHeadLength = getActualHeadLength(this.headLength, speedScale);
+        final double actualTailLength = getActualHeadLength(this.tailLength, speedScale);
 
-            c.strokeLine(x + 0.5, y + 0.5, x2 + 0.5, y2 + 0.5);
+        if (actualHeadLength > 0) {
+            paintLine(c, x, y, heading, actualHeadLength);
+        }
+
+        if (actualTailLength > 0) {
+            c.setLineDashes(0.5, 8);
+            paintLine(c, x, y, 180 + heading, actualTailLength);
         }
 
         if (label) {
@@ -96,8 +111,8 @@ public class PilotPainter extends MapPainter<Pilot> {
             c.setTextAlign(TextAlignment.CENTER);
             painterHelper.fillTextWithBackground(
                     c,
-                    x,
-                    y + yOffset,
+                    (int) x,
+                    (int) y + yOffset,
                     pilot.getCallsign(),
                     paintBackground,
                     VPos.CENTER,
@@ -105,5 +120,30 @@ public class PilotPainter extends MapPainter<Pilot> {
                     backgroundColor
             );
         }
+    }
+
+    private double speedScale(final Pilot pilot) {
+        if (headTailScaledWithSpeed) {
+            if (pilot.getGroundSpeed() < SPEED_THRESHOLD) {
+                return 0;
+            }
+            return pilot.getGroundSpeed() / MAX_SPEED;
+        }
+        return 1;
+    }
+
+    private double getActualHeadLength(final int headLength, final double speedScale) {
+        if (headTailFixed) {
+            return speedScale * headLength;
+        }
+        return speedScale * mapVariables.getScale() * headLength / SCALE_SCALE;
+    }
+
+    private void paintLine(final GraphicsContext c, final double x, final double y, final double heading, final double length) {
+        final double rad = Math.toRadians(heading);
+        final double x2 = ((int) x + Math.sin(rad) * length);
+        final double y2 = ((int) y - Math.cos(rad) * length);
+
+        c.strokeLine(x2 + 0.5, y2 + 0.5, (int) x + 0.5, (int) y + 0.5);
     }
 }

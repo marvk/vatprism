@@ -56,7 +56,7 @@
                                    GridPane.rowIndex="3"/>
                             <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
                                 <children>
-                                    <Label fx:id="departureIcao" onMouseClicked="#setToDeparture" text="Label">
+                                    <Label fx:id="departureIcao" text="Label">
                                         <styleClass>
                                             <String fx:value="mono"/>
                                             <String fx:value="hyperlink-label"/>
@@ -68,7 +68,7 @@
                             <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647"
                                   GridPane.rowIndex="1">
                                 <children>
-                                    <Label fx:id="arrivalIcao" onMouseClicked="#setToArrival" text="Label">
+                                    <Label fx:id="arrivalIcao" text="Label">
                                         <styleClass>
                                             <String fx:value="mono"/>
                                             <String fx:value="hyperlink-label"/>
@@ -81,7 +81,7 @@
                             <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647"
                                   GridPane.rowIndex="2">
                                 <children>
-                                    <Label fx:id="alternateIcao" onMouseClicked="#setToDeparture" text="Label">
+                                    <Label fx:id="alternateIcao" text="Label">
                                         <styleClass>
                                             <String fx:value="mono"/>
                                             <String fx:value="hyperlink-label"/>

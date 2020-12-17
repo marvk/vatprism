@@ -7,7 +7,9 @@ import net.marvk.fs.vatsim.api.data.Point;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 public final class GeomUtil {
@@ -21,6 +23,33 @@ public final class GeomUtil {
         df = new DecimalFormat("#.######");
         df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.HALF_UP);
+    }
+
+    public static List<Point2D> greatCirclePolyline(final Point2D origin, final Point2D destination, final double stepSize) {
+        return greatCirclePolyline(origin.getX(), origin.getY(), destination.getX(), destination.getY(), stepSize);
+
+    }
+
+    private static List<Point2D> greatCirclePolyline(final double originLon, final double originLat, final double destinationLon, final double destinationLat, final double stepSize) {
+
+        final ArrayList<Point2D> result = new ArrayList<>();
+
+        double lon = originLon;
+        double lat = originLat;
+
+        while (Math.abs(lon - destinationLon) < stepSize && Math.abs(lat - destinationLat) < stepSize) {
+
+        }
+        return result;
+    }
+
+    private static double heading(final double originLon, final double originLat, final double destinationLon, final double destinationLat) {
+        final double e = 0;
+        return (Math.sin(destinationLat) - Math.sin(destinationLon) * Math.cos(e)) / (Math.cos(originLat) * Math.sin(e));
+    }
+
+    public static void main(String[] args) {
+        greatCirclePolyline(new Point2D(20, 20), new Point2D(-60, 50), 1);
     }
 
     public static Point2D parsePoint(final String longitude, final String latitude) {

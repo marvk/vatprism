@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -122,7 +121,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         setFlightPlanPanes(false);
     }
 
-    private static void bindToAirport(final Label icao, final Label name, final ReadOnlyObjectProperty<Airport> airportProperty) {
+    private void bindToAirport(final Label icao, final Label name, final ReadOnlyObjectProperty<Airport> airportProperty) {
         icao.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     if (airportProperty.get() == null) {
@@ -133,6 +132,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                 },
                 airportProperty
         ));
+        icao.setOnMouseClicked(e -> viewModel.setDataDetail(airportProperty.get()));
         name.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     if (airportProperty.get() == null) {
@@ -154,15 +154,5 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         tooltip.setShowDelay(duration);
         tooltip.textProperty().bind(textProperty);
         return tooltip;
-    }
-
-    @FXML
-    protected void setToDeparture(final MouseEvent event) {
-        viewModel.setToArrival();
-    }
-
-    @FXML
-    private void setToArrival(final MouseEvent event) {
-        viewModel.setToDeparture();
     }
 }
