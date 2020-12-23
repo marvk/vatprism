@@ -3,7 +3,6 @@ package net.marvk.fs.vatsim.map.view.datadetail.flightplandetail;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -84,19 +83,14 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         path.setOnMouseClicked(container::fireEvent);
     }
 
-    private void setFlightPlanPanes(final Boolean newValue) {
-        final ObservableList<Node> children = container.getChildren();
+    private void setFlightPlanPanes(final Boolean flightPlanAvailable) {
+        final Node node = flightPlanAvailable ? content : noFlightPlan;
 
-        if (newValue) {
-            children.setAll(content);
-        } else {
-            children.setAll(noFlightPlan);
-        }
+        container.getChildren().setAll(node);
     }
 
     @Override
     protected void setData(final FlightPlan flightPlan) {
-        // TODO flight plan available not updating
         flightRules.textProperty().bind(flightPlan.flightTypeProperty().asString());
         aircraftType.textProperty().bind(flightPlan.aircraftProperty());
         aircraftType.setTooltip(createTooltip(aircraftType.textProperty(), Duration.millis(500)));
@@ -107,11 +101,12 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         bindToAirport(alternateIcao, alternateName, flightPlan.alternativeAirportProperty());
         path.textProperty().bind(flightPlan.plannedRouteProperty());
         remarks.textProperty().bind(flightPlan.remarksProperty());
-        setFlightPlanPanes(isFlightPlanAvailable(flightPlan));
+        flightPlan.flightTypeProperty().addListener(
+                (observable, oldValue, newValue) -> setFlightPlanPanes(isFlightPlanAvailable(newValue))
+        );
     }
 
-    private static boolean isFlightPlanAvailable(final FlightPlan flightPlan) {
-        final FlightType flightType = flightPlan.flightTypeProperty().get();
+    private static boolean isFlightPlanAvailable(final FlightType flightType) {
         return flightType != FlightType.UNKNOWN && flightType != null;
     }
 
