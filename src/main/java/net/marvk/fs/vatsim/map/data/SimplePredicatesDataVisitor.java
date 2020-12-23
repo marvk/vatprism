@@ -11,6 +11,11 @@ public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> 
     }
 
     @Override
+    public Boolean visit(final Controller controller) {
+        return super.visit(controller) || StringUtils.containsIgnoreCase(controller.getFrequency(), query);
+    }
+
+    @Override
     public Boolean visit(final Airport airport) {
         return StringUtils.containsIgnoreCase(airport.getIcao(), query) ||
                 airport

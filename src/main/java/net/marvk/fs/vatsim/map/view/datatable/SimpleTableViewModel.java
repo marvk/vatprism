@@ -4,13 +4,11 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.data.DataVisitor;
-import net.marvk.fs.vatsim.map.data.Repository;
 import net.marvk.fs.vatsim.map.data.SimplePredicatesDataVisitor;
 import net.marvk.fs.vatsim.map.view.StatusScope;
+import net.marvk.fs.vatsim.map.view.ToolbarScope;
 
 import java.util.regex.Pattern;
 
@@ -18,15 +16,12 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
     private final ReadOnlyStringWrapper query = new ReadOnlyStringWrapper();
     private final ReadOnlyObjectWrapper<Pattern> pattern = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<DataVisitor<Boolean>> predicate = new SimpleObjectProperty<>();
-    private final FilteredList<ViewModel> filteredItems;
 
     @InjectScope
-    private StatusScope statusScope;
+    protected StatusScope statusScope;
 
     @Inject
-    public SimpleTableViewModel(final Repository<ViewModel> dataRepository) {
-        this.filteredItems = new FilteredList<>(dataRepository.list());
-    }
+    protected ToolbarScope toolbarScope;
 
     public void initialize() {
         query.bind(statusScope.searchQueryProperty());
@@ -37,10 +32,6 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
         predicate.bind(Bindings.createObjectBinding(
                 () -> SimplePredicatesDataVisitor.nullOrBlankIsTrue(query.get()),
                 query
-        ));
-        filteredItems.predicateProperty().bind(Bindings.createObjectBinding(
-                () -> e -> predicate.get().visit(e),
-                predicate
         ));
     }
 
@@ -58,10 +49,5 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
 
     public ReadOnlyObjectProperty<Pattern> patternProperty() {
         return pattern.getReadOnlyProperty();
-    }
-
-    @Override
-    public ObservableList<ViewModel> items() {
-        return filteredItems;
     }
 }

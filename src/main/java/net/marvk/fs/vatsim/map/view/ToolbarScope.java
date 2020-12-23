@@ -2,10 +2,11 @@ package net.marvk.fs.vatsim.map.view;
 
 import com.google.inject.Singleton;
 import de.saxsys.mvvmfx.Scope;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import net.marvk.fs.vatsim.map.data.*;
 
 @Singleton
 public class ToolbarScope implements Scope {
@@ -16,6 +17,22 @@ public class ToolbarScope implements Scope {
     private final BooleanProperty reloadRunning = new SimpleBooleanProperty();
 
     private final ObjectProperty<Throwable> reloadException = new SimpleObjectProperty<>();
+
+    private final ListProperty<Client> filteredClients = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<Airport> filteredAirports = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<FlightInformationRegionBoundary> filteredFirbs = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final ListProperty<UpperInformationRegion> filteredUirs = new SimpleListProperty<>(FXCollections.observableArrayList());
+
+    private final ListProperty<Pilot> filteredPilots = new SimpleListProperty<>();
+    private final ListProperty<Controller> filteredControllers = new SimpleListProperty<>();
+
+    public ToolbarScope() {
+        final ObservableList clients = new FilteredList<>(filteredClients, e -> e instanceof Pilot);
+        filteredPilots.set(clients);
+
+        final ObservableList controllers = new FilteredList<>(filteredClients, e -> e instanceof Controller);
+        filteredControllers.set(controllers);
+    }
 
     public boolean isAutoReload() {
         return autoReload.get();
@@ -63,5 +80,45 @@ public class ToolbarScope implements Scope {
 
     public void setReloadException(final Throwable reloadException) {
         this.reloadException.set(reloadException);
+    }
+
+    public ObservableList<Client> filteredClients() {
+        return filteredClients.get();
+    }
+
+    public ListProperty<Client> filteredClientsProperty() {
+        return filteredClients;
+    }
+
+    public ObservableList<Pilot> filteredPilots() {
+        return filteredPilots.get();
+    }
+
+    public ObservableList<Controller> filteredControllers() {
+        return filteredControllers.get();
+    }
+
+    public ObservableList<Airport> filteredAirports() {
+        return filteredAirports.get();
+    }
+
+    public ListProperty<Airport> filteredAirportsProperty() {
+        return filteredAirports;
+    }
+
+    public ObservableList<FlightInformationRegionBoundary> filteredFirbs() {
+        return filteredFirbs.get();
+    }
+
+    public ListProperty<FlightInformationRegionBoundary> filteredFirbsProperty() {
+        return filteredFirbs;
+    }
+
+    public ObservableList<UpperInformationRegion> filteredUirs() {
+        return filteredUirs.get();
+    }
+
+    public ListProperty<UpperInformationRegion> filteredUirsProperty() {
+        return filteredUirs;
     }
 }

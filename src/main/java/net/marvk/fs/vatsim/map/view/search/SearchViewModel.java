@@ -13,6 +13,7 @@ import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
+import net.marvk.fs.vatsim.map.view.ToolbarScope;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,9 @@ public class SearchViewModel extends BaseViewModel {
     private final StringProperty query = new SimpleStringProperty();
     private final ReadOnlyObjectWrapper<ObservableList<Data>> results = new ReadOnlyObjectWrapper<>();
     private final DelegateCommand searchCommand;
+
+    @InjectScope
+    private ToolbarScope toolbarScope;
 
     @InjectScope
     private StatusScope statusScope;
@@ -90,22 +94,28 @@ public class SearchViewModel extends BaseViewModel {
     }
 
     private static class SearchActionSupplier {
-        private final ClientRepository clientRepository;
-        private final AirportRepository airportRepository;
-        private final FlightInformationRegionBoundaryRepository firbRepository;
-        private final UpperInformationRegionRepository uirRepository;
+        private FilteredList<Client> filteredClients;
+        private FilteredList<Airport> filteredAirports;
+        private FilteredList<FlightInformationRegionBoundary> filteredFirbs;
+        private FilteredList<UpperInformationRegion> filteredUirs;
 
         @Inject
         public SearchActionSupplier(
                 final ClientRepository clientRepository,
                 final AirportRepository airportRepository,
                 final FlightInformationRegionBoundaryRepository firbRepository,
-                final UpperInformationRegionRepository uirRepository
+                final UpperInformationRegionRepository uirRepository,
+                final ToolbarScope toolbarScope
         ) {
-            this.clientRepository = clientRepository;
-            this.airportRepository = airportRepository;
-            this.firbRepository = firbRepository;
-            this.uirRepository = uirRepository;
+            this.filteredClients = new FilteredList<>(clientRepository.list());
+            this.filteredAirports = new FilteredList<>(airportRepository.list());
+            this.filteredFirbs = new FilteredList<>(firbRepository.list());
+            this.filteredUirs = new FilteredList<>(uirRepository.list());
+
+            toolbarScope.filteredClientsProperty().bindContent(filteredClients);
+            toolbarScope.filteredAirportsProperty().bindContent(filteredAirports);
+            toolbarScope.filteredFirbsProperty().bindContent(filteredFirbs);
+            toolbarScope.filteredUirsProperty().bindContent(filteredUirs);
         }
 
         public Action createAction(final String query, final ObjectProperty<ObservableList<Data>> result) {
@@ -123,24 +133,13 @@ public class SearchViewModel extends BaseViewModel {
 
             @Override
             protected void action() {
-                final FilteredList<? extends Data> clients = clientRepository
-                        .list()
-                        .filtered(predicateSupplier::visit);
-
-                final FilteredList<Airport> airports = airportRepository
-                        .list()
-                        .filtered(predicateSupplier::visit);
-
-                final FilteredList<FlightInformationRegionBoundary> firs = firbRepository
-                        .list()
-                        .filtered(predicateSupplier::visit);
-
-                final FilteredList<UpperInformationRegion> uirs = uirRepository
-                        .list()
-                        .filtered(predicateSupplier::visit);
+                filteredClients.setPredicate(predicateSupplier::visit);
+                filteredAirports.setPredicate(predicateSupplier::visit);
+                filteredFirbs.setPredicate(predicateSupplier::visit);
+                filteredUirs.setPredicate(predicateSupplier::visit);
 
                 final ObservableList<Data> result = Stream
-                        .of(clients, airports)
+                        .of(filteredClients, filteredAirports)
                         .flatMap(Collection::stream)
                         .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
