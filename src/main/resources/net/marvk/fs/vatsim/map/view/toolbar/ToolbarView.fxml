@@ -12,7 +12,7 @@
                 <FontIcon iconLiteral="oct-gear-16" iconSize="24"/>
             </graphic>
         </Button>
-        <Button styleClass="icon-button" onAction="#refresh" mnemonicParsing="false">
+        <Button styleClass="icon-button" fx:id="reload" onAction="#refresh" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
             </graphic>

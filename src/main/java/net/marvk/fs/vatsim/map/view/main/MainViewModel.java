@@ -33,15 +33,15 @@ import java.util.Arrays;
 public class MainViewModel implements ViewModel {
     private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();
 
-    private final Command loadAirports;
-    private final Command loadFirs;
-    private final Command loadFirbs;
-    private final Command loadUirs;
-    private final Command loadClients;
+    private final DelegateCommand loadAirports;
+    private final DelegateCommand loadFirs;
+    private final DelegateCommand loadFirbs;
+    private final DelegateCommand loadUirs;
+    private final DelegateCommand loadClients;
+    private final DelegateCommand loadInternationalDateLine;
     private final Preferences preferences;
-    private final Command loadInternationalDateLine;
 
-    private static final Duration RELOAD_PERIOD = Duration.minutes(2);
+    private static final Duration RELOAD_PERIOD = Duration.seconds(30);
     private final ReloadService clientReloadService;
 
     @InjectScope
@@ -57,27 +57,26 @@ public class MainViewModel implements ViewModel {
             final InternationalDateLineRepository internationalDateLineRepository,
             final Preferences preferences
     ) {
-        this.loadAirports = new ReloadRepositoryAction(airportRepository).asCommand();
-        this.loadInternationalDateLine = new ReloadRepositoryAction(internationalDateLineRepository).asCommand();
-        this.loadFirbs = new ReloadRepositoryAction(flightInformationRegionBoundaryRepository).asCommand();
-        this.loadFirs = new ReloadRepositoryAction(flightInformationRegionRepository).asCommand();
-        this.loadUirs = new ReloadRepositoryAction(upperInformationRegionRepository).asCommand();
-        this.loadClients = new ReloadRepositoryAction(clientRepository).asCommand();
         this.preferences = preferences;
 
-        new CompositeCommand(
+        this.loadAirports = new ReloadRepositoryCommand(airportRepository, false);
+        this.loadInternationalDateLine = new ReloadRepositoryCommand(internationalDateLineRepository, false);
+        this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
+        this.loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
+        this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
+        this.loadClients = new ReloadRepositoryCommand(clientRepository, true);
+
+        final CompositeCommand compositeCommand = new CompositeCommand(
                 loadInternationalDateLine,
                 loadFirbs,
                 loadFirs,
                 loadUirs,
                 loadAirports,
                 loadClients
-        ).execute();
+        );
+        compositeCommand.execute();
 
-        Notifications.RELOAD_CLIENTS.subscribe(() -> {
-            loadClients.execute();
-            triggerRepaint();
-        });
+        Notifications.RELOAD_CLIENTS.subscribe(this::reloadClients);
 
         clientReloadService = new ReloadService(loadClients);
         clientReloadService.setPeriod(RELOAD_PERIOD);
@@ -85,12 +84,25 @@ public class MainViewModel implements ViewModel {
         clientReloadService.setOnSucceeded(e -> triggerRepaint());
     }
 
+    private void reloadClients() {
+        loadClients.execute();
+        triggerRepaint();
+    }
+
     private void triggerRepaint() {
         Notifications.REPAINT.publish();
     }
 
     public void initialize() {
-        toolbarScope.autoReloadProperty().addListener((observable, oldValue, newValue) -> setServiceRunning(newValue));
+        toolbarScope.autoReloadProperty().addListener((observable, oldValue, newValue) -> {
+            reloadClients();
+            setServiceRunning(newValue);
+        });
+
+        toolbarScope.reloadRunningProperty().bind(loadClients.runningProperty());
+        toolbarScope.reloadExecutableProperty().bind(loadClients.executableProperty());
+        toolbarScope.reloadExceptionProperty().bind(loadClients.exceptionProperty());
+
         final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
         final ObjectProperty<Color> baseColor = preferences.colorProperty("world.color");
 
@@ -170,20 +182,24 @@ public class MainViewModel implements ViewModel {
         return style.getReadOnlyProperty();
     }
 
-    private static final class ReloadRepositoryAction extends Action {
-        private final Repository<?> repository;
-
-        private ReloadRepositoryAction(final Repository<?> repository) {
-            this.repository = repository;
+    private static final class ReloadRepositoryCommand extends DelegateCommand {
+        private ReloadRepositoryCommand(final Repository<?> repository, final boolean background) {
+            super(() -> new ReloadRepositoryAction(repository), new ImmutableObjectProperty<>(true), background);
         }
 
-        @Override
-        protected void action() throws RepositoryException {
-            repository.reload();
-        }
+        private static final class ReloadRepositoryAction extends Action {
+            private final Repository<?> repository;
 
-        private DelegateCommand asCommand() {
-            return new DelegateCommand(() -> this, false);
+            public ReloadRepositoryAction(final Repository<?> repository) {
+                this.repository = repository;
+            }
+
+            @Override
+            protected void action() throws Exception {
+                updateProgress(0, 1);
+                repository.reload();
+                updateProgress(1, 1);
+            }
         }
     }
 

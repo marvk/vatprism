@@ -82,10 +82,16 @@
             <version>${mvvmfx.version}</version>
         </dependency>
         <dependency>
+            <groupId>de.saxsys</groupId>
+            <artifactId>mvvmfx-guice</artifactId>
+            <version>${mvvmfx.version}</version>
+        </dependency>
+        <dependency>
             <groupId>eu.lestard</groupId>
             <artifactId>easy-di</artifactId>
             <version>0.3.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -96,12 +102,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.saxsys</groupId>
-            <artifactId>mvvmfx-guice</artifactId>
-            <version>1.8.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -220,6 +220,13 @@
         <repository>
             <id>OSGeo</id>
             <url>https://repo.osgeo.org/repository/release/</url>
+        </repository>
+        <repository>
+            <id>Sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 </project>

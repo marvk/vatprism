@@ -40,6 +40,7 @@ public class SelectionShapePainter extends MapPainter<Object> {
                 context.fillOval(c.getX() - rHalf, c.getY() - rHalf, d, d);
             }
             if (stroke) {
+                context.setLineDashes((double[]) null);
                 context.setLineWidth(strokeWidth);
                 context.setStroke(strokeColor);
                 context.strokeOval(c.getX() - rHalf, c.getY() - rHalf, d, d);

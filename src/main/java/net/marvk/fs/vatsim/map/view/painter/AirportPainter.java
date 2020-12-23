@@ -97,6 +97,7 @@ public class AirportPainter extends MapPainter<Airport> {
 
             c.setTextAlign(TextAlignment.CENTER);
             c.setTextBaseline(VPos.BOTTOM);
+            c.setLineDashes(null);
 
             final String icao = airport.getIcao();
 

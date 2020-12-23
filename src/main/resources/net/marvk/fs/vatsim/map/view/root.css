@@ -15,6 +15,7 @@
     -vatsim-background-color-very-very-very-light: #42351D;
     -vatsim-text-color-dark: #52482F;
     -vatsim-text-color: #5f553d;
+    -vatsim-error-color: #5f1d1d;
     -vatsim-text-color-light: #746A53;
     -vatsim-text-greyed-out: #919191;
     -vatsim-toolbar-button-size: 24px;
@@ -66,7 +67,6 @@
 
 .icon-button {
     -fx-background-color: transparent;
-    -fx-icon-color: -vatsim-text-color;
     -fx-pref-width: -vatsim-toolbar-button-size;
     -fx-pref-height: -vatsim-toolbar-button-size;
     -fx-padding: 0;
@@ -82,10 +82,15 @@
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
 
-.icon-button * {
+.icon-button .ikonli-font-icon {
     -fx-icon-color: -vatsim-text-color;
     -fx-icon-size: -vatsim-toolbar-button-icon-size;
 }
+
+.icon-button .ikonli-font-icon:error {
+    -fx-icon-color: -vatsim-error-color;
+}
+
 
 .tab-header-background {
     -fx-background-color: -vatsim-background-color;
