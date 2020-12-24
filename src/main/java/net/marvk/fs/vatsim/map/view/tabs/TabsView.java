@@ -17,7 +17,9 @@ import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.datatable.airportstable.AirportsTableView;
 import net.marvk.fs.vatsim.map.view.datatable.clientstable.ClientsTableView;
+import net.marvk.fs.vatsim.map.view.datatable.controllerstable.ControllersTableView;
 import net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundariestable.FlightInformationRegionBoundariesTableView;
+import net.marvk.fs.vatsim.map.view.datatable.pilotstable.PilotsTableView;
 import net.marvk.fs.vatsim.map.view.datatable.upperinformationregionstable.UpperInformationRegionsTableView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
 import net.marvk.fs.vatsim.map.view.search.SearchView;
@@ -52,6 +54,8 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPane.getTabs().clear();
         tabPane.getTabs().add(createFxmlViewTab("Map", MapView.class));
         tabPane.getTabs().add(createJavaViewTab("Clients", ClientsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("Pilots", PilotsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("Controllers", ControllersTableView.class));
         tabPane.getTabs().add(createJavaViewTab("Airports", AirportsTableView.class));
         tabPane.getTabs().add(createJavaViewTab("FIRs", FlightInformationRegionBoundariesTableView.class));
         tabPane.getTabs().add(createJavaViewTab("UIRs", UpperInformationRegionsTableView.class));

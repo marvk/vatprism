@@ -1,50 +1,62 @@
 package net.marvk.fs.vatsim.map.data;
 
+import javafx.beans.value.ObservableObjectValue;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Locale;
 
 public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> {
     private final String query;
+//    private final Pattern pattern;
+//    private final Predicate<String> predicate;
 
     public SimplePredicatesDataVisitor(final String query) {
         super(false);
-        this.query = query;
+//        this.pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+//        this.predicate = pattern.asPredicate();
+        this.query = query.toLowerCase(Locale.ROOT);
+    }
+
+    private boolean matches(final String s) {
+        return StringUtils.containsIgnoreCase(s, query);
     }
 
     @Override
     public Boolean visit(final Controller controller) {
-        return super.visit(controller) || StringUtils.containsIgnoreCase(controller.getFrequency(), query);
+        return super.visit(controller) || matches(controller.getFrequency());
     }
 
     @Override
     public Boolean visit(final Airport airport) {
-        return StringUtils.containsIgnoreCase(airport.getIcao(), query) ||
+        return matches(airport.getIcao()) ||
                 airport
                         .getNames()
                         .stream()
-                        .anyMatch(name -> StringUtils.containsIgnoreCase(name.get(), query));
+                        .map(ObservableObjectValue::get)
+                        .anyMatch(this::matches);
     }
 
     @Override
     public Boolean visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-        return StringUtils.containsIgnoreCase(flightInformationRegionBoundary.getIcao(), query) ||
+        return matches(flightInformationRegionBoundary.getIcao()) ||
                 flightInformationRegionBoundary
                         .getFlightInformationRegions()
                         .stream()
                         .map(FlightInformationRegion::getName)
-                        .anyMatch(e -> StringUtils.containsIgnoreCase(e, query));
+                        .anyMatch(this::matches);
     }
 
     @Override
     public Boolean visit(final UpperInformationRegion upperInformationRegion) {
-        return StringUtils.containsIgnoreCase(upperInformationRegion.getIcao(), query) ||
-                StringUtils.containsIgnoreCase(upperInformationRegion.getName(), query);
+        return matches(upperInformationRegion.getIcao()) ||
+                matches(upperInformationRegion.getName());
     }
 
     @Override
     public Boolean visit(final Client client) {
-        return StringUtils.containsIgnoreCase(client.getCallsign(), query) ||
-                StringUtils.containsIgnoreCase(client.getRealName(), query) ||
-                StringUtils.containsIgnoreCase(client.getCidString(), query);
+        return matches(client.getCallsign()) ||
+                matches(client.getRealName()) ||
+                matches(client.getCidString());
     }
 
     public static DataVisitor<Boolean> nullOrBlankIsTrue(final String query) {
