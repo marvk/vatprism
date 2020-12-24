@@ -81,6 +81,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
     public void initialize() {
         super.initialize();
         path.setOnMouseClicked(container::fireEvent);
+        remarks.setOnMouseClicked(container::fireEvent);
     }
 
     private void setFlightPlanPanes(final Boolean flightPlanAvailable) {
@@ -104,6 +105,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         flightPlan.flightTypeProperty().addListener(
                 (observable, oldValue, newValue) -> setFlightPlanPanes(isFlightPlanAvailable(newValue))
         );
+        setFlightPlanPanes(isFlightPlanAvailable(flightPlan.getFlightType()));
     }
 
     private static boolean isFlightPlanAvailable(final FlightType flightType) {

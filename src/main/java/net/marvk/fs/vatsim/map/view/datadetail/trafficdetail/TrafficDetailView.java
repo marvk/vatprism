@@ -73,9 +73,7 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
         });
 
         viewModel.getFilteredSortedData().addListener(
-                (ListChangeListener<FlightPlan>) c -> {
-                    setGrid(viewModel.getFilteredSortedData());
-                }
+                (ListChangeListener<FlightPlan>) c -> setGrid(viewModel.getFilteredSortedData())
         );
 
         trafficHolder.placeholderTextProperty().bind(Bindings.createStringBinding(

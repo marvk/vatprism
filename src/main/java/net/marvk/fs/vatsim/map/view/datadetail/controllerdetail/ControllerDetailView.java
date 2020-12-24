@@ -43,6 +43,12 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     private final IcaoVisitor icaoVisitor = new IcaoVisitor("????");
 
     @Override
+    public void initialize() {
+        super.initialize();
+        atis.setOnMouseClicked(atisPane::fireEvent);
+    }
+
+    @Override
     protected List<TextArea> textAreas() {
         return List.of(
                 atis
@@ -72,8 +78,8 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         frequency.textProperty().bind(controller.frequencyProperty());
         rating.textProperty().bind(controller.ratingProperty());
         atis.textProperty().bind(Bindings.createStringBinding(() -> {
-            final String msg = controller.getAtisMessage();
-            if (msg == null || msg.isEmpty()) {
+                    final String msg = controller.getAtisMessage();
+                    if (msg == null || msg.isEmpty()) {
                         return "No ATIS available";
                     }
 
