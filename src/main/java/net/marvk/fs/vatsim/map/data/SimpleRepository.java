@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.data;
 
 import com.google.inject.Inject;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,43 +47,46 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
     public void reload() throws RepositoryException {
         try {
             final Collection<Model> models = extractModelList(vatsimApi);
-
-            final Set<String> keysInUpdate = models
-                    .stream()
-                    .map(this::keyFromModel)
-                    .collect(Collectors.toSet());
-
-            items.stream()
-                 .filter(e -> !keysInUpdate.contains(keyFromViewModel(e)))
-                 .forEach(this::onRemove);
-
-            items.removeIf(e -> !keysInUpdate.contains(keyFromViewModel(e)));
-            map.keySet().removeIf(o -> !keysInUpdate.contains(o));
-
-            final List<ViewModel> toAdd = new ArrayList<>();
-
-            for (final Model model : models) {
-                final String key = keyFromModel(model);
-                final ViewModel viewModel = map.get(key);
-                if (viewModel == null) {
-                    final ViewModel newViewModel = newViewModelInstance(model);
-                    if (newViewModel == null) {
-                        continue;
-                    }
-                    newViewModel.setFromModel(model);
-                    map.put(key, newViewModel);
-                    onAdd(newViewModel, model);
-                    toAdd.add(newViewModel);
-                } else {
-                    viewModel.setFromModel(model);
-                    onUpdate(viewModel, model);
-                }
-            }
-
-            items.addAll(toAdd);
+            Platform.runLater(() -> updateList(models));
         } catch (final VatsimApiException e) {
             throw new RepositoryException(e);
         }
+    }
+
+    protected void updateList(final Collection<Model> updatedModels) {
+        final Set<String> keysInUpdate = updatedModels
+                .stream()
+                .map(this::keyFromModel)
+                .collect(Collectors.toSet());
+
+        items.stream()
+             .filter(e -> !keysInUpdate.contains(keyFromViewModel(e)))
+             .forEach(this::onRemove);
+
+        items.removeIf(e -> !keysInUpdate.contains(keyFromViewModel(e)));
+        map.keySet().removeIf(o -> !keysInUpdate.contains(o));
+
+        final List<ViewModel> toAdd = new ArrayList<>();
+
+        for (final Model model : updatedModels) {
+            final String key = keyFromModel(model);
+            final ViewModel viewModel = map.get(key);
+            if (viewModel == null) {
+                final ViewModel newViewModel = newViewModelInstance(model);
+                if (newViewModel == null) {
+                    continue;
+                }
+                newViewModel.setFromModel(model);
+                map.put(key, newViewModel);
+                onAdd(newViewModel, model);
+                toAdd.add(newViewModel);
+            } else {
+                viewModel.setFromModel(model);
+                onUpdate(viewModel, model);
+            }
+        }
+
+        items.addAll(toAdd);
     }
 
     @Override

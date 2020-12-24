@@ -9,17 +9,20 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class SearchViewModel extends BaseViewModel {
     private final StringProperty query = new SimpleStringProperty();
     private final ReadOnlyObjectWrapper<ObservableList<Data>> results = new ReadOnlyObjectWrapper<>();
@@ -49,13 +52,13 @@ public class SearchViewModel extends BaseViewModel {
         });
         statusScope.searchQueryProperty().bind(query);
 
-        query.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isBlank()) {
-                search();
-            } else {
-                clear();
-            }
-        });
+//        query.addListener((observable, oldValue, newValue) -> {
+//            if (newValue != null && !newValue.isBlank()) {
+//                search();
+//            } else {
+//                clear();
+//            }
+//        });
     }
 
     public void search() {
@@ -133,17 +136,21 @@ public class SearchViewModel extends BaseViewModel {
 
             @Override
             protected void action() {
+                final long start = System.nanoTime();
+
                 filteredClients.setPredicate(predicateSupplier::visit);
                 filteredAirports.setPredicate(predicateSupplier::visit);
                 filteredFirbs.setPredicate(predicateSupplier::visit);
                 filteredUirs.setPredicate(predicateSupplier::visit);
 
                 final ObservableList<Data> result = Stream
-                        .of(filteredClients, filteredAirports)
+                        .of(filteredClients, filteredAirports, filteredFirbs, filteredUirs)
                         .flatMap(Collection::stream)
                         .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
                 this.result.set(result);
+                final Duration duration = Duration.ofNanos(System.nanoTime() - start);
+                log.info("Search duration %sms".formatted(duration.toNanos() / 1_000_000.0));
             }
         }
     }

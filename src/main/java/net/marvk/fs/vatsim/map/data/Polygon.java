@@ -103,7 +103,7 @@ public class Polygon {
 
             return new Point2D(polyLabel.getX(), polyLabel.getY());
         } catch (final IllegalStateException | IllegalArgumentException e) {
-            log.warn("Failed polyLabel", e);
+            log.warn("Failed polyLabel");
 
             return new Point2D(
                     Arrays.stream(pointsX).average().getAsDouble(),

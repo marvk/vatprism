@@ -81,9 +81,8 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     }
 
     @Override
-    public void reload() throws RepositoryException {
-        super.reload();
-
+    protected void updateList(final Collection<VatsimAirportWrapper> updatedModels) {
+        super.updateList(updatedModels);
         createRTree();
     }
 

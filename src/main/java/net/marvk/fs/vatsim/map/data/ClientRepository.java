@@ -117,9 +117,12 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     }
 
     @Override
-    public void reload() throws RepositoryException {
-        super.reload();
+    protected void updateList(final Collection<VatsimClient> updatedModels) {
+        super.updateList(updatedModels);
+        createRTree();
+    }
 
+    private void createRTree() {
         final List<Entry<Pilot, Point>> list = pilots
                 .stream()
                 .filter(e -> e.getPosition().getX() >= -180)

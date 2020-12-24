@@ -193,9 +193,13 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
             try {
                 // min because users may input more than four numbers
                 final String time = "0".repeat(4 - Math.min(s.length(), 4)) + s;
+
+                final String hourString = time.substring(0, 2);
+                final String minuteString = time.substring(2, 4);
+
                 return LocalTime.of(
-                        Integer.parseInt(time.substring(0, 2)),
-                        Integer.parseInt(time.substring(2, 4))
+                        "24".equals(hourString) ? 0 : Integer.parseInt(hourString),
+                        "60".equals(minuteString) ? 0 : Integer.parseInt(minuteString)
                 );
             } catch (final DateTimeException | NumberFormatException e) {
                 log.warn("Failed to parse time " + string, e);

@@ -69,26 +69,19 @@ public class CallsignParser {
             return Result.EMPTY;
         }
 
-        final Airport airport;
-        final UpperInformationRegion uir;
-        final FlightInformationRegion fir;
+        Airport airport = null;
+        UpperInformationRegion uir = null;
+        FlightInformationRegion fir = null;
 
-        if (controllerType == ControllerType.OBS) {
-            airport = null;
-            fir = null;
-            uir = null;
-        } else {
+        if (controllerType != ControllerType.OBS) {
+            // TODO NY_ISP_APP NY_ARD_APP NY_CSK_APP NY_HRP_APP NY_KEN_DEP
             if (controllerType != ControllerType.CTR && controllerType != ControllerType.FSS) {
                 airport = getAirport(controller, identifier);
 
                 if (airport == null) {
-                    log.warn("UNKNOWN AIRPORT: " + identifier + " Full callsign: " + callsign + ", cid " + cid);
+                    log.warn("UNKNOWN AIRPORT: %s Full callsign: %s, cid %s, type %s".formatted(identifier, callsign, cid, controllerType));
                 }
-
-                uir = null;
-                fir = null;
-            } else {
-                airport = null;
+            } else if (airport == null) {
                 uir = getUir(controller, identifier);
 
                 if (uir == null) {
