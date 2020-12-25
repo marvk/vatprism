@@ -19,6 +19,7 @@ public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion
                 Color.DARKCYAN,
                 0.5,
                 true,
+                true,
                 true
         );
     }

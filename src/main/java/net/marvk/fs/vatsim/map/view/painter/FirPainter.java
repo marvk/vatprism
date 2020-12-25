@@ -21,22 +21,25 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
     private final double lineWidth;
     @Parameter("Fill")
     private final boolean fill;
+    @Parameter("Stroke")
+    private final boolean stroke;
     @Parameter("Label")
     private final boolean label;
 
     private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();
 
-    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean label) {
+    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean stroke, final boolean label) {
         super(mapVariables);
         this.color = color;
         this.lineWidth = lineWidth;
         this.fill = fill;
         this.label = label;
+        this.stroke = stroke;
         this.fillColor = color.deriveColor(0, 1, 1, 0.05);
     }
 
     public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
-        this(mapVariables, color, lineWidth, false, false);
+        this(mapVariables, color, lineWidth, false, true, false);
     }
 
     @Override
@@ -61,10 +64,15 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
             painterHelper.fillPolygons(c, polygon);
         }
 
-        c.setStroke(color);
-        c.setFill(color);
+        if (stroke) {
+            c.setStroke(color);
+            c.setLineWidth(lineWidth);
+            c.setLineDashes(null);
+            painterHelper.strokePolygons(c, polygon);
+        }
 
         if (label) {
+            c.setFill(color);
             final Point2D polyLabel = polygon.getExteriorRing().getPolyLabel();
 
             if (polyLabel != null) {
@@ -77,10 +85,6 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
                 );
             }
         }
-
-        c.setLineWidth(lineWidth);
-        c.setLineDashes(null);
-        painterHelper.strokePolygons(c, polygon);
     }
 
     private Paint hatched(final FlightInformationRegionBoundary firb) {

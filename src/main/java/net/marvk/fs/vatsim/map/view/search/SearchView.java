@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableObjectValue;
 import javafx.fxml.FXML;
@@ -69,6 +70,15 @@ public class SearchView implements FxmlView<SearchViewModel> {
         resultsList.setCellFactory(e -> new ResultCell(viewModel.queryProperty()));
 
         searchBoxHolder.getChildren().addAll(createSearchIcon(), createClearIcon());
+
+        container.prefWidthProperty().bind(widthBinding());
+        container.maxWidthProperty().bind(widthBinding());
+        searchBox.prefWidthProperty().bind(widthBinding());
+        searchBox.maxWidthProperty().bind(widthBinding());
+    }
+
+    private DoubleBinding widthBinding() {
+        return viewModel.fontSizeProperty().divide(12.0).multiply(200.0);
     }
 
     private FontIcon createClearIcon() {
@@ -79,6 +89,7 @@ public class SearchView implements FxmlView<SearchViewModel> {
         icon.setCursor(Cursor.HAND);
         icon.setOnMouseClicked(e -> viewModel.clear());
         icon.getStyleClass().add("clear-icon");
+        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(2.0));
         return icon;
     }
 
@@ -87,6 +98,7 @@ public class SearchView implements FxmlView<SearchViewModel> {
         StackPane.setMargin(icon, new Insets(0, 0, 0, 3));
         StackPane.setAlignment(icon, Pos.CENTER_LEFT);
         icon.visibleProperty().bind(searchBox.textProperty().isEmpty().and(searchBox.focusedProperty().not()));
+        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(2.0));
         return icon;
     }
 

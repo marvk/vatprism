@@ -17,8 +17,10 @@ public class InactiveFirPainter extends MapPainter<FlightInformationRegionBounda
                 Color.valueOf("3B341F").deriveColor(0, 1, 1, 0.25),
                 0.5,
                 false,
+                true,
                 false
         );
+        enabled = false;
     }
 
     @Override

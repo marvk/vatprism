@@ -154,7 +154,10 @@ public class CallsignParser {
             return null;
         }
 
-        log.warn("Multiple models");
+        if (viewModels.size() > 1) {
+            log.warn("Multiple models " + viewModels);
+        }
+
         return viewModels.get(0);
     }
 

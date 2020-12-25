@@ -29,7 +29,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
         this.painterVisitor = new PainterVisitor();
         this.airportPainter = new AirportPainter(mapVariables, color, color, true, true, true);
         this.pilotPainter = new PilotPainter(mapVariables, color, backgrounds);
-        this.firPainter = new FirPainter(mapVariables, color, 2.5, true, true);
+        this.firPainter = new FirPainter(mapVariables, color, 2.5, true, true, true);
     }
 
     @Override

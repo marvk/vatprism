@@ -18,6 +18,7 @@ public class ActiveFirPainter extends CompositeMapPainter<FlightInformationRegio
                 Color.DARKMAGENTA,
                 1,
                 true,
+                true,
                 true
         );
     }

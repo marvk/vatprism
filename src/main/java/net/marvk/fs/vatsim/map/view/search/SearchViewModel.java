@@ -15,6 +15,7 @@ import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -27,6 +28,7 @@ public class SearchViewModel extends BaseViewModel {
     private final StringProperty query = new SimpleStringProperty();
     private final ReadOnlyObjectWrapper<ObservableList<Data>> results = new ReadOnlyObjectWrapper<>();
     private final DelegateCommand searchCommand;
+    private final Preferences preferences;
 
     @InjectScope
     private ToolbarScope toolbarScope;
@@ -35,9 +37,13 @@ public class SearchViewModel extends BaseViewModel {
     private StatusScope statusScope;
 
     @Inject
-    public SearchViewModel(final Provider<SearchActionSupplier> searchActionProvider) {
+    public SearchViewModel(
+            final Provider<SearchActionSupplier> searchActionProvider,
+            final Preferences preferences
+    ) {
         final SearchActionSupplier supplier = searchActionProvider.get();
-        this.searchCommand = new DelegateCommand(() -> supplier.createAction(query.get(), results), query.isNotEmpty(), true);
+        this.searchCommand = new DelegateCommand(() -> supplier.createAction(query.get(), results), true);
+        this.preferences = preferences;
     }
 
     public void initialize() {
@@ -69,7 +75,7 @@ public class SearchViewModel extends BaseViewModel {
 
     public void clear() {
         query.set("");
-        results.set(null);
+        search();
     }
 
     public String getQuery() {
@@ -94,6 +100,10 @@ public class SearchViewModel extends BaseViewModel {
 
     public DelegateCommand getSearchCommand() {
         return searchCommand;
+    }
+
+    public ReadOnlyIntegerProperty fontSizeProperty() {
+        return preferences.integerProperty("general.font_size");
     }
 
     private static class SearchActionSupplier {
@@ -126,10 +136,12 @@ public class SearchViewModel extends BaseViewModel {
         }
 
         private class SearchAction extends Action {
+            private final String query;
             private final ObjectProperty<ObservableList<Data>> result;
             private final DataVisitor<Boolean> predicateSupplier;
 
             public SearchAction(final String query, final ObjectProperty<ObservableList<Data>> result) {
+                this.query = query;
                 this.result = result;
                 this.predicateSupplier = SimplePredicatesDataVisitor.nullOrBlankIsTrue(query);
             }
@@ -138,17 +150,24 @@ public class SearchViewModel extends BaseViewModel {
             protected void action() {
                 final long start = System.nanoTime();
 
+                System.out.println("SearchAction.action");
+
                 filteredClients.setPredicate(predicateSupplier::visit);
                 filteredAirports.setPredicate(predicateSupplier::visit);
                 filteredFirbs.setPredicate(predicateSupplier::visit);
                 filteredUirs.setPredicate(predicateSupplier::visit);
 
-                final ObservableList<Data> result = Stream
-                        .of(filteredClients, filteredAirports, filteredFirbs, filteredUirs)
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                if (query.isBlank()) {
+                    this.result.set(null);
+                } else {
+                    final ObservableList<Data> result = Stream
+                            .of(filteredClients, filteredAirports, filteredFirbs, filteredUirs)
+                            .flatMap(Collection::stream)
+                            .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-                this.result.set(result);
+                    this.result.set(result);
+                }
+
                 final Duration duration = Duration.ofNanos(System.nanoTime() - start);
                 log.info("Search duration %sms".formatted(duration.toNanos() / 1_000_000.0));
             }

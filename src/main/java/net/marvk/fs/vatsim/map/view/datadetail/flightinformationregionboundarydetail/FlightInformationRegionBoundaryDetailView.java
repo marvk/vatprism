@@ -60,6 +60,8 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
             icaoLabel.getStyleClass().add("hyperlink-label");
             icaoLabel.setOnMouseClicked(e -> viewModel.setDataDetail(uir));
             uirsGrid.add(icaoLabel, 0, i);
+            final Label nameLabel = new Label(uir.getName());
+            uirsGrid.add(nameLabel, 1, i);
         }
     }
 
