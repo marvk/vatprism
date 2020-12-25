@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.*;
+import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
 @ToString
@@ -26,16 +27,49 @@ public class Polygon {
     private Point2D polyLabel = null;
 
     public Polygon(final List<Point> points) {
-        this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), points.size());
+        this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), List::size);
     }
 
     public Polygon(final Geometry geometry) {
-        this(geometry.getCoordinates(), (e, i) -> e[i].getX(), (e, i) -> e[i].getY(), geometry.getCoordinates().length);
+        this(coordinates(geometry),
+                (e, i) -> e[i].getX(),
+                (e, i) -> e[i].getY(),
+                e -> e.length
+        );
     }
 
-    public <T> Polygon(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final int length) {
-        final double[] pointsX = new double[length];
-        final double[] pointsY = new double[length];
+    private static Coordinate[] coordinates(final Geometry geometry) {
+        System.out.println("geometry.getCoordinates().length = " + geometry.getCoordinates().length);
+        if (geometry.getCoordinates().length == 1126) {
+            System.out.println(geometry.getCoordinates().length);
+        }
+
+        if (geometry instanceof org.locationtech.jts.geom.Polygon) {
+            final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometry;
+            final int numInteriorRing = polygon.getNumInteriorRing();
+
+            if (numInteriorRing > 1) {
+                final Coordinate[] coordinates = polygon.getCoordinates();
+                final Coordinate[] result = new Coordinate[coordinates.length + numInteriorRing - 1];
+                System.arraycopy(coordinates, 0, result, 0, coordinates.length);
+
+                for (int i = 0; i < numInteriorRing - 1; i++) {
+                    final Coordinate ringStart = polygon.getInteriorRingN(numInteriorRing - i - 2).getCoordinateN(0);
+                    result[coordinates.length + i] = ringStart;
+                }
+
+                return result;
+            }
+        }
+
+        return geometry.getCoordinates();
+    }
+
+    public <T> Polygon(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final ToIntFunction<T> lengthSupplier) {
+        final int n = lengthSupplier.applyAsInt(t);
+
+        final double[] pointsX = new double[n];
+        final double[] pointsY = new double[n];
 
         double minX = Double.POSITIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
@@ -45,7 +79,7 @@ public class Polygon {
 
         int duplicates = 0;
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < n; i++) {
             final double x = xExtractor.extract(t, i);
             final double y = yExtractor.extract(t, i);
 
@@ -67,8 +101,8 @@ public class Polygon {
 
         if (duplicates > 0) {
             log.info("Removed " + duplicates + " duplicates ");
-            this.pointsX = Arrays.copyOf(pointsX, length - duplicates);
-            this.pointsY = Arrays.copyOf(pointsY, length - duplicates);
+            this.pointsX = Arrays.copyOf(pointsX, n - duplicates);
+            this.pointsY = Arrays.copyOf(pointsY, n - duplicates);
         } else {
             this.pointsX = pointsX;
             this.pointsY = pointsY;
@@ -182,7 +216,7 @@ public class Polygon {
         return new Polygon(result,
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
-                result.size()
+                List::size
         );
     }
 

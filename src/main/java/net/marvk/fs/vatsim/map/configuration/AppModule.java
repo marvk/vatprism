@@ -8,6 +8,7 @@ import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
 import org.geotools.data.shapefile.files.ShpFiles;
 import org.geotools.data.shapefile.shp.ShapefileReader;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -44,51 +45,57 @@ public class AppModule extends AbstractModule {
 
     @Provides
     @Named("worldShapefileUrl")
-    public List<URL> worldShapefileUrls() {
-        return Collections.singletonList(getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_land/ne_50m_land.shp"));
+    public List<String> worldShapefileUrls() {
+        return Collections.singletonList("ne_50m_land");
     }
 
     @Provides
     @Named("lakesShapefileUrl")
-    public List<URL> lakesShapefileUrl() {
+    public List<String> lakesShapefileUrl() {
         return List.of(
-//                getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_10m_lakes_north_america/ne_10m_lakes_north_america.shp"),
-//               getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_10m_lakes_europe/ne_10m_lakes_europe.shp"),
-                getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_lakes/ne_50m_lakes.shp")
+//                "ne_10m_lakes_north_america",
+//                "ne_10m_lakes_europe",
+                "ne_10m_lakes"
         );
     }
 
     @Provides
     @Singleton
     @Named("world")
-    public List<Polygon> world(@Named("worldShapefileUrl") final List<URL> shapefileUrls) throws IOException {
+    public List<Polygon> world(@Named("worldShapefileUrl") final List<String> shapefileUrls) throws IOException {
         return loadPolygons(shapefileUrls);
     }
 
     @Provides
     @Singleton
     @Named("lakes")
-    public List<Polygon> lakes(@Named("lakesShapefileUrl") final List<URL> shapefileUrls) throws IOException {
+    public List<Polygon> lakes(@Named("lakesShapefileUrl") final List<String> shapefileUrls) throws IOException {
         return loadPolygons(shapefileUrls);
     }
 
-    private List<Polygon> loadPolygons(final Collection<URL> shapefileUrls) throws IOException {
+    private List<Polygon> loadPolygons(final Collection<String> names) throws IOException {
         final Collection<List<Polygon>> result = new ArrayList<>();
 
-        for (final URL shapefileUrl : shapefileUrls) {
-            result.add(loadPolygons(shapefileUrl));
+        for (final String name : names) {
+            result.add(loadPolygons(name));
         }
 
         return result.stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
     }
 
-    private List<Polygon> loadPolygons(final URL shapefileUrl) throws IOException {
+    private List<Polygon> loadPolygons(final String name) throws IOException {
         final ShapefileReader shapefileReader = new ShapefileReader(
-                new ShpFiles(shapefileUrl),
+                new ShpFiles(shpUrl(name)),
                 false,
                 false,
                 new GeometryFactory()
         );
+
+//        final DataStore dataStore = DataStoreFinder.getDataStore(Map.of("url", shpUrl(name)));
+//
+//        final SimpleFeatureSource featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+//
+//        final SimpleFeatureIterator features = featureSource.getFeatures().features();
 
         try {
             final List<Polygon> result = new ArrayList<>();
@@ -108,7 +115,10 @@ public class AppModule extends AbstractModule {
                     final MultiPolygon mp = (MultiPolygon) shape;
 
                     for (int i = 0; i < mp.getNumGeometries(); i++) {
-                        result.add(new Polygon(mp.getGeometryN(i)));
+                        final Geometry geometryN = mp.getGeometryN(i);
+                        final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometryN;
+
+                        result.add(new Polygon(polygon));
                     }
                 }
             }
@@ -117,5 +127,13 @@ public class AppModule extends AbstractModule {
         } finally {
             shapefileReader.close();
         }
+    }
+
+    private static URL shpUrl(final String name) {
+        return url(name, "shp");
+    }
+
+    private static URL url(final String name, final String extension) {
+        return AppModule.class.getResource("/net/marvk/fs/vatsim/map/world/%s/%s.%s".formatted(name, name, extension));
     }
 }

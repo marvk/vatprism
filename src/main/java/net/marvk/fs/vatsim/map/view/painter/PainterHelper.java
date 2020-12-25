@@ -11,8 +11,9 @@ import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class PainterHelper {
-    private static final double MIN_DISTANCE = 1.9;
-    private static final double MIN_SQUARE_DISTANCE = MIN_DISTANCE * MIN_DISTANCE;
+    private static final double MIN_DISTANCE = -1;
+    private static final double MIN_SQUARE_DISTANCE = MIN_DISTANCE <= 0 ? Integer.MIN_VALUE : MIN_DISTANCE * MIN_DISTANCE;
+    private static final int JUMP_THRESHOLD_SQUARED = 1000;
     private final MapVariables mapVariables;
 
     public PainterHelper(final MapVariables mapVariables) {
@@ -20,85 +21,124 @@ public class PainterHelper {
     }
 
     public void strokePolygons(final GraphicsContext c, final Polygon polygon) {
-        drawPolygons(c, polygon, false, false);
+        drawPolygons(c, polygon, false, false, true);
     }
 
     public void strokePolylines(final GraphicsContext c, final Polygon polygon) {
-        drawPolygons(c, polygon, true, false);
+        drawPolygons(c, polygon, true, false, true);
     }
 
     public void fillPolygons(final GraphicsContext c, final Polygon polygon) {
-        drawPolygons(c, polygon, false, true);
+        drawPolygons(c, polygon, false, true, true);
     }
 
-    private void drawPolygons(final GraphicsContext c, final Polygon polygon, final boolean polyline, final boolean fill) {
+    private void drawPolygons(final GraphicsContext c, final Polygon polygon, final boolean polyline, final boolean fill, final boolean simplify) {
         if (mapVariables.toCanvasX(polygon.boundary().getMinX()) < 0) {
-            drawPolygon(c, polygon, 360, polyline, fill);
+            drawPolygon(c, polygon, 360, polyline, fill, simplify);
         }
 
         if (mapVariables.toCanvasX(polygon.boundary().getMaxX()) > mapVariables.getViewWidth()) {
-            drawPolygon(c, polygon, -360, polyline, fill);
+            drawPolygon(c, polygon, -360, polyline, fill, simplify);
         }
 
-        drawPolygon(c, polygon, 0, polyline, fill);
+        drawPolygon(c, polygon, 0, polyline, fill, simplify);
     }
 
-    private void drawPolygon(final GraphicsContext c, final Polygon polygon, final double offsetX, final boolean polyline, final boolean fill) {
+    private void drawPolygon(final GraphicsContext c, final Polygon polygon, final double offsetX, final boolean polyline, final boolean fill, final boolean simplify) {
         if (!mapVariables.isIntersectingWorldView(shiftedBounds(polygon, offsetX))) {
             return;
         }
 
-        final int numPoints = writePolygonToBuffer(polygon, offsetX);
+        final int numPoints = writePolygonToBuffer(polygon, offsetX, c);
 
         final boolean twoDimensional = numPoints >= 3;
         if (!twoDimensional) {
             return;
         }
 
+        c.setFill(Color.web("00000033"));
+
         if (polyline) {
             if (!fill) {
-                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                c.stroke();
+//                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         } else {
             if (fill) {
-                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                c.fill();
+//                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             } else {
-                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+//                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         }
     }
 
-    private int writePolygonToBuffer(final Polygon polygon, final double offsetX) {
-        double lastX = Double.MAX_VALUE;
-        double lastY = Double.MAX_VALUE;
+    private int writePolygonToBuffer(final Polygon polygon, final double offsetX, final GraphicsContext c) {
+        double lastDrawnX = Double.MAX_VALUE;
+        double lastDrawnY = Double.MAX_VALUE;
+
+        double lastX = Double.NaN;
+        double lastY = Double.NaN;
 
         int numPoints = 0;
 
         int currentPoints = 0;
-        double currentXSum = 0;
-        double currentYSum = 0;
+//        double currentXSum = 0;
+//        double currentYSum = 0;
+
+        c.beginPath();
 
         for (int i = 0; i < polygon.size(); i++) {
             final double x = mapVariables.toCanvasX(polygon.getPointsX()[i] + offsetX);
             final double y = mapVariables.toCanvasY(polygon.getPointsY()[i]);
 
             currentPoints += 1;
-            currentXSum += x;
-            currentYSum += y;
+//            currentXSum += x;
+//            currentYSum += y;
 
-            if (GeomUtil.squareDistance(lastX, lastY, x, y) > MIN_SQUARE_DISTANCE) {
-                mapVariables.setXBuf(numPoints, currentXSum / currentPoints);
-                mapVariables.setYBuf(numPoints, currentYSum / currentPoints);
-                lastX = x;
-                lastY = y;
+            final double squareDistance = GeomUtil.squareDistance(lastDrawnX, lastDrawnY, x, y);
+
+            if (i == 0 || i == polygon.size() - 1 || squareDistance > MIN_SQUARE_DISTANCE) {
+                if (currentPoints > 1 && squareDistance > JUMP_THRESHOLD_SQUARED) {
+                    mapVariables.setXBuf(numPoints, lastX);
+                    mapVariables.setYBuf(numPoints, lastY);
+
+                    numPoints += 1;
+                }
+
+                final double x_ = x;
+                final double y_ = y;
+
+                final Color col = Color.hsb(numPoints * 2 % 360, 1, 1, 0.75);
+                c.setFill(col);
+                c.setStroke(col.darker().darker().darker());
+                c.setLineWidth(3);
+                c.fillOval(x_ - 2.5, y_ - 2.5, 5, 5);
+
+                if (i != 0) {
+                    c.strokeLine(lastDrawnX, lastDrawnY, x_, y_);
+                }
+
+                mapVariables.setXBuf(numPoints, x_);
+                mapVariables.setYBuf(numPoints, y_);
+
+                c.lineTo(x_, y_);
+
+                lastDrawnX = x_;
+                lastDrawnY = y_;
 
                 numPoints += 1;
 
                 currentPoints = 0;
-                currentXSum = 0;
-                currentYSum = 0;
+//                currentXSum = 0;
+//                currentYSum = 0;
             }
+
+            lastX = x;
+            lastY = y;
         }
+
+        c.closePath();
 
         return numPoints;
     }
