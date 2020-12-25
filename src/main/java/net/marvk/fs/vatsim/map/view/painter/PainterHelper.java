@@ -10,10 +10,19 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
+import java.util.List;
+
 public class PainterHelper {
-    private static final double MIN_DISTANCE = -1;
-    private static final double MIN_SQUARE_DISTANCE = MIN_DISTANCE <= 0 ? Integer.MIN_VALUE : MIN_DISTANCE * MIN_DISTANCE;
-    private static final int JUMP_THRESHOLD_SQUARED = 1000;
+    private static final double MIN_DISTANCE = 2;
+    private static final double MIN_SQUARE_DISTANCE = squareThreshold(MIN_DISTANCE);
+
+    private static final double JUMP_THRESHOLD = 128;
+    private static final double JUMP_THRESHOLD_SQUARED = squareThreshold(JUMP_THRESHOLD);
+
+    private static double squareThreshold(final double value) {
+        return value <= 0 ? Integer.MIN_VALUE : value * value;
+    }
+
     private final MapVariables mapVariables;
 
     public PainterHelper(final MapVariables mapVariables) {
@@ -49,31 +58,53 @@ public class PainterHelper {
             return;
         }
 
-        final int numPoints = writePolygonToBuffer(polygon, offsetX, c);
+        if (polygon.numPoints() == 1126) {
+            System.out.println();
+        }
+
+        int numPoints = writePolygonToBuffer(c, polygon, offsetX);
 
         final boolean twoDimensional = numPoints >= 3;
         if (!twoDimensional) {
             return;
         }
 
-        c.setFill(Color.web("00000033"));
-
         if (polyline) {
             if (!fill) {
-                c.stroke();
-//                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         } else {
             if (fill) {
-                c.fill();
-//                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             } else {
-//                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         }
     }
 
-    private int writePolygonToBuffer(final Polygon polygon, final double offsetX, final GraphicsContext c) {
+    private int writePolygonToBuffer(final GraphicsContext c, final Polygon polygon, final double offsetX) {
+        int numPoints = writeRingToBuffer(polygon.getExteriorRing(), offsetX, c, 0);
+
+        final List<Polygon.Ring> holeRings = polygon.getHoleRings();
+
+        for (final Polygon.Ring hole : holeRings) {
+            numPoints += writeRingToBuffer(hole, offsetX, c, numPoints);
+        }
+
+        for (int i = 0; i < holeRings.size() - 1; i++) {
+            final Polygon.Ring hole = holeRings.get(holeRings.size() - 2 - i);
+            writePointToBuffer(
+                    numPoints,
+                    mapVariables.toCanvasX(hole.getPointsX()[0] + offsetX),
+                    mapVariables.toCanvasY(hole.getPointsY()[0])
+            );
+            numPoints += 1;
+        }
+
+        return numPoints;
+    }
+
+    private int writeRingToBuffer(final Polygon.Ring ring, final double offsetX, final GraphicsContext c, final int indexOffset) {
         double lastDrawnX = Double.MAX_VALUE;
         double lastDrawnY = Double.MAX_VALUE;
 
@@ -86,11 +117,9 @@ public class PainterHelper {
 //        double currentXSum = 0;
 //        double currentYSum = 0;
 
-        c.beginPath();
-
-        for (int i = 0; i < polygon.size(); i++) {
-            final double x = mapVariables.toCanvasX(polygon.getPointsX()[i] + offsetX);
-            final double y = mapVariables.toCanvasY(polygon.getPointsY()[i]);
+        for (int i = 0; i < ring.numPoints(); i++) {
+            final double x = mapVariables.toCanvasX(ring.getPointsX()[i] + offsetX);
+            final double y = mapVariables.toCanvasY(ring.getPointsY()[i]);
 
             currentPoints += 1;
 //            currentXSum += x;
@@ -98,36 +127,20 @@ public class PainterHelper {
 
             final double squareDistance = GeomUtil.squareDistance(lastDrawnX, lastDrawnY, x, y);
 
-            if (i == 0 || i == polygon.size() - 1 || squareDistance > MIN_SQUARE_DISTANCE) {
-                if (currentPoints > 1 && squareDistance > JUMP_THRESHOLD_SQUARED) {
-                    mapVariables.setXBuf(numPoints, lastX);
-                    mapVariables.setYBuf(numPoints, lastY);
+            if (i == 0 || i == ring.numPoints() - 1 || squareDistance > MIN_SQUARE_DISTANCE) {
+//                if (currentPoints > 1 && squareDistance > JUMP_THRESHOLD_SQUARED) {
+//                    mapVariables.setXBuf(numPoints, lastX);
+//                    mapVariables.setYBuf(numPoints, lastY);
+//
+//                    numPoints += 1;
+//                }
 
-                    numPoints += 1;
-                }
-
-                final double x_ = x;
-                final double y_ = y;
-
-                final Color col = Color.hsb(numPoints * 2 % 360, 1, 1, 0.75);
-                c.setFill(col);
-                c.setStroke(col.darker().darker().darker());
-                c.setLineWidth(3);
-                c.fillOval(x_ - 2.5, y_ - 2.5, 5, 5);
-
-                if (i != 0) {
-                    c.strokeLine(lastDrawnX, lastDrawnY, x_, y_);
-                }
-
-                mapVariables.setXBuf(numPoints, x_);
-                mapVariables.setYBuf(numPoints, y_);
-
-                c.lineTo(x_, y_);
-
-                lastDrawnX = x_;
-                lastDrawnY = y_;
+                writePointToBuffer(indexOffset + numPoints, x, y);
 
                 numPoints += 1;
+
+                lastDrawnX = x;
+                lastDrawnY = y;
 
                 currentPoints = 0;
 //                currentXSum = 0;
@@ -138,9 +151,12 @@ public class PainterHelper {
             lastY = y;
         }
 
-        c.closePath();
-
         return numPoints;
+    }
+
+    private void writePointToBuffer(final int index, final double x, final double y) {
+        mapVariables.setXBuf(index, x);
+        mapVariables.setYBuf(index, y);
     }
 
     private static Rectangle2D shiftedBounds(final Polygon polygon, final double offsetX) {

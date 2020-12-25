@@ -64,7 +64,7 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
         c.setStroke(color);
         c.setFill(color);
 
-        final Point2D polyLabel = polygon.getPolyLabel();
+        final Point2D polyLabel = polygon.getExteriorRing().getPolyLabel();
         if (label && polyLabel != null) {
             c.setTextAlign(TextAlignment.CENTER);
             c.setTextBaseline(VPos.CENTER);

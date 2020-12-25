@@ -81,7 +81,7 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
                 .sorted()
                 .collect(Collectors.joining("\n"));
         name.setText(names);
-        position.setText(positionLabel(firb.getPolygon().getPolyLabel()));
+        position.setText(positionLabel(firb.getPolygon().getExteriorRing().getPolyLabel()));
         status.setHeaderText(firb.getIcao());
         firb.getUpperInformationRegions().addListener(this::uirsChanged);
         uirsChanged(null);

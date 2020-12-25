@@ -55,7 +55,7 @@ public class AppModule extends AbstractModule {
         return List.of(
 //                "ne_10m_lakes_north_america",
 //                "ne_10m_lakes_europe",
-                "ne_10m_lakes"
+                "ne_50m_lakes"
         );
     }
 

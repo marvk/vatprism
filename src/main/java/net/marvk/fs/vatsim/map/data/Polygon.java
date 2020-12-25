@@ -14,178 +14,112 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.util.*;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @ToString
 @Slf4j
 public class Polygon {
     private static final LinearRing[] NO_HOLES = new LinearRing[0];
-    private final double[] pointsX;
-    private final double[] pointsY;
 
-    private final Rectangle2D boundary;
-    private Point2D polyLabel = null;
+    private final Ring exteriorRing;
+    private final List<Ring> holeRings;
+
+    private final int numPoints;
 
     public Polygon(final List<Point> points) {
-        this(points, (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), List::size);
+        this(List.of(points), (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), List::size);
     }
 
     public Polygon(final Geometry geometry) {
         this(coordinates(geometry),
-                (e, i) -> e[i].getX(),
-                (e, i) -> e[i].getY(),
-                e -> e.length
+                (e, i) -> e.getCoordinates()[i].getX(),
+                (e, i) -> e.getCoordinates()[i].getY(),
+                e -> e.getCoordinates().length
         );
     }
 
-    private static Coordinate[] coordinates(final Geometry geometry) {
-        System.out.println("geometry.getCoordinates().length = " + geometry.getCoordinates().length);
-        if (geometry.getCoordinates().length == 1126) {
-            System.out.println(geometry.getCoordinates().length);
-        }
+    public <E> Polygon(final List<E> elements, final CoordinateExtractor<E> xExtractor, final CoordinateExtractor<E> yExtractor, final ToIntFunction<E> lengthSupplier) {
+        this.exteriorRing = new Ring(elements.get(0), xExtractor, yExtractor, lengthSupplier);
 
+        this.holeRings = elements
+                .stream()
+                .skip(1)
+                .map(e -> new Ring(e, xExtractor, yExtractor, lengthSupplier))
+                .collect(Collectors.toUnmodifiableList());
+
+        this.numPoints = exteriorRing.numPoints() + holeRings.stream().mapToInt(Ring::numPoints).sum();
+    }
+
+    private static List<Geometry> coordinates(final Geometry geometry) {
         if (geometry instanceof org.locationtech.jts.geom.Polygon) {
             final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometry;
             final int numInteriorRing = polygon.getNumInteriorRing();
 
-            if (numInteriorRing > 1) {
-                final Coordinate[] coordinates = polygon.getCoordinates();
-                final Coordinate[] result = new Coordinate[coordinates.length + numInteriorRing - 1];
-                System.arraycopy(coordinates, 0, result, 0, coordinates.length);
-
-                for (int i = 0; i < numInteriorRing - 1; i++) {
-                    final Coordinate ringStart = polygon.getInteriorRingN(numInteriorRing - i - 2).getCoordinateN(0);
-                    result[coordinates.length + i] = ringStart;
+            if (numInteriorRing > 0) {
+                final ArrayList<Geometry> result = new ArrayList<>(1 + numInteriorRing);
+                result.add(polygon.getExteriorRing());
+                for (int i = 0; i < numInteriorRing; i++) {
+                    result.add(polygon.getInteriorRingN(i));
                 }
-
                 return result;
             }
         }
 
-        return geometry.getCoordinates();
-    }
-
-    public <T> Polygon(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final ToIntFunction<T> lengthSupplier) {
-        final int n = lengthSupplier.applyAsInt(t);
-
-        final double[] pointsX = new double[n];
-        final double[] pointsY = new double[n];
-
-        double minX = Double.POSITIVE_INFINITY;
-        double minY = Double.POSITIVE_INFINITY;
-
-        double maxX = Double.NEGATIVE_INFINITY;
-        double maxY = Double.NEGATIVE_INFINITY;
-
-        int duplicates = 0;
-
-        for (int i = 0; i < n; i++) {
-            final double x = xExtractor.extract(t, i);
-            final double y = yExtractor.extract(t, i);
-
-            if (i > 0) {
-                if (pointsX[i - 1] == x && pointsY[i - 1] == y) {
-                    duplicates++;
-                    continue;
-                }
-            }
-
-            minX = Math.min(minX, x);
-            minY = Math.min(minY, y);
-            maxX = Math.max(maxX, x);
-            maxY = Math.max(maxY, y);
-
-            pointsX[i - duplicates] = x;
-            pointsY[i - duplicates] = y;
-        }
-
-        if (duplicates > 0) {
-            log.info("Removed " + duplicates + " duplicates ");
-            this.pointsX = Arrays.copyOf(pointsX, n - duplicates);
-            this.pointsY = Arrays.copyOf(pointsY, n - duplicates);
-        } else {
-            this.pointsX = pointsX;
-            this.pointsY = pointsY;
-        }
-
-        this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY) {
-            @Override
-            public boolean contains(final double x, final double y) {
-                return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
-            }
-        };
-
-        polyLabel();
-    }
-
-    private Point2D polyLabel() {
-        final Coordinate[] coordinates = IntStream
-                .rangeClosed(0, numPoints())
-                .mapToObj(e -> new Coordinate(pointsX[e % numPoints()], pointsY[e % numPoints()]))
-                .toArray(Coordinate[]::new);
-
-        try {
-            if (numPoints() <= 2) {
-                return null;
-            }
-
-            final org.locationtech.jts.geom.Polygon polygon = new org.locationtech.jts.geom.Polygon(
-                    new LinearRing(new CoordinateArraySequence(coordinates, 2), new GeometryFactory()), NO_HOLES, new GeometryFactory()
-            );
-
-            final org.locationtech.jts.geom.Point polyLabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
-
-            return new Point2D(polyLabel.getX(), polyLabel.getY());
-        } catch (final IllegalStateException | IllegalArgumentException e) {
-            log.warn("Failed polyLabel");
-
-            return new Point2D(
-                    Arrays.stream(pointsX).average().getAsDouble(),
-                    Arrays.stream(pointsY).average().getAsDouble()
-            );
-        }
+        return Collections.singletonList(geometry);
     }
 
     public int size() {
-        return pointsX.length;
-    }
-
-    public double[] getPointsX() {
-        return pointsX;
-    }
-
-    public double[] getPointsY() {
-        return pointsY;
-    }
-
-    public Rectangle2D boundary() {
-        return boundary;
+        return numPoints;
     }
 
     public int numPoints() {
-        return pointsX.length;
+        return numPoints;
+    }
+
+    public Rectangle2D boundary() {
+        return exteriorRing.boundary;
+    }
+
+    public Ring getExteriorRing() {
+        return exteriorRing;
+    }
+
+    public List<Ring> getHoleRings() {
+        return holeRings;
+    }
+
+    public boolean hasHoleRings() {
+        return !holeRings.isEmpty();
     }
 
     public static Polygon merge(final Polygon polygon1, final Polygon polygon2) {
-        if (isInvalid(polygon1)) {
+        if (isInvalid(polygon1.exteriorRing)) {
             return polygon2;
         }
 
-        if (isInvalid(polygon2)) {
+        if (isInvalid(polygon2.exteriorRing)) {
             return polygon1;
+        }
+
+        if (polygon1.hasHoleRings() || polygon2.hasHoleRings()) {
+            throw new IllegalArgumentException();
         }
 
         final Map<Integer, Integer> sameMap = new HashMap<>();
         final List<Integer> sameJ = new ArrayList<>();
         final List<Integer> sameI = new ArrayList<>();
 
-        for (int i = 0; i < polygon1.numPoints(); i++) {
-            final double p1x = polygon1.pointsX[i];
-            final double p1y = polygon1.pointsY[i];
+        final Ring p1Ring = polygon1.exteriorRing;
+        final Ring p2Ring = polygon2.exteriorRing;
 
-            for (int j = 0; j < polygon2.numPoints(); j++) {
-                final double p2x = polygon2.pointsX[j];
-                final double p2y = polygon2.pointsY[j];
+        for (int i = 0; i < p1Ring.numPoints(); i++) {
+            final double p1x = p1Ring.pointsX[i];
+            final double p1y = p1Ring.pointsY[i];
+
+            for (int j = 0; j < p2Ring.numPoints(); j++) {
+                final double p2x = p2Ring.pointsX[j];
+                final double p2y = p2Ring.pointsY[j];
 
                 if (Double.compare((p1x + 720) % 360, (p2x + 720) % 360) == 0 && Double.compare(p1y, p2y) == 0) {
                     sameMap.put(i, j);
@@ -208,19 +142,19 @@ public class Polygon {
 
         final List<Point2D> result;
         if (sameJ.get(0) + 1 == sameJ.get(1)) {
-            result = mergeWithLineOverlap(polygon1, polygon2, sameMap, sameI, reverse);
+            result = mergeWithLineOverlap(p1Ring, p2Ring, sameMap, sameI, reverse);
         } else {
-            result = mergeWithEndPointOverlap(polygon1, polygon2, sameMap);
+            result = mergeWithEndPointOverlap(p1Ring, p2Ring, sameMap);
         }
 
-        return new Polygon(result,
+        return new Polygon(List.of(result),
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
                 List::size
         );
     }
 
-    private static boolean isInvalid(final Polygon p) {
+    private static boolean isInvalid(final Ring p) {
         final boolean isNotPolygon = p == null || p.numPoints() <= 2;
         if (isNotPolygon) {
             return true;
@@ -236,7 +170,7 @@ public class Polygon {
         return isNot2D;
     }
 
-    private static List<Point2D> mergeWithEndPointOverlap(final Polygon polygon1, final Polygon polygon2, final Map<Integer, Integer> sameMap) {
+    private static List<Point2D> mergeWithEndPointOverlap(final Ring polygon1, final Ring polygon2, final Map<Integer, Integer> sameMap) {
         final List<Point2D> result = new ArrayList<>();
 
         for (int i = 0; i < polygon1.numPoints(); i++) {
@@ -254,8 +188,8 @@ public class Polygon {
     }
 
     private static List<Point2D> mergeWithLineOverlap(
-            final Polygon polygon1,
-            final Polygon polygon2,
+            final Ring polygon1,
+            final Ring polygon2,
             final Map<Integer, Integer> sameMap,
             final List<Integer> sameI,
             final boolean reverse
@@ -296,50 +230,126 @@ public class Polygon {
         }
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Polygon polygon = (Polygon) o;
-
-        if (!Arrays.equals(pointsX, polygon.pointsX)) {
-            return false;
-        }
-        if (!Arrays.equals(pointsY, polygon.pointsY)) {
-            return false;
-        }
-        return Objects.equals(boundary, polygon.boundary);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Arrays.hashCode(pointsX);
-        result = 31 * result + Arrays.hashCode(pointsY);
-        result = 31 * result + (boundary != null ? boundary.hashCode() : 0);
-        return result;
-    }
-
     @FunctionalInterface
     public interface CoordinateExtractor<T> {
         double extract(final T t, final int index);
     }
 
-    public Point2D getPolyLabel() {
-        if (polyLabel == null) {
-            if (numPoints() == 1) {
-                polyLabel = new Point2D(pointsX[0], pointsY[0]);
-            } else if (numPoints() == 2) {
-                polyLabel = new Point2D(pointsX[0], pointsY[0]).add(pointsX[1], pointsY[1]).multiply(0.5);
+    public static class Ring {
+        private final double[] pointsX;
+        private final double[] pointsY;
+
+        private final Rectangle2D boundary;
+
+        private Point2D polyLabel = null;
+
+        public <T> Ring(final T t, final CoordinateExtractor<T> xExtractor, final CoordinateExtractor<T> yExtractor, final ToIntFunction<T> lengthSupplier) {
+            final int n = lengthSupplier.applyAsInt(t);
+
+            final double[] pointsX = new double[n];
+            final double[] pointsY = new double[n];
+
+            double minX = Double.POSITIVE_INFINITY;
+            double minY = Double.POSITIVE_INFINITY;
+
+            double maxX = Double.NEGATIVE_INFINITY;
+            double maxY = Double.NEGATIVE_INFINITY;
+
+            int duplicates = 0;
+
+            for (int i = 0; i < n; i++) {
+                final double x = xExtractor.extract(t, i);
+                final double y = yExtractor.extract(t, i);
+
+                if (i > 0) {
+                    if (pointsX[i - 1] == x && pointsY[i - 1] == y) {
+                        duplicates++;
+                        continue;
+                    }
+                }
+
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+
+                pointsX[i - duplicates] = x;
+                pointsY[i - duplicates] = y;
+            }
+
+            if (duplicates > 0) {
+                log.info("Removed " + duplicates + " duplicates ");
+                this.pointsX = Arrays.copyOf(pointsX, n - duplicates);
+                this.pointsY = Arrays.copyOf(pointsY, n - duplicates);
             } else {
-                polyLabel = polyLabel();
+                this.pointsX = pointsX;
+                this.pointsY = pointsY;
+            }
+
+            this.boundary = new Rectangle2D(minX, minY, maxX - minX, maxY - minY) {
+                @Override
+                public boolean contains(final double x, final double y) {
+                    return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
+                }
+            };
+        }
+
+        public Point2D getPolyLabel() {
+            if (polyLabel == null) {
+                if (numPoints() == 1) {
+                    polyLabel = new Point2D(pointsX[0], pointsY[0]);
+                } else if (numPoints() == 2) {
+                    polyLabel = new Point2D(pointsX[0], pointsY[0]).add(pointsX[1], pointsY[1]).multiply(0.5);
+                } else {
+                    polyLabel = polyLabel();
+                }
+            }
+
+            return polyLabel;
+        }
+
+        public int numPoints() {
+            return pointsX.length;
+        }
+
+        private Point2D polyLabel() {
+            final Coordinate[] coordinates = IntStream
+                    .rangeClosed(0, numPoints())
+                    .mapToObj(e -> new Coordinate(pointsX[e % numPoints()], pointsY[e % numPoints()]))
+                    .toArray(Coordinate[]::new);
+
+            try {
+                if (numPoints() <= 2) {
+                    return null;
+                }
+
+                final org.locationtech.jts.geom.Polygon polygon = new org.locationtech.jts.geom.Polygon(
+                        new LinearRing(new CoordinateArraySequence(coordinates, 2), new GeometryFactory()), NO_HOLES, new GeometryFactory()
+                );
+
+                final org.locationtech.jts.geom.Point polyLabel = (org.locationtech.jts.geom.Point) PolyLabeller.getPolylabel(polygon, 1);
+
+                return new Point2D(polyLabel.getX(), polyLabel.getY());
+            } catch (final IllegalStateException | IllegalArgumentException e) {
+                log.warn("Failed polyLabel");
+
+                return new Point2D(
+                        Arrays.stream(pointsX).average().getAsDouble(),
+                        Arrays.stream(pointsY).average().getAsDouble()
+                );
             }
         }
 
-        return polyLabel;
+        public double[] getPointsX() {
+            return pointsX;
+        }
+
+        public double[] getPointsY() {
+            return pointsY;
+        }
+
+        public Rectangle2D getBoundary() {
+            return boundary;
+        }
     }
 }

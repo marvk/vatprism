@@ -12,7 +12,7 @@ public class PositionDataVisitor implements OptionalDataVisitor<Point2D> {
 
     @Override
     public Optional<Point2D> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-        return Optional.ofNullable(flightInformationRegionBoundary.getPolygon().getPolyLabel());
+        return Optional.ofNullable(flightInformationRegionBoundary.getPolygon().getExteriorRing().getPolyLabel());
     }
 
     @Override

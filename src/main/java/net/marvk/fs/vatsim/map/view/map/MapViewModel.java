@@ -18,10 +18,7 @@ import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
-import net.marvk.fs.vatsim.map.view.painter.BackgroundPainter;
-import net.marvk.fs.vatsim.map.view.painter.FrameMetricsPainter;
-import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
-import net.marvk.fs.vatsim.map.view.painter.WorldPainter;
+import net.marvk.fs.vatsim.map.view.painter.*;
 import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.ArrayList;
@@ -196,18 +193,18 @@ public class MapViewModel implements ViewModel {
 
     private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
         return FXCollections.observableArrayList(
-                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("ffffff"))),
-//                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
+                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
+                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
                 PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("17130a")), this::lakes),
-//                PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
-//                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-//                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
-//                PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-//                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
-//                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
-//                PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
-//                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
-//                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
+                PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
+                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Firs", new ActiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
+                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
+                PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
+                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
+                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
                 PainterExecutor.ofItem("Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
         );
     }
