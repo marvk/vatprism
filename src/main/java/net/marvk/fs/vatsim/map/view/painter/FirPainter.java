@@ -64,15 +64,18 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
         c.setStroke(color);
         c.setFill(color);
 
-        final Point2D polyLabel = polygon.getExteriorRing().getPolyLabel();
-        if (label && polyLabel != null) {
-            c.setTextAlign(TextAlignment.CENTER);
-            c.setTextBaseline(VPos.CENTER);
-            c.fillText(
-                    firb.icaoProperty().get(),
-                    mapVariables.toCanvasX(polyLabel.getX()),
-                    mapVariables.toCanvasY(polyLabel.getY())
-            );
+        if (label) {
+            final Point2D polyLabel = polygon.getExteriorRing().getPolyLabel();
+
+            if (polyLabel != null) {
+                c.setTextAlign(TextAlignment.CENTER);
+                c.setTextBaseline(VPos.CENTER);
+                c.fillText(
+                        "%s%s".formatted(firb.getIcao(), firb.isOceanic() ? " Oceanic" : ""),
+                        mapVariables.toCanvasX(polyLabel.getX()),
+                        mapVariables.toCanvasY(polyLabel.getY())
+                );
+            }
         }
 
         c.setLineWidth(lineWidth);

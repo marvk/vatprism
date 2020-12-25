@@ -303,6 +303,12 @@ public class Polygon {
                 } else {
                     polyLabel = polyLabel();
                 }
+
+                if (polyLabel != null) {
+                    final double x = (polyLabel.getX() + 180) % 360 - 180;
+                    final double y = polyLabel.getY();
+                    polyLabel = new Point2D(x, y);
+                }
             }
 
             return polyLabel;
