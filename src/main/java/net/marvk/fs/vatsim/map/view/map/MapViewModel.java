@@ -43,7 +43,9 @@ public class MapViewModel implements ViewModel {
 
     private final InternationalDateLineRepository internationalDateLineRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
+
     private final List<Polygon> world;
+    private final List<Polygon> lakes;
 
     private final MapVariables mapVariables = new MapVariables();
 
@@ -76,7 +78,8 @@ public class MapViewModel implements ViewModel {
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final Preferences preferences,
-            @Named("world") final List<Polygon> world
+            @Named("world") final List<Polygon> world,
+            @Named("lakes") final List<Polygon> lakes
     ) {
         this.clientRepository = clientRepository;
         this.airportRepository = airportRepository;
@@ -91,6 +94,7 @@ public class MapViewModel implements ViewModel {
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
         this.world = world;
+        this.lakes = lakes;
 
         this.mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
 
@@ -191,6 +195,7 @@ public class MapViewModel implements ViewModel {
         return FXCollections.observableArrayList(
                 PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
                 PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
+                PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("17130a")), this::lakes),
                 PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
@@ -258,6 +263,10 @@ public class MapViewModel implements ViewModel {
 
     public List<Polygon> world() {
         return world;
+    }
+
+    public List<Polygon> lakes() {
+        return lakes;
     }
 
     public DoubleProperty viewWidthProperty() {

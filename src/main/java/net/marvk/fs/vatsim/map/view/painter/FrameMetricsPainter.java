@@ -19,19 +19,21 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private boolean showAverages = true;
 
     private static Color[] COLORS = new Color[]{
-            Color.web("#E18E9F"),
-            Color.web("#D99680"),
-            Color.web("#C79F65"),
-            Color.web("#AEA958"),
-            Color.web("#8CB163"),
-            Color.web("#63B77D"),
-            Color.web("#31BA9C"),
-            Color.web("#12B8B9"),
-            Color.web("#4BB2D0"),
-            Color.web("#81A8DD"),
-            Color.web("#AD9CDF"),
-            Color.web("#CC91D4"),
-            Color.web("#DD8CBF")
+            Color.web("#C57C8B"),
+            Color.web("#C18077"),
+            Color.web("#B88664"),
+            Color.web("#AC8C55"),
+            Color.web("#9C924C"),
+            Color.web("#8A974E"),
+            Color.web("#739C59"),
+            Color.web("#599F6A"),
+            Color.web("#3BA27D"),
+            Color.web("#18A290"),
+            Color.web("#0BA1A2"),
+            Color.web("#309EB1"),
+            Color.web("#5598BC"),
+            Color.web("#7592C3"),
+            Color.web("#918AC4")
     };
 
     @Parameter(value = "Height", min = 0)
@@ -47,11 +49,9 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
 
     @Override
     public void paint(final GraphicsContext c, final FrameMetrics frameMetrics) {
-        if (!show) {
-            return;
+        if (show) {
+            paintChart(c, frameMetrics, x, y);
         }
-
-        paintChart(c, frameMetrics, x, y);
     }
 
     private void paintChart(final GraphicsContext c, final FrameMetrics frameMetrics, final int x, final int y) {
@@ -147,7 +147,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         final boolean isHuge = maxNanos > 100 * NANOS_IN_MILLI;
         final double delta = (isHuge ? 100 : 10) * NANOS_IN_MILLI;
         final double padding = (isHuge ? 20 : 2) * NANOS_IN_MILLI;
-        for (int labelNanos = 0; labelNanos < maxNanos - padding; labelNanos += delta) {
+        for (long labelNanos = 0; labelNanos < maxNanos - padding; labelNanos += delta) {
             final double currentHeight = height(maxNanos, labelNanos);
             drawLabel(c,
                     labelNanos,
@@ -165,6 +165,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         drawLine(c, total.average(), maxNanos, xOffset, yOffset, chartWidth, Color.BLACK);
 
         drawLine(c, averageDrawNanos, maxNanos, xOffset, yOffset, chartWidth, Color.BLACK);
+
     }
 
     private double getChartHeight() {

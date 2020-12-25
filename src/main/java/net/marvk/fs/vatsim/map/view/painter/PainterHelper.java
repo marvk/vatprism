@@ -6,10 +6,13 @@ import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class PainterHelper {
+    private static final double MIN_DISTANCE = 1.9;
+    private static final double MIN_SQUARE_DISTANCE = MIN_DISTANCE * MIN_DISTANCE;
     private final MapVariables mapVariables;
 
     public PainterHelper(final MapVariables mapVariables) {
@@ -45,22 +48,59 @@ public class PainterHelper {
             return;
         }
 
-        for (int i = 0; i < polygon.size(); i++) {
-            mapVariables.getXBuf()[i] = mapVariables.toCanvasX(polygon.getPointsX()[i] + offsetX);
-            mapVariables.getYBuf()[i] = mapVariables.toCanvasY(polygon.getPointsY()[i]);
+        final int numPoints = writePolygonToBuffer(polygon, offsetX);
+
+        final boolean twoDimensional = numPoints >= 3;
+        if (!twoDimensional) {
+            return;
         }
 
         if (polyline) {
             if (!fill) {
-                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
+                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         } else {
             if (fill) {
-                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
+                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             } else {
-                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), polygon.size());
+                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         }
+    }
+
+    private int writePolygonToBuffer(final Polygon polygon, final double offsetX) {
+        double lastX = Double.MAX_VALUE;
+        double lastY = Double.MAX_VALUE;
+
+        int numPoints = 0;
+
+        int currentPoints = 0;
+        double currentXSum = 0;
+        double currentYSum = 0;
+
+        for (int i = 0; i < polygon.size(); i++) {
+            final double x = mapVariables.toCanvasX(polygon.getPointsX()[i] + offsetX);
+            final double y = mapVariables.toCanvasY(polygon.getPointsY()[i]);
+
+            currentPoints += 1;
+            currentXSum += x;
+            currentYSum += y;
+
+            if (GeomUtil.squareDistance(lastX, lastY, x, y) > MIN_SQUARE_DISTANCE) {
+                mapVariables.setXBuf(numPoints, currentXSum / currentPoints);
+                mapVariables.setYBuf(numPoints, currentYSum / currentPoints);
+                lastX = x;
+                lastY = y;
+
+                numPoints += 1;
+
+                currentPoints = 0;
+                currentXSum = 0;
+                currentYSum = 0;
+            }
+        }
+
+        return numPoints;
     }
 
     private static Rectangle2D shiftedBounds(final Polygon polygon, final double offsetX) {

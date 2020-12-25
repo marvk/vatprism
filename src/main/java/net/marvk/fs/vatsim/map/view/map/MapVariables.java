@@ -2,7 +2,9 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MapVariables {
     public static final double WORLD_WIDTH = 360;
     public static final double WORLD_HALF_WIDTH = 180;
@@ -23,8 +25,8 @@ public class MapVariables {
     private double worldCenterX = 0;
     private double worldCenterY = 0;
 
-    private final double[] xBuf;
-    private final double[] yBuf;
+    private double[] xBuf;
+    private double[] yBuf;
 
     private double aspectScaleY;
 
@@ -32,7 +34,7 @@ public class MapVariables {
     private Rectangle2D worldViewExpanded = new Rectangle2D(0, 0, 0, 0);
 
     public MapVariables() {
-        this(320000);
+        this(512);
     }
 
     public MapVariables(final int bufferSize) {
@@ -202,5 +204,29 @@ public class MapVariables {
 
     public double[] getYBuf() {
         return yBuf;
+    }
+
+    public void setXBuf(final int i, final double value) {
+        if (i >= xBuf.length) {
+            log.trace("Increasing xBuf size from " + xBuf.length + " to " + xBuf.length * 2);
+            xBuf = doubleSize(xBuf);
+        }
+
+        xBuf[i] = value;
+    }
+
+    public void setYBuf(final int i, final double value) {
+        if (i >= yBuf.length) {
+            log.trace("Increasing yBuf size from " + yBuf.length + " to " + yBuf.length * 2);
+            yBuf = doubleSize(yBuf);
+        }
+
+        yBuf[i] = value;
+    }
+
+    private static double[] doubleSize(final double[] array) {
+        final double[] newXBuf = new double[array.length * 2];
+        System.arraycopy(array, 0, newXBuf, 0, array.length);
+        return newXBuf;
     }
 }

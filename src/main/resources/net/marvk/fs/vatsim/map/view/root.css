@@ -36,6 +36,10 @@
     /*-fx-font-weight: bold;*/
 }
 
+.button:hover {
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
 .table-row-cell {
     -fx-padding: 0;
 }
@@ -76,10 +80,17 @@
 
 .icon-button:selected {
     -fx-background-color: -vatsim-background-color-very-light;
+    /*-fx-background-color: green;*/
 }
 
 .icon-button:hover {
+    -fx-background-color: -vatsim-background-color-light;
+    /*-fx-background-color: pink;*/
+}
+
+.icon-button:selected:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
+    /*-fx-background-color: red;*/
 }
 
 .icon-button .ikonli-font-icon {
@@ -120,10 +131,6 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
     -fx-text-fill: -vatsim-text-color;
-}
-
-.button:hover {
-    -fx-background-color: -vatsim-background-color-very-light;
 }
 
 .tab-pane:top *.tab-header-area {

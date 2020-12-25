@@ -88,6 +88,10 @@ public final class GeomUtil {
         return distance(p1.getX(), p1.getY(), 0, p2.getX(), p2.getY(), 0);
     }
 
+    public static double squareDistance(final double x1, final double y1, final double x2, final double y2) {
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    }
+
     /*
     https://stackoverflow.com/a/16794680/3000387
      */

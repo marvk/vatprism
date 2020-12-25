@@ -95,7 +95,9 @@ public class MainViewModel implements ViewModel {
 
     public void initialize() {
         toolbarScope.autoReloadProperty().addListener((observable, oldValue, newValue) -> {
-            reloadClients();
+            if (newValue) {
+                reloadClients();
+            }
             setServiceRunning(newValue);
         });
 

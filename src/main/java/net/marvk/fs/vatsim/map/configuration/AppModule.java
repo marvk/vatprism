@@ -16,8 +16,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppModule extends AbstractModule {
     @Override
@@ -41,15 +43,46 @@ public class AppModule extends AbstractModule {
     }
 
     @Provides
-    @Named("shapefileUrl")
-    public URL shapefileUrl() {
-        return getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_land/ne_50m_land.shp");
+    @Named("worldShapefileUrl")
+    public List<URL> worldShapefileUrls() {
+        return Collections.singletonList(getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_land/ne_50m_land.shp"));
+    }
+
+    @Provides
+    @Named("lakesShapefileUrl")
+    public List<URL> lakesShapefileUrl() {
+        return List.of(
+//                getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_10m_lakes_north_america/ne_10m_lakes_north_america.shp"),
+//               getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_10m_lakes_europe/ne_10m_lakes_europe.shp"),
+                getClass().getResource("/net/marvk/fs/vatsim/map/world/ne_50m_lakes/ne_50m_lakes.shp")
+        );
     }
 
     @Provides
     @Singleton
     @Named("world")
-    public List<Polygon> worldShape(@Named("shapefileUrl") final URL shapefileUrl) throws IOException {
+    public List<Polygon> world(@Named("worldShapefileUrl") final List<URL> shapefileUrls) throws IOException {
+        return loadPolygons(shapefileUrls);
+    }
+
+    @Provides
+    @Singleton
+    @Named("lakes")
+    public List<Polygon> lakes(@Named("lakesShapefileUrl") final List<URL> shapefileUrls) throws IOException {
+        return loadPolygons(shapefileUrls);
+    }
+
+    private List<Polygon> loadPolygons(final Collection<URL> shapefileUrls) throws IOException {
+        final Collection<List<Polygon>> result = new ArrayList<>();
+
+        for (final URL shapefileUrl : shapefileUrls) {
+            result.add(loadPolygons(shapefileUrl));
+        }
+
+        return result.stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
+    }
+
+    private List<Polygon> loadPolygons(final URL shapefileUrl) throws IOException {
         final ShapefileReader shapefileReader = new ShapefileReader(
                 new ShpFiles(shapefileUrl),
                 false,
@@ -80,7 +113,7 @@ public class AppModule extends AbstractModule {
                 }
             }
 
-            return Collections.unmodifiableList(result);
+            return result;
         } finally {
             shapefileReader.close();
         }
