@@ -4,10 +4,13 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 
 import java.util.ArrayList;
+import java.util.StringJoiner;
 
+@Log4j2
 public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>, Data {
     private final StringProperty icao = new SimpleStringProperty();
     private final BooleanProperty extension = new SimpleBooleanProperty();
@@ -30,7 +33,7 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
         icao.set(airspace.getGeneral().getIcao());
         extension.set(airspace.getGeneral().getExtension());
         oceanic.set(airspace.getGeneral().getOceanic());
-        polygon.set(new Polygon(airspace.getAirspacePoints()));
+        polygon.set(new Polygon(airspace.getAirspacePoints(), polygonName()));
 
         upperInformationRegions.addListener((ListChangeListener<UpperInformationRegion>) c -> {
             while (c.next()) {
@@ -47,6 +50,18 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
                 }
             }
         });
+    }
+
+    private String polygonName() {
+        final StringJoiner sj = new StringJoiner("_");
+        sj.add(icao.get());
+        if (oceanic.get()) {
+            sj.add("Oceanic");
+        }
+        if (extension.get()) {
+            sj.add("Extension");
+        }
+        return sj.toString();
     }
 
     private void addListener(final ObservableList<Controller> controllers) {
@@ -96,6 +111,7 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     }
 
     public void mergeInto(final FlightInformationRegionBoundary extension) {
+        log.debug("Merging %s with it's extension".formatted(getIcao()));
         polygon.set(Polygon.merge(getPolygon(), extension.getPolygon()));
     }
 

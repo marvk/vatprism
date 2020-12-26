@@ -6,20 +6,19 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
-import org.geotools.data.shapefile.files.ShpFiles;
-import org.geotools.data.shapefile.shp.ShapefileReader;
+import org.geotools.data.DataStore;
+import org.geotools.data.DataStoreFinder;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.MultiPolygon;
+import org.opengis.feature.simple.SimpleFeature;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AppModule extends AbstractModule {
@@ -55,7 +54,7 @@ public class AppModule extends AbstractModule {
         return List.of(
 //                "ne_10m_lakes_north_america",
 //                "ne_10m_lakes_europe",
-                "ne_50m_lakes"
+//                "ne_50m_lakes"
         );
     }
 
@@ -84,32 +83,25 @@ public class AppModule extends AbstractModule {
     }
 
     private List<Polygon> loadPolygons(final String name) throws IOException {
-        final ShapefileReader shapefileReader = new ShapefileReader(
-                new ShpFiles(shpUrl(name)),
-                false,
-                false,
-                new GeometryFactory()
-        );
-
-//        final DataStore dataStore = DataStoreFinder.getDataStore(Map.of("url", shpUrl(name)));
-//
-//        final SimpleFeatureSource featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-//
-//        final SimpleFeatureIterator features = featureSource.getFeatures().features();
+        final DataStore dataStore = DataStoreFinder.getDataStore(Map.of("url", shpUrl(name)));
+        final SimpleFeatureSource featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
+        final SimpleFeatureIterator features = featureSource.getFeatures().features();
 
         try {
             final List<Polygon> result = new ArrayList<>();
 
-            while (shapefileReader.hasNext()) {
-                final ShapefileReader.Record record = shapefileReader.nextRecord();
+            int id = 0;
 
-                final Object shape = record.shape();
+            while (features.hasNext()) {
+                final SimpleFeature feature = features.next();
+
+                final Object shape = feature.getDefaultGeometry();
 
                 if (shape instanceof MultiLineString) {
                     final MultiLineString mls = (MultiLineString) shape;
 
                     for (int i = 0; i < mls.getNumGeometries(); i++) {
-                        result.add(new Polygon(mls.getGeometryN(i)));
+                        result.add(new Polygon(mls.getGeometryN(i), "%s_%d".formatted(name, id++)));
                     }
                 } else if (shape instanceof MultiPolygon) {
                     final MultiPolygon mp = (MultiPolygon) shape;
@@ -118,14 +110,14 @@ public class AppModule extends AbstractModule {
                         final Geometry geometryN = mp.getGeometryN(i);
                         final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometryN;
 
-                        result.add(new Polygon(polygon));
+                        result.add(new Polygon(polygon, "%s_%d".formatted(name, id++)));
                     }
                 }
             }
 
             return result;
         } finally {
-            shapefileReader.close();
+            features.close();
         }
     }
 

@@ -1,13 +1,13 @@
 package net.marvk.fs.vatsim.map.aop;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-@Slf4j
+@Log4j2
 public class LifecycleLogger implements MethodInterceptor {
     @Override
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {

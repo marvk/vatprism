@@ -93,11 +93,8 @@ public class PainterHelper {
 
         for (int i = 0; i < holeRings.size() - 1; i++) {
             final Polygon.Ring hole = holeRings.get(holeRings.size() - 2 - i);
-            writePointToBuffer(
-                    numPoints,
-                    mapVariables.toCanvasX(hole.getPointsX()[0] + offsetX),
-                    mapVariables.toCanvasY(hole.getPointsY()[0])
-            );
+            mapVariables.setBuf(numPoints, mapVariables.toCanvasX(hole.getPointsX()[0] + offsetX), mapVariables.toCanvasY(hole
+                    .getPointsY()[0]));
             numPoints += 1;
         }
 
@@ -135,7 +132,7 @@ public class PainterHelper {
 //                    numPoints += 1;
 //                }
 
-                writePointToBuffer(indexOffset + numPoints, x, y);
+                mapVariables.setBuf(indexOffset + numPoints, x, y);
 
                 numPoints += 1;
 
@@ -152,11 +149,6 @@ public class PainterHelper {
         }
 
         return numPoints;
-    }
-
-    private void writePointToBuffer(final int index, final double x, final double y) {
-        mapVariables.setXBuf(index, x);
-        mapVariables.setYBuf(index, y);
     }
 
     private static Rectangle2D shiftedBounds(final Polygon polygon, final double offsetX) {

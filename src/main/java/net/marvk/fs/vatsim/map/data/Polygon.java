@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.Point;
 import org.geotools.polylabel.PolyLabeller;
 import org.locationtech.jts.geom.Coordinate;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @ToString
-@Slf4j
+@Log4j2
 public class Polygon {
     private static final LinearRing[] NO_HOLES = new LinearRing[0];
 
@@ -27,19 +27,34 @@ public class Polygon {
 
     private final int numPoints;
 
+    private final String name;
+
     public Polygon(final List<Point> points) {
-        this(List.of(points), (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), List::size);
+        this(points, null);
+    }
+
+    public Polygon(final List<Point> points, final String name) {
+        this(List.of(points), (e, i) -> e.get(i).getX(), (e, i) -> e.get(i).getY(), List::size, name);
     }
 
     public Polygon(final Geometry geometry) {
+        this(geometry, null);
+    }
+
+    public Polygon(final Geometry geometry, final String name) {
         this(coordinates(geometry),
                 (e, i) -> e.getCoordinates()[i].getX(),
                 (e, i) -> e.getCoordinates()[i].getY(),
-                e -> e.getCoordinates().length
+                e -> e.getCoordinates().length,
+                name
         );
     }
 
     public <E> Polygon(final List<E> elements, final CoordinateExtractor<E> xExtractor, final CoordinateExtractor<E> yExtractor, final ToIntFunction<E> lengthSupplier) {
+        this(elements, xExtractor, yExtractor, lengthSupplier, null);
+    }
+
+    public <E> Polygon(final List<E> elements, final CoordinateExtractor<E> xExtractor, final CoordinateExtractor<E> yExtractor, final ToIntFunction<E> lengthSupplier, final String name) {
         this.exteriorRing = new Ring(elements.get(0), xExtractor, yExtractor, lengthSupplier);
 
         this.holeRings = elements
@@ -49,6 +64,12 @@ public class Polygon {
                 .collect(Collectors.toUnmodifiableList());
 
         this.numPoints = exteriorRing.numPoints() + holeRings.stream().mapToInt(Ring::numPoints).sum();
+
+        this.name = name;
+    }
+
+    private String name() {
+        return name == null ? "unnamed polygon" : name + " polygon";
     }
 
     private static List<Geometry> coordinates(final Geometry geometry) {
@@ -94,6 +115,9 @@ public class Polygon {
     }
 
     public static Polygon merge(final Polygon polygon1, final Polygon polygon2) {
+        Objects.requireNonNull(polygon1);
+        Objects.requireNonNull(polygon2);
+
         if (isInvalid(polygon1.exteriorRing)) {
             return polygon2;
         }
@@ -150,13 +174,18 @@ public class Polygon {
         return new Polygon(List.of(result),
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
-                List::size
+                List::size,
+                "%s_%s_merged".formatted(polygon1.name(), polygon2.name())
         );
     }
 
     private static boolean isInvalid(final Ring p) {
-        final boolean isNotPolygon = p == null || p.numPoints() <= 2;
+        final boolean isNotPolygon = p.numPoints() <= 2;
         if (isNotPolygon) {
+            log.warn("Failed to merge %s, insufficient points for merging (%d)".formatted(
+                    p.polygon().name(),
+                    p.numPoints()
+            ));
             return true;
         }
 
@@ -164,7 +193,7 @@ public class Polygon {
         final boolean isNot2D = p.pointsX[1] == p.pointsX[last] && p.pointsY[1] == p.pointsY[last];
 
         if (isNot2D) {
-            log.warn("Polygons first and last edge match");
+            log.warn("Failed to merge %s, first and last edge match".formatted(p.polygon().name()));
         }
 
         return isNot2D;
@@ -235,7 +264,7 @@ public class Polygon {
         double extract(final T t, final int index);
     }
 
-    public static class Ring {
+    public class Ring {
         private final double[] pointsX;
         private final double[] pointsY;
 
@@ -278,7 +307,7 @@ public class Polygon {
             }
 
             if (duplicates > 0) {
-                log.info("Removed " + duplicates + " duplicates ");
+                log.trace("Removed %d duplicate %s in %s".formatted(duplicates, (duplicates > 1 ? "vertices" : "vertex"), name()));
                 this.pointsX = Arrays.copyOf(pointsX, n - duplicates);
                 this.pointsY = Arrays.copyOf(pointsY, n - duplicates);
             } else {
@@ -292,6 +321,10 @@ public class Polygon {
                     return super.contains(x, y) || super.contains(x - 360, y) || super.contains(x + 360, y);
                 }
             };
+        }
+
+        private Polygon polygon() {
+            return Polygon.this;
         }
 
         public Point2D getPolyLabel() {
@@ -337,7 +370,7 @@ public class Polygon {
 
                 return new Point2D(polyLabel.getX(), polyLabel.getY());
             } catch (final IllegalStateException | IllegalArgumentException e) {
-                log.warn("Failed polyLabel");
+                log.warn("Failed polylabel for " + name());
 
                 return new Point2D(
                         Arrays.stream(pointsX).average().getAsDouble(),

@@ -9,7 +9,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
+@Log4j2
 public class SearchViewModel extends BaseViewModel {
     private final StringProperty query = new SimpleStringProperty();
     private final ReadOnlyObjectWrapper<ObservableList<Data>> results = new ReadOnlyObjectWrapper<>();
@@ -149,8 +149,6 @@ public class SearchViewModel extends BaseViewModel {
             @Override
             protected void action() {
                 final long start = System.nanoTime();
-
-                System.out.println("SearchAction.action");
 
                 filteredClients.setPredicate(predicateSupplier::visit);
                 filteredAirports.setPredicate(predicateSupplier::visit);

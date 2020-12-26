@@ -2,7 +2,7 @@ package net.marvk.fs.vatsim.map.data;
 
 import com.google.inject.Inject;
 import javafx.geometry.Point2D;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimClientType;
 import net.marvk.fs.vatsim.api.data.VatsimController;
@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@Slf4j
+@Log4j2
 public class CallsignParser {
     private final AirportRepository airportRepository;
     private final FlightInformationRegionRepository flightInformationRegionRepository;
@@ -79,7 +79,10 @@ public class CallsignParser {
                 airport = getAirport(controller, identifier);
 
                 if (airport == null) {
-                    log.warn("UNKNOWN AIRPORT: %s Full callsign: %s, cid %s, type %s".formatted(identifier, callsign, cid, controllerType));
+                    log.warn(
+                            "Could not determine airport \"%s\" for controller with callsign: %s, cid: %s, type: %s"
+                                    .formatted(identifier, callsign, cid, controllerType)
+                    );
                 }
             } else if (airport == null) {
                 uir = getUir(controller, identifier);
@@ -88,7 +91,10 @@ public class CallsignParser {
                     fir = getFir(controller, identifier, infix);
 
                     if (fir == null) {
-                        log.warn("UNKNOWN UIR or FIR: " + identifier + " Full callsign: " + callsign + ", cid " + cid);
+                        log.warn(
+                                "Could not determine FIR/UIR \"%s\" for controller with callsign: %s, cid: %s, type: %s"
+                                        .formatted(identifier, callsign, cid, controllerType)
+                        );
                     }
                 } else {
                     fir = null;
@@ -104,7 +110,7 @@ public class CallsignParser {
         );
     }
 
-    private FlightInformationRegion getFir(final VatsimClient vatsimClient, final String identifier, final String infix) {
+    private FlightInformationRegion getFir(final VatsimController vatsimClient, final String identifier, final String infix) {
         final List<FlightInformationRegion> firs = flightInformationRegionRepository.getByIdentifierAndInfix(identifier, infix);
 
         if (firs.isEmpty()) {
@@ -112,8 +118,10 @@ public class CallsignParser {
         }
 
         if (firs.size() > 1) {
-            log.warn("Could not determine exact FIR for " + identifier + ", full callsign " + vatsimClient.getCallsign() + ", cid " + vatsimClient
-                    .getCid());
+            log.warn(
+                    "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s"
+                            .formatted(identifier, vatsimClient.getCallsign(), vatsimClient.getCid(), vatsimClient.getClientType())
+            );
         }
 
         return firs.get(0);

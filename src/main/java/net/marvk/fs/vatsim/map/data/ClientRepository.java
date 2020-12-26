@@ -10,7 +10,7 @@ import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Slf4j
+@Log4j2
 public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private final ReadOnlyListWrapper<Pilot> pilots;
     private final ReadOnlyListWrapper<Controller> controllers;
@@ -162,7 +162,7 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
 
         final List<Airport> airports = airportRepository.getByIcao(icao);
         if (airports.isEmpty()) {
-            log.warn("Unknown airport " + icao);
+            log.info("Unknown airport \"%s\"".formatted(icao));
             return null;
         }
 

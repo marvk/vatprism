@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@Slf4j
+@Log4j2
 public class FlightInformationRegionBoundaryRepository extends ProviderRepository<FlightInformationRegionBoundary, VatsimAirspace> {
     private final Lookup<FlightInformationRegionBoundary> icao = Lookup.fromProperty(FlightInformationRegionBoundary::getIcao);
     private RTree<FlightInformationRegionBoundary, Rectangle> rTree = RTree.create();

@@ -10,7 +10,7 @@ public class InternationalDateLine implements Settable<Line>, Data {
 
     @Override
     public void setFromModel(final Line points) {
-        polygon.set(new Polygon(points.getPoints()));
+        polygon.set(new Polygon(points.getPoints(), "International_Date_Line"));
     }
 
     public Polygon getPolygon() {

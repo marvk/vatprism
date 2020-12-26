@@ -2,9 +2,9 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 
-@Slf4j
+@Log4j2
 public class MapVariables {
     public static final double WORLD_WIDTH = 360;
     public static final double WORLD_HALF_WIDTH = 180;
@@ -206,9 +206,14 @@ public class MapVariables {
         return yBuf;
     }
 
+    public void setBuf(final int i, final double x, final double y) {
+        setXBuf(i, x);
+        setYBuf(i, y);
+    }
+
     public void setXBuf(final int i, final double value) {
         if (i >= xBuf.length) {
-            log.trace("Increasing xBuf size from " + xBuf.length + " to " + xBuf.length * 2);
+            log.debug("Increasing xBuf size from " + xBuf.length + " to " + xBuf.length * 2);
             xBuf = doubleSize(xBuf);
         }
 
@@ -217,7 +222,7 @@ public class MapVariables {
 
     public void setYBuf(final int i, final double value) {
         if (i >= yBuf.length) {
-            log.trace("Increasing yBuf size from " + yBuf.length + " to " + yBuf.length * 2);
+            log.debug("Increasing yBuf size from " + yBuf.length + " to " + yBuf.length * 2);
             yBuf = doubleSize(yBuf);
         }
 

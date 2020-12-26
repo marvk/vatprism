@@ -9,12 +9,16 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
 import net.marvk.fs.vatsim.map.view.main.MainView;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.util.List;
 
+@Log4j2
 public class App extends MvvmfxGuiceApplication {
 
     public static void main(final String[] args) {
@@ -23,6 +27,19 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(final Stage primaryStage) {
+        final Parameters parameters = getParameters();
+
+        final String logLevelString = parameters.getNamed().get("loglevel");
+        if (logLevelString != null) {
+            final Level level = Level.toLevel(logLevelString, null);
+
+            if (level != null) {
+                Configurator.setRootLevel(level);
+            } else {
+                log.warn("Failed to set log level to \"%s\"".formatted(logLevelString));
+            }
+        }
+
         final var viewTuple = FluentViewLoader
                 .fxmlView(MainView.class)
                 .load();

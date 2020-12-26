@@ -23,6 +23,7 @@
         <guice.version>5.0.0-BETA-1</guice.version>
         <ikonli.version>12.0.0</ikonli.version>
         <lucene.version>8.7.0</lucene.version>
+        <log4j.version>2.14.0</log4j.version>
     </properties>
 
     <dependencies>
@@ -99,9 +100,19 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

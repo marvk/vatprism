@@ -1,7 +1,7 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimFlightPlan;
 
 import java.time.DateTimeException;
@@ -10,9 +10,10 @@ import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j
+@Log4j2
 public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
+    private static final String INVALID_TIME_VALUE = "5772193";
 
     private final Pilot pilot;
 
@@ -191,6 +192,11 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static LocalTime parseDepartureTime(final String string) {
         return ParseUtil.parseNullSafe(string, s -> {
             try {
+                if (s.length() > 4) {
+                    log.debug("Identified invalid time " + s);
+                    return null;
+                }
+
                 // min because users may input more than four numbers
                 final String time = "0".repeat(4 - Math.min(s.length(), 4)) + s;
 

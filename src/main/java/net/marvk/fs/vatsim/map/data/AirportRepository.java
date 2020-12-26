@@ -8,7 +8,7 @@ import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import javafx.geometry.Point2D;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirport;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-@Slf4j
+@Log4j2
 public class AirportRepository extends ProviderRepository<Airport, AirportRepository.VatsimAirportWrapper> {
     private final Lookup<Airport> icaoLookup = Lookup.fromProperty(Airport::getIcao);
     private final Lookup<Airport> iataLookup = Lookup.fromCollection(Airport::getIatas);
@@ -173,7 +173,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (pseudos.size() != 1) {
-                log.warn("Airports with same ICAO (" + icao + ") have differing pseudos");
+                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched pseudos");
             }
 
             return pseudos.get(0);
@@ -188,7 +188,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (firs.size() != 1) {
-                log.warn("Airports with same ICAO (" + icao + ") have differing firs");
+                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched firs: " + firs);
             }
 
             return firs.get(0);
@@ -212,14 +212,23 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (icaos.size() != 1) {
-                log.warn("Airports passed to VatsimAirportWrapper have differing icaos");
+                log.warn("Airports passed to VatsimAirportWrapper have mismatched icaos: " + icaos);
             }
 
             return icaos.get(0);
         }
 
         private List<String> names(final List<VatsimAirport> airports) {
-            return airports.stream().map(VatsimAirport::getName).collect(Collectors.toList());
+            final List<String> names = airports
+                    .stream()
+                    .map(VatsimAirport::getName)
+                    .collect(Collectors.toList());
+
+            if (names.size() != 1) {
+                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched names: " + names);
+            }
+
+            return names;
         }
 
         private Point2D position(final List<VatsimAirport> airports) {
@@ -231,7 +240,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (points.size() != 1) {
-                log.warn("Airports with same ICAO (" + icao + ") have differing positions");
+                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched positions: " + points);
             }
 
             return points.get(0);

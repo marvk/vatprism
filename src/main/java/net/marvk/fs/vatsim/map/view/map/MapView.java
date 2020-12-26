@@ -25,7 +25,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailViewModel;
@@ -34,7 +34,7 @@ import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 import java.io.InputStream;
 import java.util.concurrent.*;
 
-@Slf4j
+@Log4j2
 public class MapView implements FxmlView<MapViewModel> {
     private static final double D_DRAG = 1;
     private static final int MAX_SCALE = 4096;
@@ -405,6 +405,8 @@ public class MapView implements FxmlView<MapViewModel> {
 
         private final DoubleProperty lastFrameTimeMillis = new SimpleDoubleProperty();
 
+        private int frame = 0;
+
         private Renderer() {
             start();
         }
@@ -414,16 +416,18 @@ public class MapView implements FxmlView<MapViewModel> {
                 while (true) {
                     try {
                         renderSemaphore.acquire();
-                        log.info("Drawing frame");
+                        log.trace("Drawing frame %d".formatted(frame));
                         final long start = System.nanoTime();
                         redraw().get();
                         final long frameTimeNanos = System.nanoTime() - start;
                         viewModel.onFrameCompleted(frameTimeNanos);
                         final double frameTimeMillis = frameTimeNanos / 1000000.;
                         lastFrameTimeMillis.set(frameTimeMillis);
-                        log.info("Frame time was " + frameTimeMillis + "ms");
+                        log.debug("Drew frame %d in %sms".formatted(frame, frameTimeMillis));
                     } catch (final InterruptedException | ExecutionException e) {
-                        log.error("", e);
+                        log.error("Failed to draw frame %d".formatted(frame), e);
+                    } finally {
+                        frame += 1;
                     }
                 }
             });
@@ -433,7 +437,7 @@ public class MapView implements FxmlView<MapViewModel> {
             final FutureTask<Void> task = new FutureTask<>(() -> {
                 for (final PainterExecutor<?> painterExecutor : viewModel.getPainterExecutors()) {
                     painterExecutor.paint(canvas.getGraphicsContext2D());
-                    log.info(painterExecutor.getName() + " finished in " + (painterExecutor.getLastDurationNanos() / 1000000.0) + "ms");
+                    log.trace(painterExecutor.getName() + " finished in " + (painterExecutor.getLastDurationNanos() / 1000000.0) + "ms");
                 }
             }, null);
 

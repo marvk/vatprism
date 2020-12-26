@@ -18,7 +18,7 @@ import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
@@ -29,7 +29,7 @@ import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 import java.util.Arrays;
 
 @ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class})
-@Slf4j
+@Log4j2
 public class MainViewModel implements ViewModel {
     private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();
 
