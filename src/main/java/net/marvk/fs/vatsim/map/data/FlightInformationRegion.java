@@ -80,6 +80,16 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
     }
 
     @Override
+    public String toString() {
+        return "FlightInformationRegion{" +
+                "icao=" + icao +
+                ", name=" + name +
+                ", prefixPosition=" + prefixPosition +
+                ", unknown1=" + unknown1 +
+                '}';
+    }
+
+    @Override
     public <R> R visit(final DataVisitor<R> visitor) {
         return visitor.visit(this);
     }

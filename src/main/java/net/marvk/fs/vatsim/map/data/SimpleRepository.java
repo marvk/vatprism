@@ -46,8 +46,22 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
     @Override
     public void reload() throws RepositoryException {
         try {
+            updateList(extractModelList(vatsimApi));
+        } catch (VatsimApiException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public void reloadAsync(final Runnable onSucceed) throws RepositoryException {
+        try {
             final Collection<Model> models = extractModelList(vatsimApi);
-            Platform.runLater(() -> updateList(models));
+            Platform.runLater(() -> {
+                updateList(models);
+                if (onSucceed != null) {
+                    onSucceed.run();
+                }
+            });
         } catch (final VatsimApiException e) {
             throw new RepositoryException(e);
         }

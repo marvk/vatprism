@@ -1,13 +1,67 @@
 package net.marvk.fs.vatsim.map.view.datatable.pilotstable;
 
 import com.google.inject.Inject;
+import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.datatable.clientstable.AbstractClientsTableView;
+
+import java.util.Comparator;
 
 public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewModel, Pilot> {
     @Inject
     public PilotsTableView(final TextFlowHighlighter textFlowHighlighter) {
         super(textFlowHighlighter);
+    }
+
+    @Override
+    protected void initializeColumns() {
+        super.initializeColumns();
+
+        this.<Airport>newColumnBuilder()
+                .title("Departure")
+                .objectObservableValueFactory(e -> e.getFlightPlan().departureAirportProperty())
+                .toStringMapper(Airport::getIcao)
+                .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
+                .mono(true)
+                .build();
+
+        this.<Airport>newColumnBuilder()
+                .title("Arrival")
+                .objectObservableValueFactory(e -> e.getFlightPlan().arrivalAirportProperty())
+                .toStringMapper(Airport::getIcao)
+                .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
+                .mono(true)
+                .build();
+
+        this.<Airport>newColumnBuilder()
+                .title("Alternate")
+                .objectObservableValueFactory(e -> e.getFlightPlan().alternativeAirportProperty())
+                .toStringMapper(Airport::getIcao)
+                .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
+                .mono(true)
+                .build();
+
+        this.<Number>newColumnBuilder()
+                .title("Gnd. Speed")
+                .objectObservableValueFactory(Pilot::groundSpeedProperty)
+                .toStringMapper(e -> "%dkts".formatted(e.intValue()))
+                .sortable()
+                .mono(true)
+                .build();
+
+        this.<Number>newColumnBuilder()
+                .title("Altitude")
+                .objectObservableValueFactory(Pilot::altitudeProperty)
+                .toStringMapper(e -> "%dft".formatted(e.intValue()))
+                .sortable()
+                .mono(true)
+                .build();
+
+        this.<String>newColumnBuilder()
+                .title("Aircraft Type")
+                .stringObservableValueFactory(e -> e.getFlightPlan().aircraftProperty())
+                .sortable()
+                .build();
     }
 }

@@ -119,8 +119,8 @@ public class CallsignParser {
 
         if (firs.size() > 1) {
             log.warn(
-                    "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s"
-                            .formatted(identifier, vatsimClient.getCallsign(), vatsimClient.getCid(), vatsimClient.getClientType())
+                    "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s; found %s"
+                            .formatted(identifier, vatsimClient.getCallsign(), vatsimClient.getCid(), vatsimClient.getClientType(), firs)
             );
         }
 

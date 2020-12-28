@@ -166,12 +166,10 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     @Override
     public String toString() {
         return "FlightInformationRegionBoundary{" +
-                "icao=" + icao.get() +
-                ", extension=" + extension.get() +
-                ", oceanic=" + oceanic.get() +
-                ", polygon=" + polygon.get().boundary() +
-                ", flightInformationRegions=" + flightInformationRegions.get() +
-                ", upperInformationRegions=" + upperInformationRegions.get() +
+                "icao=" + icao +
+                ", extension=" + extension +
+                ", oceanic=" + oceanic +
+                ", polygon=" + polygon +
                 '}';
     }
 

@@ -64,7 +64,7 @@ public class MainViewModel implements ViewModel {
         this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
         this.loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
         this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
-        this.loadClients = new ReloadRepositoryCommand(clientRepository, true);
+        this.loadClients = new ReloadRepositoryCommand(clientRepository, true, this::triggerRepaint);
 
         final CompositeCommand compositeCommand = new CompositeCommand(
                 loadInternationalDateLine,
@@ -81,12 +81,10 @@ public class MainViewModel implements ViewModel {
         clientReloadService = new ReloadService(loadClients);
         clientReloadService.setPeriod(RELOAD_PERIOD);
         clientReloadService.setDelay(RELOAD_PERIOD);
-        clientReloadService.setOnSucceeded(e -> triggerRepaint());
     }
 
     private void reloadClients() {
         loadClients.execute();
-        triggerRepaint();
     }
 
     private void triggerRepaint() {
@@ -186,20 +184,26 @@ public class MainViewModel implements ViewModel {
 
     private static final class ReloadRepositoryCommand extends DelegateCommand {
         private ReloadRepositoryCommand(final Repository<?> repository, final boolean background) {
-            super(() -> new ReloadRepositoryAction(repository), new ImmutableObjectProperty<>(true), background);
+            this(repository, background, null);
+        }
+
+        private ReloadRepositoryCommand(final Repository<?> repository, final boolean background, final Runnable onSucceed) {
+            super(() -> new ReloadRepositoryAction(repository, onSucceed), new ImmutableObjectProperty<>(true), background);
         }
 
         private static final class ReloadRepositoryAction extends Action {
             private final Repository<?> repository;
+            private final Runnable onSucceed;
 
-            public ReloadRepositoryAction(final Repository<?> repository) {
+            public ReloadRepositoryAction(final Repository<?> repository, final Runnable onSucceed) {
                 this.repository = repository;
+                this.onSucceed = onSucceed;
             }
 
             @Override
             protected void action() throws Exception {
                 updateProgress(0, 1);
-                repository.reload();
+                repository.reloadAsync(onSucceed);
                 updateProgress(1, 1);
             }
         }

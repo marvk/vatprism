@@ -208,7 +208,7 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
                         "60".equals(minuteString) ? 0 : Integer.parseInt(minuteString)
                 );
             } catch (final DateTimeException | NumberFormatException e) {
-                log.warn("Failed to parse time " + string, e);
+                log.warn("Failed to parse time \"%s\"".formatted(string));
                 return null;
             }
         });

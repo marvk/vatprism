@@ -91,13 +91,13 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private void setAirports(final Pilot pilot, final VatsimFlightPlan flightPlan) {
         pilot.getFlightPlan()
              .departureAirportPropertyWritable()
-             .set(getAirport(flightPlan.getDepartureAirport()));
+             .set(getAirport(flightPlan.getDepartureAirport().strip()));
         pilot.getFlightPlan()
              .arrivalAirportPropertyWritable()
-             .set(getAirport(flightPlan.getArrivalAirport()));
+             .set(getAirport(flightPlan.getArrivalAirport().strip()));
         pilot.getFlightPlan()
              .alternativeAirportPropertyWritable()
-             .set(getAirport(flightPlan.getAlternateAirport()));
+             .set(getAirport(flightPlan.getAlternateAirport().strip()));
     }
 
     @Override

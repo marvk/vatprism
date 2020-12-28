@@ -1,5 +1,7 @@
 package net.marvk.fs.vatsim.map.view.map;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.sun.javafx.scene.control.ContextMenuContent;
 import de.saxsys.mvvmfx.*;
 import javafx.application.Platform;
@@ -61,7 +63,8 @@ public class MapView implements FxmlView<MapViewModel> {
 
     private ObjectProperty<Cursor> cursorProperty = new SimpleObjectProperty<>();
 
-    public MapView() {
+    @Inject
+    public MapView(@Named("open_hand_cursor") final Cursor openHand, @Named("closed_hand_cursor") final Cursor closedHand) {
         this.canvas = new Canvas(100, 100);
         this.canvas.setFocusTraversable(true);
         this.canvas.addEventFilter(MouseEvent.ANY, e -> canvas.requestFocus());
@@ -70,22 +73,21 @@ public class MapView implements FxmlView<MapViewModel> {
                 () -> {
                     if (inputEventHandler.controlDown.get()) {
                         return Cursor.HAND;
-                    } else if (inputEventHandler.leftMouseDown.get()) {
-                        return Cursor.CROSSHAIR;
                     } else if (inputEventHandler.rightMouseDown.get()) {
-                        if (inputEventHandler.rightMouseDrag.get()) {
-                            return Cursor.NONE;
-                        } else {
-                            return Cursor.MOVE;
-                        }
+                        return Cursor.CROSSHAIR;
+                    } else if (inputEventHandler.leftMouseDown.get()) {
+                        return closedHand;
+                    } else if (inputEventHandler.middleMouseDown.get()) {
+                        return Cursor.HAND;
                     } else {
-                        return Cursor.DEFAULT;
+                        return openHand;
                     }
                 },
                 inputEventHandler.leftMouseDown,
-                inputEventHandler.rightMouseDown,
                 inputEventHandler.leftMouseDrag,
+                inputEventHandler.rightMouseDown,
                 inputEventHandler.rightMouseDrag,
+                inputEventHandler.middleMouseDown,
                 inputEventHandler.controlDown
         ));
 
@@ -166,22 +168,28 @@ public class MapView implements FxmlView<MapViewModel> {
         private final BooleanProperty leftMouseDrag = new SimpleBooleanProperty();
         private final BooleanProperty rightMouseDown = new SimpleBooleanProperty();
         private final BooleanProperty rightMouseDrag = new SimpleBooleanProperty();
+        private final BooleanProperty middleMouseDown = new SimpleBooleanProperty();
         private final BooleanProperty controlDown = new SimpleBooleanProperty();
 
         public void onStart(final MouseEvent event) {
             controlDown.set(event.isControlDown());
             contextMenu.hideAndClear();
 
-            if (!leftMouseDown.get() && event.isPrimaryButtonDown()) {
+            if (event.isPrimaryButtonDown() && event.isControlDown()) {
+                viewModel.openClosest();
+            } else if (event.isSecondaryButtonDown()) {
                 if (controlDown.get()) {
                     viewModel.openClosest();
                 } else {
                     contextMenu.show(event.getX(), event.getY(), event.getScreenX(), event.getScreenY(), viewModel.showingContextMenu());
                 }
+            } else if (event.isMiddleButtonDown()) {
+                viewModel.openClosest();
             }
 
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
+            middleMouseDown.set(event.isMiddleButtonDown());
 
             lastX = event.getX();
             lastY = event.getY();
@@ -192,30 +200,19 @@ public class MapView implements FxmlView<MapViewModel> {
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
 
-            if (!rightMouseDown.get()) {
+            if (!leftMouseDown.get() || controlDown.get()) {
                 return;
             }
 
-            final double x = event.getX();
-            final double y = event.getY();
-            final double dx = (x - lastX) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
-            final double dy = -(y - lastY) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
-
-            final double aspect = (
-                    2 * MapVariables.WORLD_WIDTH * (1 / viewModel.scaleProperty().get())) /
-                    viewModel.viewWidthProperty().get();
-
-            final Point2D worldCenter = viewModel.getWorldCenter();
-            viewModel.setWorldCenter(worldCenter.add(dx * aspect, dy * aspect));
-
-            lastX = x;
-            lastY = y;
+            doDrag(event);
         }
 
         public void onRelease(final MouseEvent event) {
             controlDown.set(event.isControlDown());
+
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
+            middleMouseDown.set(event.isMiddleButtonDown());
 
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
@@ -261,6 +258,23 @@ public class MapView implements FxmlView<MapViewModel> {
             if (keyEvent.getCode() == KeyCode.CONTROL) {
                 controlDown.set(false);
             }
+        }
+
+        private void doDrag(final MouseEvent event) {
+            final double x = event.getX();
+            final double y = event.getY();
+            final double dx = (x - lastX) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
+            final double dy = -(y - lastY) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
+
+            final double aspect = (
+                    2 * MapVariables.WORLD_WIDTH * (1 / viewModel.scaleProperty().get())) /
+                    viewModel.viewWidthProperty().get();
+
+            final Point2D worldCenter = viewModel.getWorldCenter();
+            viewModel.setWorldCenter(worldCenter.add(dx * aspect, dy * aspect));
+
+            lastX = x;
+            lastY = y;
         }
     }
 
