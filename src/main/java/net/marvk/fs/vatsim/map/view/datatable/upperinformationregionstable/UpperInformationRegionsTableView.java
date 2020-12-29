@@ -37,6 +37,14 @@ public class UpperInformationRegionsTableView extends AbstractTableView<UpperInf
                 .toStringMapper(UpperInformationRegionsTableView::firbIcaos)
                 .mono(true)
                 .build();
+
+        this.<Number>newColumnBuilder()
+                .title("# of Controllers")
+                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
+                .toStringMapper(AbstractTableView::emptyIfZero)
+                .sortable()
+                .mono(true)
+                .build();
     }
 
     private static String firbIcaos(final ObservableList<FlightInformationRegionBoundary> firbs) {

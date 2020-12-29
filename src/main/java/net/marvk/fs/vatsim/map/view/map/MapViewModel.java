@@ -200,6 +200,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofItem("Connections", new DepartureArrivalPathPainter(mapVariables), this.selectedItemProperty()::get),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
                 PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
