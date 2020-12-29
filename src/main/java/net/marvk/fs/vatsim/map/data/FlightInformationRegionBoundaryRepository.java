@@ -3,7 +3,9 @@ package net.marvk.fs.vatsim.map.data;
 import com.github.davidmoten.rtree2.Entry;
 import com.github.davidmoten.rtree2.RTree;
 import com.github.davidmoten.rtree2.geometry.Geometries;
+import com.github.davidmoten.rtree2.geometry.Geometry;
 import com.github.davidmoten.rtree2.geometry.Rectangle;
+import com.github.davidmoten.rtree2.geometry.internal.RectangleDouble;
 import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -160,4 +162,49 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
         return result.get(0);
     }
 
+    private static class PolygonGeometry implements Geometry {
+        private final Polygon polygon;
+        private final RectangleDouble bound;
+
+        public PolygonGeometry(final Polygon polygon) {
+            throw new UnsupportedOperationException();
+
+            //            this.polygon = polygon;
+//
+//            final Rectangle2D b = polygon.boundary();
+//            this.bound = RectangleDouble.create(b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY());
+        }
+
+        @Override
+        public double distance(final Rectangle r) {
+            return bound.distance(r);
+        }
+
+        @Override
+        public Rectangle mbr() {
+            return bound;
+        }
+
+        @Override
+        public boolean intersects(final Rectangle r) {
+            if (isInsidePoly(r.x1(), r.y1())) {
+                return true;
+            }
+
+            if (r.contains(polygon.getExteriorRing().getPointsX()[0], polygon.getExteriorRing().getPointsY()[0])) {
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean isInsidePoly(final double x, final double y) {
+            return false;
+        }
+
+        @Override
+        public boolean isDoublePrecision() {
+            return false;
+        }
+    }
 }
