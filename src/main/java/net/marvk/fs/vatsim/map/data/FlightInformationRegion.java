@@ -26,7 +26,7 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
         icao.set(model.getIcao());
         name.set(model.getName());
         prefixPosition.set(model.getPrefixPosition());
-        unknown1.set(model.getUnknown1());
+        unknown1.set(model.getUnknown1().replaceAll("_", "-"));
     }
 
     public String getIcao() {

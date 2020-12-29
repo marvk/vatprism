@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class SelectedPainter extends CompositeMapPainter<Data> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter;
+    private final FirbPainter firbPainter;
 
     @MetaPainter("Pilot")
     private final PilotPainter pilotPainter;
@@ -29,7 +29,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
         this.painterVisitor = new PainterVisitor();
         this.airportPainter = new AirportPainter(mapVariables, color, color, true, true, true);
         this.pilotPainter = new PilotPainter(mapVariables, color, backgrounds);
-        this.firPainter = new FirPainter(mapVariables, color, 2.5, true, true, true);
+        this.firbPainter = new FirbPainter(mapVariables, color, 2.5, true, true, true);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
 
     @Override
     protected Collection<Painter<?>> painters() {
-        return List.of(firPainter);
+        return List.of(firbPainter);
     }
 
     private class PainterVisitor extends DefaultingDataVisitor<Consumer<GraphicsContext>> {
@@ -50,7 +50,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
 
         @Override
         public Consumer<GraphicsContext> visit(final UpperInformationRegion upperInformationRegion) {
-            return c -> firPainter.paint(c, upperInformationRegion.getFlightInformationRegionBoundaries());
+            return c -> firbPainter.paint(c, upperInformationRegion.getFlightInformationRegionBoundaries());
         }
 
         @Override
@@ -60,7 +60,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
 
         @Override
         public Consumer<GraphicsContext> visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-            return c -> firPainter.paint(c, flightInformationRegionBoundary);
+            return c -> firbPainter.paint(c, flightInformationRegionBoundary);
         }
 
         @Override

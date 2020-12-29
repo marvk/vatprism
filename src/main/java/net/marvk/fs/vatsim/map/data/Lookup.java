@@ -25,12 +25,41 @@ final class Lookup<ViewModel> {
                 return;
             }
 
-            lookup.putIfAbsent(key, new ArrayList<>(1));
-            lookup.get(key).add(viewModel);
+            viewModels(key).add(viewModel);
         }
+    }
+
+    private List<ViewModel> viewModels(final String key) {
+        lookup.putIfAbsent(key, new ArrayList<>(1));
+        final List<ViewModel> viewModels = lookup.get(key);
+        return viewModels;
     }
 
     List<ViewModel> get(final String key) {
         return lookup.getOrDefault(key, Collections.emptyList());
+    }
+
+    void remove(final ViewModel viewModel) {
+        for (final String key : keyExtractor.apply(viewModel)) {
+            if (key == null) {
+                return;
+            }
+
+            final List<ViewModel> viewModels = viewModels(key);
+
+            if (viewModel == null) {
+                continue;
+            }
+
+            viewModels.remove(viewModel);
+
+            if (viewModels.isEmpty()) {
+                lookup.remove(key);
+            }
+        }
+    }
+
+    void removeAll(final Iterable<ViewModel> viewModels) {
+        viewModels.forEach(this::remove);
     }
 }

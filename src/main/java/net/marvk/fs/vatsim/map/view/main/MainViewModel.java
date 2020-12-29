@@ -61,15 +61,15 @@ public class MainViewModel implements ViewModel {
 
         this.loadAirports = new ReloadRepositoryCommand(airportRepository, false);
         this.loadInternationalDateLine = new ReloadRepositoryCommand(internationalDateLineRepository, false);
-        this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
         this.loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
+        this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
         this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
         this.loadClients = new ReloadRepositoryCommand(clientRepository, true, this::triggerRepaint);
 
         final CompositeCommand compositeCommand = new CompositeCommand(
                 loadInternationalDateLine,
-                loadFirbs,
                 loadFirs,
+                loadFirbs,
                 loadUirs,
                 loadAirports,
                 loadClients

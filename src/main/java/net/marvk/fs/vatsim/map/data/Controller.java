@@ -7,7 +7,6 @@ import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimController;
 
 import java.util.List;
-import java.util.Optional;
 
 @Log4j2
 @ToString
@@ -26,6 +25,9 @@ public class Controller extends Client implements Data {
 
     private final ReadOnlyObjectWrapper<FlightInformationRegion> workingFlightInformationRegion =
             RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegion::getControllersWritable);
+
+    private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> workingFlightInformationRegionBoundary =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::getControllersWritable);
 
     private final ReadOnlyObjectWrapper<UpperInformationRegion> workingUpperInformationRegion =
             RelationshipReadOnlyObjectWrapper.withOtherList(this, UpperInformationRegion::getControllersWritable);
@@ -57,6 +59,7 @@ public class Controller extends Client implements Data {
         controllerType.set(result.getControllerType());
         workingAirport.set(result.getAirport());
         workingFlightInformationRegion.set(result.getFlightInformationRegion());
+        workingFlightInformationRegionBoundary.set(result.getFlightInformationRegionBoundary());
         workingUpperInformationRegion.set(result.getUpperInformationRegion());
 
         if (getWorkingAirport() != null) {
@@ -64,31 +67,31 @@ public class Controller extends Client implements Data {
         }
 
         if (getWorkingFlightInformationRegion() != null) {
-            final Optional<FlightInformationRegionBoundary> oceanicFirb =
-                    getWorkingFlightInformationRegion()
-                            .boundaries()
-                            .stream()
-                            .filter(FlightInformationRegionBoundary::isOceanic)
-                            .findFirst();
+//            final Optional<FlightInformationRegionBoundary> oceanicFirb =
+//                    getWorkingFlightInformationRegion()
+//                            .boundaries()
+//                            .stream()
+//                            .filter(FlightInformationRegionBoundary::isOceanic)
+//                            .findFirst();
+//
+//            if (oceanicFirb.isPresent() && controllerType.get() == ControllerType.FSS) {
+//                workingLocation.set(oceanicFirb.get());
+//            } else {
+//                final Optional<FlightInformationRegionBoundary> nonOceanicFirb =
+//                        getWorkingFlightInformationRegion()
+//                                .boundaries()
+//                                .stream()
+//                                .filter(flightInformationRegionBoundary -> !flightInformationRegionBoundary.isOceanic())
+//                                .findFirst();
+//
+//                if (nonOceanicFirb.isEmpty()) {
+//                    log.warn("Found no FIRB for controller " + this);
+//                } else {
+//                    workingLocation.set(nonOceanicFirb.get());
+//                }
+//            }
 
-            if (oceanicFirb.isPresent() && controllerType.get() == ControllerType.FSS) {
-                workingLocation.set(oceanicFirb.get());
-            } else {
-                final Optional<FlightInformationRegionBoundary> nonOceanicFirb =
-                        getWorkingFlightInformationRegion()
-                                .boundaries()
-                                .stream()
-                                .filter(flightInformationRegionBoundary -> !flightInformationRegionBoundary.isOceanic())
-                                .findFirst();
-
-                if (nonOceanicFirb.isEmpty()) {
-                    log.warn("Found no FIRB for controller " + this);
-                } else {
-                    workingLocation.set(nonOceanicFirb.get());
-                }
-            }
-
-            workingLocation.set(getWorkingFlightInformationRegion());
+            workingLocation.set(getWorkingFlightInformationRegionBoundary());
         }
 
         if (getWorkingUpperInformationRegion() != null) {
@@ -158,6 +161,18 @@ public class Controller extends Client implements Data {
 
     public ReadOnlyObjectProperty<FlightInformationRegion> workingFlightInformationRegionProperty() {
         return workingFlightInformationRegion.getReadOnlyProperty();
+    }
+
+    public FlightInformationRegionBoundary getWorkingFlightInformationRegionBoundary() {
+        return workingFlightInformationRegionBoundary.get();
+    }
+
+    ObjectProperty<FlightInformationRegionBoundary> workingFlightInformationRegionBoundaryPropertyWritable() {
+        return workingFlightInformationRegionBoundary;
+    }
+
+    public ReadOnlyObjectProperty<FlightInformationRegionBoundary> workingFlightInformationRegionBoundaryProperty() {
+        return workingFlightInformationRegionBoundary.getReadOnlyProperty();
     }
 
     public UpperInformationRegion getWorkingUpperInformationRegion() {

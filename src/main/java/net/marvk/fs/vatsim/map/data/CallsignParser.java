@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.data;
 
 import com.google.inject.Inject;
 import javafx.geometry.Point2D;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimClientType;
@@ -72,7 +73,7 @@ public class CallsignParser {
 
         Airport airport = null;
         UpperInformationRegion uir = null;
-        FlightInformationRegion fir = null;
+        FirResult fir = FirResult.EMPTY;
 
         if (controllerType != ControllerType.OBS) {
             // TODO NY_ISP_APP NY_ARD_APP NY_CSK_APP NY_HRP_APP NY_KEN_DEP
@@ -91,31 +92,32 @@ public class CallsignParser {
                 if (uir == null) {
                     fir = getFir(controller, identifier, infix, controllerType);
 
-                    if (fir == null) {
+                    if (fir.isEmpty()) {
                         log.warn(
                                 "Could not determine FIR/UIR \"%s\" for controller with callsign: %s, cid: %s, type: %s"
                                         .formatted(identifier, callsign, cid, controllerType)
                         );
                     }
                 } else {
-                    fir = null;
+                    fir = FirResult.EMPTY;
                 }
             }
         }
 
         return new Result(
+                controllerType,
                 airport,
-                fir,
-                uir,
-                controllerType
+                fir.flightInformationRegionBoundary,
+                fir.flightInformationRegion,
+                uir
         );
     }
 
-    private FlightInformationRegion getFir(final VatsimController controller, final String identifier, final String infix, final ControllerType controllerType) {
+    private FirResult getFir(final VatsimController controller, final String identifier, final String infix, final ControllerType controllerType) {
         final List<FlightInformationRegion> firs = flightInformationRegionRepository.getByIdentifierAndInfix(identifier, infix);
 
         if (firs.isEmpty()) {
-            return null;
+            return FirResult.EMPTY;
         }
 
         if (controllerType == ControllerType.FSS) {
@@ -125,7 +127,7 @@ public class CallsignParser {
                     .findFirst();
 
             if (maybeOceanic.isPresent()) {
-                return maybeOceanic.get();
+                return new FirResult(maybeOceanic.get(), maybeOceanic.get().oceanicBoundaries().get(0));
             }
         }
 
@@ -136,7 +138,15 @@ public class CallsignParser {
             );
         }
 
-        return firs.get(0);
+        final FlightInformationRegionBoundary boundary = firs
+                .get(0)
+                .boundaries()
+                .stream()
+                .filter(e -> !e.isOceanic())
+                .findFirst()
+                .get();
+
+        return new FirResult(firs.get(0), boundary);
     }
 
     private UpperInformationRegion getUir(final VatsimClient vatsimClient, final String identifier) {
@@ -181,41 +191,27 @@ public class CallsignParser {
         return viewModels.get(0);
     }
 
+    @Value
     public static class Result {
-        public static final Result EMPTY = new Result(null, null, null, ControllerType.NONE);
+        public static final Result EMPTY = new Result(ControllerType.NONE, null, null, null, null);
 
-        private final Airport airport;
-        private final FlightInformationRegion flightInformationRegion;
-        private final UpperInformationRegion upperInformationRegion;
-        private final ControllerType controllerType;
+        ControllerType controllerType;
+        Airport airport;
+        FlightInformationRegionBoundary flightInformationRegionBoundary;
+        FlightInformationRegion flightInformationRegion;
+        UpperInformationRegion upperInformationRegion;
 
-        public Result(
-                final Airport airport,
-                final FlightInformationRegion flightInformationRegion,
-                final UpperInformationRegion upperInformationRegion,
-                final ControllerType controllerType
-        ) {
-            this.airport = airport;
-            this.flightInformationRegion = flightInformationRegion;
-            this.upperInformationRegion = upperInformationRegion;
-            this.controllerType = Objects.requireNonNullElse(controllerType, ControllerType.NONE);
+        public boolean isEmpty() {
+            return EMPTY.equals(this);
         }
+    }
 
-        public Airport getAirport() {
-            return airport;
-        }
+    @Value
+    private static class FirResult {
+        public static final FirResult EMPTY = new FirResult(null, null);
 
-        public FlightInformationRegion getFlightInformationRegion() {
-            return flightInformationRegion;
-        }
-
-        public UpperInformationRegion getUpperInformationRegion() {
-            return upperInformationRegion;
-        }
-
-        public ControllerType getControllerType() {
-            return controllerType;
-        }
+        FlightInformationRegion flightInformationRegion;
+        FlightInformationRegionBoundary flightInformationRegionBoundary;
 
         public boolean isEmpty() {
             return EMPTY.equals(this);

@@ -11,10 +11,10 @@ import java.util.List;
 
 public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter;
+    private final FirbPainter firbPainter;
 
     public ActiveUirPainter(final MapVariables mapVariables) {
-        this.firPainter = new FirPainter(
+        this.firbPainter = new FirbPainter(
                 mapVariables,
                 Color.DARKCYAN,
                 0.5,
@@ -26,19 +26,19 @@ public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion
 
     @Override
     protected Collection<Painter<?>> painters() {
-        return List.of(firPainter);
+        return List.of(firbPainter);
     }
 
     @Override
     public void afterAllRender() {
-        firPainter.afterAllRender();
+        firbPainter.afterAllRender();
     }
 
     @Override
     public void paint(final GraphicsContext c, final UpperInformationRegion uir) {
         for (final FlightInformationRegionBoundary firb : uir.getFlightInformationRegionBoundaries()) {
             if (!firb.hasFirControllers() && firb.hasUirControllers()) {
-                firPainter.paint(c, firb);
+                firbPainter.paint(c, firb);
             }
         }
     }

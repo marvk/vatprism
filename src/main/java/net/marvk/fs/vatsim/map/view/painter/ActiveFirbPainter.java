@@ -8,12 +8,12 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.Collection;
 import java.util.List;
 
-public class ActiveFirPainter extends CompositeMapPainter<FlightInformationRegionBoundary> {
+public class ActiveFirbPainter extends CompositeMapPainter<FlightInformationRegionBoundary> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter;
+    private final FirbPainter firbPainter;
 
-    public ActiveFirPainter(final MapVariables mapVariables) {
-        this.firPainter = new FirPainter(
+    public ActiveFirbPainter(final MapVariables mapVariables) {
+        this.firbPainter = new FirbPainter(
                 mapVariables,
                 Color.DARKMAGENTA,
                 1,
@@ -25,18 +25,18 @@ public class ActiveFirPainter extends CompositeMapPainter<FlightInformationRegio
 
     @Override
     protected Collection<Painter<?>> painters() {
-        return List.of(firPainter);
+        return List.of(firbPainter);
     }
 
     @Override
     public void afterAllRender() {
-        firPainter.afterAllRender();
+        firbPainter.afterAllRender();
     }
 
     @Override
     public void paint(final GraphicsContext c, final FlightInformationRegionBoundary firb) {
         if (firb.hasFirControllers()) {
-            firPainter.paint(c, firb);
+            firbPainter.paint(c, firb);
         }
     }
 }

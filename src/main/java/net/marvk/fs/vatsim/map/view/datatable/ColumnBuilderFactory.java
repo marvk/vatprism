@@ -47,6 +47,7 @@ public class ColumnBuilderFactory<Model extends Data> {
 
         private Builder() {
             this.result = new TableColumn<>();
+            this.result.setSortable(false);
         }
 
         @Override
@@ -77,7 +78,7 @@ public class ColumnBuilderFactory<Model extends Data> {
 
         @Override
         public MonoStep<Model, CellValue> sortable() {
-            sortable(Comparator.comparing(e -> stringMapper.apply(e, viewModel.getQuery())));
+            this.result.setSortable(true);
             return this;
         }
 

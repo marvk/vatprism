@@ -16,6 +16,7 @@ import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApiException;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 import net.marvk.fs.vatsim.api.data.VatsimAirspaceGeneral;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,11 +29,17 @@ import java.util.stream.StreamSupport;
 @Log4j2
 public class FlightInformationRegionBoundaryRepository extends ProviderRepository<FlightInformationRegionBoundary, VatsimAirspace> {
     private final Lookup<FlightInformationRegionBoundary> icao = Lookup.fromProperty(FlightInformationRegionBoundary::getIcao);
+    private final FlightInformationRegionRepository flightInformationRegionRepository;
     private RTree<FlightInformationRegionBoundary, Rectangle> rTree = RTree.create();
 
     @Inject
-    public FlightInformationRegionBoundaryRepository(final VatsimApi vatsimApi, final Provider<FlightInformationRegionBoundary> provider) {
+    public FlightInformationRegionBoundaryRepository(
+            final VatsimApi vatsimApi,
+            final Provider<FlightInformationRegionBoundary> provider,
+            final FlightInformationRegionRepository flightInformationRegionRepository
+    ) {
         super(vatsimApi, provider);
+        this.flightInformationRegionRepository = flightInformationRegionRepository;
     }
 
     @Override
@@ -71,6 +78,42 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
         super.updateList(updatedModels);
         mergeExtensions();
         createRTree();
+        linkFirs();
+    }
+
+    private void linkFirs() {
+        for (final FlightInformationRegionBoundary firb : list()) {
+            final List<FlightInformationRegion> byIcao = flightInformationRegionRepository.getByIcao(firb.getIcao());
+
+            final List<FlightInformationRegion> firs;
+            if (byIcao.size() <= 1) {
+                firs = byIcao;
+            } else {
+                final List<FlightInformationRegion> fss = filterFss(byIcao, true);
+                final List<FlightInformationRegion> nonFss = filterFss(byIcao, false);
+                if (fss.isEmpty()) {
+                    firs = nonFss;
+                } else if (nonFss.isEmpty()) {
+                    firs = fss;
+                } else if (firb.isOceanic()) {
+                    firs = fss;
+                } else {
+                    firs = nonFss;
+                }
+            }
+
+            firs.forEach(firb.getFlightInformationRegionsWritable()::add);
+        }
+    }
+
+    private List<FlightInformationRegion> filterFss(final List<FlightInformationRegion> byIcao, final boolean fss) {
+        return byIcao.stream()
+                     .filter(e -> isRadio(e) == fss)
+                     .collect(Collectors.toList());
+    }
+
+    private boolean isRadio(final FlightInformationRegion e) {
+        return StringUtils.containsIgnoreCase(e.getName(), "radio") || StringUtils.containsIgnoreCase(e.getName(), "oceanic");
     }
 
     private void createRTree() {
@@ -120,6 +163,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
                         .collect(Collectors.toList());
 
         items.removeAll(extensions);
+        icao.removeAll(extensions);
 
         for (final FlightInformationRegionBoundary extension : extensions) {
             final Optional<FlightInformationRegionBoundary> maybeParent =

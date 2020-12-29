@@ -1,13 +1,11 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimAirspace;
 
-import java.util.ArrayList;
 import java.util.StringJoiner;
 
 @Log4j2
@@ -26,7 +24,8 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     private final ReadOnlyListWrapper<UpperInformationRegion> upperInformationRegions =
             RelationshipReadOnlyListWrapper.withOtherList(this, UpperInformationRegion::getFlightInformationRegionBoundariesWritable);
 
-    private final ReadOnlyListWrapper<Controller> controllers = new ReadOnlyListWrapper<>(FXCollections.observableList(new ArrayList<>(0)));
+    private final RelationshipReadOnlyListWrapper<Controller> controllers =
+            RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingFlightInformationRegionBoundaryPropertyWritable);
 
     @Override
     public void setFromModel(final VatsimAirspace airspace) {
@@ -39,14 +38,6 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
             while (c.next()) {
                 for (final UpperInformationRegion upperInformationRegion : c.getAddedSubList()) {
                     addListener(upperInformationRegion.getControllers());
-                }
-            }
-        });
-
-        flightInformationRegions.addListener((ListChangeListener<FlightInformationRegion>) c -> {
-            while (c.next()) {
-                for (final FlightInformationRegion flightInformationRegion : c.getAddedSubList()) {
-                    addListener(flightInformationRegion.getControllers());
                 }
             }
         });
@@ -70,11 +61,8 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
 
     private void controllersChanged(final ListChangeListener.Change<? extends Controller> c) {
         while (c.next()) {
-            controllers.addAll(c.getAddedSubList());
-
-            for (final Controller controller : c.getRemoved()) {
-                controllers.remove(controller);
-            }
+            c.getAddedSubList().forEach(controllers::regularAdd);
+            c.getRemoved().forEach(controllers::regularRemove);
         }
     }
 
@@ -139,6 +127,10 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
         return airports.getReadOnlyProperty();
     }
 
+    public SimpleListProperty<Controller> getControllersWritable() {
+        return controllers;
+    }
+
     public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
     }
@@ -154,13 +146,7 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     }
 
     public boolean hasFirControllers() {
-        for (final FlightInformationRegion fir : getFlightInformationRegions()) {
-            if (!fir.getControllers().isEmpty()) {
-                return true;
-            }
-        }
-
-        return false;
+        return controllers.stream().anyMatch(e -> e.getWorkingUpperInformationRegion() == null);
     }
 
     @Override

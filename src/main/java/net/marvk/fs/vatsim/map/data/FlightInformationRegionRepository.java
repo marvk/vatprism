@@ -15,16 +15,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FlightInformationRegionRepository extends ProviderRepository<FlightInformationRegion, VatsimFlightInformationRegion> {
-    private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
+    private final Lookup<FlightInformationRegion> unknownLookup = Lookup.fromProperty(FlightInformationRegion::getUnknown1);
+    private final Lookup<FlightInformationRegion> icaoLookup = Lookup.fromProperty(FlightInformationRegion::getIcao);
 
     @Inject
     public FlightInformationRegionRepository(
             final VatsimApi vatsimApi,
-            final Provider<FlightInformationRegion> provider,
-            final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository
+            final Provider<FlightInformationRegion> provider
     ) {
         super(vatsimApi, provider);
-        this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
     }
 
     @Override
@@ -43,7 +42,7 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
                 flightInformationRegion.getIcao(),
                 flightInformationRegion.getName(),
                 flightInformationRegion.getPrefixPosition(),
-                flightInformationRegion.getUnknown1()
+                flightInformationRegion.getUnknown1().replaceAll("_", "-")
         );
     }
 
@@ -54,19 +53,16 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
 
     @Override
     protected void onAdd(final FlightInformationRegion toAdd, final VatsimFlightInformationRegion vatsimFlightInformationRegion) {
-        final String unknown1 = toAdd.getUnknown1().replaceAll("_", "-");
+        icaoLookup.put(toAdd);
+        unknownLookup.put(toAdd);
+    }
 
-        final List<FlightInformationRegionBoundary> firbsByUnknown = flightInformationRegionBoundaryRepository.getByIcao(unknown1);
+    public List<FlightInformationRegion> getByIcao(final String icao) {
+        return icaoLookup.get(icao);
+    }
 
-        final List<FlightInformationRegionBoundary> firbs;
-
-        if (firbsByUnknown.isEmpty()) {
-            firbs = flightInformationRegionBoundaryRepository.getByIcao(vatsimFlightInformationRegion.getIcao());
-        } else {
-            firbs = firbsByUnknown;
-        }
-
-        toAdd.boundaries().setAll(firbs);
+    public List<FlightInformationRegion> getByUnknown(final String unknown) {
+        return unknownLookup.get(unknown);
     }
 
     public List<FlightInformationRegion> getByIdentifierAndInfix(final String identifier, final String infix) {

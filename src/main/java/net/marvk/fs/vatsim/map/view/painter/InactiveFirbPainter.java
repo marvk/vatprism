@@ -5,14 +5,14 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class InactiveFirPainter extends MapPainter<FlightInformationRegionBoundary> {
+public class InactiveFirbPainter extends MapPainter<FlightInformationRegionBoundary> {
     @MetaPainter("FIR")
-    private final FirPainter firPainter;
+    private final FirbPainter firbPainter;
 
-    public InactiveFirPainter(final MapVariables mapVariables) {
+    public InactiveFirbPainter(final MapVariables mapVariables) {
         super(mapVariables);
 
-        firPainter = new FirPainter(
+        firbPainter = new FirbPainter(
                 mapVariables,
                 Color.valueOf("3B341F").deriveColor(0, 1, 1, 0.25),
                 0.5,
@@ -25,7 +25,7 @@ public class InactiveFirPainter extends MapPainter<FlightInformationRegionBounda
 
     @Override
     public void afterAllRender() {
-        firPainter.afterAllRender();
+        firbPainter.afterAllRender();
     }
 
     @Override
@@ -34,6 +34,6 @@ public class InactiveFirPainter extends MapPainter<FlightInformationRegionBounda
             return;
         }
 
-        firPainter.paint(c, firb);
+        firbPainter.paint(c, firb);
     }
 }

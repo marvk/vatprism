@@ -54,6 +54,14 @@ public class RelationshipReadOnlyListWrapper<E> extends ReadOnlyListWrapper<E> {
         return remove;
     }
 
+    boolean regularAdd(final E e) {
+        return super.add(e);
+    }
+
+    boolean regularRemove(final Object obj) {
+        return super.remove(obj);
+    }
+
     public static <E, Other> RelationshipReadOnlyListWrapper<E> withOtherList(final Other parent, final Function<E, List<Other>> otherMapper) {
         return new RelationshipReadOnlyListWrapper<>(
                 e -> otherMapper.apply(e).add(parent),

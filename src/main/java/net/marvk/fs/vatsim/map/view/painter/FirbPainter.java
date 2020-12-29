@@ -12,7 +12,7 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
+public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
     @Parameter("Fill Color")
     private final Color fillColor;
     @Parameter("Color")
@@ -28,7 +28,7 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
 
     private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();
 
-    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean stroke, final boolean label) {
+    public FirbPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean stroke, final boolean label) {
         super(mapVariables);
         this.color = color;
         this.lineWidth = lineWidth;
@@ -38,7 +38,7 @@ public class FirPainter extends MapPainter<FlightInformationRegionBoundary> {
         this.fillColor = color.deriveColor(0, 1, 1, 0.05);
     }
 
-    public FirPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
+    public FirbPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
         this(mapVariables, color, lineWidth, false, true, false);
     }
 
