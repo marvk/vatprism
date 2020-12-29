@@ -56,17 +56,17 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
     protected void onAdd(final FlightInformationRegion toAdd, final VatsimFlightInformationRegion vatsimFlightInformationRegion) {
         final String unknown1 = toAdd.getUnknown1().replaceAll("_", "-");
 
-        final FlightInformationRegionBoundary firByUnknown = flightInformationRegionBoundaryRepository.getByIcao(unknown1, false, false);
+        final List<FlightInformationRegionBoundary> firbsByUnknown = flightInformationRegionBoundaryRepository.getByIcao(unknown1);
 
-        final FlightInformationRegionBoundary fir;
+        final List<FlightInformationRegionBoundary> firbs;
 
-        if (firByUnknown == null) {
-            fir = flightInformationRegionBoundaryRepository.getByIcao(vatsimFlightInformationRegion.getIcao(), false, false);
+        if (firbsByUnknown.isEmpty()) {
+            firbs = flightInformationRegionBoundaryRepository.getByIcao(vatsimFlightInformationRegion.getIcao());
         } else {
-            fir = firByUnknown;
+            firbs = firbsByUnknown;
         }
 
-        toAdd.boundaryPropertyWritable().set(fir);
+        toAdd.boundaries().setAll(firbs);
     }
 
     public List<FlightInformationRegion> getByIdentifierAndInfix(final String identifier, final String infix) {

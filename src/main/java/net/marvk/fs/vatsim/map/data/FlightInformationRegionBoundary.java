@@ -21,7 +21,7 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
             RelationshipReadOnlyListWrapper.withOtherProperty(this, Airport::flightInformationRegionBoundaryPropertyWritable);
 
     private final ReadOnlyListWrapper<FlightInformationRegion> flightInformationRegions =
-            RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightInformationRegion::boundaryPropertyWritable);
+            RelationshipReadOnlyListWrapper.withOtherList(this, FlightInformationRegion::boundariesWritable);
 
     private final ReadOnlyListWrapper<UpperInformationRegion> upperInformationRegions =
             RelationshipReadOnlyListWrapper.withOtherList(this, UpperInformationRegion::getFlightInformationRegionBoundariesWritable);

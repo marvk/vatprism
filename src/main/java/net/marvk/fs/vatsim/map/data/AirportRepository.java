@@ -222,6 +222,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
             final List<String> names = airports
                     .stream()
                     .map(VatsimAirport::getName)
+                    .distinct()
                     .collect(Collectors.toList());
 
             if (names.size() != 1) {

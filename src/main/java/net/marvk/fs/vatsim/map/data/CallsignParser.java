@@ -10,6 +10,7 @@ import net.marvk.fs.vatsim.api.data.VatsimController;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -88,7 +89,7 @@ public class CallsignParser {
                 uir = getUir(controller, identifier);
 
                 if (uir == null) {
-                    fir = getFir(controller, identifier, infix);
+                    fir = getFir(controller, identifier, infix, controllerType);
 
                     if (fir == null) {
                         log.warn(
@@ -110,17 +111,28 @@ public class CallsignParser {
         );
     }
 
-    private FlightInformationRegion getFir(final VatsimController vatsimClient, final String identifier, final String infix) {
+    private FlightInformationRegion getFir(final VatsimController controller, final String identifier, final String infix, final ControllerType controllerType) {
         final List<FlightInformationRegion> firs = flightInformationRegionRepository.getByIdentifierAndInfix(identifier, infix);
 
         if (firs.isEmpty()) {
             return null;
         }
 
+        if (controllerType == ControllerType.FSS) {
+            final Optional<FlightInformationRegion> maybeOceanic = firs
+                    .stream()
+                    .filter(e -> !e.oceanicBoundaries().isEmpty())
+                    .findFirst();
+
+            if (maybeOceanic.isPresent()) {
+                return maybeOceanic.get();
+            }
+        }
+
         if (firs.size() > 1) {
             log.warn(
                     "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s; found %s"
-                            .formatted(identifier, vatsimClient.getCallsign(), vatsimClient.getCid(), vatsimClient.getClientType(), firs)
+                            .formatted(identifier, controller.getCallsign(), controller.getCid(), controllerType, firs)
             );
         }
 

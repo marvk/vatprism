@@ -1,6 +1,8 @@
+
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.api.data.VatsimFlightInformationRegion;
 
 import java.util.Objects;
@@ -11,8 +13,8 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
     private final StringProperty prefixPosition = new SimpleStringProperty();
     private final StringProperty unknown1 = new SimpleStringProperty();
 
-    private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> boundary =
-            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::getFlightInformationRegionsWritable);
+    private final RelationshipReadOnlyListWrapper<FlightInformationRegionBoundary> boundaries =
+            RelationshipReadOnlyListWrapper.withOtherList(this, FlightInformationRegionBoundary::getFlightInformationRegionsWritable);
 
     private final ReadOnlyListWrapper<Controller> controllers =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingFlightInformationRegionPropertyWritable);
@@ -59,16 +61,16 @@ public class FlightInformationRegion implements Settable<VatsimFlightInformation
         return unknown1;
     }
 
-    public FlightInformationRegionBoundary getBoundary() {
-        return boundary.get();
+    public ObservableList<FlightInformationRegionBoundary> oceanicBoundaries() {
+        return boundaries.filtered(FlightInformationRegionBoundary::isOceanic);
     }
 
-    public ObjectProperty<FlightInformationRegionBoundary> boundaryPropertyWritable() {
-        return boundary;
+    SimpleListProperty<FlightInformationRegionBoundary> boundariesWritable() {
+        return boundaries;
     }
 
-    public ReadOnlyObjectProperty<FlightInformationRegionBoundary> boundaryProperty() {
-        return boundary.getReadOnlyProperty();
+    public ReadOnlyListProperty<FlightInformationRegionBoundary> boundaries() {
+        return boundaries.getReadOnlyProperty();
     }
 
     SimpleListProperty<Controller> getControllersWritable() {

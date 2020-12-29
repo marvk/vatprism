@@ -46,6 +46,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     public void initialize() {
         super.initialize();
         atis.setOnMouseClicked(atisPane::fireEvent);
+
     }
 
     @Override
@@ -90,9 +91,9 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         type.setStyle("-fx-text-fill: #" + webColor(color("airports.type_label_color")));
         typeBackground.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));
 
-        controlling.setText(icaoVisitor.visit(controller.getWorkingArea()));
-        controllingDescription.setText(nameVisitor.visit(controller.getWorkingArea()));
-        controlling.setOnMouseClicked(event -> viewModel.setDataDetail(controller.getWorkingArea()));
+        controlling.setText(icaoVisitor.visit(controller.getWorkingLocation()));
+        controllingDescription.setText(nameVisitor.visit(controller.getWorkingLocation()));
+        controlling.setOnMouseClicked(event -> viewModel.setDataDetail(controller.getWorkingLocation()));
 
         setAtisHeaderBindings(controller);
     }

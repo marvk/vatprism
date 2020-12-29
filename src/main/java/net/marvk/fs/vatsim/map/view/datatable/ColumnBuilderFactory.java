@@ -19,8 +19,6 @@ public class ColumnBuilderFactory<Model extends Data> {
     private final TextFlowHighlighter textFlowHighlighter;
     private final Consumer<TableColumn<Model, ?>> columnConsumer;
 
-    private static int vf = 0;
-
     public ColumnBuilderFactory(
             final SimpleTableViewModel<Model> viewModel,
             final TextFlowHighlighter textFlowHighlighter,
@@ -45,6 +43,7 @@ public class ColumnBuilderFactory<Model extends Data> {
         private boolean mono;
         private BiFunction<CellValue, String, String> stringMapper;
         private BiFunction<Model, ObservableStringValue, ObservableValue<CellValue>> valueFactory;
+        private boolean valueNullable;
 
         private Builder() {
             this.result = new TableColumn<>();
@@ -57,13 +56,35 @@ public class ColumnBuilderFactory<Model extends Data> {
         }
 
         @Override
+        public StringMapperStep<Model, CellValue> objectObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableValue<CellValue>> valueFactory) {
+            this.valueFactory = valueFactory;
+            return this;
+        }
+
+        @Override
+        public ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable) {
+            this.valueNullable = nullable;
+            this.stringMapper = stringMapper;
+            return this;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public ComparableStep<Model, String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory) {
+            this.valueFactory = (model, query) -> (ObservableValue<CellValue>) valueFactory.apply(model, query);
+            return (ComparableStep<Model, String>) toStringMapper(e -> (String) e);
+        }
+
+        @Override
         public MonoStep<Model, CellValue> sortable() {
+            sortable(Comparator.comparing(e -> stringMapper.apply(e, viewModel.getQuery())));
             return this;
         }
 
         @Override
         public MonoStep<Model, CellValue> sortable(final Comparator<CellValue> comparator) {
             this.result.setComparator(comparator);
+            this.result.setSortable(true);
             return this;
         }
 
@@ -76,27 +97,9 @@ public class ColumnBuilderFactory<Model extends Data> {
         @Override
         public void build() {
             result.setCellValueFactory(param -> valueFactory.apply(param.getValue(), viewModel.queryProperty()));
-            result.setCellFactory(param -> new DataTableCell<>((cellValue, query) -> textFlow(stringMapper.apply(cellValue, query), mono)));
+            result.setCellFactory(param -> new DataTableCell<>((cellValue, query) -> textFlow(stringMapper.apply(cellValue, query), mono), valueNullable));
+            result.setReorderable(false);
             columnConsumer.accept(result);
-        }
-
-        @Override
-        public ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
-            this.stringMapper = stringMapper;
-            return this;
-        }
-
-        @Override
-        public StringMapperStep<Model, CellValue> objectObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableValue<CellValue>> valueFactory) {
-            this.valueFactory = valueFactory;
-            return this;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public ComparableStep<Model, String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory) {
-            this.valueFactory = (model, query) -> (ObservableValue<CellValue>) valueFactory.apply(model, query);
-            return (ComparableStep<Model, String>) toStringMapper(e -> (String) e);
         }
 
         private TextFlow textFlow(final String cellValue, final boolean mono) {
@@ -131,7 +134,15 @@ public class ColumnBuilderFactory<Model extends Data> {
             return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue));
         }
 
-        ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper);
+        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper, final boolean nullable) {
+            return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue), nullable);
+        }
+
+        default ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
+            return toStringMapper(stringMapper, false);
+        }
+
+        ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable);
     }
 
     public interface ValueStep<Model extends Data, CellValue> {
@@ -167,16 +178,18 @@ public class ColumnBuilderFactory<Model extends Data> {
 
     private class DataTableCell<CellValue> extends TableCell<Model, CellValue> {
         private final BiFunction<CellValue, String, Pane> paneSupplier;
+        private final boolean valueNullable;
 
-        public DataTableCell(final BiFunction<CellValue, String, Pane> paneSupplier) {
+        public DataTableCell(final BiFunction<CellValue, String, Pane> paneSupplier, final boolean valueNullable) {
             this.paneSupplier = paneSupplier;
+            this.valueNullable = valueNullable;
         }
 
         @Override
         protected void updateItem(final CellValue item, final boolean empty) {
             super.updateItem(item, empty);
 
-            if (empty || item == null) {
+            if (empty || (item == null && !valueNullable)) {
                 setText(null);
                 setGraphic(null);
             } else {

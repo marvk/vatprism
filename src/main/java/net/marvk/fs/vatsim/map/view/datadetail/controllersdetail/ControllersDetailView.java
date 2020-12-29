@@ -26,10 +26,10 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
     @FXML
     private GridPane controllersGrid;
 
-    private void setControllerPanes(final Boolean firs) {
+    private void setControllerPanes(final Boolean controllers) {
         final ObservableList<Node> children = contentContainer.getChildren();
 
-        if (firs) {
+        if (controllers) {
             children.setAll(controllersGrid);
         } else {
             children.setAll(noControllers);

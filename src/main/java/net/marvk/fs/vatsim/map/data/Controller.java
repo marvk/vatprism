@@ -2,11 +2,14 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimController;
 
 import java.util.List;
+import java.util.Optional;
 
+@Log4j2
 @ToString
 public class Controller extends Client implements Data {
     private final StringProperty frequency = new SimpleStringProperty();
@@ -14,6 +17,9 @@ public class Controller extends Client implements Data {
     private final StringProperty atisMessage = new SimpleStringProperty();
 
     private final ObjectProperty<ControllerType> controllerType = new SimpleObjectProperty<>();
+
+    private final ObjectProperty<Data> workingLocation =
+            new SimpleObjectProperty<>();
 
     private final ReadOnlyObjectWrapper<Airport> workingAirport =
             RelationshipReadOnlyObjectWrapper.withOtherList(this, Airport::getControllersWritable);
@@ -52,22 +58,50 @@ public class Controller extends Client implements Data {
         workingAirport.set(result.getAirport());
         workingFlightInformationRegion.set(result.getFlightInformationRegion());
         workingUpperInformationRegion.set(result.getUpperInformationRegion());
-    }
 
-    public Data getWorkingArea() {
         if (getWorkingAirport() != null) {
-            return getWorkingAirport();
+            workingLocation.set(getWorkingAirport());
         }
 
         if (getWorkingFlightInformationRegion() != null) {
-            return getWorkingFlightInformationRegion().getBoundary();
+            final Optional<FlightInformationRegionBoundary> oceanicFirb =
+                    getWorkingFlightInformationRegion()
+                            .boundaries()
+                            .stream()
+                            .filter(FlightInformationRegionBoundary::isOceanic)
+                            .findFirst();
+
+            if (oceanicFirb.isPresent() && controllerType.get() == ControllerType.FSS) {
+                workingLocation.set(oceanicFirb.get());
+            } else {
+                final Optional<FlightInformationRegionBoundary> nonOceanicFirb =
+                        getWorkingFlightInformationRegion()
+                                .boundaries()
+                                .stream()
+                                .filter(flightInformationRegionBoundary -> !flightInformationRegionBoundary.isOceanic())
+                                .findFirst();
+
+                if (nonOceanicFirb.isEmpty()) {
+                    log.warn("Found no FIRB for controller " + this);
+                } else {
+                    workingLocation.set(nonOceanicFirb.get());
+                }
+            }
+
+            workingLocation.set(getWorkingFlightInformationRegion());
         }
 
         if (getWorkingUpperInformationRegion() != null) {
-            return getWorkingUpperInformationRegion();
+            workingLocation.set(getWorkingUpperInformationRegion());
         }
+    }
 
-        return null;
+    public Data getWorkingLocation() {
+        return workingLocation.get();
+    }
+
+    public ReadOnlyObjectProperty<Data> workingLocationProperty() {
+        return workingLocation;
     }
 
     public String getFrequency() {

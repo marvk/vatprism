@@ -182,7 +182,7 @@ public class Polygon {
     private static boolean isInvalid(final Ring p) {
         final boolean isNotPolygon = p.numPoints() <= 2;
         if (isNotPolygon) {
-            log.warn("Failed to merge %s, insufficient points for merging (%d)".formatted(
+            log.info("Failed to merge %s, insufficient points for merging (%d)".formatted(
                     p.polygon().name(),
                     p.numPoints()
             ));
@@ -193,7 +193,7 @@ public class Polygon {
         final boolean isNot2D = p.pointsX[1] == p.pointsX[last] && p.pointsY[1] == p.pointsY[last];
 
         if (isNot2D) {
-            log.warn("Failed to merge %s, first and last edge match".formatted(p.polygon().name()));
+            log.info("Failed to merge %s, first and last edge match".formatted(p.polygon().name()));
         }
 
         return isNot2D;
@@ -370,7 +370,7 @@ public class Polygon {
 
                 return new Point2D(polyLabel.getX(), polyLabel.getY());
             } catch (final IllegalStateException | IllegalArgumentException e) {
-                log.warn("Failed polylabel for " + name());
+                log.warn("Failed polylabel for " + name(), e);
 
                 return new Point2D(
                         Arrays.stream(pointsX).average().getAsDouble(),

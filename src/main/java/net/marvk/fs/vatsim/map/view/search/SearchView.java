@@ -186,13 +186,15 @@ public class SearchView implements FxmlView<SearchViewModel> {
 
         @Override
         public Optional<TextFlow> visit(final FlightInformationRegionBoundary firb) {
-            final String firName = firb
+            final FlightInformationRegion fir = firb
                     .getFlightInformationRegions()
                     .stream()
-                    .map(FlightInformationRegion::getName)
-                    .filter(e -> StringUtils.containsIgnoreCase(e, query.get()))
+                    .filter(e -> StringUtils.containsIgnoreCase(e.getName(), query.get()))
                     .findFirst()
-                    .orElse(firb.getFlightInformationRegions().get(0).getName());
+                    .orElse(firb.getFlightInformationRegions().isEmpty() ? null : firb.getFlightInformationRegions()
+                                                                                      .get(0));
+
+            final String firName = fir != null ? fir.getName() : "?";
 
             return Optional.of(new TextFlow(textFlowHighlighter.textFlows("%m (%r)", pattern.get(), firb.getIcao(), firName)));
         }

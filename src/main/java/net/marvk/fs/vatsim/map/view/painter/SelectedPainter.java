@@ -70,7 +70,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
 
         @Override
         public Consumer<GraphicsContext> visit(final Controller controller) {
-            return c -> visit(controller.getWorkingArea());
+            return c -> visit(controller.getWorkingLocation());
         }
     }
 }

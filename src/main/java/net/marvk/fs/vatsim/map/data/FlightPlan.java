@@ -193,7 +193,7 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
         return ParseUtil.parseNullSafe(string, s -> {
             try {
                 if (s.length() > 4) {
-                    log.debug("Identified invalid time " + s);
+                    log.info("Identified invalid time \"%s\"".formatted(s));
                     return null;
                 }
 
