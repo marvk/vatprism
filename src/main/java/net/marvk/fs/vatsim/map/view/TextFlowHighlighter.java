@@ -1,9 +1,12 @@
 package net.marvk.fs.vatsim.map.view;
 
+import com.google.inject.Inject;
+import javafx.beans.property.IntegerProperty;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,26 +15,44 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TextFlowHighlighter {
-    private static final Font BOLD = Font.font(
-            Font.getDefault().getFamily(),
-            FontWeight.BOLD,
-            Font.getDefault().getSize()
-    );
+    private Font boldDefault;
 
-    private static final Font BOLD_MONO = Font.font(
-            "JetBrains Mono",
-            FontWeight.BOLD,
-            Font.getDefault().getSize()
-    );
+    private Font boldMono;
 
-    private static final Font MONO = Font.font(
-            "JetBrains Mono",
-            Font.getDefault().getSize()
-    );
+    private Font standardMono;
+
+    private Font standardDefault;
 
     private static final Pattern REPLACING = Pattern.compile("%[rm]");
 
-    public TextFlowHighlighter() {
+    @Inject
+    public TextFlowHighlighter(final Preferences preferences) {
+        final IntegerProperty fontSizeProperty = preferences.integerProperty("general.font_size");
+        fontSizeProperty.addListener((observable, oldValue, newValue) -> {
+            setFonts(newValue.doubleValue());
+        });
+        setFonts(fontSizeProperty.doubleValue());
+    }
+
+    private void setFonts(final double fontSize) {
+        standardMono = Font.font(
+                "JetBrains Mono",
+                fontSize
+        );
+        boldMono = Font.font(
+                "JetBrains Mono",
+                FontWeight.BOLD,
+                fontSize
+        );
+        boldDefault = Font.font(
+                Font.getDefault().getFamily(),
+                FontWeight.BOLD,
+                fontSize
+        );
+        standardDefault = Font.font(
+                Font.getDefault().getFamily(),
+                fontSize
+        );
     }
 
     public Text[] textFlows(final String s, final Pattern pattern, final String... items) {
@@ -97,28 +118,42 @@ public class TextFlowHighlighter {
         return result;
     }
 
-    public Text highlightedText(final String s, final boolean mono) {
-        final Text text = new Text(s);
-        text.setStyle("-fx-fill: -vatsim-text-color-light");
-        text.setFont(mono ? BOLD_MONO : BOLD);
-        return text;
-    }
-
     public Text highlightedText(final String s) {
         return highlightedText(s, false);
     }
 
-    public Text defaultText(final String s, final boolean mono) {
-        final Text text = new Text(s);
-        text.setStyle("-fx-fill: -vatsim-text-color");
-        if (mono) {
-            text.setFont(MONO);
-        }
-        return text;
+    public Text highlightedText(final String s, final boolean mono) {
+        return createText(s, true, mono);
     }
 
     public Text defaultText(final String s) {
         return defaultText(s, false);
     }
 
+    public Text defaultText(final String s, final boolean mono) {
+        return createText(s, false, mono);
+    }
+
+    private Text createText(final String s, final boolean bold, final boolean mono) {
+        final Text text = new Text(s);
+        text.setFont(getFont(bold, mono));
+        text.setStyle("-fx-fill: -vatsim-text-color");
+        return text;
+    }
+
+    private Font getFont(final boolean bold, final boolean mono) {
+        if (bold) {
+            if (mono) {
+                return boldMono;
+            } else {
+                return boldDefault;
+            }
+        } else {
+            if (mono) {
+                return standardMono;
+            } else {
+                return standardDefault;
+            }
+        }
+    }
 }

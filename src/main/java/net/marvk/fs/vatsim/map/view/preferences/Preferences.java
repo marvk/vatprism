@@ -113,7 +113,6 @@ public class Preferences {
 
     @SneakyThrows
     private PreferencesFx createPreferencesDialog() {
-
         return PreferencesFx.of(App.class, general(), style(), painters())
                             .saveSettings(false);
     }
