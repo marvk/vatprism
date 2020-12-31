@@ -31,6 +31,7 @@ public final class PainterExecutor<T> {
         final long start = System.nanoTime();
         painter.beforeAllRender();
         if (painter.isEnabled()) {
+            c.save();
             for (final T t : paintablesSupplier.get()) {
                 if (filter.test(t)) {
                     painter.beforeEachRender();
@@ -38,6 +39,7 @@ public final class PainterExecutor<T> {
                     painter.afterEachRender();
                 }
             }
+            c.restore();
         }
         painter.afterAllRender();
         lastDurationNanos = System.nanoTime() - start;

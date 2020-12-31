@@ -136,7 +136,17 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     }
 
     public List<Pilot> searchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
-        final var spliterator = rTree.nearest(Geometries.point(p.getX(), p.getY()), maxDistance, maxCount)
+        final double offsetX;
+
+        if (p.getX() > 180) {
+            offsetX = -360;
+        } else if (p.getX() < -180) {
+            offsetX = 360;
+        } else {
+            offsetX = 0;
+        }
+
+        final var spliterator = rTree.nearest(Geometries.point(p.getX() + offsetX, p.getY()), maxDistance, maxCount)
                                      .spliterator();
         return StreamSupport.stream(spliterator, false)
                             .map(Entry::value)

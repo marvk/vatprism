@@ -40,6 +40,8 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private ToggleButton enablePilotCallsign;
     @FXML
+    private ToggleButton enableDepartureArrivalLines;
+    @FXML
     private ToggleButton enableDebug;
     @InjectViewModel
     private ToolBarViewModel viewModel;
@@ -54,6 +56,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
         bindBooleanBidirectional(enableDebug, "metrics.show");
         bindBooleanBidirectional(enablePilotCallsign, "pilots.show_label");
+        bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled");
 
         enableDebug.visibleProperty().bind(booleanProperty("general.debug"));
 

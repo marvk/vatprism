@@ -19,7 +19,6 @@ public class IdlPainter extends MapPainter<InternationalDateLine> {
     public void paint(final GraphicsContext c, final InternationalDateLine internationalDateLineViewModel) {
         final Polygon points = internationalDateLineViewModel.getPolygon();
 
-        c.setLineWidth(1);
         c.setStroke(color);
         c.setLineDashes(1, 10);
 

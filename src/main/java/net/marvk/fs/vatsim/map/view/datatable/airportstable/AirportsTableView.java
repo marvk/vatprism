@@ -66,6 +66,14 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .mono(true)
                 .build();
 
+        this.<Number>newColumnBuilder()
+                .title("Controllers")
+                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
+                .toStringMapper(AbstractTableView::emptyIfZero)
+                .sortable()
+                .mono(true)
+                .build();
+
         this.<String>newColumnBuilder()
                 .title("FIR")
                 .stringObservableValueFactory(this::firIcao)

@@ -67,7 +67,6 @@ public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
         if (stroke) {
             c.setStroke(color);
             c.setLineWidth(lineWidth);
-            c.setLineDashes(null);
             painterHelper.strokePolygons(c, polygon);
         }
 

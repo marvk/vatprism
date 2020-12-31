@@ -9,8 +9,16 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.function.Consumer;
 
 public class DepartureArrivalPathPainter extends MapPainter<Data> {
-    private final Color arrivalColor = Color.DARKOLIVEGREEN.deriveColor(0, 1, 1, 0.5);
+    @Parameter("Departure")
+    private final boolean departure = true;
+    @Parameter("Departure Color")
     private final Color departureColor = Color.CORAL.deriveColor(0, 1, 1, 0.5);
+
+    @Parameter("Arrival")
+    private final boolean arrival = true;
+    @Parameter("Arrival Color")
+    private final Color arrivalColor = Color.DARKOLIVEGREEN.deriveColor(0, 1, 1, 0.5);
+
     private final PainterVisitor painterVisitor = new PainterVisitor();
 
     public DepartureArrivalPathPainter(final MapVariables mapVariables) {
@@ -23,12 +31,26 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
     }
 
     private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
+        context.save();
+        executePaint(context, pilot, airport, type);
+        context.restore();
+    }
+
+    private void executePaint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
+        final double scale = mapVariables.getScale();
         if (type == Type.ARRIVAL) {
-            context.setLineDashes(1, 5);
-            context.setStroke(arrivalColor);
+            if (arrival) {
+                context.setStroke(arrivalColor);
+            } else {
+                return;
+            }
         } else if (type == Type.DEPARTURE) {
-            context.setLineDashes(1, 10);
-            context.setStroke(departureColor);
+            if (departure) {
+                context.setLineDashes(1, 10);
+                context.setStroke(departureColor);
+            } else {
+                return;
+            }
         } else {
             return;
         }
@@ -37,10 +59,28 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
             return;
         }
 
-        final Point2D p1 = mapVariables.toCanvas(pilot.getPosition());
-        final Point2D p2 = mapVariables.toCanvas(airport.getPosition());
+        final Point2D airportPosition = airport.getPosition().add(airportOffsetX(pilot, airport), 0);
 
-        context.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+        line(context, pilot.getPosition(), airportPosition, 0);
+        line(context, pilot.getPosition(), airportPosition, (int) (Math.signum(pilot.getPosition().getX()) * -360));
+    }
+
+    private int airportOffsetX(final Pilot pilot, final Airport airport) {
+        if (Math.abs(pilot.getPosition().getX() - airport.getPosition().getX()) > 180) {
+            if (pilot.getPosition().getX() < 0) {
+                return -360;
+            } else {
+                return 360;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    private void line(final GraphicsContext context, final Point2D p1, final Point2D p2, final int offsetX) {
+        final Point2D c1 = mapVariables.toCanvas(p1.add(offsetX, 0));
+        final Point2D c2 = mapVariables.toCanvas(p2.add(offsetX, 0));
+        context.strokeLine(c1.getX(), c1.getY(), c2.getX(), c2.getY());
     }
 
     private enum Type {

@@ -14,7 +14,7 @@ public class PilotPainter extends MapPainter<Pilot> {
     private static final int RECT_SIZE = 4;
     private static final int SPEED_THRESHOLD = 25;
     private static final double MAX_SPEED = 600.0;
-    private static final double SCALE_SCALE = 32.0;
+    private static final double SCALE_SCALE = 64.0;
 
     @Parameter("Color")
     private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
@@ -79,10 +79,8 @@ public class PilotPainter extends MapPainter<Pilot> {
         final double x = mapVariables.toCanvasX(point.getX() + xOffset);
         final double y = mapVariables.toCanvasY(point.getY());
 
-        c.setLineDashes();
         c.setStroke(color);
         c.setFill(color);
-        c.setLineWidth(1);
         c.strokeRect((int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
@@ -95,7 +93,9 @@ public class PilotPainter extends MapPainter<Pilot> {
         }
 
         if (actualTailLength > 0) {
-            c.setLineDashes(0.5, 8);
+            final double scale = mapVariables.getScale() / 64.;
+            c.setLineDashes(1 / 16 * scale, 1 * scale);
+            c.setLineWidth(Math.min(1, (1.0 / 8) * scale));
             paintLine(c, x, y, 180 + heading, actualTailLength);
         }
 
