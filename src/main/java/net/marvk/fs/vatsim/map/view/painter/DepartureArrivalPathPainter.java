@@ -31,26 +31,12 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
     }
 
     private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
-        context.save();
-        executePaint(context, pilot, airport, type);
-        context.restore();
-    }
-
-    private void executePaint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
-        final double scale = mapVariables.getScale();
         if (type == Type.ARRIVAL) {
-            if (arrival) {
-                context.setStroke(arrivalColor);
-            } else {
-                return;
-            }
+            context.setLineDashes(1, 5);
+            context.setStroke(arrivalColor);
         } else if (type == Type.DEPARTURE) {
-            if (departure) {
-                context.setLineDashes(1, 10);
-                context.setStroke(departureColor);
-            } else {
-                return;
-            }
+            context.setLineDashes(1, 10);
+            context.setStroke(departureColor);
         } else {
             return;
         }

@@ -79,8 +79,10 @@ public class PilotPainter extends MapPainter<Pilot> {
         final double x = mapVariables.toCanvasX(point.getX() + xOffset);
         final double y = mapVariables.toCanvasY(point.getY());
 
+        c.setLineDashes();
         c.setStroke(color);
         c.setFill(color);
+        c.setLineWidth(1);
         c.strokeRect((int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
