@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.data;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
@@ -14,6 +15,7 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
     private final ReadOnlyListWrapper<String> iatas = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
     private final BooleanProperty pseudo = new SimpleBooleanProperty();
     private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
+    private final IntegerProperty trafficCount = new SimpleIntegerProperty();
 
     private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundary =
             RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::getAirportsWritable);
@@ -29,6 +31,10 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
 
     private final ReadOnlyListWrapper<FlightPlan> alternatives =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::alternativeAirportPropertyWritable);
+
+    public Airport() {
+        trafficCount.bind(Bindings.add(departing.sizeProperty(), arriving.sizeProperty()));
+    }
 
     @Override
     public void setFromModel(final AirportRepository.VatsimAirportWrapper model) {
@@ -74,6 +80,14 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
 
     public Point2D getPosition() {
         return position.get();
+    }
+
+    public int getTrafficCount() {
+        return trafficCount.get();
+    }
+
+    public ReadOnlyIntegerProperty trafficCountProperty() {
+        return trafficCount;
     }
 
     public ReadOnlyObjectProperty<Point2D> positionProperty() {

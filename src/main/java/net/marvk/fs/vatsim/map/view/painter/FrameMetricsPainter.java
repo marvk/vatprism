@@ -20,20 +20,25 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
 
     private static Color[] COLORS = new Color[]{
             Color.web("#C57C8B"),
-            Color.web("#C18077"),
-            Color.web("#B88664"),
-            Color.web("#AC8C55"),
-            Color.web("#9C924C"),
-            Color.web("#8A974E"),
-            Color.web("#739C59"),
-            Color.web("#599F6A"),
-            Color.web("#3BA27D"),
-            Color.web("#18A290"),
-            Color.web("#0BA1A2"),
-            Color.web("#309EB1"),
-            Color.web("#5598BC"),
-            Color.web("#7592C3"),
-            Color.web("#918AC4")
+            Color.web("#C27F7A"),
+            Color.web("#BB8469"),
+            Color.web("#B2895B"),
+            Color.web("#A68E50"),
+            Color.web("#97934C"),
+            Color.web("#869850"),
+            Color.web("#739C5A"),
+            Color.web("#5D9F68"),
+            Color.web("#43A178"),
+            Color.web("#27A288"),
+            Color.web("#09A298"),
+            Color.web("#16A0A7"),
+            Color.web("#379DB3"),
+            Color.web("#5698BC"),
+            Color.web("#7292C2"),
+            Color.web("#8B8CC4"),
+            Color.web("#9F85C2"),
+            Color.web("#B080BC"),
+            Color.web("#BB7CB2")
     };
 
     @Parameter(value = "Height", min = 0)
@@ -165,11 +170,10 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         drawLine(c, total.average(), maxNanos, xOffset, yOffset, chartWidth, Color.BLACK);
 
         drawLine(c, averageDrawNanos, maxNanos, xOffset, yOffset, chartWidth, Color.BLACK);
-
     }
 
     private double getChartHeight() {
-        return showAverages ? Math.max(250, chartHeight) : chartHeight;
+        return showAverages ? Math.max(325, chartHeight) : chartHeight;
     }
 
     private static DoubleStream averages(final List<FrameMetrics.Metric> metrics) {

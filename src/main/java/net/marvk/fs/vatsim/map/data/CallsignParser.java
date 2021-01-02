@@ -132,10 +132,12 @@ public class CallsignParser {
         }
 
         if (firs.size() > 1) {
-            log.warn(
-                    "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s; found %s"
-                            .formatted(identifier, controller.getCallsign(), controller.getCid(), controllerType, firs)
-            );
+            if (firs.stream().map(FlightInformationRegion::getName).distinct().count() > 1) {
+                log.warn(
+                        "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s; found %s"
+                                .formatted(identifier, controller.getCallsign(), controller.getCid(), controllerType, firs)
+                );
+            }
         }
 
         final FlightInformationRegionBoundary boundary = firs
