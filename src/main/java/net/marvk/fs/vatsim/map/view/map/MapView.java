@@ -93,11 +93,6 @@ public class MapView implements FxmlView<MapViewModel> {
 
         this.canvas.cursorProperty().bind(cursorProperty);
 
-        final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
-        final Font font = Font.loadFont(s, 12);
-
-        final GraphicsContext c = this.canvas.getGraphicsContext2D();
-        c.setFont(font);
     }
 
     public void initialize() {
@@ -121,11 +116,23 @@ public class MapView implements FxmlView<MapViewModel> {
 
         this.canvas.setOnMouseMoved(inputEventHandler::onMove);
 
+        final GraphicsContext c = this.canvas.getGraphicsContext2D();
+        viewModel.fontSizeProperty().addListener((observable, oldValue, newValue) ->
+                c.setFont(createFont(newValue.doubleValue()))
+        );
+        c.setFont(createFont(viewModel.getFontSize()));
+
         invalidateCanvas();
 
         viewModel.subscribe("REPAINT", (key, payload) -> invalidateCanvas());
 
         addContextMenuShadow();
+    }
+
+    private Font createFont(final double size) {
+        final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
+        final Font font = Font.loadFont(s, size);
+        return font;
     }
 
     private void addContextMenuShadow() {

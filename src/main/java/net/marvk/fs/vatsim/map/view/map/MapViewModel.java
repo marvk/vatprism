@@ -37,6 +37,8 @@ public class MapViewModel implements ViewModel {
 
     private final ReadOnlyDoubleWrapper scrollSpeed = new ReadOnlyDoubleWrapper();
 
+    private final ReadOnlyDoubleWrapper fontSize = new ReadOnlyDoubleWrapper();
+
     private final ClientRepository clientRepository;
     private final AirportRepository airportRepository;
     private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
@@ -114,6 +116,7 @@ public class MapViewModel implements ViewModel {
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.selectionShape.addListener((observable, oldValue, newValue) -> triggerRepaint());
 
+        this.fontSize.bind(preferences.integerProperty("general.map_font_size"));
     }
 
     public void initialize() {
@@ -309,6 +312,14 @@ public class MapViewModel implements ViewModel {
 
     public ReadOnlyDoubleProperty scrollSpeedProperty() {
         return scrollSpeed.getReadOnlyProperty();
+    }
+
+    public double getFontSize() {
+        return fontSize.get();
+    }
+
+    public ReadOnlyDoubleProperty fontSizeProperty() {
+        return fontSize.getReadOnlyProperty();
     }
 
     public ContextMenuViewModel showingContextMenu() {

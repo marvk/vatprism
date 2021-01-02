@@ -134,7 +134,8 @@ public class Preferences {
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Setting.of("Enable Debug Mode", debug),
-                Setting.of("Font Size", integerProperty("general.font_size", 12), 4, 72),
+                Setting.of("UI Font Size", integerProperty("general.font_size", 12), 4, 72),
+                Setting.of("Map Font Size", integerProperty("general.map_font_size", 12), 4, 72),
                 Setting.of("Scroll Speed", doubleProperty("general.scroll_speed", 2.25), 1.1, 16, 2)
         );
     }
@@ -212,35 +213,55 @@ public class Preferences {
         final double min = parameter.min();
         final double max = parameter.max();
 
+        final String bindToKey = parameter.bind();
+        final boolean bind = !bindToKey.isBlank();
+        final boolean visible = parameter.visible();
         final String key = key(prefix, name);
         if (Color.class.isAssignableFrom(field.getType())) {
             final ObjectProperty<Color> property = colorProperty(key);
             property.set((Color) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
-            return Setting.of(name, property).customKey(key);
-        }
-        if (int.class.isAssignableFrom(field.getType())) {
+            if (bind) {
+                property.bind(colorProperty(bindToKey));
+            }
+            if (visible) {
+                return Setting.of(name, property).customKey(key);
+            }
+        } else if (int.class.isAssignableFrom(field.getType())) {
             final IntegerProperty property = integerProperty(key);
             property.set((int) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
-            return Setting.of(name, property)
-                          .customKey(key)
-                          .validate(IntegerRangeValidator.between((int) min, (int) max, "Not in range"));
-        }
-        if (double.class.isAssignableFrom(field.getType())) {
+            if (bind) {
+                property.bind(integerProperty(bindToKey));
+            }
+            if (visible) {
+                return Setting.of(name, property)
+                              .customKey(key)
+                              .validate(IntegerRangeValidator.between((int) min, (int) max, "Not in range"));
+            }
+        } else if (double.class.isAssignableFrom(field.getType())) {
             final DoubleProperty property = doubleProperty(key);
             property.set((double) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
-            return Setting.of(name, property)
-                          .customKey(key)
-                          .validate(DoubleRangeValidator.between(min, max, "Not in range"));
-        }
-        if (boolean.class.isAssignableFrom(field.getType())) {
+            if (bind) {
+                property.bind(doubleProperty(bindToKey));
+            }
+            if (visible) {
+                return Setting.of(name, property)
+                              .customKey(key)
+                              .validate(DoubleRangeValidator.between(min, max, "Not in range"));
+            }
+        } else if (boolean.class.isAssignableFrom(field.getType())) {
             final BooleanProperty property = booleanProperty(key);
             property.setValue((boolean) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
-            return Setting.of(name, property)
-                          .customKey(key);
+            if (bind) {
+                property.bind(booleanProperty(bindToKey));
+            }
+            if (visible) {
+                return Setting.of(name, property)
+                              .customKey(key);
+            }
         }
         return null;
     }

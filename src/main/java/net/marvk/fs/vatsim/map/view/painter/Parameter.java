@@ -10,6 +10,10 @@ import java.lang.annotation.Target;
 public @interface Parameter {
     String value();
 
+    String bind() default "";
+
+    boolean visible() default true;
+
     double min() default -Double.MAX_VALUE;
 
     double max() default Double.MAX_VALUE;
