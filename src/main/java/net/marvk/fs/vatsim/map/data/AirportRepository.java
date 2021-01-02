@@ -48,7 +48,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                 .vatSpy()
                 .getAirports()
                 .stream()
-                .filter(e -> !e.getPseudo())
+//                .filter(e -> !e.getPseudo())
                 .collect(Collectors.groupingBy(VatsimAirport::getIcao))
                 .values()
                 .stream()
@@ -172,11 +172,8 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .distinct()
                     .collect(Collectors.toList());
 
-            if (pseudos.size() != 1) {
-                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched pseudos");
-            }
-
-            return pseudos.get(0);
+            // TODO split pseudos?
+            return pseudos.stream().reduce((b1, b2) -> b1 && b2).get();
         }
 
         private String firs(final List<VatsimAirport> airports) {

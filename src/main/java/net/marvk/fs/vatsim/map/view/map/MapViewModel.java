@@ -198,6 +198,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("17130a")), this::lakes),
                 PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofCollection("InactiveUirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofItem("Connections", new DepartureArrivalPathPainter(mapVariables), this.selectedItemProperty()::get),

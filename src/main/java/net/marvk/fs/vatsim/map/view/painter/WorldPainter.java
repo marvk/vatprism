@@ -16,9 +16,11 @@ public class WorldPainter extends MapPainter<Polygon> {
 
     @Override
     public void paint(final GraphicsContext c, final Polygon polygon) {
-        c.setLineWidth(1);
         c.setFill(color);
-
         painterHelper.fillPolygons(c, polygon);
+
+//        c.setLineWidth(1);
+//        c.setStroke(Color.BLACK);
+//        painterHelper.strokePolygons(c, polygon);
     }
 }

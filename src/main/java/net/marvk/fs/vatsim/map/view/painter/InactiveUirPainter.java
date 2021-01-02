@@ -8,12 +8,13 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.Collection;
 import java.util.List;
 
-public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion> {
+public class InactiveUirPainter extends CompositeMapPainter<UpperInformationRegion> {
     @MetaPainter("UIR")
     private final UirPainter uirPainter;
 
-    public ActiveUirPainter(final MapVariables mapVariables) {
-        this.uirPainter = new UirPainter(mapVariables, Color.DARKCYAN, false);
+    public InactiveUirPainter(final MapVariables mapVariables) {
+        this.uirPainter = new UirPainter(mapVariables, Color.valueOf("3B341F"), false);
+        this.enabled = false;
     }
 
     @Override
@@ -28,7 +29,7 @@ public class ActiveUirPainter extends CompositeMapPainter<UpperInformationRegion
 
     @Override
     public void paint(final GraphicsContext c, final UpperInformationRegion uir) {
-        if (!uir.getControllers().isEmpty()) {
+        if (uir.getControllers().isEmpty()) {
             this.uirPainter.paint(c, uir);
         }
     }

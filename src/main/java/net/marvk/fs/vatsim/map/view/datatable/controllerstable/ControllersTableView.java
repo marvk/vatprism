@@ -21,6 +21,14 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
     protected void initializeColumns() {
         super.initializeColumns();
 
+        this.<Controller.Rating>newColumnBuilder()
+                .title("Rating")
+                .objectObservableValueFactory(Controller::ratingProperty)
+                .toStringMapper(Controller.Rating::getShortName)
+                .sortable()
+                .mono(true)
+                .build();
+
         this.<Data>newColumnBuilder()
                 .title("Location")
                 .objectObservableValueFactory(Controller::workingLocationProperty)

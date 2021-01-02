@@ -142,7 +142,7 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
         }
 
         if (controller.getWorkingUpperInformationRegion() != null) {
-            return "active_uirs.fir.color";
+            return "active_uirs.uir.fir.color";
         }
 
         return null;

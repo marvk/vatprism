@@ -77,7 +77,13 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         clientController.getViewModel().setData(controller);
         type.setText(controller.getControllerType().toString());
         frequency.textProperty().bind(controller.frequencyProperty());
-        rating.textProperty().bind(controller.ratingProperty());
+        rating.textProperty().bind(Bindings.createStringBinding(() -> {
+            final Controller.Rating r = controller.ratingProperty().get();
+            if (r == null) {
+                return "Unknown";
+            }
+            return "%s (%s)".formatted(r.getLongName(), r.getShortName());
+        }, controller.ratingProperty()));
         atis.textProperty().bind(Bindings.createStringBinding(() -> {
                     final String msg = controller.getAtisMessage();
                     if (msg == null || msg.isEmpty()) {

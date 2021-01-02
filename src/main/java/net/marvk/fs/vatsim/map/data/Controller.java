@@ -2,18 +2,23 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import lombok.ToString;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimController;
+import net.marvk.fs.vatsim.api.data.VatsimControllerRating;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @ToString
 public class Controller extends Client implements Data {
     private final StringProperty frequency = new SimpleStringProperty();
-    private final StringProperty rating = new SimpleStringProperty();
     private final StringProperty atisMessage = new SimpleStringProperty();
+
+    private final ObjectProperty<Rating> rating = new SimpleObjectProperty<>();
 
     private final ObjectProperty<ControllerType> controllerType = new SimpleObjectProperty<>();
 
@@ -38,7 +43,7 @@ public class Controller extends Client implements Data {
         super.setFromModel(controller);
 
         frequency.set(controller.getFrequency());
-        rating.set("%s (%s)".formatted(controller.getRating().getLongName(), controller.getRating().getShortName()));
+        rating.set(Rating.of(controller.getRating()));
         setAtisMessage(controller.getTextAtis());
     }
 
@@ -115,11 +120,11 @@ public class Controller extends Client implements Data {
         return frequency;
     }
 
-    public String getRating() {
+    public Rating getRating() {
         return rating.get();
     }
 
-    public ReadOnlyStringProperty ratingProperty() {
+    public ReadOnlyObjectProperty<Rating> ratingProperty() {
         return rating;
     }
 
@@ -190,5 +195,27 @@ public class Controller extends Client implements Data {
     @Override
     public <R> R visit(final DataVisitor<R> visitor) {
         return visitor.visit(this);
+    }
+
+    @Value
+    public static class Rating implements Comparable<Rating> {
+        private static final Map<String, Rating> RATINGS = new HashMap<>();
+
+        int id;
+        String shortName;
+        String longName;
+
+        public static Rating of(final int id, final String shortName, final String longName) {
+            return RATINGS.computeIfAbsent(shortName, s -> new Rating(id, shortName, longName));
+        }
+
+        public static Rating of(final VatsimControllerRating rating) {
+            return of(Integer.parseInt(rating.getId()), rating.getShortName(), rating.getLongName());
+        }
+
+        @Override
+        public int compareTo(final Rating o) {
+            return Integer.compare(id, o.id);
+        }
     }
 }
