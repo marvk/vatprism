@@ -157,7 +157,7 @@ public class MapViewModel implements ViewModel {
     }
 
     public void openClosest() {
-        selectedItem.set(contextMenu.closest().orElse(null));
+        selectedItem.set(contextMenu.closest(getMouseWorldPosition()).orElse(null));
     }
 
     private void fireTransition(final WorldPanTransition transition) {
@@ -174,20 +174,21 @@ public class MapViewModel implements ViewModel {
     private void setContextMenuItems(final Point2D mouseWorldPosition) {
         contextMenu.getBoundaries()
                    .getItems()
-                   .setAll(flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition));
+                   .setAll(flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition, selectionDistance()));
 
         final List<Airport> col = airportRepository
                 .streamSearchByPosition(mouseWorldPosition, selectionDistance(), Integer.MAX_VALUE)
                 .filter(Airport::hasControllers)
                 .limit(10)
                 .collect(Collectors.toList());
+
         contextMenu.getAirports()
                    .getItems()
                    .setAll(col);
 
         contextMenu.getPilots()
                    .getItems()
-                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 3));
+                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 10));
     }
 
     private double selectionDistance() {
@@ -201,7 +202,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("17130a")), this::lakes),
                 PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-                PainterExecutor.ofCollection("InactiveUirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
+                PainterExecutor.ofCollection("Inactive Uirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofItem("Connections", new DepartureArrivalPathPainter(mapVariables), this.selectedItemProperty()::get),

@@ -4,8 +4,8 @@ import com.github.davidmoten.rtree2.Entry;
 import com.github.davidmoten.rtree2.RTree;
 import com.github.davidmoten.rtree2.geometry.Geometries;
 import com.github.davidmoten.rtree2.geometry.Geometry;
+import com.github.davidmoten.rtree2.geometry.Point;
 import com.github.davidmoten.rtree2.geometry.Rectangle;
-import com.github.davidmoten.rtree2.geometry.internal.RectangleDouble;
 import com.github.davidmoten.rtree2.internal.EntryDefault;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -30,7 +30,7 @@ import java.util.stream.StreamSupport;
 public class FlightInformationRegionBoundaryRepository extends ProviderRepository<FlightInformationRegionBoundary, VatsimAirspace> {
     private final Lookup<FlightInformationRegionBoundary> icao = Lookup.fromProperty(FlightInformationRegionBoundary::getIcao);
     private final FlightInformationRegionRepository flightInformationRegionRepository;
-    private RTree<FlightInformationRegionBoundary, Rectangle> rTree = RTree.create();
+    private RTree<FlightInformationRegionBoundary, PolygonGeometry> rTree = RTree.create();
 
     @Inject
     public FlightInformationRegionBoundaryRepository(
@@ -117,7 +117,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     }
 
     private void createRTree() {
-        final List<Entry<FlightInformationRegionBoundary, Rectangle>> entries = list()
+        final List<Entry<FlightInformationRegionBoundary, PolygonGeometry>> entries = list()
                 .stream()
                 .map(FlightInformationRegionBoundaryRepository::entry)
                 .collect(Collectors.toList());
@@ -125,7 +125,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
         rTree = RTree.star().create(entries);
     }
 
-    public List<Entry<FlightInformationRegionBoundary, Rectangle>> getByPositionAsEntries(final Point2D position) {
+    public List<Entry<FlightInformationRegionBoundary, PolygonGeometry>> getByPositionAsEntries(final Point2D position) {
         return getAllByPositionAsStream(position)
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -138,21 +138,29 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, Rectangle>> getAllByPositionAsStream(final Point2D position) {
+    public List<FlightInformationRegionBoundary> getByPosition(final Point2D position, final double distance) {
+        final var iterable = rTree.search(Geometries.point(position.getX(), position.getY()), distance);
+
+        return StreamSupport
+                .stream(iterable.spliterator(), false)
+                .map(Entry::value)
+                .collect(Collectors.toList());
+    }
+
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> getAllByPositionAsStream(final Point2D position) {
         return Stream.concat(
                 getByPositionAsStream(position),
                 getByPositionAsStream(position.add(360, 0))
         );
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, Rectangle>> getByPositionAsStream(final Point2D position) {
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> getByPositionAsStream(final Point2D position) {
         final var spliterator = rTree.search(Geometries.point(position.getX(), position.getY())).spliterator();
         return StreamSupport.stream(spliterator, false);
     }
 
-    private static Entry<FlightInformationRegionBoundary, Rectangle> entry(final FlightInformationRegionBoundary e) {
-        final Rectangle2D b = e.getPolygon().boundary();
-        return new EntryDefault<>(e, Geometries.rectangle(b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY()));
+    private static Entry<FlightInformationRegionBoundary, PolygonGeometry> entry(final FlightInformationRegionBoundary e) {
+        return new EntryDefault<>(e, new PolygonGeometry(e.getPolygon()));
     }
 
     private void mergeExtensions() {
@@ -208,20 +216,21 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
 
     private static class PolygonGeometry implements Geometry {
         private final Polygon polygon;
-        private final RectangleDouble bound;
+        private final Rectangle bound;
 
         public PolygonGeometry(final Polygon polygon) {
-            throw new UnsupportedOperationException();
-
-            //            this.polygon = polygon;
-//
-//            final Rectangle2D b = polygon.boundary();
-//            this.bound = RectangleDouble.create(b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY());
+            this.polygon = polygon;
+            final Rectangle2D b = polygon.boundary();
+            this.bound = Geometries.rectangle(b.getMinX(), b.getMinY(), b.getMaxX(), b.getMaxY());
         }
 
         @Override
         public double distance(final Rectangle r) {
-            return bound.distance(r);
+            if (!(r instanceof Point)) {
+                throw new UnsupportedOperationException();
+            }
+            final Point p = (Point) r;
+            return polygon.distance(p.x(), p.y());
         }
 
         @Override
@@ -231,24 +240,16 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
 
         @Override
         public boolean intersects(final Rectangle r) {
-            if (isInsidePoly(r.x1(), r.y1())) {
-                return true;
+            if (!(r instanceof Point)) {
+                throw new UnsupportedOperationException();
             }
-
-            if (r.contains(polygon.getExteriorRing().getPointsX()[0], polygon.getExteriorRing().getPointsY()[0])) {
-                return true;
-            }
-
-            return false;
-        }
-
-        private boolean isInsidePoly(final double x, final double y) {
-            return false;
+            final Point p = (Point) r;
+            return polygon.isInside(p.x(), p.y());
         }
 
         @Override
         public boolean isDoublePrecision() {
-            return false;
+            return true;
         }
     }
 }

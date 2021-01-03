@@ -72,6 +72,136 @@ public class Polygon {
         return name == null ? "unnamed polygon" : name + " polygon";
     }
 
+    public boolean isInside(final Point2D point) {
+        return isInside(point.getX(), point.getY());
+    }
+
+    public boolean isInside(final double x, final double y) {
+        if (hasHoleRings()) {
+            throw new UnsupportedOperationException();
+        }
+
+        return windingNumber(x, y) != 0;
+    }
+
+    public double distance(final Point2D point) {
+        return distance(point.getX(), point.getY());
+    }
+
+    public double distance(final double x, final double y) {
+        if (hasHoleRings()) {
+            throw new UnsupportedOperationException();
+        }
+
+        if (isInside(x, y)) {
+            return 0;
+        }
+
+        double minSquareDist = Double.MAX_VALUE;
+
+        for (int i = 0; i < exteriorRing.numPoints(); i++) {
+            final double a = squareDist(i, x, y);
+            minSquareDist = Math.min(a, minSquareDist);
+        }
+
+        final double dist = Math.sqrt(minSquareDist);
+
+        if (name.contains("SAEF")) {
+            System.out.println("name = " + name);
+            System.out.println("minSquareDist = " + minSquareDist);
+            System.out.println("dist = " + dist);
+            System.out.println();
+        }
+
+        return dist;
+    }
+
+    private double squareDist(final int lineIndex, final double x, final double y) {
+        final int nextLineIndex = (lineIndex + 1) % exteriorRing.numPoints();
+        final double x0 = exteriorRing.pointsX[lineIndex];
+        final double y0 = exteriorRing.pointsY[lineIndex];
+        final double x1 = exteriorRing.pointsX[nextLineIndex];
+        final double y1 = exteriorRing.pointsY[nextLineIndex];
+
+        final double dotProduct = dotProduct(x0, y0, x1, y1);
+        final double squareMagnitude = squareMagnitude(x0, y0, x1, y1);
+
+        final double t = dotProduct / squareMagnitude;
+
+        if (t <= 0) {
+            return squareMagnitude(x0, y0, x, y);
+        } else if (t > 1) {
+            return squareMagnitude(x1, y1, x, y);
+        } else {
+            return squareMagnitude(x0 + t * (x1 - x0), y0 + t * (y1 - y0), x, y);
+        }
+    }
+
+    private static double dotProduct(final double x0, final double y0, final double x1, final double y1) {
+        return x0 * x1 + y0 * y1;
+    }
+
+    private static double squareMagnitude(final double x0, final double y0, final double x1, final double y1) {
+        return (x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1);
+    }
+
+    /**
+     * Test if a point is {@code Left}, {@code On} or {@code Right} of an infinite line.
+     *
+     * @param x0 line point 0 x
+     * @param y0 line point 0 y
+     * @param x1 line point 1 x
+     * @param y1 line point 1 y
+     * @param xt test point x
+     * @param yt test point y
+     *
+     * @return {@code >0} for P2 left of the line through P0 and P1 <br>
+     * {@code =0} for P2  on the line <br>
+     * {@code <0} for P2  right of the line
+     *
+     * @see <a href="http://geomalgorithms.com/a03-_inclusion.html">Point in Polygon Inclusion</a>
+     */
+    private static double isLeft(final double x0, final double y0, final double x1, final double y1, final double xt, final double yt) {
+        return ((x1 - x0) * (yt - y0)
+                - (xt - x0) * (y1 - y0));
+    }
+
+    /**
+     * winding number test for a point in a polygon
+     *
+     * @param x test point x
+     * @param y test point y
+     *
+     * @return the winding number ({@code =0} only when P is outside)
+     *
+     * @see <a href="http://geomalgorithms.com/a03-_inclusion.html">Point in Polygon Inclusion</a>
+     */
+    private int windingNumber(final double x, final double y) {
+        int windingNumber = 0;
+
+        final Ring r = this.exteriorRing;
+        final int n = r.numPoints();
+
+        for (int i = 0; i < n; i++) {                                                                       // edge from V[i] to  V[i+1]
+            final int i1 = (i + 1) % n;
+            if (r.pointsY[i] <= y) {                                                                        // start y <= P.y
+                if (r.pointsY[i1] > y) {                                                                 // an upward crossing
+                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) > 0) { // P left of  edge
+                        windingNumber += 1;                                                                 // have  a valid up intersect
+                    }
+                }
+            } else {                                                                                        // start y > P.y (no test needed)
+                if (i1 < n && r.pointsY[i1] <= y) {                                                   // a downward crossing
+                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) < 0) { // P right of  edge
+                        windingNumber -= 1;                                                                 // have  a valid down intersect
+                    }
+                }
+            }
+        }
+
+        return windingNumber;
+    }
+
     private static List<Geometry> coordinates(final Geometry geometry) {
         if (geometry instanceof org.locationtech.jts.geom.Polygon) {
             final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometry;
