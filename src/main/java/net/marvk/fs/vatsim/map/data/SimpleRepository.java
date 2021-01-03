@@ -27,7 +27,7 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
 
     protected abstract String keyFromViewModel(final ViewModel model);
 
-    protected abstract Collection<Model> extractModelList(final VatsimApi api) throws VatsimApiException;
+    protected abstract Collection<Model> extractModels(final VatsimApi api) throws VatsimApiException;
 
     protected void onAdd(final ViewModel toAdd, final Model model) {
     }
@@ -46,7 +46,7 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
     @Override
     public void reload() throws RepositoryException {
         try {
-            updateList(extractModelList(vatsimApi));
+            updateList(extractModels(vatsimApi));
         } catch (VatsimApiException e) {
             throw new RepositoryException(e);
         }
@@ -55,7 +55,7 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
     @Override
     public void reloadAsync(final Runnable onSucceed) throws RepositoryException {
         try {
-            final Collection<Model> models = extractModelList(vatsimApi);
+            final Collection<Model> models = extractModels(vatsimApi);
             Platform.runLater(() -> {
                 updateList(models);
                 if (onSucceed != null) {

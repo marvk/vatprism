@@ -66,7 +66,7 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     }
 
     @Override
-    protected Collection<VatsimClient> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<VatsimClient> extractModels(final VatsimApi api) throws VatsimApiException {
         try {
             return api.data().getClients();
         } catch (final Throwable t) {

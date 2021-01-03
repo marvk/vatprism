@@ -43,7 +43,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     }
 
     @Override
-    protected Collection<VatsimAirportWrapper> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<VatsimAirportWrapper> extractModels(final VatsimApi api) throws VatsimApiException {
         return api
                 .vatSpy()
                 .getAirports()

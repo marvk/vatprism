@@ -47,7 +47,7 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
     }
 
     @Override
-    protected Collection<VatsimFlightInformationRegion> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<VatsimFlightInformationRegion> extractModels(final VatsimApi api) throws VatsimApiException {
         return api.vatSpy().getFlightInformationRegions();
     }
 

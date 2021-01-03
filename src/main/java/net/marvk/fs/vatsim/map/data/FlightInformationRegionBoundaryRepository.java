@@ -64,7 +64,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     }
 
     @Override
-    protected Collection<VatsimAirspace> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<VatsimAirspace> extractModels(final VatsimApi api) throws VatsimApiException {
         return api.firBoundaries().getAirspaces();
     }
 

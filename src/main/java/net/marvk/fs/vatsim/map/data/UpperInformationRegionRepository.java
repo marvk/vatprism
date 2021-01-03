@@ -34,7 +34,7 @@ public class UpperInformationRegionRepository extends ProviderRepository<UpperIn
     }
 
     @Override
-    protected Collection<VatsimUpperInformationRegion> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<VatsimUpperInformationRegion> extractModels(final VatsimApi api) throws VatsimApiException {
         return api.vatSpy().getUpperInformationRegions();
     }
 

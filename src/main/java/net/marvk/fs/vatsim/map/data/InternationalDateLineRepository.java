@@ -26,7 +26,7 @@ public class InternationalDateLineRepository extends ProviderRepository<Internat
     }
 
     @Override
-    protected Collection<Line> extractModelList(final VatsimApi api) throws VatsimApiException {
+    protected Collection<Line> extractModels(final VatsimApi api) throws VatsimApiException {
         return Collections.singleton(api.vatSpy().getInternationDateLine());
     }
 }
