@@ -106,13 +106,6 @@ public class Polygon {
 
         final double dist = Math.sqrt(minSquareDist);
 
-        if (name.contains("SAEF")) {
-            System.out.println("name = " + name);
-            System.out.println("minSquareDist = " + minSquareDist);
-            System.out.println("dist = " + dist);
-            System.out.println();
-        }
-
         return dist;
     }
 

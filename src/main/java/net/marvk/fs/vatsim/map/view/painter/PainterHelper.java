@@ -58,11 +58,7 @@ public class PainterHelper {
             return;
         }
 
-        if (polygon.numPoints() == 1126) {
-            System.out.println();
-        }
-
-        int numPoints = writePolygonToBuffer(c, polygon, offsetX);
+        final int numPoints = writePolygonToBuffer(c, polygon, offsetX);
 
         final boolean twoDimensional = numPoints >= 3;
         if (!twoDimensional) {

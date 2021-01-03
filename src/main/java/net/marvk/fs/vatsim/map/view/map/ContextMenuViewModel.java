@@ -9,7 +9,6 @@ import net.marvk.fs.vatsim.map.data.Pilot;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ContextMenuViewModel {
     private final ContextMenuItems<Pilot> pilots;
@@ -63,37 +62,23 @@ public class ContextMenuViewModel {
             return pilot;
         }
 
-        return extracted(this.boundaries.getItems())
-                .stream()
-                .min(Comparator.comparing(e -> distance(e, worldPosition)));
+        return boundaries.getItems()
+                         .stream()
+                         .min(firbComparator(worldPosition));
+    }
+
+    private static Comparator<FlightInformationRegionBoundary> firbComparator(final Point2D worldPosition) {
+        return Comparator.<FlightInformationRegionBoundary, Double>comparing(e -> distance(e, worldPosition)).thenComparing(
+                Comparator.comparing(FlightInformationRegionBoundary::hasFirControllers).reversed().thenComparing(
+                        Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed()
+                )
+        );
     }
 
     private static double distance(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
         return flightInformationRegionBoundary
                 .getPolygon()
                 .distance(point);
-    }
-
-    private List<FlightInformationRegionBoundary> extracted(final List<FlightInformationRegionBoundary> boundaries) {
-        final List<FlightInformationRegionBoundary> boundariesWithFirControllers =
-                boundaries.stream()
-                          .filter(FlightInformationRegionBoundary::hasFirControllers)
-                          .collect(Collectors.toUnmodifiableList());
-
-        if (!boundariesWithFirControllers.isEmpty()) {
-            return boundariesWithFirControllers;
-        }
-
-        final List<FlightInformationRegionBoundary> boundariesWithUirControllers =
-                boundaries.stream()
-                          .filter(FlightInformationRegionBoundary::hasUirControllers)
-                          .collect(Collectors.toUnmodifiableList());
-
-        if (!boundariesWithUirControllers.isEmpty()) {
-            return boundariesWithUirControllers;
-        }
-
-        return boundaries;
     }
 
     public ContextMenuItems<FlightInformationRegionBoundary> getBoundaries() {
