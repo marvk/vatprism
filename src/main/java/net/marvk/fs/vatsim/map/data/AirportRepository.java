@@ -61,8 +61,13 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
         icaoLookup.put(toAdd);
         iataLookup.put(toAdd);
 
-        findFirb(vatsimAirport.getFir())
-                .ifPresent(e -> toAdd.flightInformationRegionBoundaryPropertyWritable().set(e));
+        final Optional<FlightInformationRegionBoundary> firb = findFirb(vatsimAirport.getFir());
+        if (firb.isPresent()) {
+            toAdd.flightInformationRegionBoundaryPropertyWritable().set(firb.get());
+        } else {
+            log.warn("Could not determine FIR for airport with ICAO: \"%s\", name: \"%s\", FIR ICAO: \"%s\"".formatted(vatsimAirport
+                    .getIcao(), vatsimAirport.getNames().get(0), vatsimAirport.getFir()));
+        }
     }
 
     private Optional<FlightInformationRegionBoundary> findFirb(final String icao) {
@@ -185,7 +190,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (firs.size() != 1) {
-                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched firs: " + firs);
+                log.warn("Airports with matching ICAO \"" + icao + "\" have mismatched firs: " + firs);
             }
 
             return firs.get(0);
@@ -223,7 +228,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (names.size() != 1) {
-                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched names: " + names);
+                log.warn("Airports with matching ICAO \"" + icao + "\" have mismatched names: " + names);
             }
 
             return names;
@@ -238,7 +243,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                     .collect(Collectors.toList());
 
             if (points.size() != 1) {
-                log.info("Airports with matching ICAO \"" + icao + "\" have mismatched positions: " + points);
+                log.warn("Airports with matching ICAO \"" + icao + "\" have mismatched positions: " + points);
             }
 
             return points.get(0);
