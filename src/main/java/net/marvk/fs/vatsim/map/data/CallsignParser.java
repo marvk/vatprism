@@ -82,8 +82,8 @@ public class CallsignParser {
 
                 if (airport == null) {
                     log.warn(
-                            "Could not determine airport \"%s\" for controller with callsign: %s, cid: %s, type: %s"
-                                    .formatted(identifier, callsign, cid, controllerType)
+                            "Could not determine airport \"%s\" for controller with callsign: %s, cid: %s, name: %s, type: %s"
+                                    .formatted(identifier, callsign, cid, controller.getName(), controllerType)
                     );
                 }
             } else if (airport == null) {
@@ -94,8 +94,8 @@ public class CallsignParser {
 
                     if (fir.isEmpty()) {
                         log.warn(
-                                "Could not determine FIR/UIR \"%s\" for controller with callsign: %s, cid: %s, type: %s"
-                                        .formatted(identifier, callsign, cid, controllerType)
+                                "Could not determine FIR/UIR \"%s\" for controller with callsign: %s, cid: %s, name: %s, type: %s"
+                                        .formatted(identifier, callsign, cid, controller.getName(), controllerType)
                         );
                     }
                 } else {
@@ -134,8 +134,8 @@ public class CallsignParser {
         if (firs.size() > 1) {
             if (firs.stream().map(FlightInformationRegion::getName).distinct().count() > 1) {
                 log.warn(
-                        "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, type: %s; found %s"
-                                .formatted(identifier, controller.getCallsign(), controller.getCid(), controllerType, firs)
+                        "Could not determine exact FIR \"%s\" for controller with callsign: %s, cid: %s, name: %s, type: %s; found %s"
+                                .formatted(identifier, controller.getCallsign(), controller.getCid(), controller.getName(), controllerType, firs)
                 );
             }
         }
