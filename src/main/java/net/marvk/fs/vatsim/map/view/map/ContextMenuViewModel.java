@@ -1,10 +1,7 @@
 package net.marvk.fs.vatsim.map.view.map;
 
 import javafx.geometry.Point2D;
-import net.marvk.fs.vatsim.map.data.Airport;
-import net.marvk.fs.vatsim.map.data.Data;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
-import net.marvk.fs.vatsim.map.data.Pilot;
+import net.marvk.fs.vatsim.map.data.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +10,8 @@ import java.util.Optional;
 public class ContextMenuViewModel {
     private final ContextMenuItems<Pilot> pilots;
     private final ContextMenuItems<Airport> airports;
-    private final ContextMenuItems<FlightInformationRegionBoundary> boundaries;
+    private final ContextMenuItems<FlightInformationRegionBoundary> firbs;
+    private final ContextMenuItems<UpperInformationRegion> uirs;
 
     private final List<ContextMenuItems<? extends Data>> contextMenuItems;
 
@@ -21,7 +19,8 @@ public class ContextMenuViewModel {
         this(
                 new ContextMenuItems<>("Pilots"),
                 new ContextMenuItems<>("Airports"),
-                new ContextMenuItems<>("FIRs")
+                new ContextMenuItems<>("FIRs"),
+                new ContextMenuItems<>("UIRs")
         );
     }
 
@@ -29,42 +28,54 @@ public class ContextMenuViewModel {
         this(
                 new ContextMenuItems<>(contextMenuViewModel.pilots),
                 new ContextMenuItems<>(contextMenuViewModel.airports),
-                new ContextMenuItems<>(contextMenuViewModel.boundaries)
+                new ContextMenuItems<>(contextMenuViewModel.firbs),
+                new ContextMenuItems<>(contextMenuViewModel.uirs)
         );
     }
 
     private ContextMenuViewModel(
             final ContextMenuItems<Pilot> pilots,
             final ContextMenuItems<Airport> airports,
-            final ContextMenuItems<FlightInformationRegionBoundary> boundaries
+            final ContextMenuItems<FlightInformationRegionBoundary> firbs,
+            final ContextMenuItems<UpperInformationRegion> uirs
     ) {
         this.pilots = pilots;
         this.airports = airports;
-        this.boundaries = boundaries;
+        this.firbs = firbs;
+        this.uirs = uirs;
         this.contextMenuItems = List.of(
                 pilots,
                 airports,
-                boundaries
+                firbs,
+                uirs
         );
     }
 
     public Optional<? extends Data> closest(final Point2D worldPosition) {
         // TODO move filter to settings
-        final Optional<Airport> airport = airports.getItems().stream().filter(Airport::hasControllers).findFirst();
+        final Optional<Airport> airport = airports
+                .getItems()
+                .stream()
+                .filter(Airport::hasControllers)
+                .findFirst();
 
         if (airport.isPresent()) {
             return airport;
         }
 
-        final Optional<Pilot> pilot = pilots.getItems().stream().findFirst();
+        final Optional<Pilot> pilot = pilots
+                .getItems()
+                .stream()
+                .findFirst();
 
         if (pilot.isPresent()) {
             return pilot;
         }
 
-        return boundaries.getItems()
-                         .stream()
-                         .min(firbComparator(worldPosition));
+        return firbs
+                .getItems()
+                .stream()
+                .min(firbComparator(worldPosition));
     }
 
     private static Comparator<FlightInformationRegionBoundary> firbComparator(final Point2D worldPosition) {
@@ -81,8 +92,8 @@ public class ContextMenuViewModel {
                 .distance(point);
     }
 
-    public ContextMenuItems<FlightInformationRegionBoundary> getBoundaries() {
-        return boundaries;
+    public ContextMenuItems<FlightInformationRegionBoundary> getFirbs() {
+        return firbs;
     }
 
     public ContextMenuItems<Airport> getAirports() {
@@ -91,6 +102,10 @@ public class ContextMenuViewModel {
 
     public ContextMenuItems<Pilot> getPilots() {
         return pilots;
+    }
+
+    public ContextMenuItems<UpperInformationRegion> getUirs() {
+        return uirs;
     }
 
     public List<ContextMenuItems<? extends Data>> getContextMenuItems() {
@@ -130,13 +145,23 @@ public class ContextMenuViewModel {
 
         remaining -= 1;
 
-        if (remaining < boundaries.getItems().size()) {
-            return boundaries.getItems().get(remaining);
+        if (remaining < firbs.getItems().size()) {
+            return firbs.getItems().get(remaining);
         }
 
-        remaining -= boundaries.getItems().size();
+        remaining -= firbs.getItems().size();
 
-        final var n = numberOfItems();
+        if (remaining == 0) {
+            return null;
+        }
+
+        remaining -= 1;
+
+        if (remaining < uirs.getItems().size()) {
+            return uirs.getItems().get(remaining);
+        }
+
+        remaining -= uirs.getItems().size();
 
         return null;
     }
@@ -151,5 +176,4 @@ public class ContextMenuViewModel {
 
         return nItems + nContextMenus;
     }
-
 }

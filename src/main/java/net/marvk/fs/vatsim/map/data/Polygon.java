@@ -69,7 +69,7 @@ public class Polygon {
     }
 
     private String name() {
-        return name == null ? "unnamed polygon" : name + " polygon";
+        return name == null ? "unnamed_polygon" : name + "_polygon";
     }
 
     public boolean isInside(final Point2D point) {
@@ -287,19 +287,42 @@ public class Polygon {
             reverse = false;
         }
 
-        final List<Point2D> result;
+        final List<Point2D> merged;
         if (sameJ.get(0) + 1 == sameJ.get(1)) {
-            result = mergeWithLineOverlap(p1Ring, p2Ring, sameMap, sameI, reverse);
+            merged = mergeWithLineOverlap(p1Ring, p2Ring, sameMap, sameI, reverse);
         } else {
-            result = mergeWithEndPointOverlap(p1Ring, p2Ring, sameMap);
+            merged = mergeWithEndPointOverlap(p1Ring, p2Ring, sameMap);
         }
+
+        final String mergedName = "%s_%s_merged".formatted(polygon1.name(), polygon2.name());
+
+        final List<Point2D> result = normalize(mergedName, merged);
 
         return new Polygon(List.of(result),
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
                 List::size,
-                "%s_%s_merged".formatted(polygon1.name(), polygon2.name())
+                mergedName
         );
+    }
+
+    private static List<Point2D> normalize(final String name, final List<Point2D> merged) {
+        if (merged.get(0).equals(merged.get(merged.size() - 1))) {
+            log.debug("Merged polygon %s has same start and end point, removing end point".formatted(name));
+            merged.remove(merged.size() - 1);
+        }
+
+        if (merged.stream().mapToDouble(Point2D::getX).allMatch(e -> e > 180)) {
+            log.debug("Merged polygon %s lies beyond 180 degrees, shifting west by 360 degrees".formatted(name));
+            return merged.stream().map(e -> e.add(-360, 0)).collect(Collectors.toList());
+        }
+
+        if (merged.stream().mapToDouble(Point2D::getX).allMatch(e -> e < 180)) {
+            log.debug("Merged polygon %s lies beyond -180 degrees, shifting east by 360 degrees".formatted(name));
+            return merged.stream().map(e -> e.add(360, 0)).collect(Collectors.toList());
+        }
+
+        return merged;
     }
 
     private static boolean isInvalid(final Ring p) {

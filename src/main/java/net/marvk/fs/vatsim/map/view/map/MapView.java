@@ -303,6 +303,11 @@ public class MapView implements FxmlView<MapViewModel> {
             public String visit(final Pilot visitor) {
                 return visitor.getCallsign();
             }
+
+            @Override
+            public String visit(final UpperInformationRegion upperInformationRegion) {
+                return upperInformationRegion.getIcao();
+            }
         };
         private final Region shadowHolder = new Region();
 

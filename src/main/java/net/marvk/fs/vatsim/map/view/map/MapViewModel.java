@@ -22,6 +22,7 @@ import net.marvk.fs.vatsim.map.view.painter.*;
 import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,7 +131,7 @@ public class MapViewModel implements ViewModel {
 
         this.frameMetrics = new FrameMetrics(names, 250);
 
-        Bindings.bindContent(statusScope.highlightedFirs(), contextMenu.getBoundaries().getItems());
+        Bindings.bindContent(statusScope.highlightedFirs(), contextMenu.getFirbs().getItems());
         statusScope.mouseViewPositionProperty().bind(mouseViewPosition);
         statusScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
 
@@ -172,23 +173,34 @@ public class MapViewModel implements ViewModel {
     }
 
     private void setContextMenuItems(final Point2D mouseWorldPosition) {
-        contextMenu.getBoundaries()
+        final List<FlightInformationRegionBoundary> firbs = flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition, selectionDistance());
+        contextMenu.getFirbs()
                    .getItems()
-                   .setAll(flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition, selectionDistance()));
+                   .setAll(firbs);
 
-        final List<Airport> col = airportRepository
+        final List<UpperInformationRegion> uirs = firbs
+                .stream()
+                .map(FlightInformationRegionBoundary::getUpperInformationRegions)
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+        contextMenu.getUirs()
+                   .getItems()
+                   .setAll(uirs);
+
+        final List<Airport> airports = airportRepository
                 .streamSearchByPosition(mouseWorldPosition, selectionDistance(), Integer.MAX_VALUE)
                 .filter(Airport::hasControllers)
                 .limit(10)
                 .collect(Collectors.toList());
-
         contextMenu.getAirports()
                    .getItems()
-                   .setAll(col);
+                   .setAll(airports);
 
+        final List<Pilot> pilots = clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 10);
         contextMenu.getPilots()
                    .getItems()
-                   .setAll(clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 10));
+                   .setAll(pilots);
     }
 
     private double selectionDistance() {
