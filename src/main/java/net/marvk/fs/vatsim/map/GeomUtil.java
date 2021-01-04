@@ -7,6 +7,7 @@ import net.marvk.fs.vatsim.api.data.Point;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -84,12 +85,28 @@ public final class GeomUtil {
         return new Point2D(longitude, latitude);
     }
 
+    /**
+     * Calculate the distance in meters at MSL between two points on the globe
+     *
+     * @param p1 point 1
+     * @param p2 point 2
+     *
+     * @return Distance in meters
+     */
     public static double distanceOnMsl(final Point2D p1, final Point2D p2) {
         return distance(p1.getX(), p1.getY(), 0, p2.getX(), p2.getY(), 0);
     }
 
     public static double squareDistance(final double x1, final double y1, final double x2, final double y2) {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+    }
+
+    public static double knotsToMs(final double knots) {
+        return knots * 0.514444444;
+    }
+
+    public static Duration duration(final double meters, final double knots) {
+        return Duration.ofSeconds((long) (meters / knotsToMs(knots)));
     }
 
     /*

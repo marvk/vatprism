@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import net.marvk.fs.vatsim.map.data.Pilot;
+import net.marvk.fs.vatsim.map.view.EtaToStringMapper;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
@@ -14,6 +15,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pilot>, Pilot> {
+    private static final EtaToStringMapper ETA_MAPPER = new EtaToStringMapper();
+
+    @FXML
+    private Label eta;
     @FXML
     private Label verticalSpeed;
     @FXML
@@ -52,7 +57,8 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
                 qnhInchesMercury,
                 squawk,
                 altitude,
-                verticalSpeed
+                verticalSpeed,
+                eta
         );
     }
 
@@ -67,6 +73,10 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         altitude.textProperty().bind(doubleToIntString(pilot.altitudeProperty(), "ft"));
         flightPlanController.getViewModel().setData(pilot.getFlightPlan());
         clientController.getViewModel().setData(pilot);
+        eta.textProperty().bind(Bindings.createStringBinding(
+                () -> ETA_MAPPER.map(pilot.getEta()),
+                pilot.etaProperty()
+        ));
         verticalSpeed.textProperty().bind(Bindings.createStringBinding(
                 () -> fpmString(pilot),
                 pilot.verticalSpeedProperty())

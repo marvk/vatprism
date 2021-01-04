@@ -27,7 +27,8 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <Label styleClass="description" text="ETA" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
                 <Label styleClass="description" text="V/S" GridPane.rowIndex="3"/>
                 <Label styleClass="description" text="Squawk" GridPane.rowIndex="4"/>
                 <Label styleClass="description" text="Heading" GridPane.rowIndex="1"/>
@@ -42,10 +43,12 @@
                 <Label fx:id="heading" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                 <Label fx:id="groundSpeed" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.rowIndex="1"/>
-                <Label fx:id="qnhMillibars" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                <Label fx:id="eta" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="2"/>
-                <Label fx:id="qnhInchesMercury" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                <Label fx:id="qnhMillibars" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="3"/>
+                <Label fx:id="qnhInchesMercury" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                       GridPane.columnSpan="2147483647" GridPane.rowIndex="4"/>
                 <Label styleClass="description" text="Position"/>
                 <Label fx:id="verticalSpeed" styleClass="mono" text="Label" GridPane.columnIndex="1"
                        GridPane.rowIndex="3"/>

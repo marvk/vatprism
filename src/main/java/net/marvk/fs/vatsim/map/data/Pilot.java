@@ -2,12 +2,14 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
+import lombok.Value;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimPilot;
 import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +31,8 @@ public class Pilot extends Client implements Data {
     private final ObjectProperty<Airline> airline = new SimpleObjectProperty<>();
     private final StringProperty flightNumber = new SimpleStringProperty();
     private final BooleanProperty flightNumberAvailable = new SimpleBooleanProperty();
+
+    private final ObjectProperty<Eta> eta = new SimpleObjectProperty<>(Eta.UNKNOWN);
 
     public Pilot() {
         flightNumberAvailable.bind(airline.isNotNull().and(flightNumber.isNotNull()));
@@ -65,6 +69,35 @@ public class Pilot extends Client implements Data {
                 verticalSpeed.set(Double.NaN);
             }
         }
+
+        eta.set(calculateEta());
+    }
+
+    private Eta calculateEta() {
+        if (getPosition() == null) {
+            return Eta.UNKNOWN;
+        } else {
+            final Double distanceToDeparture = dist(flightPlan.getDepartureAirport());
+            final Double distanceToArrival = dist(flightPlan.getArrivalAirport());
+
+            if (groundSpeed.get() < 50) {
+                if (distanceToDeparture != null && distanceToDeparture < 8000) {
+                    return Eta.DEPARTING;
+                } else if (distanceToArrival != null && distanceToArrival < 8000) {
+                    return Eta.ARRIVING;
+                } else {
+                    return Eta.UNKNOWN;
+                }
+            } else if (distanceToArrival != null) {
+                return new Eta(GeomUtil.duration(distanceToArrival, groundSpeed.get()));
+            } else {
+                return Eta.UNKNOWN;
+            }
+        }
+    }
+
+    private Double dist(final Airport airport) {
+        return airport == null ? null : GeomUtil.distanceOnMsl(getPosition(), airport.getPosition());
     }
 
     private void parseAirlineAndFlightNumber(final String callsign) {
@@ -179,8 +212,45 @@ public class Pilot extends Client implements Data {
         return verticalSpeed;
     }
 
+    public Eta getEta() {
+        return eta.get();
+    }
+
+    public ReadOnlyObjectProperty<Eta> etaProperty() {
+        return eta;
+    }
+
     @Override
     public <R> R visit(final DataVisitor<R> visitor) {
         return visitor.visit(this);
+    }
+
+    @Value
+    public static class Eta {
+        public static final Eta ARRIVING = new Eta(Duration.ZERO);
+        public static final Eta DEPARTING = new Eta(ChronoUnit.ERAS.getDuration());
+        public static final Eta UNKNOWN = new Eta(ChronoUnit.FOREVER.getDuration());
+
+        Duration duration;
+
+        public boolean isDeparting() {
+            return DEPARTING.equals(this);
+        }
+
+        public boolean isArriving() {
+            return ARRIVING.equals(this);
+        }
+
+        public boolean isUnknown() {
+            return UNKNOWN.equals(this);
+        }
+
+        public boolean isEnRoute() {
+            return !isDeparting() && !isArriving() && !isUnknown();
+        }
+
+        public Duration getDuration() {
+            return duration;
+        }
     }
 }
