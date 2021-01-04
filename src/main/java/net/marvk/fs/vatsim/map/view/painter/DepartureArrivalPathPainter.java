@@ -63,10 +63,10 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
         }
     }
 
-    private void line(final GraphicsContext context, final Point2D p1, final Point2D p2, final int offsetX) {
+    private void line(final GraphicsContext c, final Point2D p1, final Point2D p2, final int offsetX) {
         final Point2D c1 = mapVariables.toCanvas(p1.add(offsetX, 0));
         final Point2D c2 = mapVariables.toCanvas(p2.add(offsetX, 0));
-        context.strokeLine(c1.getX(), c1.getY(), c2.getX(), c2.getY());
+        painterHelper.strokeLine(c, c1.getX(), c1.getY(), c2.getX(), c2.getY());
     }
 
     private enum Type {

@@ -27,23 +27,23 @@ public class SelectionShapePainter extends MapPainter<Object> {
     }
 
     @Override
-    public void paint(final GraphicsContext context, final Object shape) {
+    public void paint(final GraphicsContext c, final Object shape) {
         if (shape instanceof Circle2D) {
             final Circle2D circle = (Circle2D) shape;
-            final Point2D c = circle.getCenter();
+            final Point2D p = circle.getCenter();
             final double d = mapVariables.worldWidthToViewWidth(circle.getRadius()) * 2;
 
             final double rHalf = (d / 2) + 0.5;
 
             if (fill) {
-                context.setFill(fillColor);
-                context.fillOval(c.getX() - rHalf, c.getY() - rHalf, d, d);
+                c.setFill(fillColor);
+                painterHelper.fillOval(c, p.getX() - rHalf, p.getY() - rHalf, d, d);
             }
             if (stroke) {
-                context.setLineDashes((double[]) null);
-                context.setLineWidth(strokeWidth);
-                context.setStroke(strokeColor);
-                context.strokeOval(c.getX() - rHalf, c.getY() - rHalf, d, d);
+                c.setLineDashes((double[]) null);
+                c.setLineWidth(strokeWidth);
+                c.setStroke(strokeColor);
+                painterHelper.strokeOval(c, p.getX() - rHalf, p.getY() - rHalf, d, d);
             }
         }
     }

@@ -83,7 +83,7 @@ public class PilotPainter extends MapPainter<Pilot> {
         c.setStroke(color);
         c.setFill(color);
         c.setLineWidth(1);
-        c.strokeRect((int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
+        painterHelper.strokeRect(c, (int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
         final double speedScale = speedScale(pilot);
@@ -146,6 +146,6 @@ public class PilotPainter extends MapPainter<Pilot> {
         final double x2 = ((int) x + Math.sin(rad) * length);
         final double y2 = ((int) y - Math.cos(rad) * length);
 
-        c.strokeLine(x2 + 0.5, y2 + 0.5, (int) x + 0.5, (int) y + 0.5);
+        painterHelper.strokeLine(c, x2 + 0.5, y2 + 0.5, (int) x + 0.5, (int) y + 0.5);
     }
 }

@@ -73,9 +73,9 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         final int chartWidth = frameMetrics.getMaxFrames();
 
         c.setFill(Color.GRAY.darker().darker());
-        c.fillRect(x, y, frameMetrics.getMaxFrames() + borderWidth * (5 + (showAverages ? 10 : 0)), getChartHeight() + borderWidth * 2);
+        painterHelper.fillRect(c, x, y, frameMetrics.getMaxFrames() + borderWidth * (5 + (showAverages ? 10 : 0)), getChartHeight() + borderWidth * 2);
         c.setFill(Color.GRAY);
-        c.fillRect(xOffset, yOffset, chartWidth, getChartHeight());
+        painterHelper.fillRect(c, xOffset, yOffset, chartWidth, getChartHeight());
 
         c.setFill(Color.PINK);
 
@@ -84,7 +84,8 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
             final long totalNanos = frameTimes.get(i);
             final double totalHeight = height(maxNanos, totalNanos);
             c.setFill(COLORS[0]);
-            c.fillRect(
+            painterHelper.fillRect(
+                    c,
                     xOffset + offset + i,
                     heightInCanvas(yOffset, totalHeight),
                     1,
@@ -102,7 +103,8 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
                 final double currentHeight = height(maxNanos, currentNanos);
 
                 c.setFill(COLORS[j]);
-                c.fillRect(
+                painterHelper.fillRect(
+                        c,
                         xOffset + offset + i,
                         heightInCanvas(yOffset, currentHeight) - barOffset,
                         1,
@@ -137,11 +139,11 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
                 c.setFill(COLORS[i]);
                 final double yCur = yOffset + metrics.size() * 20 - i * 20;
                 final double xCur = borderWidth * 10;
-                c.fillText(name, xOffset + chartWidth + xCur, yCur);
+                painterHelper.fillText(c, name, xOffset + chartWidth + xCur, yCur);
 
                 c.setTextAlign(TextAlignment.LEFT);
                 c.setFill(color);
-                c.fillText(nanoString(value), xOffset + chartWidth + xCur + 2, yCur);
+                painterHelper.fillText(c, nanoString(value), xOffset + chartWidth + xCur + 2, yCur);
             }
         }
 
@@ -186,7 +188,8 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private void drawLine(final GraphicsContext c, final double value, final long max, final double xOffset, final double yOffset, final int width, final Color color) {
         c.setFill(color);
         final double averageY = heightInCanvas(yOffset, height(max, value));
-        c.fillRect(
+        painterHelper.fillRect(
+                c,
                 xOffset,
                 averageY,
                 width,
@@ -208,8 +211,8 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         return (toMillis(nanos) / toMillis(maxNanos)) * getChartHeight();
     }
 
-    private static void drawLabel(final GraphicsContext c, final double nanos, final double x, final double y) {
-        c.fillText(nanoString(nanos), x, y);
+    private void drawLabel(final GraphicsContext c, final double nanos, final double x, final double y) {
+        painterHelper.fillText(c, nanoString(nanos), x, y);
     }
 
     private static String nanoString(final double nanos) {

@@ -113,18 +113,18 @@ public class AirportPainter extends MapPainter<Airport> {
 
                     if (paintApproachCircle) {
                         c.setStroke(appCircleColor);
-                        c.strokeOval(x - rHalf, y - rHalf, r, r);
+                        painterHelper.strokeOval(c, x - rHalf, y - rHalf, r, r);
                     }
 
                     if (paintApproachLabel && text) {
                         c.setFill(appCircleColor);
-                        c.fillText(icao, x, y - rHalf);
+                        painterHelper.fillText(c, icao, x, y - rHalf);
                     }
                 }
             }
 
             c.setFill(textColor);
-            c.fillRect(x, y, 1, 1);
+            painterHelper.fillRect(c, x, y, 1, 1);
 
             c.setTextBaseline(VPos.CENTER);
             if (paintControllers) {
@@ -140,14 +140,19 @@ public class AirportPainter extends MapPainter<Airport> {
                     c.setStroke(typesBorderColor);
                     final double xCur = labelsX(x, n, i);
                     final double yCur = labelsY(y);
-                    c.fillRect(xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
+                    painterHelper.fillRect(c, xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
 
                     if (type != ControllerType.APP) {
                         c.setFill(typesLabelColor);
-                        c.fillText(type.toString().substring(0, 1), xCur + TYPES_WIDTH / 2.0, yCur + TYPES_WIDTH / 2.0);
+                        painterHelper.fillText(
+                                c,
+                                type.toString().substring(0, 1),
+                                xCur + TYPES_WIDTH / 2.0,
+                                yCur + TYPES_WIDTH / 2.0
+                        );
                     }
 
-                    c.strokeRect(xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
+                    painterHelper.strokeRect(c, xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
                 }
 
                 if (paintApproach && !paintApproachCircle) {
@@ -155,7 +160,7 @@ public class AirportPainter extends MapPainter<Airport> {
                     final double xCur = labelsX(x, n, 0);
                     final double yCur = labelsY(y);
 
-                    c.strokeRect(xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+                    painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
                 }
             }
 

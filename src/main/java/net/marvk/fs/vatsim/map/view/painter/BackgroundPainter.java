@@ -16,6 +16,6 @@ public class BackgroundPainter extends MapPainter<Void> {
     @Override
     public void paint(final GraphicsContext c, final Void unused) {
         c.setFill(color);
-        c.fillRect(0, 0, mapVariables.getViewWidth(), mapVariables.getViewHeight());
+        painterHelper.fillRect(c, 0, 0, mapVariables.getViewWidth(), mapVariables.getViewHeight());
     }
 }

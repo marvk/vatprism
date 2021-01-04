@@ -78,7 +78,8 @@ public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
             if (polyLabel != null) {
                 c.setTextAlign(TextAlignment.CENTER);
                 c.setTextBaseline(VPos.CENTER);
-                c.fillText(
+                painterHelper.fillText(
+                        c,
                         "%s%s".formatted(firb.getIcao(), firb.isOceanic() ? " Oceanic" : ""),
                         mapVariables.toCanvasX(polyLabel.getX()),
                         mapVariables.toCanvasY(polyLabel.getY())

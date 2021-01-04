@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
+import net.marvk.fs.vatsim.map.view.map.PainterMetric;
 
 import java.util.Objects;
 
@@ -14,4 +15,7 @@ public abstract class MapPainter<T> extends DisableablePainter<T> {
         this.painterHelper = new PainterHelper(mapVariables);
     }
 
+    public PainterMetric getMapVariables() {
+        return painterHelper.metricSnapshot();
+    }
 }

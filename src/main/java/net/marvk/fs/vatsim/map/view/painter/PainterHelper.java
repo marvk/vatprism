@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
+import net.marvk.fs.vatsim.map.view.map.PainterMetric;
 
 import java.util.List;
 
@@ -16,8 +17,7 @@ public class PainterHelper {
     private static final double MIN_DISTANCE = 2;
     private static final double MIN_SQUARE_DISTANCE = squareThreshold(MIN_DISTANCE);
 
-    private static final double JUMP_THRESHOLD = 128;
-    private static final double JUMP_THRESHOLD_SQUARED = squareThreshold(JUMP_THRESHOLD);
+    private PainterMetric metric = new PainterMetric();
 
     private static double squareThreshold(final double value) {
         return value <= 0 ? Integer.MIN_VALUE : value * value;
@@ -27,6 +27,12 @@ public class PainterHelper {
 
     public PainterHelper(final MapVariables mapVariables) {
         this.mapVariables = mapVariables;
+    }
+
+    public PainterMetric metricSnapshot() {
+        final PainterMetric result = this.metric;
+        this.metric = new PainterMetric();
+        return result;
     }
 
     public void strokePolygons(final GraphicsContext c, final Polygon polygon) {
@@ -67,12 +73,15 @@ public class PainterHelper {
 
         if (polyline) {
             if (!fill) {
+                metric.getStrokePolyline().increment();
                 c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         } else {
             if (fill) {
+                metric.getFillPolygon().increment();
                 c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             } else {
+                metric.getStrokePolygon().increment();
                 c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
             }
         }
@@ -101,47 +110,22 @@ public class PainterHelper {
         double lastDrawnX = Double.MAX_VALUE;
         double lastDrawnY = Double.MAX_VALUE;
 
-        double lastX = Double.NaN;
-        double lastY = Double.NaN;
-
         int numPoints = 0;
-
-        int currentPoints = 0;
-//        double currentXSum = 0;
-//        double currentYSum = 0;
 
         for (int i = 0; i < ring.numPoints(); i++) {
             final double x = mapVariables.toCanvasX(ring.getPointsX()[i] + offsetX);
             final double y = mapVariables.toCanvasY(ring.getPointsY()[i]);
 
-            currentPoints += 1;
-//            currentXSum += x;
-//            currentYSum += y;
-
             final double squareDistance = GeomUtil.squareDistance(lastDrawnX, lastDrawnY, x, y);
 
             if (i == 0 || i == ring.numPoints() - 1 || squareDistance > MIN_SQUARE_DISTANCE) {
-//                if (currentPoints > 1 && squareDistance > JUMP_THRESHOLD_SQUARED) {
-//                    mapVariables.setXBuf(numPoints, lastX);
-//                    mapVariables.setYBuf(numPoints, lastY);
-//
-//                    numPoints += 1;
-//                }
-
                 mapVariables.setBuf(indexOffset + numPoints, x, y);
 
                 numPoints += 1;
 
                 lastDrawnX = x;
                 lastDrawnY = y;
-
-                currentPoints = 0;
-//                currentXSum = 0;
-//                currentYSum = 0;
             }
-
-            lastX = x;
-            lastY = y;
         }
 
         return numPoints;
@@ -192,15 +176,41 @@ public class PainterHelper {
 
             final double xRect = Math.floor(x - width / 2.0);
             final double yRect = Math.ceil(y - 1 - baselineOffset) + 1;
-            c.fillRect(xRect, yRect, width + 1, height);
+            fillRect(c, xRect, yRect, width + 1, height);
         }
 
-        fillText(c, x, y, text, textColor, baseline);
+        c.setTextBaseline(baseline);
+        c.setFill(textColor);
+        fillText(c, text, x, y);
     }
 
-    public void fillText(final GraphicsContext c, final double x, final double y, final String text, final Color color, final VPos baseline) {
-        c.setFill(color);
-        c.setTextBaseline(baseline);
+    public void fillText(final GraphicsContext c, final String text, final double x, final double y) {
+        metric.getFillText().increment();
         c.fillText(text, x, y);
+    }
+
+    public void fillOval(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        metric.getFillOval().increment();
+        c.fillOval(x, y, w, h);
+    }
+
+    public void strokeOval(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        metric.getStrokeOval().increment();
+        c.strokeOval(x, y, w, h);
+    }
+
+    public void strokeLine(final GraphicsContext c, final double x1, final double y1, final double x2, final double y2) {
+        metric.getStrokeLine().increment();
+        c.strokeLine(x1, y1, x2, y2);
+    }
+
+    public void strokeRect(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        metric.getStrokeRect().increment();
+        c.strokeRect(x, y, w, h);
+    }
+
+    public void fillRect(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        metric.getFillRect().increment();
+        c.fillRect(x, y, w, h);
     }
 }
