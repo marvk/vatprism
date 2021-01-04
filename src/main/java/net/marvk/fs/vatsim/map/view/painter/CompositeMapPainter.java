@@ -1,6 +1,10 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import net.marvk.fs.vatsim.map.view.map.PainterMetric;
+
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class CompositeMapPainter<T> extends DisableablePainter<T> {
     private Collection<Painter<?>> painters = null;
@@ -13,6 +17,16 @@ public abstract class CompositeMapPainter<T> extends DisableablePainter<T> {
         }
 
         return painters;
+    }
+
+    @Override
+    public PainterMetric getMetricsSnapshot() {
+        final List<PainterMetric> metrics = getPainters()
+                .stream()
+                .map(Painter::getMetricsSnapshot)
+                .collect(Collectors.toList());
+
+        return PainterMetric.ofMetrics(metrics);
     }
 
     @Override

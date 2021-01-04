@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
 import javafx.scene.canvas.GraphicsContext;
+import net.marvk.fs.vatsim.map.view.map.PainterMetric;
 
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -38,4 +39,6 @@ public interface Painter<T> {
     }
 
     boolean isEnabled();
+
+    PainterMetric getMetricsSnapshot();
 }

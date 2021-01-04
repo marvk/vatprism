@@ -60,7 +60,7 @@ public class PainterHelper {
     }
 
     private void drawPolygon(final GraphicsContext c, final Polygon polygon, final double offsetX, final boolean polyline, final boolean fill, final boolean simplify) {
-        if (!mapVariables.isIntersectingWorldView(shiftedBounds(polygon, offsetX))) {
+        if (!mapVariables.isRectIntersectingWorldView(shiftedBounds(polygon, offsetX))) {
             return;
         }
 
@@ -200,16 +200,28 @@ public class PainterHelper {
     }
 
     public void strokeLine(final GraphicsContext c, final double x1, final double y1, final double x2, final double y2) {
+        if (!mapVariables.isLineIntersectingCanvasView(x1, y2, x2, y2)) {
+            return;
+        }
+
         metric.getStrokeLine().increment();
         c.strokeLine(x1, y1, x2, y2);
     }
 
     public void strokeRect(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        if (!mapVariables.isRectIntersectingCanvasView(x, y, w, h)) {
+            return;
+        }
+
         metric.getStrokeRect().increment();
         c.strokeRect(x, y, w, h);
     }
 
     public void fillRect(final GraphicsContext c, final double x, final double y, final double w, final double h) {
+        if (!mapVariables.isRectIntersectingCanvasView(x, y, w, h)) {
+            return;
+        }
+
         metric.getFillRect().increment();
         c.fillRect(x, y, w, h);
     }

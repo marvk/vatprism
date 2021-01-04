@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
 import javafx.scene.canvas.GraphicsContext;
+import net.marvk.fs.vatsim.map.view.map.PainterMetric;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +16,7 @@ public final class PainterExecutor<T> {
     private final Predicate<T> filter;
 
     private long lastDurationNanos = 0L;
+    private PainterMetric lastPainterMetric = new PainterMetric();
 
     private PainterExecutor(final String name, final Painter<T> painter) {
         this(name, painter, () -> Collections.singletonList(null), e -> true);
@@ -40,6 +42,7 @@ public final class PainterExecutor<T> {
             }
         }
         painter.afterAllRender();
+        lastPainterMetric = painter.getMetricsSnapshot();
         lastDurationNanos = System.nanoTime() - start;
     }
 
@@ -53,6 +56,10 @@ public final class PainterExecutor<T> {
 
     public long getLastDurationNanos() {
         return lastDurationNanos;
+    }
+
+    public PainterMetric getLastPainterMetric() {
+        return lastPainterMetric;
     }
 
     public static <T> PainterExecutor<T> of(final String name, final Painter<T> painter) {

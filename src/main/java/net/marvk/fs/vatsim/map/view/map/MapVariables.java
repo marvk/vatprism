@@ -33,6 +33,8 @@ public class MapVariables {
     private Rectangle2D worldView = new Rectangle2D(0, 0, 0, 0);
     private Rectangle2D worldViewExpanded = new Rectangle2D(0, 0, 0, 0);
 
+    private Rectangle2D canvasView;
+
     public MapVariables() {
         this(512);
     }
@@ -86,8 +88,16 @@ public class MapVariables {
         return worldViewExpanded.contains(worldPosition);
     }
 
-    public boolean isIntersectingWorldView(final Rectangle2D worldRectangle) {
+    public boolean isRectIntersectingWorldView(final Rectangle2D worldRectangle) {
         return worldView.intersects(worldRectangle);
+    }
+
+    public boolean isRectIntersectingCanvasView(final double x, final double y, final double w, final double h) {
+        return canvasView.intersects(x, y, w, h);
+    }
+
+    public boolean isLineIntersectingCanvasView(final double x1, final double y1, final double x2, final double y2) {
+        return isRectIntersectingCanvasView(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1 - x2), Math.abs(y1 - y2));
     }
 
     public double aspectScaleY() {
@@ -121,6 +131,13 @@ public class MapVariables {
                 minY,
                 maxX - minX,
                 maxY - minY
+        );
+
+        this.canvasView = new Rectangle2D(
+                0,
+                0,
+                viewWidth,
+                viewHeight
         );
 
         final double expandedWidth = EXPANDED_WIDTH / scale;

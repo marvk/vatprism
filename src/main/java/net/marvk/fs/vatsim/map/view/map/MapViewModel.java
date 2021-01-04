@@ -14,6 +14,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class MapViewModel implements ViewModel {
     private final DoubleProperty scale = new SimpleDoubleProperty(1);
     private final ReadOnlyObjectWrapper<Point2D> worldCenter = new ReadOnlyObjectWrapper<>(new Point2D(0, 0));
@@ -352,6 +354,21 @@ public class MapViewModel implements ViewModel {
         }
 
         frameMetrics.getMetric("Total").append(totalFrameTimeNanos);
+
+        painterMetricsSnapshot().forEach(this::logCounter);
+    }
+
+    private void logCounter(final PainterMetric.Counter counter) {
+        log.trace("%d calls to %s".formatted(counter.getCount(), counter.getName()));
+    }
+
+    private PainterMetric painterMetricsSnapshot() {
+        final List<PainterMetric> painterMetrics = painterExecutors.stream()
+                                                                   .map(PainterExecutor::getLastPainterMetric)
+                                                                   .collect(Collectors.toList());
+
+        final PainterMetric painterMetric = PainterMetric.ofMetrics(painterMetrics);
+        return painterMetric;
     }
 
     private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {
