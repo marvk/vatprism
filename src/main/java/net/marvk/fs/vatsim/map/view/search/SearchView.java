@@ -14,6 +14,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -149,7 +150,14 @@ public class SearchView implements FxmlView<SearchViewModel> {
             ));
             setStyle("-fx-padding: 0 0 0 5");
 
-            setOnMouseClicked(e -> viewModel.setDataDetail(data.get()));
+            setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setDataDetail(data.get());
+                    if (e.isControlDown()) {
+                        viewModel.goTo(data.get());
+                    }
+                }
+            });
             cursorProperty().bind(Bindings.createObjectBinding(
                     () -> data.get() == null ? Cursor.DEFAULT : Cursor.HAND,
                     data

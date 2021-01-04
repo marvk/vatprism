@@ -248,3 +248,7 @@ modules.xml
 
 
 # End of https://www.toptal.com/developers/gitignore/api/java,jetbrains,jetbrains+iml,jetbrains+all,code-java
+
+src/main/resources/net/marvk/fs/vatsim/map/world/**/*.html
+
+src/main/resources/net/marvk/fs/vatsim/map/world/**/*VERSION.txt
