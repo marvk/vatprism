@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
+    private static final int MULTI_DRAW_BOUND = 20;
     @Parameter("Fill Color")
     private final Color fillColor;
     @Parameter("Color")
@@ -72,19 +73,32 @@ public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
         }
 
         if (label) {
-            c.setFill(color);
-            final Point2D polyLabel = polygon.getExteriorRing().getPolyLabel();
-
-            if (polyLabel != null) {
-                c.setTextAlign(TextAlignment.CENTER);
-                c.setTextBaseline(VPos.CENTER);
-                painterHelper.fillText(
-                        c,
-                        "%s%s".formatted(firb.getIcao(), firb.isOceanic() ? " Oceanic" : ""),
-                        mapVariables.toCanvasX(polyLabel.getX()),
-                        mapVariables.toCanvasY(polyLabel.getY())
-                );
+            final double centerX = mapVariables.toCanvasX(firb.getPolygon().getExteriorRing().getPolyLabel().getX());
+            if (centerX - MULTI_DRAW_BOUND < 0) {
+                drawLabel(c, firb, 360);
             }
+
+            if (centerX + MULTI_DRAW_BOUND > mapVariables.getViewWidth()) {
+                drawLabel(c, firb, -360);
+            }
+
+            drawLabel(c, firb, 0);
+        }
+    }
+
+    private void drawLabel(final GraphicsContext c, final FlightInformationRegionBoundary firb, final double offsetX) {
+        c.setFill(color);
+        final Point2D polyLabel = firb.getPolygon().getExteriorRing().getPolyLabel();
+
+        if (polyLabel != null) {
+            c.setTextAlign(TextAlignment.CENTER);
+            c.setTextBaseline(VPos.CENTER);
+            painterHelper.fillText(
+                    c,
+                    "%s%s".formatted(firb.getIcao(), firb.isOceanic() ? " Oceanic" : ""),
+                    mapVariables.toCanvasX(polyLabel.getX() + offsetX),
+                    mapVariables.toCanvasY(polyLabel.getY())
+            );
         }
     }
 

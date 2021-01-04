@@ -77,105 +77,127 @@ public class AirportPainter extends MapPainter<Airport> {
     @Override
     public void paint(final GraphicsContext c, final Airport airport) {
         final Point2D position = airport.getPosition();
-        if (!mapVariables.isContainedInExpandedWorldView(position)) {
+        final double xOffset = xOffset(position);
+
+        if (!mapVariables.isContainedInExpandedWorldView(position.getX() + xOffset, position.getY())) {
             return;
         }
 
-        if (paintAll || airport.hasControllers() || (paintUncontrolledButDestinationsOrArrivals && (airport.hasArrivals() || airport
-                .hasDepartures()))) {
-            final Point2D point = airport.getPosition();
-            final double x = (int) mapVariables.toCanvasX(point.getX());
-            final double y = (int) mapVariables.toCanvasY(point.getY());
+        if (!paintAll &&
+                !airport.hasControllers() &&
+                (!paintUncontrolledButDestinationsOrArrivals || (!airport.hasArrivals() && !airport.hasDepartures()))
+        ) {
+            return;
+        }
 
-            final List<ControllerType> types = airport
-                    .getControllers()
-                    .stream()
-                    .map(Controller::getControllerType)
-                    .distinct()
-                    .sorted(ControllerType.COMPARATOR)
-                    .collect(Collectors.toCollection(ArrayList::new));
+        draw(c, airport, xOffset);
+    }
 
-            c.setTextAlign(TextAlignment.CENTER);
-            c.setTextBaseline(VPos.BOTTOM);
-            c.setLineDashes(null);
-            c.setLineWidth(1);
+    private void draw(final GraphicsContext c, final Airport airport, final double xOffset) {
+        final Point2D point = airport.getPosition();
+        final double x = (int) mapVariables.toCanvasX(point.getX() + xOffset);
+        final double y = (int) mapVariables.toCanvasY(point.getY());
 
-            final String icao = airport.getIcao();
+        final List<ControllerType> types = airport
+                .getControllers()
+                .stream()
+                .map(Controller::getControllerType)
+                .distinct()
+                .sorted(ControllerType.COMPARATOR)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-            final boolean paintApproachCircle = mapVariables.getScale() > 32;
-            final boolean paintApproachLabel = mapVariables.getScale() > 32;
-            final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
+        c.setTextAlign(TextAlignment.CENTER);
+        c.setTextBaseline(VPos.BOTTOM);
+        c.setLineDashes(null);
+        c.setLineWidth(1);
 
-            if (paintControllers) {
-                if (paintApproach) {
-                    final double r = APPROACH_RADIUS * mapVariables.getScale();
-                    final double rHalf = r / 2.0;
+        final String icao = airport.getIcao();
 
-                    if (paintApproachCircle) {
-                        c.setStroke(appCircleColor);
-                        painterHelper.strokeOval(c, x - rHalf, y - rHalf, r, r);
-                    }
+        final boolean paintApproachCircle = mapVariables.getScale() > 32;
+        final boolean paintApproachLabel = mapVariables.getScale() > 32;
+        final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
 
-                    if (paintApproachLabel && text) {
-                        c.setFill(appCircleColor);
-                        painterHelper.fillText(c, icao, x, y - rHalf);
-                    }
-                }
-            }
+        if (paintControllers) {
+            if (paintApproach) {
+                final double r = APPROACH_RADIUS * mapVariables.getScale();
+                final double rHalf = r / 2.0;
 
-            c.setFill(textColor);
-            painterHelper.fillRect(c, x, y, 1, 1);
-
-            c.setTextBaseline(VPos.CENTER);
-            if (paintControllers) {
-                if (paintApproach && types.isEmpty() && !paintApproachCircle) {
-                    types.add(ControllerType.APP);
-                }
-
-                final int n = types.size();
-
-                for (int i = 0; i < n; i++) {
-                    final ControllerType type = types.get(i);
-                    c.setFill(color(type));
-                    c.setStroke(typesBorderColor);
-                    final double xCur = labelsX(x, n, i);
-                    final double yCur = labelsY(y);
-                    painterHelper.fillRect(c, xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
-
-                    if (type != ControllerType.APP) {
-                        c.setFill(typesLabelColor);
-                        painterHelper.fillText(
-                                c,
-                                type.toString().substring(0, 1),
-                                xCur + TYPES_WIDTH / 2.0,
-                                yCur + TYPES_WIDTH / 2.0
-                        );
-                    }
-
-                    painterHelper.strokeRect(c, xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
-                }
-
-                if (paintApproach && !paintApproachCircle) {
+                if (paintApproachCircle) {
                     c.setStroke(appCircleColor);
-                    final double xCur = labelsX(x, n, 0);
-                    final double yCur = labelsY(y);
+                    painterHelper.strokeOval(c, x - rHalf, y - rHalf, r, r);
+                }
 
-                    painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+                if (paintApproachLabel && text) {
+                    c.setFill(appCircleColor);
+                    painterHelper.fillText(c, icao, x, y - rHalf);
                 }
             }
+        }
 
-            if (text) {
-                painterHelper.fillTextWithBackground(
-                        c,
-                        x,
-                        y - 10,
-                        icao,
-                        paintBackground,
-                        VPos.CENTER,
-                        textColor,
-                        backgroundColor
-                );
+        c.setFill(textColor);
+        painterHelper.fillRect(c, x, y, 1, 1);
+
+        c.setTextBaseline(VPos.CENTER);
+        if (paintControllers) {
+            if (paintApproach && types.isEmpty() && !paintApproachCircle) {
+                types.add(ControllerType.APP);
             }
+
+            final int n = types.size();
+
+            for (int i = 0; i < n; i++) {
+                final ControllerType type = types.get(i);
+                c.setFill(color(type));
+                c.setStroke(typesBorderColor);
+                final double xCur = labelsX(x, n, i);
+                final double yCur = labelsY(y);
+                painterHelper.fillRect(c, xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
+
+                if (type != ControllerType.APP) {
+                    c.setFill(typesLabelColor);
+                    painterHelper.fillText(
+                            c,
+                            type.toString().substring(0, 1),
+                            xCur + TYPES_WIDTH / 2.0,
+                            yCur + TYPES_WIDTH / 2.0
+                    );
+                }
+
+                painterHelper.strokeRect(c, xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
+            }
+
+            if (paintApproach && !paintApproachCircle) {
+                c.setStroke(appCircleColor);
+                final double xCur = labelsX(x, n, 0);
+                final double yCur = labelsY(y);
+
+                painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+            }
+        }
+
+        if (text) {
+            painterHelper.fillTextWithBackground(
+                    c,
+                    x,
+                    y - 10,
+                    icao,
+                    paintBackground,
+                    VPos.CENTER,
+                    textColor,
+                    backgroundColor
+            );
+        }
+    }
+
+    private double xOffset(final Point2D point) {
+        final double centerX = mapVariables.toCanvasX(point.getX());
+
+        if (centerX < 0) {
+            return 360;
+        } else if (centerX > mapVariables.getViewWidth()) {
+            return -360;
+        } else {
+            return 0;
         }
     }
 

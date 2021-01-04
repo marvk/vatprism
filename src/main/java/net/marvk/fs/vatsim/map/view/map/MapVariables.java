@@ -81,11 +81,19 @@ public class MapVariables {
     }
 
     public boolean isContainedInWorldView(final Point2D worldPosition) {
-        return worldView.contains(worldPosition);
+        return isContainedInWorldView(worldPosition.getX(), worldPosition.getY());
+    }
+
+    public boolean isContainedInWorldView(final double x, final double y) {
+        return worldView.contains(x, y);
     }
 
     public boolean isContainedInExpandedWorldView(final Point2D worldPosition) {
-        return worldViewExpanded.contains(worldPosition);
+        return isContainedInExpandedWorldView(worldPosition.getX(), worldPosition.getY());
+    }
+
+    public boolean isContainedInExpandedWorldView(final double x, final double y) {
+        return worldViewExpanded.contains(x, y);
     }
 
     public boolean isRectIntersectingWorldView(final Rectangle2D worldRectangle) {

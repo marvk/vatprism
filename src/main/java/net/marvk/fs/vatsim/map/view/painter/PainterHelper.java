@@ -185,6 +185,11 @@ public class PainterHelper {
     }
 
     public void fillText(final GraphicsContext c, final String text, final double x, final double y) {
+        // TODO temporary fix
+        if (!mapVariables.isRectIntersectingCanvasView(x - 150, y - 150, 300, 300)) {
+            return;
+        }
+
         metric.getFillText().increment();
         c.fillText(text, x, y);
     }
