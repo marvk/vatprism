@@ -140,15 +140,14 @@ public class CallsignParser {
             }
         }
 
-        final FlightInformationRegionBoundary boundary = firs
+        return firs
                 .get(0)
                 .boundaries()
                 .stream()
                 .filter(e -> !e.isOceanic())
                 .findFirst()
-                .get();
-
-        return new FirResult(firs.get(0), boundary);
+                .map(e -> new FirResult(firs.get(0), e))
+                .orElse(FirResult.EMPTY);
     }
 
     private UpperInformationRegion getUir(final VatsimClient vatsimClient, final String identifier) {
