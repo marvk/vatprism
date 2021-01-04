@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+    <Properties>
+        <Property
+                name="LOG_PATTERN"
+                value="%d{DEFAULT} %style{%highlight{%-5level}{TRACE=white}}{reverse} [%10.10r] --- [%25t] %style{%-45.45logger{1.}}{magenta} : %style{%msg%n}{dim}"/>
+        <Property
+                name="LOG_PATTERN_NO_ANSI"
+                value="%d{DEFAULT} %-5level [%10.10r] --- [%25t] %-45.45logger{1.} : %msg%n"/>
+    </Properties>
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <!--            <PatternLayout pattern="%d [%t] %highlight{%-5level: %msg%n%throwable}{TRACE=white}" disableAnsi="false"/>-->
+        <Console
+                name="Console"
+                target="SYSTEM_OUT">
             <PatternLayout
-                    pattern="%d{DEFAULT} %style{%highlight{%-5level}{TRACE=white}}{reverse} [%10.10r] --- [%25t] %style{%-45.45logger{1.}}{magenta} : %style{%msg%n}{dim}"
+                    pattern="${LOG_PATTERN}"
                     disableAnsi="false"/>
         </Console>
+        <RollingFile
+                name="File"
+                fileName="log/vat-map.log"
+                filePattern="log/vat-map.%d{yyyy-MM-dd-HH-mm-ss}.log">
+            <PatternLayout
+                    pattern="${LOG_PATTERN_NO_ANSI}"
+                    disableAnsi="true"
+                    noConsoleNoAnsi="true"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="all">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
         </Root>
     </Loggers>
 </Configuration>

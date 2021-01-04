@@ -55,6 +55,8 @@ public class Polygon {
     }
 
     public <E> Polygon(final List<E> elements, final CoordinateExtractor<E> xExtractor, final CoordinateExtractor<E> yExtractor, final ToIntFunction<E> lengthSupplier, final String name) {
+        this.name = name;
+
         this.exteriorRing = new Ring(elements.get(0), xExtractor, yExtractor, lengthSupplier);
 
         this.holeRings = elements
@@ -64,8 +66,6 @@ public class Polygon {
                 .collect(Collectors.toUnmodifiableList());
 
         this.numPoints = exteriorRing.numPoints() + holeRings.stream().mapToInt(Ring::numPoints).sum();
-
-        this.name = name;
     }
 
     private String name() {
