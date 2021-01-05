@@ -14,9 +14,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 @Log4j2
 public class CallsignParser {
+    private static final Pattern UNDERSCORES = Pattern.compile("_+");
     private final AirportRepository airportRepository;
     private final FlightInformationRegionRepository flightInformationRegionRepository;
     private final UpperInformationRegionRepository upperInformationRegionRepository;
@@ -44,7 +46,7 @@ public class CallsignParser {
         final String callsign = controller.getCallsign();
         final String cid = controller.getCid();
 
-        final String[] sections = callsign.split("_");
+        final String[] sections = UNDERSCORES.split(callsign);
         final int n = sections.length;
 
         final ControllerType defaultControllerType = ControllerType.OBS;
