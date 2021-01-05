@@ -31,14 +31,16 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private final AirportRepository airportRepository;
     private final CallsignParser callsignParser;
     private final ClientTypeMapper clientTypeMapper;
+    private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
     private RTree<Pilot, Point> rTree = RTree.create();
 
     @Inject
-    public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser, final ClientTypeMapper clientTypeMapper) {
+    public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser, final ClientTypeMapper clientTypeMapper, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository) {
         super(vatsimApi);
         this.airportRepository = airportRepository;
         this.callsignParser = callsignParser;
         this.clientTypeMapper = clientTypeMapper;
+        this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
 
         // yikes, but it works, sooo...
         pilots = new ReadOnlyListWrapper<Pilot>(new FilteredList(list(), e -> e instanceof Pilot));
@@ -85,6 +87,9 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
             if (flightPlan != null) {
                 setAirports(pilot, flightPlan);
             }
+            final List<FlightInformationRegionBoundary> firbs =
+                    flightInformationRegionBoundaryRepository.getByPosition(((Pilot) toAdd).getPosition());
+            ((Pilot) toAdd).flightInformationRegionBoundariesWritable().setAll(firbs);
         }
     }
 
@@ -103,11 +108,14 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     @Override
     protected void onRemove(final Client toRemove) {
         if (toRemove instanceof Controller) {
-            ((Controller) toRemove).setFromCallsignParserResult(CallsignParser.Result.EMPTY);
+            final Controller controller = (Controller) toRemove;
+            controller.setFromCallsignParserResult(CallsignParser.Result.EMPTY);
         } else if (toRemove instanceof Pilot) {
             final Pilot pilot = (Pilot) toRemove;
             pilot.getFlightPlan().departureAirportPropertyWritable().set(null);
             pilot.getFlightPlan().arrivalAirportPropertyWritable().set(null);
+            pilot.getFlightPlan().alternativeAirportPropertyWritable().set(null);
+            pilot.flightInformationRegionBoundariesWritable().clear();
         }
     }
 

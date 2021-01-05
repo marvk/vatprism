@@ -1,9 +1,13 @@
 package net.marvk.fs.vatsim.map.view.datadetail.pilotdetail;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegion;
+import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.EtaToStringMapper;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
@@ -16,7 +20,10 @@ import java.util.List;
 
 public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pilot>, Pilot> {
     private static final EtaToStringMapper ETA_MAPPER = new EtaToStringMapper();
-
+    @FXML
+    private Label firName;
+    @FXML
+    private Label firIcao;
     @FXML
     private Label eta;
     @FXML
@@ -58,7 +65,9 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
                 squawk,
                 altitude,
                 verticalSpeed,
-                eta
+                eta,
+                firIcao,
+                firName
         );
     }
 
@@ -81,6 +90,40 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
                 () -> fpmString(pilot),
                 pilot.verticalSpeedProperty())
         );
+        firIcao.textProperty().bind(Bindings.createStringBinding(
+                () -> firIcao(pilot), pilot.flightInformationRegionBoundaries()
+        ));
+
+        firName.textProperty().bind(Bindings.createStringBinding(
+                () -> firName(pilot), pilot.flightInformationRegionBoundaries()
+        ));
+    }
+
+    private String firIcao(final Pilot pilot) {
+        final ReadOnlyListProperty<FlightInformationRegionBoundary> firbs = pilot.flightInformationRegionBoundaries();
+        if (firbs.isEmpty()) {
+            firIcao.getStyleClass().remove("hyperlink-label");
+            return "????";
+        } else {
+            firIcao.getStyleClass().add("hyperlink-label");
+            return firbs.get(0).getIcao();
+        }
+    }
+
+    private String firName(final Pilot pilot) {
+        final ReadOnlyListProperty<FlightInformationRegionBoundary> firbs =
+                pilot.flightInformationRegionBoundaries();
+        if (firbs.isEmpty()) {
+            return "";
+        } else {
+            final ReadOnlyListProperty<FlightInformationRegion> firs =
+                    firbs.get(0).getFlightInformationRegions();
+            if (firs.isEmpty()) {
+                return "";
+            } else {
+                return firs.get(0).getName();
+            }
+        }
     }
 
     private static String fpmString(final Pilot pilot) {
@@ -98,5 +141,15 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         super.clear(oldValue);
         flightPlanController.getViewModel().setData(null);
         clientController.getViewModel().setData(null);
+    }
+
+    public void goToFir(final MouseEvent event) {
+        final Pilot data = viewModel.getData();
+        if (data != null) {
+            final ReadOnlyListProperty<FlightInformationRegionBoundary> boundaries = data.flightInformationRegionBoundaries();
+            if (!boundaries.isEmpty()) {
+                viewModel.setDataDetail(boundaries.get(0));
+            }
+        }
     }
 }

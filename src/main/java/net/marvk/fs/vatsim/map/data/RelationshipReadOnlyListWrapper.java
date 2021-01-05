@@ -5,6 +5,7 @@ import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,6 +53,13 @@ public class RelationshipReadOnlyListWrapper<E> extends ReadOnlyListWrapper<E> {
         removeFrom.accept((E) obj);
 
         return remove;
+    }
+
+    @Override
+    public boolean setAll(final Collection<? extends E> elements) {
+        clear();
+        elements.forEach(this::add);
+        return true;
     }
 
     boolean regularAdd(final E e) {

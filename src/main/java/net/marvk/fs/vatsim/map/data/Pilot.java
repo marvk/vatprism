@@ -34,6 +34,9 @@ public class Pilot extends Client implements Data {
 
     private final ObjectProperty<Eta> eta = new SimpleObjectProperty<>(Eta.UNKNOWN);
 
+    private final ReadOnlyListWrapper<FlightInformationRegionBoundary> firbs =
+            RelationshipReadOnlyListWrapper.withOtherList(this, FlightInformationRegionBoundary::pilots);
+
     public Pilot() {
         flightNumberAvailable.bind(airline.isNotNull().and(flightNumber.isNotNull()));
     }
@@ -218,6 +221,14 @@ public class Pilot extends Client implements Data {
 
     public ReadOnlyObjectProperty<Eta> etaProperty() {
         return eta;
+    }
+
+    SimpleListProperty<FlightInformationRegionBoundary> flightInformationRegionBoundariesWritable() {
+        return firbs;
+    }
+
+    public ReadOnlyListProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaries() {
+        return firbs.getReadOnlyProperty();
     }
 
     @Override
