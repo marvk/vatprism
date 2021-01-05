@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.String?>
@@ -30,6 +30,9 @@
                                 <String fx:value="hyperlink-label"/>
                             </styleClass>
                         </Label>
+                        <Label text="Country" GridPane.rowIndex="2"/>
+                        <Label fx:id="country" text="Label" GridPane.columnIndex="1"
+                               GridPane.rowIndex="2"/>
                     </children>
                 </GridPane>
             </contentNode>

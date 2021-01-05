@@ -18,7 +18,10 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
     private final IntegerProperty trafficCount = new SimpleIntegerProperty();
 
     private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundary =
-            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::getAirportsWritable);
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::airportsWritable);
+
+    private final ReadOnlyObjectWrapper<Country> country =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, Country::airportsWritable);
 
     private final ReadOnlyListWrapper<Controller> controllers =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingAirportPropertyWritable);
@@ -136,6 +139,18 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
 
     public ReadOnlyObjectProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaryProperty() {
         return flightInformationRegionBoundary.getReadOnlyProperty();
+    }
+
+    public Country getCountry() {
+        return country.get();
+    }
+
+    ObjectProperty<Country> countryPropertyWritable() {
+        return country;
+    }
+
+    public ReadOnlyObjectProperty<Country> countryProperty() {
+        return country.getReadOnlyProperty();
     }
 
     public boolean hasArrivals() {

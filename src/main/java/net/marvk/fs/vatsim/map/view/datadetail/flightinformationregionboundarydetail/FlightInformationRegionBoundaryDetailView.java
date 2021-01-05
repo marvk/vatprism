@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView<DataDetailSubViewModel<FlightInformationRegionBoundary>, FlightInformationRegionBoundary> {
     @FXML
+    private Label country;
+    @FXML
     private DataDetailPane status;
     @FXML
     private DataDetailPane uirsContainer;
@@ -38,7 +40,8 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
     protected List<Label> labels() {
         return List.of(
                 name,
-                position
+                position,
+                country
         );
     }
 
@@ -88,6 +91,12 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
         firb.getUpperInformationRegions().addListener(this::uirsChanged);
         uirsChanged(null);
         controllersController.getViewModel().setData(firb.getControllers());
+
+        if (firb.getCountry() == null) {
+            country.setText("UNKNOWN");
+        } else {
+            country.setText(firb.getCountry().getName());
+        }
     }
 
     @Override

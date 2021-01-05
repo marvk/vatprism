@@ -39,6 +39,7 @@ public class MainViewModel implements ViewModel {
     private final DelegateCommand loadUirs;
     private final DelegateCommand loadClients;
     private final DelegateCommand loadInternationalDateLine;
+    private final ReloadRepositoryCommand loadCountries;
     private final Preferences preferences;
 
     private static final Duration RELOAD_PERIOD = Duration.seconds(30);
@@ -55,6 +56,7 @@ public class MainViewModel implements ViewModel {
             final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
+            final CountryRepository countryRepository,
             final Preferences preferences
     ) {
         this.preferences = preferences;
@@ -64,10 +66,12 @@ public class MainViewModel implements ViewModel {
         this.loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
         this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
         this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
+        this.loadCountries = new ReloadRepositoryCommand(countryRepository, false);
         this.loadClients = new ReloadRepositoryCommand(clientRepository, true, this::triggerRepaint);
 
         final CompositeCommand compositeCommand = new CompositeCommand(
                 loadInternationalDateLine,
+                loadCountries,
                 loadFirs,
                 loadFirbs,
                 loadUirs,

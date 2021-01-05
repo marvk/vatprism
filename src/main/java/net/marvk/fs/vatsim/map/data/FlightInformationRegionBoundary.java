@@ -18,6 +18,9 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
     private final ReadOnlyListWrapper<Airport> airports =
             RelationshipReadOnlyListWrapper.withOtherProperty(this, Airport::flightInformationRegionBoundaryPropertyWritable);
 
+    private final ReadOnlyObjectWrapper<Country> country =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, Country::flightInformationRegionBoundariesWritable);
+
     private final ReadOnlyListWrapper<FlightInformationRegion> flightInformationRegions =
             RelationshipReadOnlyListWrapper.withOtherList(this, FlightInformationRegion::boundariesWritable);
 
@@ -119,7 +122,7 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
         return upperInformationRegions.getReadOnlyProperty();
     }
 
-    SimpleListProperty<Airport> getAirportsWritable() {
+    SimpleListProperty<Airport> airportsWritable() {
         return airports;
     }
 
@@ -133,6 +136,18 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
 
     public ReadOnlyListProperty<Controller> getControllers() {
         return controllers.getReadOnlyProperty();
+    }
+
+    public Country getCountry() {
+        return country.get();
+    }
+
+    ObjectProperty<Country> countryPropertyWritable() {
+        return country;
+    }
+
+    public ReadOnlyObjectProperty<Country> countryProperty() {
+        return country.getReadOnlyProperty();
     }
 
     public boolean hasUirControllers() {

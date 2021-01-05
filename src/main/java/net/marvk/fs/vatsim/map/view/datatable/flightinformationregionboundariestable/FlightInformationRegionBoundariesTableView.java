@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundaries
 
 import com.google.inject.Inject;
 import javafx.beans.property.ReadOnlyStringProperty;
+import net.marvk.fs.vatsim.map.data.Country;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.datatable.AbstractTableView;
@@ -42,6 +43,13 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
                 .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
+                .build();
+
+        this.<Country>newColumnBuilder()
+                .title("Country")
+                .objectObservableValueFactory(FlightInformationRegionBoundary::countryProperty)
+                .toStringMapper(Country::getName)
+                .sortable()
                 .build();
     }
 

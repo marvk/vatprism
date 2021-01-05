@@ -24,12 +24,14 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
     private final Lookup<Airport> icaoLookup = Lookup.fromProperty(Airport::getIcao);
     private final Lookup<Airport> iataLookup = Lookup.fromCollection(Airport::getIatas);
     private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
+    private final CountryRepository countryRepository;
     private RTree<Airport, Point> rTree = RTree.create();
 
     @Inject
-    public AirportRepository(final VatsimApi vatsimApi, final Provider<Airport> provider, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository) {
+    public AirportRepository(final VatsimApi vatsimApi, final Provider<Airport> provider, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository, final CountryRepository countryRepository) {
         super(vatsimApi, provider);
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
+        this.countryRepository = countryRepository;
     }
 
     @Override
@@ -64,9 +66,19 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
         final Optional<FlightInformationRegionBoundary> firb = findFirb(vatsimAirport.getFir());
         if (firb.isPresent()) {
             toAdd.flightInformationRegionBoundaryPropertyWritable().set(firb.get());
+
         } else {
             log.warn("Could not determine FIR for airport with ICAO: \"%s\", name: \"%s\", FIR ICAO: \"%s\"".formatted(vatsimAirport
                     .getIcao(), vatsimAirport.getNames().get(0), vatsimAirport.getFir()));
+        }
+
+        final Country country = countryRepository.getByPrefix(toAdd.getIcao().substring(0, 2));
+        if (country != null) {
+            toAdd.countryPropertyWritable().set(country);
+        } else {
+            log.warn("Could not determine Country for airport with ICAO: \"%s\", name: \"%s\"".formatted(vatsimAirport.getIcao(), vatsimAirport
+                    .getNames()
+                    .get(0)));
         }
     }
 
@@ -128,7 +140,7 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
         return iataLookup.get(iata);
     }
 
-    public static final class VatsimAirportWrapper {
+    static final class VatsimAirportWrapper {
         private final String icao;
         private final List<String> names;
         private final Point2D position;

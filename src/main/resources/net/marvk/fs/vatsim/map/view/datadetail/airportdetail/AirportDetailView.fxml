@@ -21,7 +21,7 @@
                     </rowConstraints>
                     <children>
                         <Label styleClass="description" text="Name"/>
-                        <Label fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
+                        <Label fx:id="name" text="Label" GridPane.columnIndex="1"/>
                         <Label text="Position" GridPane.rowIndex="1"/>
                         <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="1">
@@ -38,6 +38,9 @@
                                 <String fx:value="hyperlink-label"/>
                             </styleClass>
                         </Label>
+                        <Label styleClass="description" text="Country" GridPane.rowIndex="3"/>
+                        <Label fx:id="country" text="Label" GridPane.columnIndex="1"
+                               GridPane.rowIndex="3"/>
                     </children>
                 </GridPane>
             </contentNode>

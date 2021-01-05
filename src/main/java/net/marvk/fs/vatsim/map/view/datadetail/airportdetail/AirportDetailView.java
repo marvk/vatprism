@@ -15,6 +15,8 @@ import java.util.List;
 
 public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel, Airport> {
     private static final String HYPERLINK_LABEL = "hyperlink-label";
+    @FXML
+    private Label country;
 
     @FXML
     private DataDetailPane status;
@@ -41,7 +43,7 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
 
     @Override
     protected List<Label> labels() {
-        return List.of(position, name, fir);
+        return List.of(position, name, fir, country);
     }
 
     @Override
@@ -62,6 +64,12 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
         } else {
             fir.getStyleClass().add(HYPERLINK_LABEL);
             fir.setText(firb.getIcao());
+        }
+
+        if (airport.getCountry() == null) {
+            country.setText("UNKNOWN");
+        } else {
+            country.setText(airport.getCountry().getName());
         }
 
         controllersController.getViewModel().setData(airport.getControllers());

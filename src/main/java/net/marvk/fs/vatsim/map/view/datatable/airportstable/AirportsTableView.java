@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.Country;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.datatable.AbstractTableView;
 import org.apache.commons.lang3.StringUtils;
@@ -89,6 +90,12 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .mono(true)
                 .build();
 
+        this.<Country>newColumnBuilder()
+                .title("Country")
+                .objectObservableValueFactory(Airport::countryProperty)
+                .toStringMapper(Country::getName)
+                .sortable()
+                .build();
     }
 
     private ReadOnlyStringProperty firIcao(final Airport e) {

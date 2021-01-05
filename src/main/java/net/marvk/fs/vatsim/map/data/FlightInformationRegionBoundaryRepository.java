@@ -30,16 +30,19 @@ import java.util.stream.StreamSupport;
 public class FlightInformationRegionBoundaryRepository extends ProviderRepository<FlightInformationRegionBoundary, VatsimAirspace> {
     private final Lookup<FlightInformationRegionBoundary> icao = Lookup.fromProperty(FlightInformationRegionBoundary::getIcao);
     private final FlightInformationRegionRepository flightInformationRegionRepository;
+    private final CountryRepository countryRepository;
     private RTree<FlightInformationRegionBoundary, PolygonGeometry> rTree = RTree.create();
 
     @Inject
     public FlightInformationRegionBoundaryRepository(
             final VatsimApi vatsimApi,
             final Provider<FlightInformationRegionBoundary> provider,
-            final FlightInformationRegionRepository flightInformationRegionRepository
+            final FlightInformationRegionRepository flightInformationRegionRepository,
+            final CountryRepository countryRepository
     ) {
         super(vatsimApi, provider);
         this.flightInformationRegionRepository = flightInformationRegionRepository;
+        this.countryRepository = countryRepository;
     }
 
     @Override
@@ -71,6 +74,13 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     @Override
     protected void onAdd(final FlightInformationRegionBoundary toAdd, final VatsimAirspace airspace) {
         icao.put(toAdd);
+
+        final Country country = countryRepository.getByPrefix(toAdd.getIcao().substring(0, 2));
+        if (country != null) {
+            toAdd.countryPropertyWritable().set(country);
+        } else {
+            log.warn("Could not determine Country for FIRB with ICAO: \"%s\"".formatted(toAdd.getIcao()));
+        }
     }
 
     @Override
