@@ -205,7 +205,7 @@ public class PainterHelper {
     }
 
     public void strokeLine(final GraphicsContext c, final double x1, final double y1, final double x2, final double y2) {
-        if (!mapVariables.isLineIntersectingCanvasView(x1, y2, x2, y2)) {
+        if (!mapVariables.isLineIntersectingCanvasView(x1, y1, x2, y2)) {
             return;
         }
 
