@@ -14,33 +14,36 @@ import java.util.Set;
 
 public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
     private static final int MULTI_DRAW_BOUND = 20;
-    @Parameter("Fill Color")
-    private final Color fillColor;
-    @Parameter("Color")
-    private final Color color;
-    @Parameter(value = "Line Width", min = 0, max = 10)
-    private final double lineWidth;
     @Parameter("Fill")
     private final boolean fill;
+    @Parameter("Fill Color")
+    private final Color fillColor;
     @Parameter("Stroke")
     private final boolean stroke;
+    @Parameter("Stroke Color")
+    private final Color strokeColor;
+    @Parameter(value = "Stroke Width", min = 0, max = 10)
+    private final double lineWidth;
     @Parameter("Label")
     private final boolean label;
+    @Parameter("Label Color")
+    private final Color textColor;
 
     private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();
 
-    public FirbPainter(final MapVariables mapVariables, final Color color, final double lineWidth, final boolean fill, final boolean stroke, final boolean label) {
+    public FirbPainter(final MapVariables mapVariables, final Color strokeColor, final double lineWidth, final boolean fill, final boolean stroke, final boolean label) {
         super(mapVariables);
-        this.color = color;
+        this.strokeColor = strokeColor;
         this.lineWidth = lineWidth;
         this.fill = fill;
         this.label = label;
         this.stroke = stroke;
-        this.fillColor = color.deriveColor(0, 1, 1, 0.05);
+        this.fillColor = strokeColor.deriveColor(0, 1, 1, 0.05);
+        this.textColor = strokeColor;
     }
 
-    public FirbPainter(final MapVariables mapVariables, final Color color, final double lineWidth) {
-        this(mapVariables, color, lineWidth, false, true, false);
+    public FirbPainter(final MapVariables mapVariables, final Color strokeColor, final double lineWidth) {
+        this(mapVariables, strokeColor, lineWidth, false, true, false);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
         }
 
         if (stroke) {
-            c.setStroke(color);
+            c.setStroke(strokeColor);
             c.setLineWidth(lineWidth);
             c.setLineDashes(null);
             painterHelper.strokePolygons(c, polygon);
@@ -87,10 +90,10 @@ public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
     }
 
     private void drawLabel(final GraphicsContext c, final FlightInformationRegionBoundary firb, final double offsetX) {
-        c.setFill(color);
         final Point2D polyLabel = firb.getPolygon().getExteriorRing().getPolyLabel();
 
         if (polyLabel != null) {
+            c.setFill(textColor);
             c.setTextAlign(TextAlignment.CENTER);
             c.setTextBaseline(VPos.CENTER);
             painterHelper.fillText(

@@ -7,7 +7,7 @@ import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class IdlPainter extends MapPainter<InternationalDateLine> {
-    @Parameter("Color")
+    @Parameter("Stroke Color")
     private final Color color;
 
     public IdlPainter(final MapVariables mapVariables, final Color color) {

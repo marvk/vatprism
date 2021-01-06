@@ -4,6 +4,7 @@ import com.dlsc.formsfx.model.validators.DoubleRangeValidator;
 import com.dlsc.formsfx.model.validators.IntegerRangeValidator;
 import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
+import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -153,40 +154,71 @@ public class Preferences {
         final List<Category> categories = new ArrayList<>();
 
         for (final PainterExecutor<?> executor : executors) {
-            final Setting<?, ?>[] settings = getSettings(executor.getPainter(), executor.getName());
-            for (final Setting<?, ?> setting : settings) {
-                final Property<?> o = setting.valueProperty();
-                observables.put(o.getName(), o);
+            final Group[] groups = getSettings(executor.getPainter(), executor.getName());
+            for (final Group group : groups) {
+                for (final Setting<?, ?> setting : group.getSettings()) {
+                    final Property<?> o = setting.valueProperty();
+                    observables.put(o.getName(), o);
+                }
             }
-            final Category category = Category.of(executor.getName(), settings);
+            final Category category = Category.of(executor.getName(), groups);
             categories.add(category);
         }
         return categories.toArray(Category[]::new);
     }
 
-    private Setting<?, ?>[] getSettings(final Painter<?> painter, final String prefix) throws IllegalAccessException {
-        final Collection<Setting<?, ?>> settings = new ArrayList<>();
+    private Group[] getSettings(final Painter<?> painter, final String prefix) throws IllegalAccessException {
 
         final List<Field> fields = Arrays
                 .stream(fields(painter))
-                .filter(e -> e.isAnnotationPresent(Parameter.class) || e.isAnnotationPresent(MetaPainter.class))
+                .filter(e -> e.isAnnotationPresent(net.marvk.fs.vatsim.map.view.painter.Group.class) || e.isAnnotationPresent(Parameter.class) || e
+                        .isAnnotationPresent(MetaPainter.class))
                 .peek(e -> e.setAccessible(true))
                 .collect(Collectors.toList());
+
+        final ArrayList<Group> result = new ArrayList<>();
+
+        String currentGroup = prefix;
+        final Collection<Setting<?, ?>> settings = new ArrayList<>();
+
+        for (final Field field : fields) {
+            if (field.isAnnotationPresent(net.marvk.fs.vatsim.map.view.painter.Group.class)) {
+                if (!settings.isEmpty()) {
+                    settings.removeIf(Objects::isNull);
+
+                    if (!settings.isEmpty()) {
+                        result.add(Group.of(currentGroup, settings.toArray(Setting[]::new)));
+                    }
+                    settings.clear();
+                }
+
+                final var groupAnnotation = field.getAnnotation(net.marvk.fs.vatsim.map.view.painter.Group.class);
+                currentGroup = groupAnnotation.value();
+            }
+
+            if (field.isAnnotationPresent(Parameter.class)) {
+                settings.add(extracted(painter, field, prefix));
+            }
+        }
+
+        if (!settings.isEmpty()) {
+            settings.removeIf(Objects::isNull);
+
+            if (!settings.isEmpty()) {
+                result.add(Group.of(currentGroup, settings.toArray(Setting[]::new)));
+            }
+        }
 
         for (final Field field : fields) {
             if (field.isAnnotationPresent(MetaPainter.class)) {
                 final MetaPainter metaPainter = field.getAnnotation(MetaPainter.class);
 
                 final Painter<?> thePainter = (Painter<?>) field.get(painter);
-                settings.addAll(Arrays.asList(getSettings(thePainter, prefix + "." + metaPainter.value())));
-            } else {
-                settings.add(extracted(painter, field, prefix));
+                result.addAll(Arrays.asList(getSettings(thePainter, prefix + "." + metaPainter.value())));
             }
         }
 
-        settings.removeIf(Objects::isNull);
-
-        return settings.toArray(Setting[]::new);
+        return result.toArray(Group[]::new);
     }
 
     private static Field[] fields(final Painter<?> painter) {

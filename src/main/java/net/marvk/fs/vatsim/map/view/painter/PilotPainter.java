@@ -16,9 +16,13 @@ public class PilotPainter extends MapPainter<Pilot> {
     private static final double MAX_SPEED = 600.0;
     private static final double SCALE_SCALE = 64.0;
 
-    @Parameter("Color")
-    private Color color = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
+    @Parameter("Label")
+    private boolean label = true;
+    @Parameter("Label Color")
+    private Color labelColor = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
 
+    @Parameter("Background")
+    private boolean paintBackground = false;
     @Parameter("Background Color")
     private Color backgroundColor;
 
@@ -34,15 +38,9 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter(value = "Head/Tail length scaled with speed")
     private boolean headTailScaledWithSpeed = true;
 
-    @Parameter("Show Label")
-    private boolean label = true;
-
-    @Parameter("Background")
-    private boolean paintBackground = false;
-
-    public PilotPainter(final MapVariables mapVariables, final Color color, final boolean paintBackground) {
+    public PilotPainter(final MapVariables mapVariables, final Color labelColor, final boolean paintBackground) {
         super(mapVariables);
-        this.color = color;
+        this.labelColor = labelColor;
         this.paintBackground = paintBackground;
         setBackgroundColor();
     }
@@ -53,7 +51,7 @@ public class PilotPainter extends MapPainter<Pilot> {
     }
 
     private void setBackgroundColor() {
-        backgroundColor = color.deriveColor(0, 1, 0.5, 1);
+        backgroundColor = labelColor.deriveColor(0, 1, 0.5, 1);
     }
 
     @Override
@@ -80,8 +78,8 @@ public class PilotPainter extends MapPainter<Pilot> {
         final double y = mapVariables.toCanvasY(point.getY());
 
         c.setLineDashes();
-        c.setStroke(color);
-        c.setFill(color);
+        c.setStroke(labelColor);
+        c.setFill(labelColor);
         c.setLineWidth(1);
         painterHelper.strokeRect(c, (int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
@@ -118,7 +116,7 @@ public class PilotPainter extends MapPainter<Pilot> {
                     pilot.getCallsign(),
                     paintBackground,
                     VPos.CENTER,
-                    color,
+                    labelColor,
                     backgroundColor
             );
         }

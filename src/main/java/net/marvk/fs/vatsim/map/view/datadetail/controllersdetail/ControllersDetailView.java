@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
@@ -18,6 +19,7 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class ControllersDetailView extends DetailSubView<ControllersDetailViewModel, ObservableList<Controller>> {
     @FXML
     private HBox noControllers;
@@ -37,11 +39,11 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
     }
 
     private Color color(final String key) {
-        if (key == null) {
-            return Color.HOTPINK;
+        final Color color = viewModel.getPreferences().colorProperty(key).get();
+        if (color == null) {
+            log.error("Unable to find color with key \"%s\"".formatted(key));
         }
-
-        return viewModel.getPreferences().colorProperty(key).get();
+        return color;
     }
 
     @Override
@@ -74,7 +76,7 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             final String typeLabel = controller.getControllerType().toString();
             final Label type = new Label(" ".repeat(4 - typeLabel.length()) + typeLabel);
             type.setPadding(new Insets(0, 2, 0, 2));
-            type.setStyle("-fx-text-fill: #" + webColor(color("airports.type_label_color")));
+            type.setStyle("-fx-text-fill: #" + webColor(color("airports.controller_label_color")));
             type.getStyleClass().add("mono");
             final Pane typeHolder = new Pane(type);
             typeHolder.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));

@@ -24,19 +24,21 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-    @Parameter("Text Color")
-    private Color textColor = Color.GREY;
-    @Parameter("Text Background Color")
-    private Color backgroundColor;
     @Parameter("Airport Color")
     private Color airportColor = Color.GREY;
-    @Parameter("Approach Circle Color")
-    private Color appCircleColor = Color.CYAN.darker().darker().darker();
-    @Parameter("Type Label Color")
-    private Color typesLabelColor = Color.WHITE.darker();
-    @Parameter("Type Border Color")
-    private Color typesBorderColor = Color.BLACK.brighter();
 
+    @Parameter("Label")
+    private boolean text = true;
+    @Parameter("Label Color")
+    private Color textColor = Color.GREY;
+
+    @Parameter("Background")
+    private boolean paintBackground = true;
+    @Parameter("Background Color")
+    private Color backgroundColor;
+
+    @Parameter("Controllers")
+    private boolean paintControllers = true;
     @Parameter("Atis Color")
     private Color atisColor = Color.web("443000");
     @Parameter("Delivery Color")
@@ -46,14 +48,13 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Tower Color")
     private Color twrColor = Color.web("760023");
     @Parameter("Approach Color")
-    private Color appColor = Color.web("17130a");
-
-    @Parameter("Paint Controllers")
-    private boolean paintControllers = true;
-    @Parameter("Paint Background")
-    private boolean paintBackground = true;
-    @Parameter("Paint Text")
-    private boolean text = true;
+    private Color appColor = Color.CYAN.darker().darker().darker();
+    @Parameter("Approach PlaceholderColor")
+    private Color appPlaceholderColor = Color.web("17130a");
+    @Parameter("Controller Label Color")
+    private Color typesLabelColor = Color.WHITE.darker();
+    @Parameter("Controller Border Color")
+    private Color typesBorderColor = Color.BLACK.brighter();
 
     public AirportPainter(final MapVariables mapVariables) {
         super(mapVariables);
@@ -123,12 +124,12 @@ public class AirportPainter extends MapPainter<Airport> {
                 final double rHalf = r / 2.0;
 
                 if (paintApproachCircle) {
-                    c.setStroke(appCircleColor);
+                    c.setStroke(appColor);
                     painterHelper.strokeOval(c, x - rHalf, y - rHalf, r, r);
                 }
 
                 if (paintApproachLabel && text) {
-                    c.setFill(appCircleColor);
+                    c.setFill(appColor);
                     painterHelper.fillText(c, icao, x, y - rHalf);
                 }
             }
@@ -167,7 +168,7 @@ public class AirportPainter extends MapPainter<Airport> {
             }
 
             if (paintApproach && !paintApproachCircle) {
-                c.setStroke(appCircleColor);
+                c.setStroke(appColor);
                 final double xCur = labelsX(x, n, 0);
                 final double yCur = labelsY(y);
 
@@ -215,7 +216,7 @@ public class AirportPainter extends MapPainter<Airport> {
             case DEL -> delColor;
             case GND -> gndColor;
             case TWR -> twrColor;
-            case APP -> appColor;
+            case APP -> appPlaceholderColor;
             default -> Color.GREY;
         };
     }

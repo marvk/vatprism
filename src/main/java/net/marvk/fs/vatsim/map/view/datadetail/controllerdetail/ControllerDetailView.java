@@ -94,7 +94,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
                 }, controller.atisMessageProperty()
         ));
 
-        type.setStyle("-fx-text-fill: #" + webColor(color("airports.type_label_color")));
+        type.setStyle("-fx-text-fill: #" + webColor(color("airports.controller_label_color")));
         typeBackground.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));
 
         controlling.setText(icaoVisitor.visit(controller.getWorkingLocation()));

@@ -7,20 +7,17 @@ import net.marvk.fs.vatsim.map.data.Circle2D;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class SelectionShapePainter extends MapPainter<Object> {
-    @Parameter("Fill Color")
-    private Color fillColor = Color.SEASHELL.deriveColor(0, 1, 1, 0.05);
-
+    @Parameter("Stroke")
+    private boolean stroke = true;
     @Parameter("Stroke Color")
     private Color strokeColor = Color.SEASHELL;
-
     @Parameter(value = "Stroke Width", min = 0, max = 20)
     private double strokeWidth = 1;
 
     @Parameter("Fill")
     private boolean fill = true;
-
-    @Parameter("Stroke")
-    private boolean stroke = true;
+    @Parameter("Fill Color")
+    private Color fillColor = Color.SEASHELL.deriveColor(0, 1, 1, 0.05);
 
     public SelectionShapePainter(final MapVariables mapVariables) {
         super(mapVariables);

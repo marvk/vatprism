@@ -14,6 +14,7 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.paint.Color;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Log4j2
 public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<ViewModel>, ViewModel> implements FxmlView<DetailViewModel> {
     @InjectViewModel
     protected DetailViewModel viewModel;
@@ -132,8 +134,13 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
                 case DEL -> "airports.delivery_color";
                 case GND -> "airports.ground_color";
                 case TWR -> "airports.tower_color";
-                case APP, DEP -> "airports.approach_circle_color";
-                default -> null;
+                case APP, DEP -> "airports.approach_color";
+                default -> {
+                    log.warn("Could not color for controller with callsign: %s, cid: %s, name: %s, type: %s"
+                            .formatted(controller.getCallsign(), controller.getCid(), controller.getRealName(), controller
+                                    .getControllerType()));
+                    yield null;
+                }
             };
         }
 
@@ -145,6 +152,8 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
             return "active_uirs.uir.fir.color";
         }
 
+        log.warn("Could not color for controller with callsign: %s, cid: %s, name: %s, type: %s"
+                .formatted(controller.getCallsign(), controller.getCid(), controller.getRealName(), controller.getControllerType()));
         return null;
     }
 

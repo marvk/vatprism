@@ -14,10 +14,10 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private static final double NANOS_IN_MILLI = 1000000.;
     private static final double AVERAGES_X_OFFSET = 100;
 
-    @Parameter("Show Averages")
+    @Parameter("Averages")
     private boolean showAverages = true;
 
-    @Parameter("Show Chart")
+    @Parameter("Chart")
     private boolean showChart = true;
 
     private static Color[] COLORS = new Color[]{
