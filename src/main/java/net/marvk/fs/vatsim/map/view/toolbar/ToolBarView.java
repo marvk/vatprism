@@ -55,7 +55,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
         container.sceneProperty().addListener((observable, oldValue, newValue) -> setupWindowBindings(newValue));
 
         bindBooleanBidirectional(enableDebug, "metrics.enabled");
-        bindBooleanBidirectional(enablePilotCallsign, "pilots.show_label");
+        bindBooleanBidirectional(enablePilotCallsign, "pilots.label");
         bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled");
 
         enableDebug.visibleProperty().bind(booleanProperty("general.debug"));

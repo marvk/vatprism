@@ -145,11 +145,11 @@ public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<V
         }
 
         if (controller.getWorkingFlightInformationRegion() != null) {
-            return "active_firs.fir.color";
+            return "active_firs.fir.stroke_color";
         }
 
         if (controller.getWorkingUpperInformationRegion() != null) {
-            return "active_uirs.uir.fir.color";
+            return "active_uirs.uir.fir.stroke_color";
         }
 
         log.warn("Could not color for controller with callsign: %s, cid: %s, name: %s, type: %s"
