@@ -13,6 +13,7 @@ import java.util.stream.DoubleStream;
 public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private static final double NANOS_IN_MILLI = 1000000.;
     private static final double AVERAGES_X_OFFSET = 100;
+    private static final Color TOTAL_COLOR = Color.gray(0.4);
 
     @Parameter("Averages")
     private boolean showAverages = true;
@@ -84,24 +85,35 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
         if (showAverages) {
             final double max = averages(metrics).max().orElse(0);
 
-            for (int i = 0; i < metrics.size(); i++) {
-                final FrameMetrics.Metric metric = metrics.get(i);
+            final int n = metrics.size() + 1;
+            for (int i = 0; i < n; i++) {
+                final FrameMetrics.Metric metric = metrics.get(Math.max(0, i - 1));
                 final double value;
                 final Color color;
                 final String name;
-                if ("Total".equals(metric.getName())) {
+                final boolean totalMetric = "Total".equals(metric.getName());
+                final boolean residualMetric = totalMetric && i > 0;
+                if (residualMetric) {
                     name = "Residual";
                     value = metric.average() - averageDrawNanos;
                     color = COLORS[i];
                 } else {
                     name = metric.getName();
                     value = metric.average();
-                    color = new Color(0.5 + 0.5 * (value / max), 0.5, 0.5, 1);
+                    if (totalMetric) {
+                        color = TOTAL_COLOR;
+                    } else {
+                        color = new Color(0.5 + 0.5 * (value / max), 0.5, 0.5, 1);
+                    }
                 }
 
                 c.setTextAlign(TextAlignment.RIGHT);
-                c.setFill(COLORS[i]);
-                final double yCur = yOffset + metrics.size() * 20 - i * 20;
+                if (totalMetric && !residualMetric) {
+                    c.setFill(TOTAL_COLOR);
+                } else {
+                    c.setFill(COLORS[i]);
+                }
+                final double yCur = yOffset - 20 + n * 20 - i * 20;
                 final double xCur = xOffset + AVERAGES_X_OFFSET + chartWidth;
                 painterHelper.fillText(c, name, xCur, yCur);
 
