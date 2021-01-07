@@ -19,6 +19,8 @@ import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
+import net.marvk.fs.vatsim.api.CachedVatsimApi;
+import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
@@ -38,6 +40,7 @@ public class MainViewModel implements ViewModel {
     private final DelegateCommand loadFirbs;
     private final DelegateCommand loadUirs;
     private final DelegateCommand loadClients;
+    private final VatsimApi vatsimApi;
     private final DelegateCommand loadInternationalDateLine;
     private final ReloadRepositoryCommand loadCountries;
     private final Preferences preferences;
@@ -57,7 +60,8 @@ public class MainViewModel implements ViewModel {
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final InternationalDateLineRepository internationalDateLineRepository,
             final CountryRepository countryRepository,
-            final Preferences preferences
+            final Preferences preferences,
+            final VatsimApi vatsimApi
     ) {
         this.preferences = preferences;
 
@@ -68,6 +72,7 @@ public class MainViewModel implements ViewModel {
         this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
         this.loadCountries = new ReloadRepositoryCommand(countryRepository, false);
         this.loadClients = new ReloadRepositoryCommand(clientRepository, true, this::triggerRepaint);
+        this.vatsimApi = vatsimApi;
 
         final CompositeCommand compositeCommand = new CompositeCommand(
                 loadInternationalDateLine,
@@ -76,7 +81,15 @@ public class MainViewModel implements ViewModel {
                 loadFirbs,
                 loadUirs,
                 loadAirports,
-                loadClients
+                loadClients,
+                new DelegateCommand(() -> new Action() {
+                    @Override
+                    protected void action() {
+                        if (vatsimApi instanceof CachedVatsimApi) {
+                            ((CachedVatsimApi) vatsimApi).clear();
+                        }
+                    }
+                })
         );
         compositeCommand.execute();
 
