@@ -2,171 +2,199 @@ package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
 import javafx.geometry.Point2D;
+import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>, Data {
-    private final StringProperty icao = new SimpleStringProperty();
-    private final ReadOnlyListWrapper<ReadOnlyStringProperty> names = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
-    private final ReadOnlyListWrapper<String> iatas = new ReadOnlyListWrapper<>(FXCollections.observableArrayList(new ArrayList<>(1)));
-    private final BooleanProperty pseudo = new SimpleBooleanProperty();
-    private final ObjectProperty<Point2D> position = new SimpleObjectProperty<>();
-    private final IntegerProperty trafficCount = new SimpleIntegerProperty();
-
-    private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundary =
-            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::airportsWritable);
-
-    private final ReadOnlyObjectWrapper<Country> country =
-            RelationshipReadOnlyObjectWrapper.withOtherList(this, Country::airportsWritable);
-
-    private final ReadOnlyListWrapper<Controller> controllers =
-            RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingAirportPropertyWritable);
-
-    private final ReadOnlyListWrapper<FlightPlan> departing =
-            RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::departureAirportPropertyWritable);
-
-    private final ReadOnlyListWrapper<FlightPlan> arriving =
-            RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::arrivalAirportPropertyWritable);
-
-    private final ReadOnlyListWrapper<FlightPlan> alternatives =
-            RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::alternativeAirportPropertyWritable);
-
-    public Airport() {
-        trafficCount.bind(Bindings.add(departing.sizeProperty(), arriving.sizeProperty()));
-    }
-
-    @Override
-    public void setFromModel(final AirportRepository.VatsimAirportWrapper model) {
-        Objects.requireNonNull(model);
-
-        icao.set(model.getIcao());
-        names.setAll(model
-                .getNames()
-                .stream()
-                .distinct()
-                .map(ImmutableStringProperty::new)
-                .collect(Collectors.toList())
-        );
-        iatas.setAll(model.getIatas());
-        pseudo.set(model.isPseudo());
-
-        position.set(model.getPosition());
-    }
+    private ReadOnlyStringProperty icao;
 
     public String getIcao() {
-        return icao.get();
+        return icaoProperty().get();
     }
 
     public ReadOnlyStringProperty icaoProperty() {
         return icao;
     }
 
-    public ReadOnlyListProperty<ReadOnlyStringProperty> getNames() {
-        return names.getReadOnlyProperty();
-    }
+//    private ReadOnlyBooleanProperty pseudo;
+//
+//    public boolean isPseudo() {
+//        return pseudo.get();
+//    }
+//
+//    public ReadOnlyBooleanProperty pseudoProperty() {
+//        return pseudo;
+//    }
 
-    public ReadOnlyListProperty<String> getIatas() {
-        return iatas.getReadOnlyProperty();
-    }
-
-    public boolean isPseudo() {
-        return pseudo.get();
-    }
-
-    public ReadOnlyBooleanProperty pseudoProperty() {
-        return pseudo;
-    }
+    private ReadOnlyObjectProperty<Point2D> position;
 
     public Point2D getPosition() {
         return position.get();
-    }
-
-    public int getTrafficCount() {
-        return trafficCount.get();
-    }
-
-    public ReadOnlyIntegerProperty trafficCountProperty() {
-        return trafficCount;
     }
 
     public ReadOnlyObjectProperty<Point2D> positionProperty() {
         return position;
     }
 
-    SimpleListProperty<FlightPlan> getDepartingWritable() {
-        return departing;
+    private IntegerProperty trafficCount;
+
+    public int getTrafficCount() {
+        return trafficCount.get();
     }
 
-    public ReadOnlyListProperty<FlightPlan> getDeparting() {
-        return departing.getReadOnlyProperty();
+    public ReadOnlyIntegerProperty trafficCountProperty() {
+        if (trafficCount == null) {
+            trafficCount = new SimpleIntegerProperty();
+            bindTrafficCount();
+        }
+        return trafficCount;
     }
 
-    SimpleListProperty<FlightPlan> getArrivingWritable() {
-        return arriving;
+    private ReadOnlyListProperty<ReadOnlyStringProperty> names;
+
+    public ReadOnlyListProperty<ReadOnlyStringProperty> getNames() {
+        return names;
     }
 
-    public ReadOnlyListProperty<FlightPlan> getArriving() {
-        return arriving.getReadOnlyProperty();
+    private ReadOnlyListProperty<String> iatas;
+
+    public ReadOnlyListProperty<String> getIatas() {
+        return iatas;
     }
 
-    SimpleListProperty<Controller> getControllersWritable() {
-        return controllers;
-    }
-
-    public ReadOnlyListProperty<Controller> getControllers() {
-        return controllers.getReadOnlyProperty();
-    }
-
-    SimpleListProperty<FlightPlan> getAlternativesWritable() {
-        return alternatives;
-    }
-
-    public ReadOnlyListProperty<FlightPlan> alternativesProperty() {
-        return alternatives.getReadOnlyProperty();
-    }
+    private final ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundary =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, FlightInformationRegionBoundary::airportsWritable);
 
     public FlightInformationRegionBoundary getFlightInformationRegionBoundary() {
-        return flightInformationRegionBoundary.get();
+        return flightInformationRegionBoundaryPropertyWritable().get();
     }
 
-    ObjectProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaryPropertyWritable() {
+    ReadOnlyObjectWrapper<FlightInformationRegionBoundary> flightInformationRegionBoundaryPropertyWritable() {
         return flightInformationRegionBoundary;
     }
 
     public ReadOnlyObjectProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaryProperty() {
-        return flightInformationRegionBoundary.getReadOnlyProperty();
+        return flightInformationRegionBoundaryPropertyWritable().getReadOnlyProperty();
     }
+
+    private final ReadOnlyObjectWrapper<Country> country =
+            RelationshipReadOnlyObjectWrapper.withOtherList(this, Country::airportsWritable);
 
     public Country getCountry() {
-        return country.get();
+        return countryPropertyWritable().get();
     }
 
-    ObjectProperty<Country> countryPropertyWritable() {
+    ReadOnlyObjectWrapper<Country> countryPropertyWritable() {
         return country;
     }
 
     public ReadOnlyObjectProperty<Country> countryProperty() {
-        return country.getReadOnlyProperty();
+        return countryPropertyWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<Controller> controllers;
+
+    ReadOnlyListWrapper<Controller> getControllersWritable() {
+        if (controllers == null) {
+            controllers = RelationshipReadOnlyListWrapper.withOtherProperty(this, Controller::workingAirportPropertyWritable);
+        }
+        return controllers;
+    }
+
+    public ReadOnlyListProperty<Controller> getControllers() {
+        return getControllersWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<FlightPlan> departing;
+
+    ReadOnlyListWrapper<FlightPlan> getDepartingWritable() {
+        if (departing == null) {
+            departing = RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::departureAirportPropertyWritable);
+            bindTrafficCount();
+        }
+        return departing;
+    }
+
+    public ReadOnlyListProperty<FlightPlan> getDeparting() {
+        return getDepartingWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<FlightPlan> arriving;
+
+    ReadOnlyListWrapper<FlightPlan> getArrivingWritable() {
+        if (arriving == null) {
+            arriving = RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::arrivalAirportPropertyWritable);
+            bindTrafficCount();
+        }
+        return arriving;
+    }
+
+    public ReadOnlyListProperty<FlightPlan> getArriving() {
+        return getArrivingWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<FlightPlan> alternatives;
+
+    ReadOnlyListWrapper<FlightPlan> getAlternativesWritable() {
+        if (alternatives == null) {
+            alternatives = RelationshipReadOnlyListWrapper.withOtherProperty(this, FlightPlan::alternativeAirportPropertyWritable);
+        }
+        return alternatives;
+    }
+
+    public ReadOnlyListProperty<FlightPlan> alternativesProperty() {
+        return getAlternativesWritable().getReadOnlyProperty();
+    }
+
+    @Override
+    public void setFromModel(final AirportRepository.VatsimAirportWrapper model) {
+        Objects.requireNonNull(model);
+
+        icao = new ImmutableStringProperty(model.getIcao());
+        final List<ReadOnlyStringProperty> modelNames = model
+                .getNames()
+                .stream()
+                .map(ImmutableStringProperty::new)
+                .collect(Collectors.toUnmodifiableList());
+        names = new ImmutableListProperty<>(modelNames);
+        iatas = new ImmutableListProperty<>(model.getIatas());
+        position = new ImmutableObjectProperty<>(model.getPosition());
+//        pseudo = new ImmutableBooleanProperty(model.isPseudo());
+    }
+
+    private void bindTrafficCount() {
+        if (trafficCount != null) {
+            if (departing != null && arriving != null) {
+                trafficCount.bind(Bindings.add(departing.sizeProperty(), arriving.sizeProperty()));
+            } else if (departing != null) {
+                trafficCount.bind(departing.sizeProperty());
+            } else if (arriving != null) {
+                trafficCount.bind(arriving.sizeProperty());
+            } else {
+                trafficCount.set(0);
+            }
+        }
     }
 
     public boolean hasArrivals() {
-        return !arriving.isEmpty();
+        return arriving != null && !arriving.isEmpty();
     }
 
     public boolean hasDepartures() {
-        return !departing.isEmpty();
+        return departing != null && !departing.isEmpty();
     }
 
     public boolean hasAlternatives() {
-        return !alternatives.isEmpty();
+        return alternatives != null && !alternatives.isEmpty();
     }
 
     public boolean hasControllers() {
-        return !controllers.isEmpty();
+        return controllers != null && !controllers.isEmpty();
     }
 
     @Override

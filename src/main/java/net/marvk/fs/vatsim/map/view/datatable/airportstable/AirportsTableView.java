@@ -85,7 +85,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
 
         this.<String>newColumnBuilder()
                 .title("FIR")
-                .stringObservableValueFactory(this::firIcao)
+                .stringObservableValueFactory(AirportsTableView::firIcao)
                 .sortable()
                 .mono(true)
                 .build();
@@ -98,7 +98,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .build();
     }
 
-    private ReadOnlyStringProperty firIcao(final Airport e) {
+    private static ReadOnlyStringProperty firIcao(final Airport e) {
         if (e.getFlightInformationRegionBoundary() == null) {
             return EMPTY;
         }
