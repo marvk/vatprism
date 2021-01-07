@@ -13,12 +13,11 @@ import java.util.regex.Pattern;
 @Log4j2
 public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
-    private static final String INVALID_TIME_VALUE = "5772193";
 
     private final Pilot pilot;
 
     private final StringProperty aircraft = new SimpleStringProperty();
-    private final ObjectProperty<FlightType> flightType = new SimpleObjectProperty<>();
+    private final ObjectProperty<FlightRule> flightRule = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalTime> departureTime = new SimpleObjectProperty<>();
     private final StringProperty altitude = new SimpleStringProperty();
     private final StringProperty trueCruiseAirspeed = new SimpleStringProperty();
@@ -43,7 +42,7 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
         }
 
         aircraft.set(model.getAircraft());
-        flightType.set(FlightType.fromString(model.getFlightRules()));
+        flightRule.set(FlightRule.fromString(model.getFlightRules()));
         departureTime.set(parseDepartureTime(model.getDepartureTime()));
         altitude.set(parseAltitude(model.getAltitude()));
         trueCruiseAirspeed.set(model.getCruiseTas());
@@ -52,6 +51,10 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
         plannedRoute.set(model.getRoute());
         remarks.set(model.getRemarks());
+    }
+
+    public boolean isSet() {
+        return getFlightRule() != FlightRule.UNKNOWN && getFlightRule() != null;
     }
 
     public Pilot getPilot() {
@@ -66,12 +69,12 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
         return aircraft;
     }
 
-    public FlightType getFlightType() {
-        return flightType.get();
+    public FlightRule getFlightRule() {
+        return flightRule.get();
     }
 
-    public ReadOnlyObjectProperty<FlightType> flightTypeProperty() {
-        return flightType;
+    public ReadOnlyObjectProperty<FlightRule> flightRuleProperty() {
+        return flightRule;
     }
 
     public LocalTime getDepartureTime() {
@@ -164,6 +167,22 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
     public ReadOnlyObjectProperty<Airport> alternativeAirportProperty() {
         return alternativeAirport.getReadOnlyProperty();
+    }
+
+    public boolean isDomestic() {
+        return isDepartureAndArrivalPresent() && isDomesticNullVulnerable();
+    }
+
+    public boolean isInternational() {
+        return isDepartureAndArrivalPresent() && !isDomesticNullVulnerable();
+    }
+
+    private boolean isDomesticNullVulnerable() {
+        return getDepartureAirport().getCountry().equals(getArrivalAirport().getCountry());
+    }
+
+    private boolean isDepartureAndArrivalPresent() {
+        return getDepartureAirport() != null && getArrivalAirport() != null;
     }
 
     private static Duration parseDuration(final String hoursMinutes) {

@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
-import net.marvk.fs.vatsim.map.data.FlightType;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
 import java.util.List;
@@ -92,7 +91,7 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
 
     @Override
     protected void setData(final FlightPlan flightPlan) {
-        flightRules.textProperty().bind(flightPlan.flightTypeProperty().asString());
+        flightRules.textProperty().bind(flightPlan.flightRuleProperty().asString());
         aircraftType.textProperty().bind(flightPlan.aircraftProperty());
         aircraftType.setTooltip(createTooltip(aircraftType.textProperty(), Duration.millis(500)));
         trueAirSpeed.textProperty().bind(stringToString(flightPlan.trueCruiseAirspeedProperty(), "kts"));
@@ -102,14 +101,10 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
         bindToAirport(alternateIcao, alternateName, flightPlan.alternativeAirportProperty());
         path.textProperty().bind(flightPlan.plannedRouteProperty());
         remarks.textProperty().bind(flightPlan.remarksProperty());
-        flightPlan.flightTypeProperty().addListener(
-                (observable, oldValue, newValue) -> setFlightPlanPanes(isFlightPlanAvailable(newValue))
+        flightPlan.flightRuleProperty().addListener(
+                (observable, oldValue, newValue) -> setFlightPlanPanes(flightPlan.isSet())
         );
-        setFlightPlanPanes(isFlightPlanAvailable(flightPlan.getFlightType()));
-    }
-
-    private static boolean isFlightPlanAvailable(final FlightType flightType) {
-        return flightType != FlightType.UNKNOWN && flightType != null;
+        setFlightPlanPanes(flightPlan.isSet());
     }
 
     @Override

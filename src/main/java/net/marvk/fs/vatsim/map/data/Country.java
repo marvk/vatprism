@@ -64,4 +64,19 @@ public class Country implements Settable<CountryRepository.VatsimCountryWrapper>
     public ReadOnlyListProperty<FlightInformationRegionBoundary> flightInformationRegionBoundaries() {
         return firbs.getReadOnlyProperty();
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final Country country = (Country) o;
+
+        return name != null ? name.equals(country.name) : country.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
+    }
 }
