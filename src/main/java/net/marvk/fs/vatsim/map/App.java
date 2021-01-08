@@ -16,6 +16,7 @@ import net.marvk.fs.vatsim.map.configuration.JfxModule;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.io.IoBuilder;
 
 import java.util.List;
 
@@ -23,6 +24,8 @@ import java.util.List;
 public class App extends MvvmfxGuiceApplication {
 
     public static void main(final String[] args) {
+        System.setErr(IoBuilder.forLogger("System.err").setLevel(Level.ERROR).buildPrintStream());
+        System.setOut(IoBuilder.forLogger("System.out").setLevel(Level.TRACE).buildPrintStream());
         launch(args);
     }
 
