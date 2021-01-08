@@ -101,7 +101,7 @@ public class MapViewModel implements ViewModel {
         this.world = world;
         this.lakes = lakes;
 
-        this.mouseViewPosition.addListener((observable, oldValue, newValue) -> mouseWorldPosition.set(mapVariables.toWorld(newValue)));
+        this.mouseViewPosition.addListener((observable, oldValue, newValue) -> recalculateMouseWorldPosition());
 
         this.scale.addListener((observable, oldValue, newValue) -> mapVariables.setScale(newValue.doubleValue()));
         this.mapVariables.setScale(scale.get());
@@ -120,6 +120,10 @@ public class MapViewModel implements ViewModel {
         this.selectionShape.addListener((observable, oldValue, newValue) -> triggerRepaint());
 
         this.fontSize.bind(preferences.integerProperty("general.map_font_size"));
+    }
+
+    public void recalculateMouseWorldPosition() {
+        mouseWorldPosition.set(mapVariables.toWorld(mouseViewPosition.get()));
     }
 
     public void initialize() {

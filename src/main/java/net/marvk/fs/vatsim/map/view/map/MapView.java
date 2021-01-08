@@ -177,6 +177,7 @@ public class MapView implements FxmlView<MapViewModel> {
         private final BooleanProperty rightMouseDrag = new SimpleBooleanProperty();
         private final BooleanProperty middleMouseDown = new SimpleBooleanProperty();
         private final BooleanProperty controlDown = new SimpleBooleanProperty();
+        private Point2D currentMousePosition = null;
 
         public void onStart(final MouseEvent event) {
             controlDown.set(event.isControlDown());
@@ -227,11 +228,19 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void onMove(final MouseEvent event) {
             controlDown.set(event.isControlDown());
-            viewModel.mouseViewPositionProperty().set(new Point2D(event.getX(), event.getY()));
+            currentMousePosition = new Point2D(event.getX(), event.getY());
+            refreshCurrentMousePosition();
+        }
+
+        public void refreshCurrentMousePosition() {
+            if (currentMousePosition != null) {
+                viewModel.mouseViewPositionProperty().set(currentMousePosition);
+            }
         }
 
         public void onScroll(final ScrollEvent event) {
             contextMenu.hideAndClear();
+            viewModel.recalculateMouseWorldPosition();
             final boolean scollingIn = event.getDeltaY() > 0;
             final double fScroll = Math.pow(viewModel.getScrollSpeed(), 1. / 4);
             final double delta = scollingIn ? fScroll : 1.0 / fScroll;
