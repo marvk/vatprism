@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.datatable.pilotstable;
 
 import com.google.inject.Inject;
 import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.FlightRule;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.EtaToStringMapper;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
@@ -48,6 +49,20 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .widthFactor(0.7)
                 .build();
 
+        this.<String>newColumnBuilder()
+                .title("Aircraft Type")
+                .stringObservableValueFactory(e -> e.getFlightPlan().aircraftProperty())
+                .sortable()
+                .build();
+
+        this.<FlightRule>newColumnBuilder()
+                .title("Flight Rules")
+                .objectObservableValueFactory(e -> e.getFlightPlan().flightRuleProperty())
+                .toStringMapper(Enum::toString)
+                .sortable()
+                .widthFactor(0.85)
+                .build();
+
         this.<Number>newColumnBuilder()
                 .title("Gnd. Speed")
                 .objectObservableValueFactory(Pilot::groundSpeedProperty)
@@ -64,12 +79,6 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .sortable()
                 .mono(true)
                 .widthFactor(0.7)
-                .build();
-
-        this.<String>newColumnBuilder()
-                .title("Aircraft Type")
-                .stringObservableValueFactory(e -> e.getFlightPlan().aircraftProperty())
-                .sortable()
                 .build();
 
         this.<Pilot.Eta>newColumnBuilder()
