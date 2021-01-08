@@ -22,6 +22,7 @@ public class UpperInformationRegionsTableView extends AbstractTableView<UpperInf
                 .stringObservableValueFactory(UpperInformationRegion::icaoProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.6)
                 .build();
 
         newColumnBuilder()
@@ -29,6 +30,7 @@ public class UpperInformationRegionsTableView extends AbstractTableView<UpperInf
                 .stringObservableValueFactory(UpperInformationRegion::nameProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(2.5)
                 .build();
 
         this.<ObservableList<FlightInformationRegionBoundary>>newColumnBuilder()
@@ -36,14 +38,16 @@ public class UpperInformationRegionsTableView extends AbstractTableView<UpperInf
                 .objectObservableValueFactory(UpperInformationRegion::getFlightInformationRegionBoundaries)
                 .toStringMapper(UpperInformationRegionsTableView::firbIcaos)
                 .mono(true)
+                .widthFactor(6)
                 .build();
 
         this.<Number>newColumnBuilder()
-                .title("# of Controllers")
+                .title("Controllers")
                 .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
                 .toStringMapper(AbstractTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.8)
                 .build();
     }
 

@@ -28,6 +28,7 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
                 .toStringMapper(Object::toString)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<String>newColumnBuilder()
@@ -35,12 +36,14 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
                 .stringObservableValueFactory(Client::callsignProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<String>newColumnBuilder()
                 .title("Name")
                 .stringObservableValueFactory(Client::realNameProperty)
                 .sortable()
+                .widthFactor(2.0)
                 .build();
 
         this.<ZonedDateTime>newColumnBuilder()
@@ -49,6 +52,7 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
                 .toStringMapper(FORMATTER::format)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<Duration>newColumnBuilder()
@@ -58,6 +62,7 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
                 .toStringMapper(AbstractClientsTableView::formatDuration)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
     }
 

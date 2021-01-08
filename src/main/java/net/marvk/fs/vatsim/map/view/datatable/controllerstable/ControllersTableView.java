@@ -27,6 +27,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .toStringMapper(Rating::getShortName)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<Data>newColumnBuilder()
@@ -35,6 +36,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .toStringMapper(locationTypeToStringVisitor::visit, true)
                 .sortable()
                 .mono(false)
+                .widthFactor(0.7)
                 .build();
 
         this.<Data>newColumnBuilder()
@@ -43,6 +45,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .toStringMapper(locationToStringVisitor::visit, true)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<ControllerType>newColumnBuilder()
@@ -51,6 +54,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .toStringMapper(Enum::toString)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.5)
                 .build();
 
         this.<String>newColumnBuilder()
@@ -58,6 +62,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .stringObservableValueFactory(Controller::frequencyProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
     }
 

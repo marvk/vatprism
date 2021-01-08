@@ -9,6 +9,7 @@ import net.marvk.fs.vatsim.map.data.DataVisitor;
 import net.marvk.fs.vatsim.map.data.SimplePredicatesDataVisitor;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
+import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.regex.Pattern;
 
@@ -16,12 +17,18 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
     private final ReadOnlyStringWrapper query = new ReadOnlyStringWrapper();
     private final ReadOnlyObjectWrapper<Pattern> pattern = new ReadOnlyObjectWrapper<>();
     private final ObjectProperty<DataVisitor<Boolean>> predicate = new SimpleObjectProperty<>();
+    private final Preferences preferences;
 
     @InjectScope
     protected StatusScope statusScope;
 
     @Inject
     protected ToolbarScope toolbarScope;
+
+    @Inject
+    public SimpleTableViewModel(final Preferences preferences) {
+        this.preferences = preferences;
+    }
 
     public void initialize() {
         query.bind(statusScope.searchQueryProperty());
@@ -49,5 +56,9 @@ public abstract class SimpleTableViewModel<ViewModel extends Data> extends Abstr
 
     public ReadOnlyObjectProperty<Pattern> patternProperty() {
         return pattern.getReadOnlyProperty();
+    }
+
+    public ReadOnlyIntegerProperty fontSizeProperty() {
+        return preferences.integerProperty("general.font_size");
     }
 }

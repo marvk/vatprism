@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.text.TextFlow;
 import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
@@ -37,13 +38,15 @@ public class ColumnBuilderFactory<Model extends Data> {
             TitleStep<Model, CellValue>,
             ComparableStep<Model, CellValue>,
             StringMapperStep<Model, CellValue>,
-            ValueStep<Model, CellValue> {
+            ValueStep<Model, CellValue>,
+            WidthStep {
 
         private final TableColumn<Model, CellValue> result;
         private boolean mono;
         private BiFunction<CellValue, String, String> stringMapper;
         private BiFunction<Model, ObservableStringValue, ObservableValue<CellValue>> valueFactory;
         private boolean valueNullable;
+        private double widthFactor = 1.0;
 
         private Builder() {
             this.result = new TableColumn<>();
@@ -77,73 +80,63 @@ public class ColumnBuilderFactory<Model extends Data> {
         }
 
         @Override
-        public MonoStep<Model, CellValue> sortable() {
+        public MonoStep sortable() {
             this.result.setSortable(true);
             return this;
         }
 
         @Override
-        public MonoStep<Model, CellValue> sortable(final Comparator<CellValue> comparator) {
+        public MonoStep sortable(final Comparator<CellValue> comparator) {
             this.result.setComparator(comparator);
             this.result.setSortable(true);
             return this;
         }
 
         @Override
-        public BuildStep mono(final boolean mono) {
+        public WidthStep mono(final boolean mono) {
             this.mono = mono;
+            return this;
+        }
+
+        @Override
+        public BuildStep widthFactor(final double factor) {
+            if (factor <= 0) {
+                throw new IllegalArgumentException("Factor can not be equal or less than zero, was %s".formatted(factor));
+            }
+            this.widthFactor = factor;
             return this;
         }
 
         @Override
         public void build() {
             result.setCellValueFactory(param -> valueFactory.apply(param.getValue(), viewModel.queryProperty()));
-            result.setCellFactory(param -> new DataTableCell<>((cellValue, query) -> textFlow(stringMapper.apply(cellValue, query), mono), valueNullable));
+            result.setCellFactory(param -> new DataTableCell<>((cellValue, query) -> textFlowAdjusted(stringMapper.apply(cellValue, query), mono), valueNullable));
             result.setReorderable(false);
+            result.prefWidthProperty()
+                  .bind(viewModel.fontSizeProperty().divide(12.0).multiply(100.0).multiply(widthFactor));
             columnConsumer.accept(result);
+        }
+
+        private TextFlow textFlowAdjusted(final String cellValue, final boolean mono) {
+            final TextFlow textFlow = textFlow(cellValue, mono);
+            textFlow.setMinHeight(0);
+            textFlow.setPrefHeight(Region.USE_PREF_SIZE);
+            textFlow.setMinWidth(Region.USE_PREF_SIZE);
+            textFlow.setPrefWidth(Region.USE_COMPUTED_SIZE);
+            return textFlow;
         }
 
         private TextFlow textFlow(final String cellValue, final boolean mono) {
             if (viewModel.getQuery() == null || viewModel.getQuery().isBlank()) {
-                return new TextFlow(textFlowHighlighter.createSimpleTextFlow(cellValue, mono));
+                return textFlowHighlighter.createSimpleTextFlow(cellValue, mono);
             }
-
-            return new TextFlow(textFlowHighlighter.createHighlightedTextFlow(cellValue, viewModel.getPattern(), mono));
+            return textFlowHighlighter.createHighlightedTextFlow(cellValue, viewModel.getPattern(), mono);
         }
+
     }
 
     public interface TitleStep<Model extends Data, CellValue> {
         ValueStep<Model, CellValue> title(final String s);
-    }
-
-    public interface ComparableStep<Model extends Data, CellValue> extends MonoStep<Model, CellValue>, BuildStep {
-        MonoStep<Model, CellValue> sortable();
-
-        MonoStep<Model, CellValue> sortable(final Comparator<CellValue> comparator);
-    }
-
-    public interface MonoStep<Model extends Data, CellValue> extends BuildStep {
-        BuildStep mono(final boolean mono);
-    }
-
-    public interface BuildStep {
-        void build();
-    }
-
-    public interface StringMapperStep<Model extends Data, CellValue> {
-        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper) {
-            return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue));
-        }
-
-        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper, final boolean nullable) {
-            return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue), nullable);
-        }
-
-        default ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
-            return toStringMapper(stringMapper, false);
-        }
-
-        ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable);
     }
 
     public interface ValueStep<Model extends Data, CellValue> {
@@ -175,6 +168,41 @@ public class ColumnBuilderFactory<Model extends Data> {
         }
 
         ComparableStep<Model, String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory);
+    }
+
+    public interface StringMapperStep<Model extends Data, CellValue> {
+
+        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper) {
+            return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue));
+        }
+
+        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper, final boolean nullable) {
+            return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue), nullable);
+        }
+
+        default ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
+            return toStringMapper(stringMapper, false);
+        }
+
+        ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable);
+    }
+
+    public interface ComparableStep<Model extends Data, CellValue> extends MonoStep, WidthStep, BuildStep {
+        MonoStep sortable();
+
+        MonoStep sortable(final Comparator<CellValue> comparator);
+    }
+
+    public interface MonoStep extends WidthStep, BuildStep {
+        WidthStep mono(final boolean mono);
+    }
+
+    public interface WidthStep extends BuildStep {
+        BuildStep widthFactor(final double factor);
+    }
+
+    public interface BuildStep {
+        void build();
     }
 
     private class DataTableCell<CellValue> extends TableCell<Model, CellValue> {

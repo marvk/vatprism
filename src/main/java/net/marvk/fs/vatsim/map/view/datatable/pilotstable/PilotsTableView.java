@@ -27,6 +27,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<Airport>newColumnBuilder()
@@ -35,6 +36,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<Airport>newColumnBuilder()
@@ -43,6 +45,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -51,6 +54,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(e -> "%dkts".formatted(e.intValue()))
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -59,6 +63,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(e -> "%dft".formatted(e.intValue()))
                 .sortable()
                 .mono(true)
+                .widthFactor(0.7)
                 .build();
 
         this.<String>newColumnBuilder()
@@ -73,6 +78,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(ETA_MAPPER::map)
                 .sortable(Comparator.comparing(Pilot.Eta::getDuration))
                 .mono(true)
+                .widthFactor(0.6)
                 .build();
     }
 }

@@ -66,7 +66,6 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
         final Optional<FlightInformationRegionBoundary> firb = findFirb(vatsimAirport.getFir());
         if (firb.isPresent()) {
             toAdd.flightInformationRegionBoundaryPropertyWritable().set(firb.get());
-
         } else {
             log.warn("Could not determine FIR for airport with ICAO: \"%s\", name: \"%s\", FIR ICAO: \"%s\"".formatted(vatsimAirport
                     .getIcao(), vatsimAirport.getNames().get(0), vatsimAirport.getFir()));

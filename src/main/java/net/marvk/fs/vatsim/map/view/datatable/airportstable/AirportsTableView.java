@@ -26,6 +26,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .stringObservableValueFactory(Airport::icaoProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.5)
                 .build();
 
         this.<String>newColumnBuilder()
@@ -33,6 +34,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .stringObservableValueFactory(AirportsTableView::airportName)
                 .sortable()
                 .mono(false)
+                .widthFactor(2.5)
                 .build();
 
         this.<Point2D>newColumnBuilder()
@@ -41,6 +43,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(e -> GeomUtil.formatLon(e.getY()))
                 .sortable(Comparator.comparingDouble(Point2D::getX))
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<Point2D>newColumnBuilder()
@@ -49,6 +52,23 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(e -> GeomUtil.formatLat(e.getX()))
                 .sortable(Comparator.comparingDouble(Point2D::getY))
                 .mono(true)
+                .widthFactor(0.85)
+                .build();
+
+        this.<String>newColumnBuilder()
+                .title("FIR")
+                .stringObservableValueFactory(AirportsTableView::firIcao)
+                .sortable()
+                .mono(true)
+                .widthFactor(0.5)
+                .build();
+
+        this.<Country>newColumnBuilder()
+                .title("Country")
+                .objectObservableValueFactory(Airport::countryProperty)
+                .toStringMapper(Country::getName)
+                .sortable()
+                .widthFactor(1.25)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -57,6 +77,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(AbstractTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -65,6 +86,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(AbstractTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -73,6 +95,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(AbstractTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.85)
                 .build();
 
         this.<Number>newColumnBuilder()
@@ -81,20 +104,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(AbstractTableView::emptyIfZero)
                 .sortable()
                 .mono(true)
-                .build();
-
-        this.<String>newColumnBuilder()
-                .title("FIR")
-                .stringObservableValueFactory(AirportsTableView::firIcao)
-                .sortable()
-                .mono(true)
-                .build();
-
-        this.<Country>newColumnBuilder()
-                .title("Country")
-                .objectObservableValueFactory(Airport::countryProperty)
-                .toStringMapper(Country::getName)
-                .sortable()
+                .widthFactor(0.85)
                 .build();
     }
 

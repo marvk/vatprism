@@ -20,6 +20,7 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
                 .stringObservableValueFactory(FlightInformationRegionBoundary::icaoProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(0.6)
                 .build();
 
         this.<String>newColumnBuilder()
@@ -27,6 +28,7 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
                 .stringObservableValueFactory(FlightInformationRegionBoundariesTableView::nameProperty)
                 .sortable()
                 .mono(true)
+                .widthFactor(2.5)
                 .build();
 
         this.<Boolean>newColumnBuilder()
@@ -35,14 +37,7 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
                 .toStringMapper(e -> e ? "Yes" : "")
                 .sortable()
                 .mono(true)
-                .build();
-
-        this.<Number>newColumnBuilder()
-                .title("# of Controllers")
-                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
-                .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
+                .widthFactor(0.5)
                 .build();
 
         this.<Country>newColumnBuilder()
@@ -50,6 +45,16 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
                 .objectObservableValueFactory(FlightInformationRegionBoundary::countryProperty)
                 .toStringMapper(Country::getName)
                 .sortable()
+                .widthFactor(1.25)
+                .build();
+
+        this.<Number>newColumnBuilder()
+                .title("Controllers")
+                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
+                .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
+                .sortable()
+                .mono(true)
+                .widthFactor(0.85)
                 .build();
     }
 
