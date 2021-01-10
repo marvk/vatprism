@@ -200,19 +200,19 @@ public class MainViewModel implements ViewModel {
     }
 
     private static final class ReloadRepositoryCommand extends DelegateCommand {
-        private ReloadRepositoryCommand(final Repository<?> repository, final boolean background) {
+        private ReloadRepositoryCommand(final ReloadableRepository<?> repository, final boolean background) {
             this(repository, background, null);
         }
 
-        private ReloadRepositoryCommand(final Repository<?> repository, final boolean background, final Runnable onSucceed) {
+        private ReloadRepositoryCommand(final ReloadableRepository<?> repository, final boolean background, final Runnable onSucceed) {
             super(() -> new ReloadRepositoryAction(repository, onSucceed), new ImmutableObjectProperty<>(true), background);
         }
 
         private static final class ReloadRepositoryAction extends Action {
-            private final Repository<?> repository;
+            private final ReloadableRepository<?> repository;
             private final Runnable onSucceed;
 
-            public ReloadRepositoryAction(final Repository<?> repository, final Runnable onSucceed) {
+            public ReloadRepositoryAction(final ReloadableRepository<?> repository, final Runnable onSucceed) {
                 this.repository = repository;
                 this.onSucceed = onSucceed;
             }

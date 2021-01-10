@@ -11,7 +11,7 @@ import net.marvk.fs.vatsim.api.VatsimApiException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model> implements Repository<ViewModel> {
+public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model> implements ReloadableRepository<ViewModel> {
     protected final VatsimApi vatsimApi;
     protected final Map<String, ViewModel> map = new HashMap<>();
     protected final ReadOnlyListWrapper<ViewModel> items = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());

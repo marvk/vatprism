@@ -196,3 +196,16 @@
 .menu-item-header:focused {
     -fx-background-color: transparent;
 }
+
+.mono {
+    -fx-font-family: "JetBrains Mono";
+}
+
+.hyperlink-label {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.hyperlink-label:hover {
+    -fx-text-fill: -vatsim-text-color-light;
+}

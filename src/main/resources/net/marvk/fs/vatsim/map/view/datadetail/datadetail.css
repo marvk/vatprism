@@ -77,19 +77,6 @@
     -fx-background-radius: 0;
 }
 
-.mono {
-    -fx-font-family: "JetBrains Mono";
-}
-
 .detail-view-container {
     -fx-effect: -vatsim-dropshadow;
-}
-
-.hyperlink-label {
-    -fx-underline: true;
-    -fx-cursor: hand;
-}
-
-.hyperlink-label:hover {
-    -fx-text-fill: -vatsim-text-color-light;
 }

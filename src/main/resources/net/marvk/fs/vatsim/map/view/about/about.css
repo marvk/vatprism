@@ -1,11 +1,12 @@
 .about-container {
-    -fx-background-color: #2B2313;
-    -fx-effect: -vatsim-dropshadow;
+    -fx-background-color: white;
+    /*-fx-background-color: #2B2313;*/
+    /*-fx-effect: -vatsim-dropshadow;*/
 }
 
 .label {
-    -fx-text-fill: #5f553d;
-    -fx-font-family: "JetBrains Mono";
+    -fx-text-fill: black;
+    /*-fx-text-fill: #5f553d;*/
 }
 
 .h2 {
@@ -14,4 +15,14 @@
 
 .h1 {
     -fx-font-size: 30;
+    -fx-font-weight: bold;
+}
+
+.hl {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.hl:hover {
+    -fx-text-fill: #222222;
 }

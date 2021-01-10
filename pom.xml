@@ -15,7 +15,7 @@
 
     <developers>
         <developer>
-            <name>Marvin Kuhnke</name>
+            <name>${developerName}</name>
             <email>marvinkuhnke@gmail.com</email>
             <organization>net.marvk</organization>
             <organizationUrl>kuhnke.dev</organizationUrl>
@@ -37,7 +37,8 @@
         <version-number>0.1.0</version-number>
         <version-suffix>SNAPSHOT</version-suffix>
 
-        <main-class>net.marvk.fs.vatsim.map.Application</main-class>
+        <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
+        <developerName>Marvin Kuhnke</developerName>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -72,7 +73,6 @@
             <artifactId>ikonli-fileicons-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -197,7 +197,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
                 <configuration>
-                    <mainClass>${main-class}</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -224,7 +224,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>${main-class}</mainClass>
+                                    <mainClass>${mainClass}</mainClass>
                                 </transformer>
                             </transformers>
                             <finalName>${project.artifactId}-${project.version}-fat</finalName>
@@ -271,11 +271,20 @@
                         </goals>
                         <configuration>
                             <executable>jpackage</executable>
-                            <commandlineArgs>--input target-fat-jar/ --name ${name} --main-jar
-                                vatsim-map-${version}-fat.jar --dest target-installer --main-class ${main-class} --type
-                                msi --win-dir-chooser --description "${description}" --vendor Marvk --app-version
-                                ${version-number} --icon src/main/resources/net/marvk/fs/vatsim/map/icon-32.ico
-                                --win-menu --win-menu-group ${name}
+                            <commandlineArgs>
+                                --input "target-fat-jar/"
+                                --name "${name}"
+                                --main-jar "vatsim-map-${version}-fat.jar"
+                                --dest "target-installer"
+                                --main-class "${mainClass}"
+                                --type "msi"
+                                --description "${description}"
+                                --vendor "${developerName}"
+                                --app-version "${version-number}"
+                                --icon "src/main/resources/net/marvk/fs/vatsim/map/icon-32.ico"
+                                --win-dir-chooser
+                                --win-menu
+                                --win-menu-group ${name}
                             </commandlineArgs>
                         </configuration>
                     </execution>
@@ -299,6 +308,19 @@
                         </fileset>
                     </filesets>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

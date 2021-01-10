@@ -2,7 +2,7 @@
 
 
 <?import javafx.scene.layout.VBox?>
-<VBox styleClass="root" fx:id="container" stylesheets="@../root.css, @../list.css, @../scrollbar.css, @../table.css"
+<VBox fx:id="container" stylesheets="@../root.css, @../list.css, @../scrollbar.css, @../table.css"
       fx:controller="net.marvk.fs.vatsim.map.view.main.MainView" maxHeight="-Infinity"
       maxWidth="-Infinity"
       minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"

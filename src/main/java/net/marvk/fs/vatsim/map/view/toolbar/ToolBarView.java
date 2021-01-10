@@ -158,7 +158,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
     @FXML
     private void showAbout(final ActionEvent actionEvent) {
-        final Parent view = FluentViewLoader.fxmlView(AboutView.class).context(context).load().getView();
+        final Parent view = FluentViewLoader.fxmlView(AboutView.class).load().getView();
 
         final Popup popup = new Popup();
         popup.getContent().add(view);

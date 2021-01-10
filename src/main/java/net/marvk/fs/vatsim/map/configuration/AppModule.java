@@ -33,6 +33,13 @@ public class AppModule extends AbstractModule {
         bind(UpperInformationRegionRepository.class).in(Singleton.class);
         bind(InternationalDateLineRepository.class).in(Singleton.class);
         bind(CountryRepository.class).in(Singleton.class);
+        bind(DependencyRepository.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Named("licenseFileName")
+    public String licenseFileName() {
+        return "/THIRD-PARTY.txt";
     }
 
     @Provides
