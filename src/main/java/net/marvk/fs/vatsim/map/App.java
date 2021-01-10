@@ -25,7 +25,7 @@ public class App extends MvvmfxGuiceApplication {
 
     public static void main(final String[] args) {
         System.setErr(IoBuilder.forLogger("System.err").setLevel(Level.ERROR).buildPrintStream());
-        System.setOut(IoBuilder.forLogger("System.out").setLevel(Level.TRACE).buildPrintStream());
+//        System.setOut(IoBuilder.forLogger("System.out").setLevel(Level.TRACE).buildPrintStream());
         launch(args);
     }
 

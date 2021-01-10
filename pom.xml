@@ -6,9 +6,39 @@
 
     <groupId>net.marvk.fs</groupId>
     <artifactId>vatsim-map</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>${version-number}-${version-suffix}</version>
+
+    <name>VatMap</name>
+    <description>VatSim Map</description>
+    <url>https://github.com/marvk/vatsim-map</url>
+    <inceptionYear>2020</inceptionYear>
+
+    <developers>
+        <developer>
+            <name>Marvin Kuhnke</name>
+            <email>marvinkuhnke@gmail.com</email>
+            <organization>net.marvk</organization>
+            <organizationUrl>kuhnke.dev</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:ssh://github.com:marvk/vatsim-map.git</connection>
+        <developerConnection>scm:git:ssh://github.com:marvk/vatsim-map.git</developerConnection>
+        <url>http://github.com/marvk/vatsim-map/tree/master</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/marvk/vatsim-map/issues</url>
+    </issueManagement>
 
     <properties>
+        <version-number>0.1.0</version-number>
+        <version-suffix>SNAPSHOT</version-suffix>
+
+        <main-class>net.marvk.fs.vatsim.map.Application</main-class>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -167,7 +197,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
                 <configuration>
-                    <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
+                    <mainClass>${main-class}</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -194,9 +224,11 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
+                                    <mainClass>${main-class}</mainClass>
                                 </transformer>
                             </transformers>
+                            <finalName>${project.artifactId}-${project.version}-fat</finalName>
+                            <outputDirectory>target-fat-jar</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -227,6 +259,47 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <commandlineArgs>--input target-fat-jar/ --name ${name} --main-jar
+                                vatsim-map-${version}-fat.jar --dest target-installer --main-class ${main-class} --type
+                                msi --win-dir-chooser --description "${description}" --vendor Marvk --app-version
+                                ${version-number} --icon src/main/resources/net/marvk/fs/vatsim/map/icon-32.ico
+                                --win-menu --win-menu-group ${name}
+                            </commandlineArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>.</directory>
+                            <includes>
+                                <include>target-fat-jar/**/*</include>
+                                <include>target-fat-jar</include>
+                                <include>target-installer/**/*</include>
+                                <include>target-installer</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -249,6 +322,9 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
     </repositories>
 </project>

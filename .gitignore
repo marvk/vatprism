@@ -253,7 +253,8 @@ src/main/resources/net/marvk/fs/vatsim/map/world/**/*.html
 
 src/main/resources/net/marvk/fs/vatsim/map/world/**/*VERSION.txt
 
-target/**/*
+
+target*/**/*
 out_/**/*
 out/**/*
 lib/**/*
