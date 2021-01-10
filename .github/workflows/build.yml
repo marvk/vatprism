@@ -12,8 +12,6 @@ jobs:
           java-version: 15
       - name: Download WiX Toolset
         run: Invoke-WebRequest https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -OutFile wix.zip
-      - name: ls debug
-        run: ls
       - name: Unzip WiX Toolset
         run: mkdir wix; tar -xf wix.zip -C wix
       - name: Install WiX Toolset
