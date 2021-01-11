@@ -38,7 +38,28 @@ Issue tracking takes place on this GitHub issue repository. You are most invited
 any other constructive feedback [as an issue.](https://github.com/marvk/vatsim-map/issues) Please check existing issues
 before creating a new one.
 
-# Build status ![Build Status](https://github.com/marvk/vatsim-map/workflows/Build/badge.svg)
+# Installation
+
+#### Windows
+
+Simply download the latest installer (`.msi`) from the [releases page.](https://github.com/marvk/vatsim-map/releases)
+and run it. The installer will guide you through the installation.
+
+If you have another version of VATprism installed, the installer may prompt you to remove an existing version. In this
+case, head to Windows' *add or remove programs* dialog, remove your existing version, and rerun the installer. Don't
+worry, your settings will not be removed.
+
+#### Linux and macOS
+
+Currently, there is no support for native linux or macOS binaries. It is still possible to run VATprism with `java` by
+downloading the `.jar` from the [releases page.](https://github.com/marvk/vatsim-map/releases) and
+running `java -jar vatprism-VERSION.jar`. This requires an installation of JDK 15+ or JRE 15+, which are available on
+the [AdoptOpenJDK website.](https://adoptopenjdk.net/index.html)
+
+If there is demand for macOS or linux native binaries in the future, I will think about adding support. Feel free to
+request this as an issue, or submit a pull request.
+
+# Build ![Build Status](https://github.com/marvk/vatsim-map/workflows/Build/badge.svg)
 
 If you want to build the project yourself, you require
 
