@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.Dependency;
+import net.marvk.fs.vatsim.map.view.ListNoneSelectionModel;
 
 public class AboutView implements FxmlView<AboutViewModel> {
     @FXML
@@ -26,6 +27,9 @@ public class AboutView implements FxmlView<AboutViewModel> {
 
         dependenciesList.setItems(viewModel.dependencies());
         dependenciesList.setCellFactory(param -> new DependencyListCell());
+        dependenciesList.setSelectionModel(new ListNoneSelectionModel<>());
+        dependenciesList.setFocusTraversable(false);
+        version.requestFocus();
     }
 
     private void setVersion() {
@@ -57,17 +61,25 @@ public class AboutView implements FxmlView<AboutViewModel> {
         private Pane getPane(final Dependency item) {
             if (pane == null) {
                 name = new Label();
-                name.getStyleClass().add("hl");
                 version = new Label();
                 license = new Label();
 
                 final HBox hBox = new HBox(name, version);
-                hBox.setSpacing(10);
+                hBox.setSpacing(5);
                 pane = new VBox(hBox, license);
             }
 
             name.setText(item.getProjectName());
-            name.setOnMouseClicked(e -> viewModel.openDepdendencyUrlInBrowser(item));
+            final String url = item.getProjectUrl();
+            if (url != null && !url.isBlank()) {
+                if (!name.getStyleClass().contains("hl")) {
+                    name.getStyleClass().add("hl");
+                }
+                name.setOnMouseClicked(e -> viewModel.openDepdendencyUrlInBrowser(item));
+            } else {
+                name.getStyleClass().remove("hl");
+                name.setOnMouseClicked(null);
+            }
             version.setText(item.getVersion());
             license.setText(item.getLicenseName());
 

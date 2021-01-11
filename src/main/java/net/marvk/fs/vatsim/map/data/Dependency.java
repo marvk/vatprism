@@ -1,7 +1,9 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.ReadOnlyStringProperty;
+import lombok.ToString;
 
+@ToString
 public class Dependency {
     private final ReadOnlyStringProperty licenseName;
     private final ReadOnlyStringProperty projectName;

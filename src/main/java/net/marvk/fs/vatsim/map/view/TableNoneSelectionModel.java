@@ -6,11 +6,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 
-/**
- * https://stackoverflow.com/a/46186195/3000387
- */
-public class NoneSelectionModel<T> extends TableView.TableViewSelectionModel<T> {
-    public NoneSelectionModel(final TableView<T> tableView) {
+public class TableNoneSelectionModel<T> extends TableView.TableViewSelectionModel<T> {
+    public TableNoneSelectionModel(final TableView<T> tableView) {
         super(tableView);
     }
 

@@ -14,10 +14,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DependencyRepository implements ReadOnlyRepository<Dependency> {
     private static final Pattern LINE_PATTERN =
-            Pattern.compile("^\\s*(?:\\('?(?<licenseName>[^()]*)'?\\) )+(?<projectName>\\S*) \\((?<groupId>\\S*):(?<artifactId>\\S*):(?<version>\\S*) - (?<projectUrl>\\S*)\\)$");
+            Pattern.compile("^\\s*(?:\\('?(?<licenseName>([^()]|(\\(.*\\)))*)'?\\)\\s*)+(?<projectName>.*) \\((?<groupId>\\S*):(?<artifactId>\\S*):(?<version>\\S*) - (?:(?<projectUrl>\\S*)|(no url defined))\\)$");
 
     private final String licenseFileName;
 
@@ -40,33 +41,45 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
     private ReadOnlyListProperty<Dependency> loadDependencies() {
         final InputStream resource = getClass().getResourceAsStream(licenseFileName);
 
-        final List<Dependency> result =
+        final Stream<Dependency> result =
                 new BufferedReader(new InputStreamReader(resource))
                         .lines()
                         .map(DependencyRepository::parseLine)
                         .filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .sorted(Comparator.comparing(Dependency::getProjectName))
-                        .collect(Collectors.toList());
+                        .map(Optional::get);
 
-        return new ImmutableListProperty<>(result);
+        final Stream<Dependency> additionalDependencies = List.of(
+                new Dependency(
+                        "Unknown license",
+                        "VAT-Spy Data Project",
+                        null,
+                        null,
+                        null,
+                        "https://github.com/vatsimnetwork/vatspy-data-project"
+                ),
+                new Dependency(
+                        "Unknown license",
+                        "VATSIM API",
+                        null,
+                        null,
+                        null,
+                        "https://api.vatsim.net/api/"
+                )
+        ).stream();
+
+        return new ImmutableListProperty<>(
+                Stream.concat(result, additionalDependencies)
+                      .sorted(Comparator.comparing(Dependency::getProjectName))
+                      .collect(Collectors.toUnmodifiableList())
+        );
     }
 
     public static Optional<Dependency> parseLine(final String line) {
         final Matcher matcher = LINE_PATTERN.matcher(line);
 
         if (matcher.matches()) {
-            System.out.println("line = >>>>>%s<<<<<".formatted(line));
-            System.out.println(matcher.group("licenseName"));
-            System.out.println(matcher.group("projectName"));
-            System.out.println(matcher.group("groupId"));
-            System.out.println(matcher.group("artifactId"));
-            System.out.println(matcher.group("version"));
-            System.out.println(matcher.group("projectUrl"));
-            System.out.println();
-
             return Optional.of(new Dependency(
-                    matcher.group("licenseName"),
+                    matcher.group("licenseName").split("\\) \\(")[0],
                     matcher.group("projectName"),
                     matcher.group("groupId"),
                     matcher.group("artifactId"),

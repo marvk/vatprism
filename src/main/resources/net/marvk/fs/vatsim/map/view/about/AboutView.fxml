@@ -11,7 +11,7 @@
         <VBox>
             <Label styleClass="h1" text="Untitled Vatsim Map"/>
             <Label styleClass="h2" text="Created by Marvin Kuhnke"/>
-            <HBox spacing="11">
+            <HBox spacing="5">
                 <Label text="Version: "/>
                 <Label fx:id="version" text="DEV"/>
             </HBox>
