@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 public class DependencyRepository implements ReadOnlyRepository<Dependency> {
     private static final Pattern LINE_PATTERN =
-            Pattern.compile("^\\s*(?:\\('?(?<licenseName>([^()]|(\\(.*\\)))*)'?\\)\\s*)+(?<projectName>.*) \\((?<groupId>\\S*):(?<artifactId>\\S*):(?<version>\\S*) - (?:(?<projectUrl>\\S*)|(no url defined))\\)$");
+            Pattern.compile("^\\s*(?:\\('?+(?<licenseName>([^()]|(\\(.*\\)))+?)'?\\)\\s*)+(?<projectName>.*) \\((?<groupId>\\S*):(?<artifactId>\\S*):(?<version>\\S*) - (?:(?<projectUrl>\\S*)|(no url defined))\\)$");
 
     private final String licenseFileName;
 
