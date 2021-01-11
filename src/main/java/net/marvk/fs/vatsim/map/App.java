@@ -65,8 +65,8 @@ public class App extends MvvmfxGuiceApplication {
             Platform.exit();
             System.exit(0);
         });
-        primaryStage.getIcons().addAll(loadIcon("icon-24.png"));
-        primaryStage.setTitle("VATSim Map");
+        primaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-24.png"), loadIcon("icon-32.png"));
+        primaryStage.setTitle("VATprism");
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         primaryStage.show();
     }

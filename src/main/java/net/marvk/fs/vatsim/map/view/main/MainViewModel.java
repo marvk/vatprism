@@ -151,16 +151,16 @@ public class MainViewModel implements ViewModel {
                     """.formatted(
                     (Object[]) fixColorStrings(
                             baseColor,
-                            baseColor.deriveColor(0, 1, mapBrightnessFactor(b, 1.5), 1),
-                            baseColor.deriveColor(0, 0.95, mapBrightnessFactor(b, 2), 1),
-                            baseColor.deriveColor(0, 0.95, mapBrightnessFactor(b, 2), 0.25),
-                            baseColor.deriveColor(0, 0.9, mapBrightnessFactor(b, 2.5), 1),
-                            baseColor.deriveColor(0, 0.85, mapBrightnessFactor(b, 3), 1),
+                            baseColor.deriveColor(0, 1.00, mapBrightnessFactor(b, 1.50), 1.00),
+                            baseColor.deriveColor(0, 0.80, mapBrightnessFactor(b, 2.00), 1.00),
+                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(b, 2.00), 0.25),
+                            baseColor.deriveColor(0, 0.30, mapBrightnessFactor(b, 2.50), 1.00),
+                            baseColor.deriveColor(0, 0.20, mapBrightnessFactor(b, 3.00), 1.00),
 
-                            baseColor.deriveColor(0, 0.7, mapBrightnessFactor(b, 4), 1),
-                            baseColor.deriveColor(0, 0.6, mapBrightnessFactor(b, 4.5), 1),
-                            baseColor.deriveColor(0, 0.5, mapBrightnessFactor(b, 5), 1),
-                            baseColor.deriveColor(0, 0, mapBrightnessFactor(b, 4.5), 1)
+                            baseColor.deriveColor(0, 0.70, mapBrightnessFactor(b, 6.00), 1.00),
+                            baseColor.deriveColor(0, 0.60, mapBrightnessFactor(b, 7.50), 1.00),
+                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(b, 10.00), 1.00),
+                            baseColor.deriveColor(0, 0.00, mapBrightnessFactor(b, 7.50), 1.00)
                     )
             );
         }

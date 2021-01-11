@@ -281,7 +281,7 @@
                                 --description "${description}"
                                 --vendor "${developerName}"
                                 --app-version "${version-number}"
-                                --icon "src/main/resources/net/marvk/fs/vatsim/map/icon-32.ico"
+                                --icon "src/main/resources/net/marvk/fs/vatsim/map/icon.ico"
                                 --win-dir-chooser
                                 --win-menu
                                 --win-menu-group ${name}
