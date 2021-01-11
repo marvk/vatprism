@@ -126,7 +126,7 @@ public class Preferences {
         final BooleanProperty debug = booleanProperty("general.debug");
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                booleanProperty("metrics.show").set(false);
+                booleanProperty("metrics.enabled").set(false);
             }
         });
         debug.set(true);

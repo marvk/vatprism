@@ -7,9 +7,11 @@ import javafx.animation.RotateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.Property;
+import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -58,7 +60,16 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
         bindBooleanBidirectional(enablePilotCallsign, "pilots.label");
         bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled");
 
-        enableDebug.visibleProperty().bind(booleanProperty("general.debug"));
+        booleanProperty("general.debug").addListener((observable, oldValue, newValue) -> {
+            final ObservableList<Node> children = container.getChildren();
+            if (newValue) {
+                if (!children.contains(enableDebug)) {
+                    children.add(children.size() - 1, enableDebug);
+                }
+            } else {
+                children.remove(enableDebug);
+            }
+        });
 
         reload.disableProperty().bind(viewModel.reloadExecutableProperty().not());
         autoReload.disableProperty().bind(viewModel.reloadExecutableProperty().not());
