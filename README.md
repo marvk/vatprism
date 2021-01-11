@@ -6,11 +6,12 @@ Welcome to the VATprism repository! VATprism is a data explorer for [VATSIM](htt
 **V**irtual **A**ir **T**raffic **Sim**ulation Network. VATprism allows users to explore available ATC services,
 connected pilots, Airports, Flight and Upper Information Regions and more!
 
+## Motivation
+
 VATprism was born out of a desire to simplify, and make more customizable, access to VATSIM data and is inspired by the
 excellent [VAT-Spy](http://www1.metacraft.com/VATSpy/), which, as of this time, unfortunately remains closed source.
 
-VATprism uses the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy-data-project) as a source
-of Data.
+## Screenshots
 
 #### Airport Detail
 
@@ -32,17 +33,17 @@ of Data.
 
 ![Screenshot5](https://i.imgur.com/GkxMnGy.png)
 
-# Issues
+## Issues
 
 Issue tracking takes place on this GitHub issue repository. You are most invited to contribute bugs, issues, feature or
 any other constructive feedback [as an issue.](https://github.com/marvk/vatsim-map/issues) Please check existing issues
 before creating a new one.
 
-# Installation
+## Installation
 
 #### Windows
 
-Simply download the latest installer (`.msi`) from the [releases page.](https://github.com/marvk/vatsim-map/releases)
+Simply download the latest installer (`.msi`) from the [releases page](https://github.com/marvk/vatsim-map/releases)
 and run it. The installer will guide you through the installation.
 
 If you have another version of VATprism installed, the installer may prompt you to remove an existing version. In this
@@ -52,14 +53,14 @@ worry, your settings will not be removed.
 #### Linux and macOS
 
 Currently, there is no support for native linux or macOS binaries. It is still possible to run VATprism with `java` by
-downloading the `.jar` from the [releases page.](https://github.com/marvk/vatsim-map/releases) and
+downloading the `.jar` from the [releases page](https://github.com/marvk/vatsim-map/releases) and
 running `java -jar vatprism-VERSION.jar`. This requires an installation of JDK 15+ or JRE 15+, which are available on
 the [AdoptOpenJDK website.](https://adoptopenjdk.net/index.html)
 
-If there is demand for macOS or linux native binaries in the future, I will think about adding support. Feel free to
+If there is demand for macOS or Linux native binaries in the future, I will think about adding support. Feel free to
 request this as an issue, or submit a pull request.
 
-# Build ![Build Status](https://github.com/marvk/vatsim-map/workflows/Build/badge.svg)
+## Build ![Build Status](https://github.com/marvk/vatsim-map/workflows/Build/badge.svg)
 
 If you want to build the project yourself, you require
 
@@ -70,4 +71,9 @@ If you want to build the project yourself, you require
 * [WiX Toolset](https://wixtoolset.org/) (For building a Windows Installer via `jpackage`)
 
 To build the project, run clone the repository and run `mvn package`. Currently, this will fail if WiX Toolkit is not
-installed. To disable the Windows Installer build, removed the Exec Maven Plugin from the `pom.xml`.
+installed. To disable the Windows installer build, removed the Exec Maven Plugin from the `pom.xml`.
+
+## Acknowledgements
+
+VATprism uses the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy-data-project) as a source
+of Data.
