@@ -131,11 +131,15 @@ public class Preferences {
         });
         debug.set(true);
 
+        final IntegerProperty uiFontSize = integerProperty("general.font_size", 12);
+        final IntegerProperty uiScale = integerProperty("general.ui_scale");
+        uiScale.bind(uiFontSize.divide(12.0));
+
         return Category.of(
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Setting.of("Enable Debug Mode", debug),
-                Setting.of("UI Font Size", integerProperty("general.font_size", 12), 4, 72),
+                Setting.of("UI Font Size", uiFontSize, 4, 72),
                 Setting.of("Map Font Size", integerProperty("general.map_font_size", 12), 4, 72),
                 Setting.of("Scroll Speed", doubleProperty("general.scroll_speed", 2.25), 1.1, 16, 2)
         );

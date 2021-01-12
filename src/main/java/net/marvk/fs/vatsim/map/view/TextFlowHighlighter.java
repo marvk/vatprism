@@ -28,9 +28,7 @@ public class TextFlowHighlighter {
     @Inject
     public TextFlowHighlighter(final Preferences preferences) {
         final IntegerProperty fontSizeProperty = preferences.integerProperty("general.font_size");
-        fontSizeProperty.addListener((observable, oldValue, newValue) -> {
-            setFonts(newValue.doubleValue());
-        });
+        fontSizeProperty.addListener((observable, oldValue, newValue) -> setFonts(newValue.doubleValue()));
         setFonts(fontSizeProperty.doubleValue());
     }
 
