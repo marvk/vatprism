@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import javafx.beans.property.*;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.data.VatsimFlightPlan;
+import net.marvk.fs.vatsim.map.GeomUtil;
 
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -23,6 +24,8 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private final StringProperty trueCruiseAirspeed = new SimpleStringProperty();
     private final ObjectProperty<Duration> enrouteProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<Duration> fuelProperty = new SimpleObjectProperty<>();
+
+    private final DoubleProperty totalDistance = new SimpleDoubleProperty(Double.NaN);
 
     private final StringProperty plannedRoute = new SimpleStringProperty();
     private final StringProperty remarks = new SimpleStringProperty();
@@ -51,6 +54,20 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
         plannedRoute.set(model.getRoute());
         remarks.set(model.getRemarks());
+
+        departureAirport.addListener((observable, oldValue, newValue) -> setTotalDistance());
+        arrivalAirport.addListener((observable, oldValue, newValue) -> setTotalDistance());
+    }
+
+    private void setTotalDistance() {
+        final Airport departureAirport = this.departureAirport.get();
+        final Airport arrivalAirport = this.arrivalAirport.get();
+
+        if (departureAirport != null && arrivalAirport != null) {
+            totalDistance.set(GeomUtil.distanceOnMsl(departureAirport.getPosition(), arrivalAirport.getPosition()));
+        } else {
+            totalDistance.set(Double.NaN);
+        }
     }
 
     public boolean isSet() {
@@ -167,6 +184,14 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
     public ReadOnlyObjectProperty<Airport> alternativeAirportProperty() {
         return alternativeAirport.getReadOnlyProperty();
+    }
+
+    public double getTotalDistance() {
+        return totalDistance.get();
+    }
+
+    public ReadOnlyDoubleProperty totalDistanceProperty() {
+        return totalDistance;
     }
 
     public boolean isDomestic() {

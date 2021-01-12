@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.datatable.pilotstable;
 
 import com.google.inject.Inject;
+import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightRule;
 import net.marvk.fs.vatsim.map.data.Pilot;
@@ -49,6 +50,15 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .widthFactor(0.7)
                 .build();
 
+        this.<Number>newColumnBuilder()
+                .title("Distance")
+                .objectObservableValueFactory(e -> e.getFlightPlan().totalDistanceProperty())
+                .toStringMapper(e -> Double.isNaN(e.doubleValue()) ? null : Math.round(GeomUtil.metersToNauticalMiles(e.doubleValue())) + "NM")
+                .sortable(PilotsTableView::compareDistance)
+                .mono(true)
+                .widthFactor(0.6)
+                .build();
+
         this.<String>newColumnBuilder()
                 .title("Aircraft Type")
                 .stringObservableValueFactory(e -> e.getFlightPlan().aircraftProperty())
@@ -87,7 +97,21 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(ETA_MAPPER::map)
                 .sortable(Comparator.comparing(Pilot.Eta::getDuration))
                 .mono(true)
-                .widthFactor(0.6)
+                .widthFactor(0.7)
                 .build();
+    }
+
+    private static int compareDistance(final Number o1, final Number o2) {
+        final boolean firstIsDouble = Double.isNaN(o1.doubleValue());
+        final boolean secondIsDouble = Double.isNaN(o2.doubleValue());
+        if (firstIsDouble && secondIsDouble) {
+            return 0;
+        } else if (firstIsDouble) {
+            return -1;
+        } else if (secondIsDouble) {
+            return 1;
+        } else {
+            return Double.compare(o1.doubleValue(), o2.doubleValue());
+        }
     }
 }
