@@ -14,8 +14,13 @@
 }
 
 .h1 {
-    -fx-font-size: 30;
+    -fx-font-family: "B612";
+    -fx-font-size: 47;
     -fx-font-weight: bold;
+}
+
+h1 .text, h2 .text {
+    -fx-font-smoothing-type: gray;
 }
 
 .hl {
@@ -26,3 +31,4 @@
 .hl:hover {
     -fx-text-fill: #222222;
 }
+

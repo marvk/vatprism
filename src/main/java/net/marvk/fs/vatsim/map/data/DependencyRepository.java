@@ -64,6 +64,14 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         null,
                         null,
                         "https://api.vatsim.net/api/"
+                ),
+                new Dependency(
+                        "Eclipse Public License v2.0",
+                        "B612 Fontface",
+                        null,
+                        null,
+                        null,
+                        "https://b612-font.com/"
                 )
         ).stream();
 

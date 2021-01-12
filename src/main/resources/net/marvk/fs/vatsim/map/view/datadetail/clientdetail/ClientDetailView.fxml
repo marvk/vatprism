@@ -23,7 +23,7 @@
             </rowConstraints>
             <Label styleClass="description" text="Online Since" GridPane.rowIndex="2"/>
             <Label styleClass="description" text="Server" GridPane.rowIndex="3"/>
-            <Label fx:id="onlineSince" styleClass="mono" text="Label" GridPane.columnIndex="1"
+            <Label fx:id="onlineSince" text="Label" GridPane.columnIndex="1"
                    GridPane.rowIndex="2"/>
             <Label fx:id="server" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
             <Label fx:id="cid" onMouseClicked="#openStats" text="Label" GridPane.columnIndex="1">

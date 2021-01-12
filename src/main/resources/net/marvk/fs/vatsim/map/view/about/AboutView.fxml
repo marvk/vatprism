@@ -2,23 +2,33 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<VBox prefWidth="600" spacing="20.0" styleClass="about-container" stylesheets="@about.css"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="net.marvk.fs.vatsim.map.view.about.AboutView">
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<VBox prefWidth="600" styleClass="about-container" stylesheets="@about.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.about.AboutView">
     <children>
-        <VBox>
-            <Label styleClass="h1" text="Untitled Vatsim Map"/>
-            <Label styleClass="h2" text="Created by Marvin Kuhnke"/>
-            <HBox spacing="5">
-                <Label text="Version: "/>
-                <Label fx:id="version" text="DEV"/>
-            </HBox>
-            <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-            </padding>
-        </VBox>
+        <HBox>
+            <VBox>
+                <Label styleClass="h1" text="VATprism"/>
+                <Label styleClass="h2" text="Created by Marvin Kuhnke"/>
+                <HBox spacing="5">
+                    <Label text="Version: "/>
+                    <Label fx:id="version" text="DEV"/>
+                </HBox>
+                <Region VBox.vgrow="ALWAYS">
+                </Region>
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ImageView fitHeight="128.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../icon-128.png"/>
+                </image>
+            </ImageView>
+        </HBox>
         <VBox>
             <Label text="Powered by Open Source Software:">
                 <padding>

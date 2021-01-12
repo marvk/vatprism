@@ -34,21 +34,21 @@ public class TextFlowHighlighter {
 
     private void setFonts(final double fontSize) {
         standardMono = Font.font(
-                "JetBrains Mono",
+                "B612 Mono",
                 fontSize
         );
         boldMono = Font.font(
-                "JetBrains Mono",
+                "B612 Mono",
                 FontWeight.BOLD,
                 fontSize
         );
         boldDefault = Font.font(
-                Font.getDefault().getFamily(),
+                "B612",
                 FontWeight.BOLD,
                 fontSize
         );
         standardDefault = Font.font(
-                Font.getDefault().getFamily(),
+                "B612",
                 fontSize
         );
     }

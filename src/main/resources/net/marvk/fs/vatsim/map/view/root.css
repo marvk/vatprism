@@ -1,11 +1,3 @@
-/*@font-face {*/
-/*    src: url("net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-Regular.ttf");*/
-/*}*/
-
-/*@font-face {*/
-/*    src: url("net/marvk/fs/vatsim/map/view/fonts/JetBrainsMono-ExtraBold.ttf");*/
-/*}*/
-
 .root {
     -vatsim-background-color: #0E0C06;
     -vatsim-background-color-light: #17130a;
@@ -21,6 +13,7 @@
     -vatsim-toolbar-button-size: 24px;
     -vatsim-toolbar-button-icon-size: 20px;
     -vatsim-dropshadow: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
+    -fx-font-family: "B612";
 }
 
 .vatsim-font {
@@ -152,7 +145,7 @@
 }
 
 .menu-item .label {
-    -fx-font-family: "JetBrains Mono";
+    -fx-font-family: "B612 Mono";
     -fx-text-fill: -vatsim-text-greyed-out;
 }
 
@@ -173,7 +166,7 @@
 }
 
 .menu-item-data .label {
-    -fx-font-family: "JetBrains Mono";
+    -fx-font-family: "B612 Mono";
     -fx-text-fill: -vatsim-text-greyed-out;
 }
 
@@ -198,7 +191,7 @@
 }
 
 .mono {
-    -fx-font-family: "JetBrains Mono";
+    -fx-font-family: "B612 Mono";
 }
 
 .hyperlink-label {

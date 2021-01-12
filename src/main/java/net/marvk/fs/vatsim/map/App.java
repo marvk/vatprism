@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
@@ -32,6 +33,8 @@ public class App extends MvvmfxGuiceApplication {
     @Override
     public void startMvvmfx(final Stage primaryStage) {
         final Parameters parameters = getParameters();
+
+        loadFonts();
 
         final String logLevelString = parameters.getNamed().get("loglevel");
         if (logLevelString != null) {
@@ -69,6 +72,23 @@ public class App extends MvvmfxGuiceApplication {
         primaryStage.setTitle("VATprism");
         primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         primaryStage.show();
+    }
+
+    private void loadFonts() {
+        final String path = "/net/marvk/fs/vatsim/map/view/fonts/";
+        final List<String> fontFiles = List.of("B612-Bold.ttf",
+                "B612-BoldItalic.ttf",
+                "B612-Italic.ttf",
+                "B612-Regular.ttf",
+                "B612Mono-Bold.ttf",
+                "B612Mono-BoldItalic.ttf",
+                "B612Mono-Italic.ttf",
+                "B612Mono-Regular.ttf"
+        );
+
+        for (final String fontFile : fontFiles) {
+            Font.loadFont(getClass().getResourceAsStream(path + fontFile), -1);
+        }
     }
 
     private Image loadIcon(final String name) {

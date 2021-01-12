@@ -36,7 +36,6 @@ import net.marvk.fs.vatsim.map.view.datadetail.DataDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailViewModel;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
-import java.io.InputStream;
 import java.util.concurrent.*;
 
 @Log4j2
@@ -128,8 +127,7 @@ public class MapView implements FxmlView<MapViewModel> {
     }
 
     private Font createFont(final double size) {
-        final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
-        return Font.loadFont(s, size);
+        return Font.font("B612 Mono", size);
     }
 
     private void addContextMenuShadow() {

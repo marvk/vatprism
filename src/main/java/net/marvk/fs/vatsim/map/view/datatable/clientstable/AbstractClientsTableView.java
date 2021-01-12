@@ -51,7 +51,6 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
                 .objectObservableValueFactory(Client::logonTimeProperty)
                 .toStringMapper(FORMATTER::format)
                 .sortable()
-                .mono(true)
                 .widthFactor(0.85)
                 .build();
 
