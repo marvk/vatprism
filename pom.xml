@@ -8,8 +8,11 @@
     <artifactId>vatsim-map</artifactId>
     <version>${version-number}-${version-suffix}</version>
 
-    <name>VatMap</name>
-    <description>VatSim Map</description>
+    <name>VATprism</name>
+    <description>VATprism is a data explorer for VATSIM, the Virtual Air Traffic Simulation Network. VATprism allows
+        users to explore available ATC services, connected pilots, Airports, Flight and Upper Information Regions and
+        more!
+    </description>
     <url>https://github.com/marvk/vatsim-map</url>
     <inceptionYear>2020</inceptionYear>
 

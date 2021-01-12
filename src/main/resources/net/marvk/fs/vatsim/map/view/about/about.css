@@ -1,16 +1,16 @@
 .about-container {
-    -fx-background-color: white;
+    -fx-background-image: url("../../background-about.png");
     /*-fx-background-color: #2B2313;*/
     /*-fx-effect: -vatsim-dropshadow;*/
+}
+
+* {
+    -fx-font-family: "B612";
 }
 
 .label {
     -fx-text-fill: black;
     /*-fx-text-fill: #5f553d;*/
-}
-
-.h2 {
-    -fx-font-size: 18;
 }
 
 .h1 {
@@ -19,8 +19,20 @@
     -fx-font-weight: bold;
 }
 
-h1 .text, h2 .text {
+.h1 .text {
     -fx-font-smoothing-type: gray;
+}
+
+.h2 {
+    -fx-font-size: 18;
+}
+
+.h2 .text {
+    -fx-font-smoothing-type: gray;
+}
+
+.white {
+    -fx-text-fill: white;
 }
 
 .hl {

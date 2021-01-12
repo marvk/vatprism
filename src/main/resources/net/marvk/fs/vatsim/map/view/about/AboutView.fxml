@@ -5,36 +5,46 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.String?>
 <VBox prefWidth="600" styleClass="about-container" stylesheets="@about.css" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.about.AboutView">
     <children>
-        <HBox>
+        <HBox alignment="CENTER">
             <VBox>
-                <Label styleClass="h1" text="VATprism"/>
-                <Label styleClass="h2" text="Created by Marvin Kuhnke"/>
+                <Label text="VATprism">
+                    <styleClass>
+                        <String fx:value="h1"/>
+                        <String fx:value="white"/>
+                    </styleClass>
+                </Label>
+                <Label text="Created by Marvin Kuhnke">
+                    <styleClass>
+                        <String fx:value="h2"/>
+                        <String fx:value="white"/>
+                    </styleClass>
+                </Label>
                 <HBox spacing="5">
-                    <Label text="Version: "/>
-                    <Label fx:id="version" text="DEV"/>
+                    <Label styleClass="white" text="Version: "/>
+                    <Label styleClass="white" fx:id="version" text="DEV"/>
                 </HBox>
-                <Region VBox.vgrow="ALWAYS">
+                <Region minHeight="20.0" VBox.vgrow="ALWAYS">
                 </Region>
-                <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                </padding>
+                <Label styleClass="white" text="Powered by Open Source Software"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <ImageView fitHeight="128.0" fitWidth="128.0" pickOnBounds="true" preserveRatio="true">
                 <image>
-                    <Image url="@../../icon-128.png"/>
+                    <Image url="@../../icon-about.png"/>
                 </image>
+                <HBox.margin>
+                    <Insets right="20.0"/>
+                </HBox.margin>
             </ImageView>
+            <padding>
+                <Insets bottom="5.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
         </HBox>
         <VBox>
-            <Label text="Powered by Open Source Software:">
-                <padding>
-                    <Insets left="5.0" right="5.0"/>
-                </padding>
-            </Label>
             <ListView fx:id="dependenciesList" prefHeight="125.0"/>
         </VBox>
     </children>
