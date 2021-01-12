@@ -8,13 +8,14 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 import static java.lang.Math.*;
 
+/**
+ * @see <a href="https://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts - Calculate distance, bearing and more between Latitude/Longitude points</a>
+ */
 public final class GeomUtil {
 
     private static final int EARTH_RADIUS = 6371;
@@ -66,6 +67,11 @@ public final class GeomUtil {
     }
 
     public static Point2D pointBetween(final Point2D origin, final Point2D destination, final double fraction) {
+
+        return pointBetween(origin, destination, fraction, distanceInRadiansOnMsl(origin, destination));
+    }
+
+    private static Point2D pointBetween(final Point2D origin, final Point2D destination, final double fraction, final double d) {
         if (fraction < 0 || fraction > 1) {
             throw new IllegalArgumentException("fraction must be in [0, 1], was %s".formatted(fraction));
         }
@@ -77,7 +83,6 @@ public final class GeomUtil {
         final double lat2 = toRadians(destination.getY()); // φ2
 
         final double f = fraction;
-        final double d = d(origin, destination);
 
         final double a = sin((1 - f) * d) / sin(d);
         final double b = sin(f * d) / sin(d);
@@ -90,7 +95,7 @@ public final class GeomUtil {
         return new Point2D(toDegrees(lon), toDegrees(lat));
     }
 
-    private static final double d(final Point2D origin, final Point2D destination) {
+    private static double distanceInRadiansOnMsl(final Point2D origin, final Point2D destination) {
         final double lon1 = toRadians(origin.getX()); // λ1
         final double lat1 = toRadians(origin.getY()); // φ1
 
@@ -100,28 +105,6 @@ public final class GeomUtil {
         final double v1 = sin((lat1 - lat2) / 2);
         final double v2 = sin((lon1 - lon2) / 2);
         return 2 * asin(sqrt(v1 * v1 + cos(lat1) * cos(lat2) * v2 * v2));
-    }
-
-    private static List<Point2D> greatCirclePolyline(final double originLon, final double originLat, final double destinationLon, final double destinationLat, final double stepSize) {
-        final ArrayList<Point2D> result = new ArrayList<>();
-
-        double lon = originLon;
-        double lat = originLat;
-
-        while (Math.abs(lon - destinationLon) < stepSize && Math.abs(lat - destinationLat) < stepSize) {
-
-        }
-        return result;
-    }
-
-    private static double heading(final double originLon, final double originLat, final double destinationLon, final double destinationLat) {
-        final double e = 0;
-        return (sin(destinationLat) - sin(destinationLon) * Math.cos(e)) / (Math.cos(originLat) * sin(e));
-    }
-
-    public static void main(String[] args) {
-//        final List<Point2D> point2DS = greatCirclePolyline(new Point2D(-80, -80), new Point2D(80, 80), 1);
-//        point2DS.stream().map(e -> "%s, %s".formatted(e.getX(), e.getY())).forEach(System.out::println);
     }
 
     public static Point2D parsePoint(final String longitude, final String latitude) {
@@ -191,16 +174,13 @@ public final class GeomUtil {
             final double lat1, final double lon1, final double el1,
             final double lat2, final double lon2, final double el2
     ) {
-
-        final int r = EARTH_RADIUS; // Radius of the earth
-
         final double latDistance = Math.toRadians(lat2 - lat1);
         final double lonDistance = Math.toRadians(lon2 - lon1);
         final double a = sin(latDistance / 2) * sin(latDistance / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * sin(lonDistance / 2) * sin(lonDistance / 2);
         final double c = 2 * atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = r * c * 1000; // convert to meters
+        double distance = R * c * 1000; // convert to meters
 
         final double height = el1 - el2;
 

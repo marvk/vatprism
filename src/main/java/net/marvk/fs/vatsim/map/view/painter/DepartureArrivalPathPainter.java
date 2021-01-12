@@ -38,10 +38,6 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
     }
 
     private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
-        System.out.println("type = " + type);
-        System.out.println("arrival = " + arrival);
-        System.out.println("departure = " + departure);
-
         if (type == Type.ARRIVAL && arrival) {
             context.setLineDashes(1, 5);
             context.setStroke(arrivalColor);
@@ -51,9 +47,6 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
         } else {
             return;
         }
-
-        System.out.println("PAINT");
-        System.out.println();
 
         if (pilot == null || airport == null || pilot.getPosition() == null || airport.getPosition() == null) {
             return;
