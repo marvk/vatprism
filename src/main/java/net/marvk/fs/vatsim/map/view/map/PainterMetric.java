@@ -22,7 +22,7 @@ public class PainterMetric implements Iterable<PainterMetric.Counter> {
     Counter fillRect = new Counter("fillRect");
 
     @Getter(AccessLevel.PRIVATE)
-    private final List<Counter> counters = List.of(
+    List<Counter> counters = List.of(
             strokePolyline,
             strokePolygon,
             fillPolygon,

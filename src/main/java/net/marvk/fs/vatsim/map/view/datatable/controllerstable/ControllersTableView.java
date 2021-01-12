@@ -58,7 +58,7 @@ public class ControllersTableView extends AbstractClientsTableView<ControllersTa
                 .build();
 
         this.<String>newColumnBuilder()
-                .title("Frequncy")
+                .title("Frequency")
                 .stringObservableValueFactory(Controller::frequencyProperty)
                 .sortable()
                 .mono(true)

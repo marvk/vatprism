@@ -75,7 +75,7 @@ public class AboutView implements FxmlView<AboutViewModel> {
                 if (!name.getStyleClass().contains("hl")) {
                     name.getStyleClass().add("hl");
                 }
-                name.setOnMouseClicked(e -> viewModel.openDepdendencyUrlInBrowser(item));
+                name.setOnMouseClicked(e -> viewModel.openDependencyUrlInBrowser(item));
             } else {
                 name.getStyleClass().remove("hl");
                 name.setOnMouseClicked(null);

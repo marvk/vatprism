@@ -31,7 +31,7 @@ public class AboutViewModel implements ViewModel {
         return version;
     }
 
-    public void openDepdendencyUrlInBrowser(final Dependency dependency) {
+    public void openDependencyUrlInBrowser(final Dependency dependency) {
         if (dependency != null) {
             hostServices.showDocument(dependency.getProjectUrl());
         }
