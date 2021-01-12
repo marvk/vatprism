@@ -1,5 +1,7 @@
 name: Build
 on: [ push ]
+env:
+  VERSION_NAME: 0.1.0-alpha.${{github.run_number}}
 jobs:
   build_windows:
     runs-on: windows-latest
@@ -17,14 +19,16 @@ jobs:
       - name: Install WiX Toolset
         run: echo wix | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Maven Build
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.VERSION_NAME}}" "-DbuildNumber=${{github.run_number}}"
+      - name: Rename artifacts
+        run: ren target-fat-jar/vatsim-map-${{env.VERSION_NAME}}-fat.jar VATprism-${{env.VERSION_NAME}}.jar; ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.VERSION_NAME}}.msi;
       - name: Github Release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           automatic_release_tag: latest
           prerelease: true
-          title: v0.1.0-alpha.${{github.run_number}}
+          title: v${{env.VERSION_NAME}}
           files: |
             target-fat-jar/*
             target-installer/*

@@ -6,7 +6,7 @@
 
     <groupId>net.marvk.fs</groupId>
     <artifactId>vatsim-map</artifactId>
-    <version>${version-number}-${version-suffix}</version>
+    <version>${versionName}</version>
 
     <name>VATprism</name>
     <description>VATprism is a data explorer for VATSIM, the Virtual Air Traffic Simulation Network. VATprism allows
@@ -37,8 +37,9 @@
     </issueManagement>
 
     <properties>
-        <version-number>0.1.0</version-number>
-        <version-suffix>SNAPSHOT</version-suffix>
+        <!--Defaults, should be passed as command line argument for real builds-->
+        <versionName>DEV</versionName>
+        <buildNumber>0</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
         <developerName>Marvin Kuhnke</developerName>
@@ -276,18 +277,18 @@
                             <executable>jpackage</executable>
                             <commandlineArgs>
                                 --input "target-fat-jar/"
-                                --name "${name}"
-                                --main-jar "vatsim-map-${version}-fat.jar"
+                                --name "${project.name}"
+                                --main-jar "vatsim-map-${project.version}-fat.jar"
                                 --dest "target-installer"
                                 --main-class "${mainClass}"
                                 --type "msi"
-                                --description "${description}"
+                                --description "VATSIM data explorer"
                                 --vendor "${developerName}"
-                                --app-version "${version-number}"
+                                --app-version "${buildNumber}.0.0"
                                 --icon "src/main/resources/net/marvk/fs/vatsim/map/icon.ico"
                                 --win-dir-chooser
                                 --win-menu
-                                --win-menu-group ${name}
+                                --win-menu-group ${project.name}
                             </commandlineArgs>
                         </configuration>
                     </execution>
