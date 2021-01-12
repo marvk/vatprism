@@ -24,7 +24,7 @@ jobs:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           automatic_release_tag: latest
           prerelease: true
-          title: v0.1.0-alpha
+          title: v0.1.0-alpha.${{github.run_number}}
           files: |
             target-fat-jar/*
             target-installer/*
