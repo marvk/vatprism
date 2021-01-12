@@ -34,6 +34,7 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
     private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
     private RTree<Pilot, Point> rTree = RTree.create();
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Inject
     public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser, final ClientTypeMapper clientTypeMapper, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository) {
         super(vatsimApi);
@@ -53,7 +54,6 @@ public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
             case CONTROLLER -> new Controller();
             case PILOT -> new Pilot();
             case ATIS -> new Atis();
-            default -> null;
         };
     }
 

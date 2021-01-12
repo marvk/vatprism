@@ -52,10 +52,7 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
     public void initialize() {
         paneManager = new PaneManager(context);
 
-        viewModel.dataProperty().addListener((observable, oldValue, newValue) -> {
-            setPane(paneManager.visit(newValue));
-            type.setText(nameVisitor.visit(newValue));
-        });
+        viewModel.dataProperty().addListener((observable, oldValue, newValue) -> dataChanged(newValue));
 
         historyBack.disableProperty().bind(viewModel.historyBackAvailableProperty().not());
         historyForward.disableProperty().bind(viewModel.historyForwardAvailableProperty().not());
@@ -63,6 +60,12 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
         container.setOnKeyPressed(this::handleKeyEvent);
 
         container.setOnMouseClicked(this::handleMousePressed);
+    }
+
+    private void dataChanged(final Data newValue) {
+        container.getChildren().clear();
+        paneManager.visit(newValue).ifPresent(e -> container.getChildren().add(e));
+        type.setText(nameVisitor.visit(newValue));
     }
 
     private void handleMousePressed(final MouseEvent event) {
@@ -81,11 +84,6 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 //            case RIGHT -> viewModel.historyForward();
 //            case LEFT -> viewModel.historyBack();
 //        }
-    }
-
-    private void setPane(final Optional<Parent> maybePane) {
-        container.getChildren().clear();
-        maybePane.ifPresent(e -> container.getChildren().add(e));
     }
 
     public void hide(final ActionEvent actionEvent) {

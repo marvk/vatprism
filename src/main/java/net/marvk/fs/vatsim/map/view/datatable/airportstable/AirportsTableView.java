@@ -19,6 +19,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
         super(textFlowHighlighter);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     protected void initializeColumns() {
         this.<String>newColumnBuilder()

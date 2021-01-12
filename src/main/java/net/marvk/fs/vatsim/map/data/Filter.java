@@ -6,11 +6,13 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class Filter implements Predicate<Client> {
@@ -338,7 +340,7 @@ public class Filter implements Predicate<Client> {
         }
 
         private static String simplePatternToRegex(final String simplePattern) {
-            return Arrays.stream(simplePattern.split("\\*", -1)).collect(Collectors.joining(".*"));
+            return String.join(".*", simplePattern.split("\\*", -1));
         }
     }
 

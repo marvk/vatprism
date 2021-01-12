@@ -36,7 +36,7 @@ public class ColumnBuilderFactory<Model extends Data> {
 
     public final class Builder<CellValue> implements
             TitleStep<Model, CellValue>,
-            ComparableStep<Model, CellValue>,
+            ComparableStep<CellValue>,
             StringMapperStep<Model, CellValue>,
             ValueStep<Model, CellValue>,
             WidthStep {
@@ -66,7 +66,7 @@ public class ColumnBuilderFactory<Model extends Data> {
         }
 
         @Override
-        public ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable) {
+        public ComparableStep<CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable) {
             this.valueNullable = nullable;
             this.stringMapper = stringMapper;
             return this;
@@ -74,9 +74,9 @@ public class ColumnBuilderFactory<Model extends Data> {
 
         @SuppressWarnings("unchecked")
         @Override
-        public ComparableStep<Model, String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory) {
+        public ComparableStep<String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory) {
             this.valueFactory = (model, query) -> (ObservableValue<CellValue>) valueFactory.apply(model, query);
-            return (ComparableStep<Model, String>) toStringMapper(e -> (String) e);
+            return (ComparableStep<String>) toStringMapper(e -> (String) e);
         }
 
         @Override
@@ -140,54 +140,37 @@ public class ColumnBuilderFactory<Model extends Data> {
     }
 
     public interface ValueStep<Model extends Data, CellValue> {
-//        default StringMapperStep<Model, CellValue> objectValueFactory(final Function<Model, CellValue> valueFactory) {
-//            return objectValueFactory((model, s) -> valueFactory.apply(model));
-//        }
-//
-//        default StringMapperStep<Model, CellValue> objectValueFactory(final BiFunction<Model, ObservableStringValue, CellValue> valueFactory) {
-//            return objectObservableValueFactory((model, query) -> new SimpleObjectProperty<>(valueFactory.apply(model, query)));
-//        }
-
         default StringMapperStep<Model, CellValue> objectObservableValueFactory(final Function<Model, ObservableValue<CellValue>> valueFactory) {
             return objectObservableValueFactory((model, ignored) -> valueFactory.apply(model));
         }
 
         StringMapperStep<Model, CellValue> objectObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableValue<CellValue>> valueFactory);
 
-//        default ComparableStep<Model, String> stringValueFactory(final Function<Model, String> valueFactory) {
-//
-//            return stringValueFactory((model, s) -> valueFactory.apply(model));
-//        }
-//
-//        default ComparableStep<Model, String> stringValueFactory(final BiFunction<Model, ObservableStringValue, String> valueFactory) {
-//            return stringObservableValueFactory((model, query) -> new SimpleStringProperty(valueFactory.apply(model, query)));
-//        }
-
-        default ComparableStep<Model, String> stringObservableValueFactory(final Function<Model, ObservableStringValue> valueFactory) {
+        default ComparableStep<String> stringObservableValueFactory(final Function<Model, ObservableStringValue> valueFactory) {
             return stringObservableValueFactory((model, ignored) -> valueFactory.apply(model));
         }
 
-        ComparableStep<Model, String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory);
+        ComparableStep<String> stringObservableValueFactory(final BiFunction<Model, ObservableStringValue, ObservableStringValue> valueFactory);
     }
 
     public interface StringMapperStep<Model extends Data, CellValue> {
 
-        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper) {
+        default ComparableStep<CellValue> toStringMapper(final Function<CellValue, String> stringMapper) {
             return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue));
         }
 
-        default ComparableStep<Model, CellValue> toStringMapper(final Function<CellValue, String> stringMapper, final boolean nullable) {
+        default ComparableStep<CellValue> toStringMapper(final Function<CellValue, String> stringMapper, final boolean nullable) {
             return toStringMapper((cellValue, ignored) -> stringMapper.apply(cellValue), nullable);
         }
 
-        default ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
+        default ComparableStep<CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper) {
             return toStringMapper(stringMapper, false);
         }
 
-        ComparableStep<Model, CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable);
+        ComparableStep<CellValue> toStringMapper(final BiFunction<CellValue, String, String> stringMapper, final boolean nullable);
     }
 
-    public interface ComparableStep<Model extends Data, CellValue> extends MonoStep, WidthStep, BuildStep {
+    public interface ComparableStep<CellValue> extends MonoStep, WidthStep, BuildStep {
         MonoStep sortable();
 
         MonoStep sortable(final Comparator<CellValue> comparator);

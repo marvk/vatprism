@@ -47,7 +47,7 @@ public abstract class SimpleRepository<ViewModel extends Settable<Model>, Model>
     public void reload() throws RepositoryException {
         try {
             updateList(extractModels(vatsimApi));
-        } catch (VatsimApiException e) {
+        } catch (final VatsimApiException e) {
             throw new RepositoryException(e);
         }
     }

@@ -7,6 +7,8 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Objects;
+
 public class Country implements Settable<CountryRepository.VatsimCountryWrapper> {
     private ReadOnlyStringProperty name;
     private ReadOnlyListWrapper<String> prefixes;
@@ -67,12 +69,16 @@ public class Country implements Settable<CountryRepository.VatsimCountryWrapper>
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         final Country country = (Country) o;
 
-        return name != null ? name.equals(country.name) : country.name == null;
+        return Objects.equals(name, country.name);
     }
 
     @Override

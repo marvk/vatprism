@@ -1,13 +1,14 @@
 package net.marvk.fs.vatsim.map;
 
-public class Application {
-    public static void main(String[] args) {
-//        if (args.length > 0) {
-//            System.out.println("Press enter");
-//            new Scanner(System.in).nextLine();
-//            System.out.println("Loading");
-//        }
+/**
+ * TODO Hacky way to start a JavaFX application without messing with modules
+ */
+public final class Application {
+    private Application() {
+        throw new AssertionError("No instances of main class " + Application.class);
+    }
 
+    public static void main(final String[] args) {
         App.main(args);
     }
 }

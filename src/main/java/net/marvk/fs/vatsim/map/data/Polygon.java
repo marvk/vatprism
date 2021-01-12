@@ -104,9 +104,7 @@ public class Polygon {
             minSquareDist = Math.min(a, minSquareDist);
         }
 
-        final double dist = Math.sqrt(minSquareDist);
-
-        return dist;
+        return Math.sqrt(minSquareDist);
     }
 
     private double squareDist(final int lineIndex, final double x, final double y) {
@@ -336,7 +334,7 @@ public class Polygon {
         }
 
         final int last = p.numPoints() - 1;
-        final boolean isNot2D = p.pointsX[1] == p.pointsX[last] && p.pointsY[1] == p.pointsY[last];
+        final boolean isNot2D = Double.compare(p.pointsX[1], p.pointsX[last]) == 0 && Double.compare(p.pointsY[1], p.pointsY[last]) == 0;
 
         if (isNot2D) {
             log.info("Failed to merge %s, first and last edge match".formatted(p.polygon().name()));
@@ -437,7 +435,7 @@ public class Polygon {
                 final double y = yExtractor.extract(t, i);
 
                 if (i > 0) {
-                    if (pointsX[i - 1] == x && pointsY[i - 1] == y) {
+                    if (Double.compare(pointsX[i - 1], x) == 0 && Double.compare(pointsY[i - 1], y) == 0) {
                         duplicates++;
                         continue;
                     }

@@ -6,7 +6,10 @@ import com.sun.javafx.scene.control.ContextMenuContent;
 import de.saxsys.mvvmfx.*;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -61,15 +64,13 @@ public class MapView implements FxmlView<MapViewModel> {
 
     private ViewTuple<DataDetailView, DataDetailViewModel> detailView;
 
-    private ObjectProperty<Cursor> cursorProperty = new SimpleObjectProperty<>();
-
     @Inject
     public MapView(@Named("open_hand_cursor") final Cursor openHand, @Named("closed_hand_cursor") final Cursor closedHand) {
         this.canvas = new Canvas(100, 100);
         this.canvas.setFocusTraversable(true);
         this.canvas.addEventFilter(MouseEvent.ANY, e -> canvas.requestFocus());
 
-        this.cursorProperty.bind(Bindings.createObjectBinding(
+        this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
                 () -> {
                     if (inputEventHandler.controlDown.get()) {
                         return Cursor.HAND;
@@ -90,9 +91,6 @@ public class MapView implements FxmlView<MapViewModel> {
                 inputEventHandler.middleMouseDown,
                 inputEventHandler.controlDown
         ));
-
-        this.canvas.cursorProperty().bind(cursorProperty);
-
     }
 
     public void initialize() {
@@ -131,8 +129,7 @@ public class MapView implements FxmlView<MapViewModel> {
 
     private Font createFont(final double size) {
         final InputStream s = getClass().getResourceAsStream("../fonts/JetBrainsMono-Regular.ttf");
-        final Font font = Font.loadFont(s, size);
-        return font;
+        return Font.loadFont(s, size);
     }
 
     private void addContextMenuShadow() {
@@ -297,35 +294,13 @@ public class MapView implements FxmlView<MapViewModel> {
     private final class MapContextMenu extends ContextMenu {
         private ContextMenuViewModel contextMenuViewModel = null;
 
-        private final DataVisitor<String> labelVisitor = new DataVisitor<>() {
-            @Override
-            public String visit(final Airport airport) {
-                return airport.getIcao();
-            }
-
-            @Override
-            public String visit(final FlightInformationRegionBoundary firb) {
-                return firb.getIcao() + (firb.isOceanic() ? " Oceanic" : "");
-            }
-
-            @Override
-            public String visit(final Pilot visitor) {
-                return visitor.getCallsign();
-            }
-
-            @Override
-            public String visit(final UpperInformationRegion upperInformationRegion) {
-                return upperInformationRegion.getIcao();
-            }
-        };
+        private final DataVisitor<String> labelVisitor = new LabelVisitor();
         private final Region shadowHolder = new Region();
 
         public MapContextMenu() {
             setSkin(createDefaultSkin());
             shadowHolder.prefWidthProperty().bind(widthProperty());
             shadowHolder.prefHeightProperty().bind(heightProperty());
-
-//            shadowHolder.visibleProperty().bind(showingProperty());
         }
 
         @Override
@@ -395,9 +370,8 @@ public class MapView implements FxmlView<MapViewModel> {
                     continue;
                 }
 
-                final ContextMenuContent.MenuItemContainer node = (ContextMenuContent.MenuItemContainer) child;
-                final int finalId = id++;
-                node.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                final int finalId = id;
+                child.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         final var item = contextMenuViewModel.getItem(finalId);
 
@@ -406,6 +380,8 @@ public class MapView implements FxmlView<MapViewModel> {
                         }
                     }
                 });
+
+                id++;
             }
         }
 
@@ -431,6 +407,28 @@ public class MapView implements FxmlView<MapViewModel> {
         public Node getShadowHolder() {
             shadowHolder.getStyleClass().add("context-menu-drop-shadow-holder");
             return shadowHolder;
+        }
+
+        private class LabelVisitor implements DataVisitor<String> {
+            @Override
+            public String visit(final Airport airport) {
+                return airport.getIcao();
+            }
+
+            @Override
+            public String visit(final FlightInformationRegionBoundary firb) {
+                return firb.getIcao() + (firb.isOceanic() ? " Oceanic" : "");
+            }
+
+            @Override
+            public String visit(final Pilot visitor) {
+                return visitor.getCallsign();
+            }
+
+            @Override
+            public String visit(final UpperInformationRegion upperInformationRegion) {
+                return upperInformationRegion.getIcao();
+            }
         }
     }
 

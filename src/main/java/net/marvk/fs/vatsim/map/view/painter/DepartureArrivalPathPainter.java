@@ -37,31 +37,6 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
         painterVisitor.visit(data).accept(context);
     }
 
-    private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
-        if (type == Type.ARRIVAL && arrival) {
-            context.setLineDashes(1, 5);
-            context.setStroke(arrivalColor);
-        } else if (type == Type.DEPARTURE && departure) {
-            context.setLineDashes(1, 10);
-            context.setStroke(departureColor);
-        } else {
-            return;
-        }
-
-        if (pilot == null || airport == null || pilot.getPosition() == null || airport.getPosition() == null) {
-            return;
-        }
-
-        final Point2D airportPosition = airport.getPosition().add(airportOffsetX(pilot, airport), 0);
-
-        if (greatCircle) {
-            greatCircleLine(context, pilot.getPosition(), airportPosition);
-        } else {
-            line(context, pilot.getPosition(), airportPosition, 0);
-            line(context, pilot.getPosition(), airportPosition, (int) (Math.signum(pilot.getPosition().getX()) * -360));
-        }
-    }
-
     private static int airportOffsetX(final Pilot pilot, final Airport airport) {
         if (Math.abs(pilot.getPosition().getX() - airport.getPosition().getX()) > 180) {
             if (pilot.getPosition().getX() < 0) {
@@ -122,6 +97,32 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
                 paint(c, flightPlan.getPilot(), flightPlan.getArrivalAirport(), Type.ARRIVAL);
                 paint(c, flightPlan.getPilot(), flightPlan.getDepartureAirport(), Type.DEPARTURE);
             };
+        }
+
+        private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
+            if (type == Type.ARRIVAL && arrival) {
+                context.setLineDashes(1, 5);
+                context.setStroke(arrivalColor);
+            } else if (type == Type.DEPARTURE && departure) {
+                context.setLineDashes(1, 10);
+                context.setStroke(departureColor);
+            } else {
+                return;
+            }
+
+            if (pilot == null || airport == null || pilot.getPosition() == null || airport.getPosition() == null) {
+                return;
+            }
+
+            final Point2D airportPosition = airport.getPosition().add(airportOffsetX(pilot, airport), 0);
+
+            if (greatCircle) {
+                greatCircleLine(context, pilot.getPosition(), airportPosition);
+            } else {
+                line(context, pilot.getPosition(), airportPosition, 0);
+                line(context, pilot.getPosition(), airportPosition, (int) (Math.signum(pilot.getPosition()
+                                                                                            .getX()) * -360));
+            }
         }
     }
 }

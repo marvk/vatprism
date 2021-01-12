@@ -31,8 +31,7 @@ final class Lookup<ViewModel> {
 
     private List<ViewModel> viewModels(final String key) {
         lookup.putIfAbsent(key, new ArrayList<>(1));
-        final List<ViewModel> viewModels = lookup.get(key);
-        return viewModels;
+        return lookup.get(key);
     }
 
     List<ViewModel> get(final String key) {

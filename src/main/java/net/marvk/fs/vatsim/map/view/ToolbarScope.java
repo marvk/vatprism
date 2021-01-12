@@ -26,6 +26,7 @@ public class ToolbarScope implements Scope {
     private final ListProperty<Pilot> filteredPilots = new SimpleListProperty<>();
     private final ListProperty<Controller> filteredControllers = new SimpleListProperty<>();
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public ToolbarScope() {
         final ObservableList clients = new FilteredList<>(filteredClients, e -> e instanceof Pilot);
         filteredPilots.set(clients);

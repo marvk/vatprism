@@ -22,7 +22,7 @@ public class TableNoneSelectionModel<T> extends TableView.TableViewSelectionMode
     }
 
     @Override
-    public void selectIndices(int index, int... indices) {
+    public void selectIndices(final int index, final int... indices) {
     }
 
     @Override
@@ -38,19 +38,19 @@ public class TableNoneSelectionModel<T> extends TableView.TableViewSelectionMode
     }
 
     @Override
-    public void clearAndSelect(int index) {
+    public void clearAndSelect(final int index) {
     }
 
     @Override
-    public void select(int index) {
+    public void select(final int index) {
     }
 
     @Override
-    public void select(T obj) {
+    public void select(final T obj) {
     }
 
     @Override
-    public void clearSelection(int index) {
+    public void clearSelection(final int index) {
     }
 
     @Override
@@ -58,7 +58,7 @@ public class TableNoneSelectionModel<T> extends TableView.TableViewSelectionMode
     }
 
     @Override
-    public boolean isSelected(int index) {
+    public boolean isSelected(final int index) {
         return false;
     }
 

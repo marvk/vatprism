@@ -371,8 +371,7 @@ public class MapViewModel implements ViewModel {
                                                                    .map(PainterExecutor::getLastPainterMetric)
                                                                    .collect(Collectors.toList());
 
-        final PainterMetric painterMetric = PainterMetric.ofMetrics(painterMetrics);
-        return painterMetric;
+        return PainterMetric.ofMetrics(painterMetrics);
     }
 
     private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {
@@ -440,20 +439,17 @@ public class MapViewModel implements ViewModel {
             super(30);
             setCycleDuration(Duration.seconds(1));
             setCycleCount(1);
-//            setInterpolator(Interpolator.EASE_BOTH);
+
             this.targetWorldCenter = target.worldCenter.multiply(-1);
             this.startingWorldCenter = starting.worldCenter.multiply(-1);
 
             this.targetScale = target.scale;
-            this.startingScale = starting.scale + (starting.scale == 1 ? 0.000000001 : 0);
+            this.startingScale = starting.scale + (Double.compare(starting.scale, 1) == 0 ? 0.000000001 : 0);
         }
 
         @Override
         protected void interpolate(final double frac) {
-//            worldCenter.set(position(frac));
-//            scale.set(scale(frac));
-            final double f1 = frac;
-            worldCenter.set(position(f1));
+            worldCenter.set(position(frac));
 
             scale.set(scale(frac));
         }

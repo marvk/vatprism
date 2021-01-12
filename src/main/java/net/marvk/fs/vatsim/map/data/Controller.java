@@ -68,30 +68,6 @@ public class Controller extends Client implements Data {
         }
 
         if (getWorkingFlightInformationRegion() != null) {
-//            final Optional<FlightInformationRegionBoundary> oceanicFirb =
-//                    getWorkingFlightInformationRegion()
-//                            .boundaries()
-//                            .stream()
-//                            .filter(FlightInformationRegionBoundary::isOceanic)
-//                            .findFirst();
-//
-//            if (oceanicFirb.isPresent() && controllerType.get() == ControllerType.FSS) {
-//                workingLocation.set(oceanicFirb.get());
-//            } else {
-//                final Optional<FlightInformationRegionBoundary> nonOceanicFirb =
-//                        getWorkingFlightInformationRegion()
-//                                .boundaries()
-//                                .stream()
-//                                .filter(flightInformationRegionBoundary -> !flightInformationRegionBoundary.isOceanic())
-//                                .findFirst();
-//
-//                if (nonOceanicFirb.isEmpty()) {
-//                    log.warn("Found no FIRB for controller " + this);
-//                } else {
-//                    workingLocation.set(nonOceanicFirb.get());
-//                }
-//            }
-
             workingLocation.set(getWorkingFlightInformationRegionBoundary());
         }
 

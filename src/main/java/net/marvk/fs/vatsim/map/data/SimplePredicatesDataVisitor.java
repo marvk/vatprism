@@ -7,13 +7,9 @@ import java.util.Locale;
 
 public class SimplePredicatesDataVisitor extends DefaultingDataVisitor<Boolean> {
     private final String query;
-//    private final Pattern pattern;
-//    private final Predicate<String> predicate;
 
     public SimplePredicatesDataVisitor(final String query) {
         super(false);
-//        this.pattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-//        this.predicate = pattern.asPredicate();
         this.query = query.toLowerCase(Locale.ROOT);
     }
 

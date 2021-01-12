@@ -305,12 +305,11 @@ public class Preferences {
     }
 
     private static String key(final String... keys) {
-        final String s = Arrays
+        return Arrays
                 .stream(keys)
                 .map(e -> e.toLowerCase(Locale.ROOT))
                 .map(e -> e.replaceAll("\\s", "_"))
                 .map(e -> e.replaceAll("[^A-Za-z0-9._]", ""))
                 .collect(Collectors.joining("."));
-        return s;
     }
 }

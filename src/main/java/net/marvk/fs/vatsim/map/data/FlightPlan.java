@@ -242,7 +242,7 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
                 }
 
                 // min because users may input more than four numbers
-                final String time = "0".repeat(4 - Math.min(s.length(), 4)) + s;
+                final String time = "0".repeat(4 - s.length()) + s;
 
                 final String hourString = time.substring(0, 2);
                 final String minuteString = time.substring(2, 4);

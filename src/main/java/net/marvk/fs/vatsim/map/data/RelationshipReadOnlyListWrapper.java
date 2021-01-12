@@ -42,6 +42,7 @@ public class RelationshipReadOnlyListWrapper<E> extends ReadOnlyListWrapper<E> {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean remove(final Object obj) {
         if (!contains(obj)) {

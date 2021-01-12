@@ -88,7 +88,7 @@ public class CallsignParser {
                                     .formatted(identifier, callsign, cid, controller.getName(), controllerType)
                     );
                 }
-            } else if (airport == null) {
+            } else {
                 uir = getUir(controller, identifier);
 
                 if (uir == null) {

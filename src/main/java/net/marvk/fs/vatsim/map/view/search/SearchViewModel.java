@@ -107,10 +107,10 @@ public class SearchViewModel extends BaseViewModel {
     }
 
     private static class SearchActionSupplier {
-        private FilteredList<Client> filteredClients;
-        private FilteredList<Airport> filteredAirports;
-        private FilteredList<FlightInformationRegionBoundary> filteredFirbs;
-        private FilteredList<UpperInformationRegion> filteredUirs;
+        private final FilteredList<Client> filteredClients;
+        private final FilteredList<Airport> filteredAirports;
+        private final FilteredList<FlightInformationRegionBoundary> filteredFirbs;
+        private final FilteredList<UpperInformationRegion> filteredUirs;
 
         @Inject
         public SearchActionSupplier(

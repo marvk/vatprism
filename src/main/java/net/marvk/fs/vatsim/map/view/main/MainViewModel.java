@@ -121,14 +121,14 @@ public class MainViewModel implements ViewModel {
         toolbarScope.reloadExceptionProperty().bind(loadClients.exceptionProperty());
 
         final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
-        final ObjectProperty<Color> baseColor = preferences.colorProperty("world.color");
+        final ObjectProperty<Color> baseColor = preferences.colorProperty("world.fill_color");
 
         style.bind(Bindings.createStringBinding(this::style, fontSize, baseColor));
     }
 
     private String style() {
         final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
-        final Color baseColor = preferences.colorProperty("world.color").get();
+        final Color baseColor = preferences.colorProperty("world.fill_color").get();
 
         final String fontSizeStyle = "-fx-font-size: %spx;".formatted(fontSize.get());
 

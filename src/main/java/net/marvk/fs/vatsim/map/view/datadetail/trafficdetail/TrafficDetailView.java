@@ -98,10 +98,6 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
 
         trafficHolder.contentVisibleProperty().bind(data.emptyProperty().not());
 
-//        table.setItems(viewModel.getFilteredSortedData());
-//        table.prefHeightProperty().bind(PilotListCell.height.multiply(7));
-//        table.setPlaceholder(new Label("No " + getTitle().toLowerCase(Locale.ROOT)));
-
         clearQuery();
     }
 

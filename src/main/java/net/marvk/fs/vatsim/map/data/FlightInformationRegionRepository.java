@@ -72,6 +72,7 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
         return byPrefix(list(), identifier, infix);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private static List<FlightInformationRegion> byPrefix(final List<FlightInformationRegion> list, final String identifier, final String infix) {
         final QueryResult noInfix = query(list, identifier, FlightInformationRegion::prefixPositionProperty);
         if (noInfix.isOneResult()) {
@@ -92,6 +93,7 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
         return byUnknown1(list, identifier, infix);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private static List<FlightInformationRegion> byUnknown1(final List<FlightInformationRegion> list, final String identifier, final String infix) {
         final QueryResult noInfix = query(list, identifier, FlightInformationRegion::unknown1Property);
         if (noInfix.isOneResult()) {

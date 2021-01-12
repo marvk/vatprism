@@ -13,6 +13,7 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
         super(textFlowHighlighter);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     protected void initializeColumns() {
         this.<String>newColumnBuilder()

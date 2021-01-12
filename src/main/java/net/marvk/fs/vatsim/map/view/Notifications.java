@@ -39,6 +39,7 @@ public final class Notifications {
             this.message = message;
         }
 
+        @SuppressWarnings("unchecked")
         public void subscribe(final Consumer<E> onNotification) {
             MvvmFX.getNotificationCenter().subscribe(message, (key, payload) -> onNotification.accept((E) payload[0]));
         }

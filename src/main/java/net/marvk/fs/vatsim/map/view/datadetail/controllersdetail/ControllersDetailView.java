@@ -60,7 +60,7 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
         onDataChanged(null);
     }
 
-    protected void onDataChanged(ListChangeListener.Change<? extends Controller> change) {
+    protected void onDataChanged(final ListChangeListener.Change<? extends Controller> change) {
         controllersGrid.getChildren().clear();
         final List<Controller> controllers = viewModel
                 .getData()

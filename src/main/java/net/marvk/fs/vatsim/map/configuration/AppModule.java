@@ -46,8 +46,7 @@ public class AppModule extends AbstractModule {
     @Singleton
     public VatsimApi vatsimApi(final VatsimApiDataSource dataSource) {
         final SimpleVatsimApi api = new SimpleVatsimApi(dataSource);
-        final CachedVatsimApi cached = new CachedVatsimApi(api, Duration.ofSeconds(3));
-        return cached;
+        return new CachedVatsimApi(api, Duration.ofSeconds(3));
     }
 
     @Provides
@@ -90,12 +89,12 @@ public class AppModule extends AbstractModule {
         return result.stream().flatMap(Collection::stream).collect(Collectors.toUnmodifiableList());
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private List<Polygon> loadPolygons(final String name) throws IOException {
         final DataStore dataStore = DataStoreFinder.getDataStore(Map.of("url", shpUrl(name)));
         final SimpleFeatureSource featureSource = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
-        final SimpleFeatureIterator features = featureSource.getFeatures().features();
 
-        try {
+        try (SimpleFeatureIterator features = featureSource.getFeatures().features()) {
             final List<Polygon> result = new ArrayList<>();
 
             int id = 0;
@@ -109,7 +108,8 @@ public class AppModule extends AbstractModule {
                     final MultiLineString mls = (MultiLineString) shape;
 
                     for (int i = 0; i < mls.getNumGeometries(); i++) {
-                        result.add(new Polygon(mls.getGeometryN(i), "%s_%d".formatted(name, id++)));
+                        result.add(new Polygon(mls.getGeometryN(i), "%s_%d".formatted(name, id)));
+                        id += 1;
                     }
                 } else if (shape instanceof MultiPolygon) {
                     final MultiPolygon mp = (MultiPolygon) shape;
@@ -118,14 +118,13 @@ public class AppModule extends AbstractModule {
                         final Geometry geometryN = mp.getGeometryN(i);
                         final org.locationtech.jts.geom.Polygon polygon = (org.locationtech.jts.geom.Polygon) geometryN;
 
-                        result.add(new Polygon(polygon, "%s_%d".formatted(name, id++)));
+                        result.add(new Polygon(polygon, "%s_%d".formatted(name, id)));
+                        id += 1;
                     }
                 }
             }
 
             return result;
-        } finally {
-            features.close();
         }
     }
 

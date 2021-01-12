@@ -94,7 +94,7 @@ public class PilotPainter extends MapPainter<Pilot> {
 
         if (actualTailLength > 0) {
             final double scale = mapVariables.getScale() / 64.;
-            c.setLineDashes(1 / 16 * scale, 1 * scale);
+            c.setLineDashes((double) 1 / 16 * scale, 1 * scale);
             c.setLineWidth(Math.min(1, (1.0 / 8) * scale));
             paintLine(c, x, y, 180 + heading, actualTailLength);
         }

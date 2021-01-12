@@ -6,18 +6,39 @@ import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class WorldPainter extends MapPainter<Polygon> {
-    @Parameter("Color")
-    private final Color color;
+    @Parameter("Fill")
+    private boolean fill = true;
+
+    @Parameter("Fill color")
+    private Color fillColor;
+
+    @Parameter("Stroke")
+    private boolean stroke = false;
+
+    @Parameter("Stroke color")
+    private Color strokeColor;
+
+    @Parameter(value = "Stroke Width", min = 0, max = 10)
+    private double strokeWidth = 1;
 
     public WorldPainter(final MapVariables mapVariables, final Color color) {
         super(mapVariables);
-        this.color = color;
+        this.fillColor = color;
+        this.strokeColor = color;
     }
 
     @Override
     public void paint(final GraphicsContext c, final Polygon polygon) {
-        c.setFill(color);
-        painterHelper.fillPolygons(c, polygon);
+        if (fill) {
+            c.setFill(fillColor);
+            painterHelper.fillPolygons(c, polygon);
+        }
+
+        if (stroke) {
+            c.setStroke(strokeColor);
+            c.setLineWidth(strokeWidth);
+            painterHelper.strokePolygons(c, polygon);
+        }
 
 //        c.setLineWidth(1);
 //        c.setStroke(Color.BLACK);

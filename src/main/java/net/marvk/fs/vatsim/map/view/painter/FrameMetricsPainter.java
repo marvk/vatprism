@@ -21,7 +21,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     @Parameter("Chart")
     private boolean showChart = true;
 
-    private static Color[] COLORS = new Color[]{
+    private static final Color[] COLORS = new Color[]{
             Color.web("#C57C8B"),
             Color.web("#C27F7A"),
             Color.web("#BB8469"),
