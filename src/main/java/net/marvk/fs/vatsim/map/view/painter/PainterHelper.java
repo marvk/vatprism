@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.painter;
 
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
@@ -47,6 +48,35 @@ public class PainterHelper {
         drawPolygons(c, polygon, false, true, true);
     }
 
+    public void strokePolyline(final GraphicsContext c, final Point2D[] polyline) {
+        if (polyline.length == 0) {
+            return;
+        }
+
+        double minX = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+
+        for (final Point2D p : polyline) {
+            minX = Math.min(p.getX(), minX);
+            maxX = Math.max(p.getX(), maxX);
+        }
+
+        if (mapVariables.toCanvasX(minX) > 0) {
+            strokePolyline(c, polyline, -360);
+        }
+
+        if (mapVariables.toCanvasX(maxX) < mapVariables.getViewWidth()) {
+            strokePolyline(c, polyline, 360);
+        }
+
+        strokePolyline(c, polyline, 0);
+    }
+
+    private void strokePolyline(final GraphicsContext c, final Point2D[] polyline, final double offsetX) {
+        final int n = writePolylineToBuffer(polyline, offsetX);
+        strokePolyline(c, n);
+    }
+
     private void drawPolygons(final GraphicsContext c, final Polygon polygon, final boolean polyline, final boolean fill, final boolean simplify) {
         if (mapVariables.toCanvasX(polygon.boundary().getMinX()) < 0) {
             drawPolygon(c, polygon, 360, polyline, fill, simplify);
@@ -64,7 +94,7 @@ public class PainterHelper {
             return;
         }
 
-        final int numPoints = writePolygonToBuffer(c, polygon, offsetX);
+        final int numPoints = writePolygonToBuffer(polygon, offsetX);
 
         final boolean twoDimensional = numPoints >= 3;
         if (!twoDimensional) {
@@ -73,27 +103,49 @@ public class PainterHelper {
 
         if (polyline) {
             if (!fill) {
-                metric.getStrokePolyline().increment();
-                c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                strokePolyline(c, numPoints);
             }
         } else {
             if (fill) {
-                metric.getFillPolygon().increment();
-                c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                fillPolygon(c, numPoints);
             } else {
-                metric.getStrokePolygon().increment();
-                c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+                strokePolygon(c, numPoints);
             }
         }
     }
 
-    private int writePolygonToBuffer(final GraphicsContext c, final Polygon polygon, final double offsetX) {
-        int numPoints = writeRingToBuffer(polygon.getExteriorRing(), offsetX, c, 0);
+    private void strokePolygon(final GraphicsContext c, final int numPoints) {
+        metric.getStrokePolygon().increment();
+        c.strokePolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+    }
+
+    private void fillPolygon(final GraphicsContext c, final int numPoints) {
+        metric.getFillPolygon().increment();
+        c.fillPolygon(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+    }
+
+    private void strokePolyline(final GraphicsContext c, final int numPoints) {
+        metric.getStrokePolyline().increment();
+        c.strokePolyline(mapVariables.getXBuf(), mapVariables.getYBuf(), numPoints);
+    }
+
+    private int writePolylineToBuffer(final Point2D[] polyline, final double offsetX) {
+        for (int i = 0; i < polyline.length; i++) {
+            final Point2D p = polyline[i];
+            final double x = mapVariables.toCanvasX(p.getX() + offsetX);
+            final double y = mapVariables.toCanvasY(p.getY());
+            mapVariables.setBuf(i, x, y);
+        }
+        return polyline.length;
+    }
+
+    private int writePolygonToBuffer(final Polygon polygon, final double offsetX) {
+        int numPoints = writeRingToBuffer(polygon.getExteriorRing(), offsetX, 0);
 
         final List<Polygon.Ring> holeRings = polygon.getHoleRings();
 
         for (final Polygon.Ring hole : holeRings) {
-            numPoints += writeRingToBuffer(hole, offsetX, c, numPoints);
+            numPoints += writeRingToBuffer(hole, offsetX, numPoints);
         }
 
         for (int i = 0; i < holeRings.size() - 1; i++) {
@@ -106,7 +158,7 @@ public class PainterHelper {
         return numPoints;
     }
 
-    private int writeRingToBuffer(final Polygon.Ring ring, final double offsetX, final GraphicsContext c, final int indexOffset) {
+    private int writeRingToBuffer(final Polygon.Ring ring, final double offsetX, final int indexOffset) {
         double lastDrawnX = Double.MAX_VALUE;
         double lastDrawnY = Double.MAX_VALUE;
 

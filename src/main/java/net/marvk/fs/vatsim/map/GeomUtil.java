@@ -13,7 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import static java.lang.Math.*;
+
 public final class GeomUtil {
+
+    private static final int EARTH_RADIUS = 6371;
+    private static final int R = EARTH_RADIUS;
+
     private GeomUtil() {
         throw new AssertionError("No instances of utility class " + GeomUtil.class);
     }
@@ -26,13 +32,77 @@ public final class GeomUtil {
         df.setRoundingMode(RoundingMode.HALF_UP);
     }
 
-    public static List<Point2D> greatCirclePolyline(final Point2D origin, final Point2D destination, final double stepSize) {
-        return greatCirclePolyline(origin.getX(), origin.getY(), destination.getX(), destination.getY(), stepSize);
+    public static Point2D[] greatCirclePolyline(final Point2D origin, final Point2D destination, final Point2D[] result) {
+        final int n = result.length;
 
+        double lastX = Double.NaN;
+        double shiftX = 0;
+        for (int i = 0; i < n; i++) {
+            final double f = (double) i / (n - 1);
+            final Point2D p = pointBetween(origin, destination, f);
+
+            final double curX = p.getX();
+
+            // Shift past 180th for easier drawing
+            if (!Double.isNaN(lastX)) {
+                final double abs = abs(lastX - curX);
+                if (lastX != 0 && abs > 180) {
+                    shiftX = Math.signum(lastX) * 360;
+                }
+            }
+
+            result[i] = shiftX == 0
+                    ? p
+                    : p.add(shiftX, 0);
+
+            lastX = curX;
+        }
+
+        return result;
+    }
+
+    public static Point2D[] greatCirclePolyline(final Point2D origin, final Point2D destination) {
+        return greatCirclePolyline(origin, destination, new Point2D[51]);
+    }
+
+    public static Point2D pointBetween(final Point2D origin, final Point2D destination, final double fraction) {
+        if (fraction < 0 || fraction > 1) {
+            throw new IllegalArgumentException("fraction must be in [0, 1], was %s".formatted(fraction));
+        }
+
+        final double lon1 = toRadians(origin.getX()); // λ1
+        final double lat1 = toRadians(origin.getY()); // φ1
+
+        final double lon2 = toRadians(destination.getX()); // λ2
+        final double lat2 = toRadians(destination.getY()); // φ2
+
+        final double f = fraction;
+        final double d = d(origin, destination);
+
+        final double a = sin((1 - f) * d) / sin(d);
+        final double b = sin(f * d) / sin(d);
+        final double x = a * cos(lat1) * cos(lon1) + b * cos(lat2) * cos(lon2);
+        final double y = a * cos(lat1) * sin(lon1) + b * cos(lat2) * sin(lon2);
+        final double z = a * sin(lat1) + b * sin(lat2);
+        final double lat = atan2(z, sqrt(x * x + y * y));
+        final double lon = atan2(y, x);
+
+        return new Point2D(toDegrees(lon), toDegrees(lat));
+    }
+
+    private static final double d(final Point2D origin, final Point2D destination) {
+        final double lon1 = toRadians(origin.getX()); // λ1
+        final double lat1 = toRadians(origin.getY()); // φ1
+
+        final double lon2 = toRadians(destination.getX()); // λ2
+        final double lat2 = toRadians(destination.getY()); // φ2
+
+        final double v1 = sin((lat1 - lat2) / 2);
+        final double v2 = sin((lon1 - lon2) / 2);
+        return 2 * asin(sqrt(v1 * v1 + cos(lat1) * cos(lat2) * v2 * v2));
     }
 
     private static List<Point2D> greatCirclePolyline(final double originLon, final double originLat, final double destinationLon, final double destinationLat, final double stepSize) {
-
         final ArrayList<Point2D> result = new ArrayList<>();
 
         double lon = originLon;
@@ -46,11 +116,12 @@ public final class GeomUtil {
 
     private static double heading(final double originLon, final double originLat, final double destinationLon, final double destinationLat) {
         final double e = 0;
-        return (Math.sin(destinationLat) - Math.sin(destinationLon) * Math.cos(e)) / (Math.cos(originLat) * Math.sin(e));
+        return (sin(destinationLat) - sin(destinationLon) * Math.cos(e)) / (Math.cos(originLat) * sin(e));
     }
 
     public static void main(String[] args) {
-        greatCirclePolyline(new Point2D(20, 20), new Point2D(-60, 50), 1);
+//        final List<Point2D> point2DS = greatCirclePolyline(new Point2D(-80, -80), new Point2D(80, 80), 1);
+//        point2DS.stream().map(e -> "%s, %s".formatted(e.getX(), e.getY())).forEach(System.out::println);
     }
 
     public static Point2D parsePoint(final String longitude, final String latitude) {
@@ -105,6 +176,10 @@ public final class GeomUtil {
         return knots * 0.514444444;
     }
 
+    public static double metersToNauticalMiles(final double meters) {
+        return meters * 0.000539957;
+    }
+
     public static Duration duration(final double meters, final double knots) {
         return Duration.ofSeconds((long) (meters / knotsToMs(knots)));
     }
@@ -117,14 +192,14 @@ public final class GeomUtil {
             final double lat2, final double lon2, final double el2
     ) {
 
-        final int r = 6371; // Radius of the earth
+        final int r = EARTH_RADIUS; // Radius of the earth
 
         final double latDistance = Math.toRadians(lat2 - lat1);
         final double lonDistance = Math.toRadians(lon2 - lon1);
-        final double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+        final double a = sin(latDistance / 2) * sin(latDistance / 2)
                 + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        final double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                * sin(lonDistance / 2) * sin(lonDistance / 2);
+        final double c = 2 * atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = r * c * 1000; // convert to meters
 
         final double height = el1 - el2;
