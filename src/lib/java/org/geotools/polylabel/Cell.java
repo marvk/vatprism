@@ -1,4 +1,8 @@
 /*
+ * TAKEN FROM https://github.com/dr-jts/jts-ports
+ */
+
+/*
  *    GeoTools - The Open Source Java GIS Toolkit
  *    http://geotools.org
  *
@@ -19,6 +23,7 @@ package org.geotools.polylabel;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 
 /**
