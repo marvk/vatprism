@@ -13,7 +13,7 @@
         users to explore available ATC services, connected pilots, Airports, Flight and Upper Information Regions and
         more!
     </description>
-    <url>https://github.com/marvk/vatsim-map</url>
+    <url>https://github.com/marvk/vatprism</url>
     <inceptionYear>2020</inceptionYear>
 
     <developers>
@@ -26,14 +26,14 @@
     </developers>
 
     <scm>
-        <connection>scm:git:ssh://github.com:marvk/vatsim-map.git</connection>
-        <developerConnection>scm:git:ssh://github.com:marvk/vatsim-map.git</developerConnection>
-        <url>http://github.com/marvk/vatsim-map/tree/master</url>
+        <connection>scm:git:ssh://github.com:marvk/vatprism.git</connection>
+        <developerConnection>scm:git:ssh://github.com:marvk/vatprism.git</developerConnection>
+        <url>http://github.com/marvk/vatprism/tree/master</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/marvk/vatsim-map/issues</url>
+        <url>https://github.com/marvk/vatprism/issues</url>
     </issueManagement>
 
     <properties>
