@@ -202,3 +202,14 @@
 .hyperlink-label:hover {
     -fx-text-fill: -vatsim-text-color-light;
 }
+
+.text-field {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-min-height: 0;
+    -fx-text-fill: -vatsim-text-color;
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
+    -fx-highlight-text-fill: -vatsim-text-color-light;
+    -fx-prompt-text-fill: -vatsim-text-color-dark;
+}

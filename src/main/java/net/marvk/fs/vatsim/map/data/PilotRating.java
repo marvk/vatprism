@@ -27,6 +27,23 @@ public class PilotRating implements Comparable<PilotRating> {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        return id == ((PilotRating) o).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
     public int compareTo(final PilotRating o) {
         return Integer.compare(id, o.id);
     }

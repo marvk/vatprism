@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<SplitPane styleClass="container" stylesheets="@../filter.css" xmlns="http://javafx.com/javafx/11.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="net.marvk.fs.vatsim.map.view.filter.filteroutline.FilterOutlineView">
+    <items>
+        <TableView/>
+        <ScrollPane styleClass="container" minWidth="400" fitToWidth="true">
+            <fx:include source="../filtereditor/FilterEditorView.fxml"/>
+        </ScrollPane>
+    </items>
+</SplitPane>

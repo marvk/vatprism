@@ -27,6 +27,23 @@ public class ControllerRating implements Comparable<ControllerRating> {
     }
 
     @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        return id == ((ControllerRating) o).id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
     public int compareTo(final ControllerRating o) {
         return Integer.compare(id, o.id);
     }

@@ -6,10 +6,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -29,6 +26,11 @@ public class Filter implements Predicate<Client> {
     private final ReadOnlyBooleanProperty departuresOrArrivals;
     private final StringPredicateListPredicate arrivalAirportPredicates;
 
+    private final CollectionPredicate<ControllerRating> controllerRatings;
+    private final CollectionPredicate<PilotRating> pilotRatings;
+
+    private final EnumSetPredicate<ControllerType> controllerTypes;
+
     private final EnumSetPredicate<FlightStatus> flightStatuses;
     private final EnumSetPredicate<FlightType> flightTypes;
     private final EnumSetPredicate<FlightRule> flightRules;
@@ -45,7 +47,10 @@ public class Filter implements Predicate<Client> {
             final List<StringPredicate> departureAirportPredicates,
             final Boolean departuresOrArrivals,
             final List<StringPredicate> arrivalAirportPredicates,
+            final Collection<PilotRating> pilotRatings,
+            final Collection<ControllerRating> controllerRatings,
             final Collection<FlightStatus> flightStatuses,
+            final Collection<ControllerType> controllerTypes,
             final Collection<FlightType> flightTypes,
             final Collection<FlightRule> flightRules,
             final boolean flightPlanRequired
@@ -59,9 +64,12 @@ public class Filter implements Predicate<Client> {
         this.departureAirportPredicates = new StringPredicateListPredicate(departureAirportPredicates);
         this.departuresOrArrivals = new ImmutableBooleanProperty(departuresOrArrivals);
         this.arrivalAirportPredicates = new StringPredicateListPredicate(arrivalAirportPredicates);
-        this.flightStatuses = new EnumSetPredicate<>(EnumSet.copyOf(flightStatuses));
-        this.flightTypes = new EnumSetPredicate<>(EnumSet.copyOf(flightTypes));
-        this.flightRules = new EnumSetPredicate<>(EnumSet.copyOf(flightRules));
+        this.pilotRatings = new CollectionPredicate<>(pilotRatings);
+        this.controllerRatings = new CollectionPredicate<>(controllerRatings);
+        this.flightStatuses = new EnumSetPredicate<>(flightStatuses);
+        this.controllerTypes = new EnumSetPredicate<>(controllerTypes);
+        this.flightTypes = new EnumSetPredicate<>(flightTypes);
+        this.flightRules = new EnumSetPredicate<>(flightRules);
         this.flightPlanRequired = new ImmutableBooleanProperty(flightPlanRequired);
     }
 
@@ -273,6 +281,10 @@ public class Filter implements Predicate<Client> {
             this.set = set;
         }
 
+        public EnumSetPredicate(final Collection<E> collection) {
+            this(EnumSet.copyOf(collection));
+        }
+
         @Override
         public boolean test(final E e) {
             return set == null || set.isEmpty() || set.contains(e);
@@ -298,6 +310,23 @@ public class Filter implements Predicate<Client> {
                 }
             }
             return false;
+        }
+    }
+
+    private static class CollectionPredicate<T> implements Predicate<T> {
+        private final Collection<T> items;
+
+        public CollectionPredicate(final Collection<T> items) {
+            this.items = items == null ? null : new HashSet<>(items);
+        }
+
+        @Override
+        public boolean test(final T t) {
+            if (items == null || items.isEmpty()) {
+                return true;
+            }
+
+            return items.contains(t);
         }
     }
 

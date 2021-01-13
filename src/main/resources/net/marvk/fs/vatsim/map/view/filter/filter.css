@@ -1,0 +1,31 @@
+.separator .line {
+    -fx-border-color: -vatsim-background-color-very-very-light;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: -vatsim-background-color;
+    -fx-background-insets: 0;
+}
+
+.radio-button .radio {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-insets: 0;
+}
+
+.check-box .box {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-insets: 0;
+    -fx-border-radius: 0;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: -vatsim-background-color;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.split-pane:vertical > .split-pane-divider {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
