@@ -72,14 +72,21 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         null,
                         null,
                         "https://b612-font.com/"
+                ),
+                new Dependency(
+                        "Creative Commons Attribution-NonCommercial 3.0 Unported",
+                        "JetBrains Code2Art",
+                        null,
+                        null,
+                        null,
+                        "https://code2art.jetbrains.com//"
                 )
         ).stream();
 
-        return new ImmutableListProperty<>(
-                Stream.concat(result, additionalDependencies)
-                      .sorted(Comparator.comparing(Dependency::getProjectName))
-                      .collect(Collectors.toUnmodifiableList())
-        );
+        return Stream
+                .concat(result, additionalDependencies)
+                .sorted(Comparator.comparing(Dependency::getProjectName))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableListProperty::new));
     }
 
     public static Optional<Dependency> parseLine(final String line) {
