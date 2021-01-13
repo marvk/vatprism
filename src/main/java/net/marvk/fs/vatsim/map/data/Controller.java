@@ -14,7 +14,7 @@ public class Controller extends Client implements Data {
     private final StringProperty frequency = new SimpleStringProperty();
     private final StringProperty atisMessage = new SimpleStringProperty();
 
-    private final ObjectProperty<Rating> rating = new SimpleObjectProperty<>();
+    private final ObjectProperty<ControllerRating> rating = new SimpleObjectProperty<>();
 
     private final ObjectProperty<ControllerType> controllerType = new SimpleObjectProperty<>();
 
@@ -39,7 +39,7 @@ public class Controller extends Client implements Data {
         super.setFromModel(controller);
 
         frequency.set(controller.getFrequency());
-        rating.set(Rating.of(controller.getRating()));
+        rating.set(ControllerRating.of(controller.getRating()));
         setAtisMessage(controller.getTextAtis());
     }
 
@@ -92,11 +92,11 @@ public class Controller extends Client implements Data {
         return frequency;
     }
 
-    public Rating getRating() {
+    public ControllerRating getRating() {
         return rating.get();
     }
 
-    public ReadOnlyObjectProperty<Rating> ratingProperty() {
+    public ReadOnlyObjectProperty<ControllerRating> ratingProperty() {
         return rating;
     }
 

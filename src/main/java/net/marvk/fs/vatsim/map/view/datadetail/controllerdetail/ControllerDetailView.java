@@ -10,8 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Atis;
 import net.marvk.fs.vatsim.map.data.Controller;
+import net.marvk.fs.vatsim.map.data.ControllerRating;
 import net.marvk.fs.vatsim.map.data.IcaoVisitor;
-import net.marvk.fs.vatsim.map.data.Rating;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.NameVisitor;
 import net.marvk.fs.vatsim.map.view.datadetail.clientdetail.ClientDetailView;
@@ -79,7 +79,7 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         type.setText(controller.getControllerType().toString());
         frequency.textProperty().bind(controller.frequencyProperty());
         rating.textProperty().bind(Bindings.createStringBinding(() -> {
-            final Rating r = controller.ratingProperty().get();
+            final ControllerRating r = controller.ratingProperty().get();
             if (r == null) {
                 return "Unknown";
             }

@@ -35,14 +35,8 @@ import java.util.Arrays;
 public class MainViewModel implements ViewModel {
     private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();
 
-    private final DelegateCommand loadAirports;
-    private final DelegateCommand loadFirs;
-    private final DelegateCommand loadFirbs;
-    private final DelegateCommand loadUirs;
     private final DelegateCommand loadClients;
-    private final VatsimApi vatsimApi;
-    private final DelegateCommand loadInternationalDateLine;
-    private final ReloadRepositoryCommand loadCountries;
+
     private final Preferences preferences;
 
     private static final Duration RELOAD_PERIOD = Duration.seconds(30);
@@ -53,6 +47,7 @@ public class MainViewModel implements ViewModel {
 
     @Inject
     public MainViewModel(
+            final RatingsLoader ratingsLoader,
             final AirportRepository airportRepository,
             final ClientRepository clientRepository,
             final FlightInformationRegionRepository flightInformationRegionRepository,
@@ -65,16 +60,23 @@ public class MainViewModel implements ViewModel {
     ) {
         this.preferences = preferences;
 
-        this.loadAirports = new ReloadRepositoryCommand(airportRepository, false);
-        this.loadInternationalDateLine = new ReloadRepositoryCommand(internationalDateLineRepository, false);
-        this.loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
-        this.loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
-        this.loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
-        this.loadCountries = new ReloadRepositoryCommand(countryRepository, false);
-        this.loadClients = new ReloadRepositoryCommand(clientRepository, true, this::triggerRepaint);
-        this.vatsimApi = vatsimApi;
+        final var loadRatings = new DelegateCommand(() -> new Action() {
+            @Override
+            protected void action() throws Exception {
+                ratingsLoader.loadRatings();
+            }
+        });
+        final var loadAirports = new ReloadRepositoryCommand(airportRepository, false);
+        final var loadInternationalDateLine = new ReloadRepositoryCommand(internationalDateLineRepository, false);
+        final var loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
+        final var loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
+        final var loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
+        final var loadCountries = new ReloadRepositoryCommand(countryRepository, false);
+
+        this.loadClients = new ReloadRepositoryCommand(clientRepository, true, Notifications.REPAINT::publish);
 
         final CompositeCommand compositeCommand = new CompositeCommand(
+                loadRatings,
                 loadInternationalDateLine,
                 loadCountries,
                 loadFirs,
@@ -85,9 +87,12 @@ public class MainViewModel implements ViewModel {
                 new DelegateCommand(() -> new Action() {
                     @Override
                     protected void action() {
+                        // Clear unneeded cached values
                         if (vatsimApi instanceof CachedVatsimApi) {
                             ((CachedVatsimApi) vatsimApi).clear();
                         }
+                        System.out.println(Arrays.toString(ControllerRating.values()));
+                        System.out.println(Arrays.toString(PilotRating.values()));
                     }
                 })
         );
@@ -102,10 +107,6 @@ public class MainViewModel implements ViewModel {
 
     private void reloadClients() {
         loadClients.execute();
-    }
-
-    private void triggerRepaint() {
-        Notifications.REPAINT.publish();
     }
 
     public void initialize() {
