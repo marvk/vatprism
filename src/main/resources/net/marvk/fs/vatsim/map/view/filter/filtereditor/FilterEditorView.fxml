@@ -6,24 +6,28 @@
 <?import org.kordamp.ikonli.javafx.*?>
 <VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
       minWidth="300" prefWidth="500.0" spacing="5.0" styleClass="container"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditorView">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label text="Name"/>
+                <Label fx:id="filterName" text="Name"/>
                 <TextField HBox.hgrow="ALWAYS"/>
             </children>
         </HBox>
         <Separator prefWidth="200.0"/>
+        <Label text="Filtering" styleClass="static-label"/>
         <HBox alignment="CENTER" spacing="10.0">
             <children>
-                <CheckBox mnemonicParsing="false" selected="true" text="Pilots"/>
-                <CheckBox mnemonicParsing="false" text="Controllers"/>
+                <fx:define>
+                    <ToggleGroup fx:id="filterType"/>
+                </fx:define>
+                <RadioButton mnemonicParsing="false" toggleGroup="$filterType" selected="true" text="Pilots"/>
+                <RadioButton mnemonicParsing="false" toggleGroup="$filterType" text="Controllers"/>
             </children>
         </HBox>
         <Separator prefWidth="200.0"/>
-        <Label text="with..."/>
-        <Separator prefWidth="200.0"/>
+        <Label text="with" styleClass="static-label"/>
         <GridPane>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
@@ -38,12 +42,12 @@
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                     <children>
-                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <ListView fx:id="callsignList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                     <children>
-                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <ListView fx:id="cidList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
                 <Label text="Callsign(s)"/>
@@ -51,22 +55,27 @@
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1"
                       GridPane.rowIndex="1">
                     <children>
-                        <RadioButton mnemonicParsing="false" selected="true"/>
-                        <Label text="or"/>
+                        <fx:define>
+                            <ToggleGroup fx:id="callsignCidAndOr"/>
+                        </fx:define>
+                        <RadioButton mnemonicParsing="false" toggleGroup="$callsignCidAndOr" selected="true"/>
+                        <Label fx:id="callsignCidOr" text="or" styleClass="static-label"/>
                         <Region prefHeight="10.0"/>
-                        <RadioButton mnemonicParsing="false"/>
-                        <Label text="and"/>
+                        <RadioButton mnemonicParsing="false" toggleGroup="$callsignCidAndOr"/>
+                        <Label fx:id="callsignCidAnd" text="and" styleClass="static-label"/>
                     </children>
                 </VBox>
                 <HBox GridPane.rowIndex="2">
                     <children>
-                        <ToggleButton styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <ToggleButton fx:id="callsignRegex" styleClass="icon-button" mnemonicParsing="false"
+                                      HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="file-regex" iconSize="24"/>
                             </graphic>
                         </ToggleButton>
-                        <TextField minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <TextField fx:id="callsignInput" minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="callsignSubmit" styleClass="icon-button" mnemonicParsing="false"
+                                HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="oct-plus-16" iconSize="24"/>
                             </graphic>
@@ -75,13 +84,14 @@
                 </HBox>
                 <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">
                     <children>
-                        <ToggleButton styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <ToggleButton fx:id="cidRegex" styleClass="icon-button" mnemonicParsing="false"
+                                      HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="file-regex" iconSize="24"/>
                             </graphic>
                         </ToggleButton>
-                        <TextField minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <TextField fx:id="cidInput" minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="cidSubmit" styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="oct-plus-16" iconSize="24"/>
                             </graphic>
@@ -91,8 +101,7 @@
             </children>
         </GridPane>
         <Separator prefWidth="200.0"/>
-        <Label text="and"/>
-        <Separator prefWidth="200.0"/>
+        <Label text="and" styleClass="static-label"/>
         <GridPane>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
@@ -107,12 +116,12 @@
             <children>
                 <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="1">
                     <children>
-                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <ListView fx:id="departuresList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
                 <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                     <children>
-                        <ListView prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <ListView fx:id="arrivalsList" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                     </children>
                 </VBox>
                 <Label text="Departure Airport(s)/FIR(s)"/>
@@ -120,17 +129,27 @@
                 <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1"
                       GridPane.rowIndex="1">
                     <children>
-                        <RadioButton mnemonicParsing="false" selected="true"/>
-                        <Label text="or"/>
+                        <fx:define>
+                            <ToggleGroup fx:id="departuresArrivalsAndOr"/>
+                        </fx:define>
+                        <RadioButton toggleGroup="$departuresArrivalsAndOr" mnemonicParsing="false" selected="true"/>
+                        <Label fx:id="departuresArrivalsOr" text="or" styleClass="static-label"/>
                         <Region prefHeight="10.0"/>
-                        <RadioButton mnemonicParsing="false"/>
-                        <Label text="and"/>
+                        <RadioButton toggleGroup="$departuresArrivalsAndOr" mnemonicParsing="false"/>
+                        <Label fx:id="departuresArrivalsAnd" text="and" styleClass="static-label"/>
                     </children>
                 </VBox>
                 <HBox GridPane.rowIndex="2">
                     <children>
-                        <TextField HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <ToggleButton fx:id="departuresRegex" styleClass="icon-button" mnemonicParsing="false"
+                                      HBox.hgrow="NEVER">
+                            <graphic>
+                                <FontIcon iconLiteral="file-regex" iconSize="24"/>
+                            </graphic>
+                        </ToggleButton>
+                        <TextField fx:id="departuresInput" minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="departuresSubmit" styleClass="icon-button" mnemonicParsing="false"
+                                HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="oct-plus-16" iconSize="24"/>
                             </graphic>
@@ -139,8 +158,15 @@
                 </HBox>
                 <HBox GridPane.columnIndex="2" GridPane.rowIndex="2">
                     <children>
-                        <TextField HBox.hgrow="ALWAYS"/>
-                        <Button styleClass="icon-button" mnemonicParsing="false" HBox.hgrow="NEVER">
+                        <ToggleButton fx:id="arrivalsRegex" styleClass="icon-button" mnemonicParsing="false"
+                                      HBox.hgrow="NEVER">
+                            <graphic>
+                                <FontIcon iconLiteral="file-regex" iconSize="24"/>
+                            </graphic>
+                        </ToggleButton>
+                        <TextField fx:id="arrivalsInput" minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="arrivalsSubmit" styleClass="icon-button" mnemonicParsing="false"
+                                HBox.hgrow="NEVER">
                             <graphic>
                                 <FontIcon iconLiteral="oct-plus-16" iconSize="24"/>
                             </graphic>
@@ -150,8 +176,7 @@
             </children>
         </GridPane>
         <Separator prefWidth="200.0"/>
-        <Label text="and"/>
-        <Separator prefWidth="200.0"/>
+        <Label text="and" styleClass="static-label"/>
         <GridPane>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
@@ -163,17 +188,18 @@
                 <RowConstraints maxHeight="125.0" minHeight="10.0" vgrow="ALWAYS"/>
             </rowConstraints>
             <children>
-                <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
-                <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                <ListView fx:id="ratingsList" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <ListView fx:id="facilitiesList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2"
+                          GridPane.rowIndex="1"/>
                 <Label text="Ratings"/>
                 <Label text="Facilities" GridPane.columnIndex="2"/>
-                <Label text="and" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"
+                <Label text="and" styleClass="static-label" GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                       GridPane.rowIndex="1"
                        GridPane.valignment="CENTER"/>
             </children>
         </GridPane>
         <Separator prefWidth="200.0"/>
-        <Label text="and"/>
-        <Separator prefWidth="200.0"/>
+        <Label text="and" styleClass="static-label"/>
         <GridPane>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
@@ -186,7 +212,7 @@
             </rowConstraints>
             <children>
                 <Label text="Flight Status"/>
-                <ListView prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
+                <ListView fx:id="flightStatusList" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1"/>
                 <VBox GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.rowIndex="1"
                       GridPane.rowSpan="2147483647">
                     <children>
@@ -203,20 +229,23 @@
                             <children>
                                 <Label text="Flight Type"/>
                                 <Label text="Flight Plan filed" wrapText="true" GridPane.rowIndex="2"/>
-                                <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                                <ComboBox prefWidth="150.0" GridPane.columnIndex="1"/>
-                                <Label text="and" GridPane.halignment="RIGHT" GridPane.rowIndex="1"
+                                <CheckBox fx:id="flightPlanFiled" mnemonicParsing="false" GridPane.columnIndex="1"
+                                          GridPane.rowIndex="2"/>
+                                <ComboBox fx:id="flightType" prefWidth="150.0" GridPane.columnIndex="1"/>
+                                <Label text="and" styleClass="static-label" GridPane.halignment="RIGHT"
+                                       GridPane.rowIndex="1"
                                        GridPane.valignment="CENTER"/>
                             </children>
                         </GridPane>
                     </children>
                 </VBox>
-                <Label text="and" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"
+                <Label text="and" styleClass="static-label" GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                       GridPane.rowIndex="1"
                        GridPane.valignment="CENTER"/>
             </children>
         </GridPane>
     </children>
     <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
 </VBox>

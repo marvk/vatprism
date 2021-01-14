@@ -14,10 +14,11 @@ import java.util.regex.Pattern;
 @Log4j2
 public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
-
+    private static final Pattern AIRCRAFT_PATTERN = Pattern.compile("^(?:./)?(....?)(?:/.*)?$", Pattern.CASE_INSENSITIVE);
     private final Pilot pilot;
 
     private final StringProperty aircraft = new SimpleStringProperty();
+    private final StringProperty aircraftShort = new SimpleStringProperty();
     private final ObjectProperty<FlightRule> flightRule = new SimpleObjectProperty<>();
     private final ObjectProperty<LocalTime> departureTime = new SimpleObjectProperty<>();
     private final StringProperty altitude = new SimpleStringProperty();
@@ -45,6 +46,7 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
         }
 
         aircraft.set(model.getAircraft());
+        aircraftShort.set(shortAircraft(model.getAircraft()));
         flightRule.set(FlightRule.fromString(model.getFlightRules()));
         departureTime.set(parseDepartureTime(model.getDepartureTime()));
         altitude.set(parseAltitude(model.getAltitude()));
@@ -57,6 +59,16 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
         departureAirport.addListener((observable, oldValue, newValue) -> setTotalDistance());
         arrivalAirport.addListener((observable, oldValue, newValue) -> setTotalDistance());
+    }
+
+    private String shortAircraft(final String aircraft) {
+        final Matcher matcher = AIRCRAFT_PATTERN.matcher(aircraft);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        } else {
+            log.warn("Failed to parse short aircraft type from string \"%s\"".formatted(aircraft));
+            return null;
+        }
     }
 
     private void setTotalDistance() {
@@ -84,6 +96,14 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
     public ReadOnlyStringProperty aircraftProperty() {
         return aircraft;
+    }
+
+    public String getAircraftShort() {
+        return aircraftShort.get();
+    }
+
+    public ReadOnlyStringProperty aircraftShortProperty() {
+        return aircraftShort;
     }
 
     public FlightRule getFlightRule() {

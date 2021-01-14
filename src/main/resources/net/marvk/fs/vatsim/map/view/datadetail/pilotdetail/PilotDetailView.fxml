@@ -56,7 +56,7 @@
                 <Label fx:id="heading" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                 <Label fx:id="groundSpeed" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.rowIndex="2"/>
-                <Label fx:id="eta" styleClass="mono" text="Label" GridPane.columnIndex="4"
+                <Label fx:id="eta" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="3"/>
                 <Label fx:id="qnhMillibars" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="4"/>

@@ -19,11 +19,11 @@ public class Filter implements Predicate<Client> {
     private final ReadOnlyObjectProperty<Color> color;
 
     private final StringPredicateListPredicate callsignPredicates;
-    private final ReadOnlyBooleanProperty callsignsOrCids;
+    private final ReadOnlyObjectProperty<Operator> callsignsCidsOperator;
     private final StringPredicateListPredicate cidPredicates;
 
     private final StringPredicateListPredicate departureAirportPredicates;
-    private final ReadOnlyBooleanProperty departuresOrArrivals;
+    private final ReadOnlyObjectProperty<Operator> departuresArrivalsOperator;
     private final StringPredicateListPredicate arrivalAirportPredicates;
 
     private final CollectionPredicate<ControllerRating> controllerRatings;
@@ -42,10 +42,10 @@ public class Filter implements Predicate<Client> {
             final Color color,
             final Type type,
             final List<StringPredicate> callsignPredicates,
-            final Boolean callsignsOrCids,
+            final Operator callsignsCidsOperator,
             final List<StringPredicate> cidPredicates,
             final List<StringPredicate> departureAirportPredicates,
-            final Boolean departuresOrArrivals,
+            final Operator departuresArrivalsOperator,
             final List<StringPredicate> arrivalAirportPredicates,
             final Collection<PilotRating> pilotRatings,
             final Collection<ControllerRating> controllerRatings,
@@ -59,10 +59,10 @@ public class Filter implements Predicate<Client> {
         this.name = new ImmutableStringProperty(name);
         this.color = new ImmutableObjectProperty<>(color);
         this.callsignPredicates = new StringPredicateListPredicate(callsignPredicates);
-        this.callsignsOrCids = new ImmutableBooleanProperty(callsignsOrCids);
+        this.callsignsCidsOperator = new ImmutableObjectProperty<>(callsignsCidsOperator);
         this.cidPredicates = new StringPredicateListPredicate(cidPredicates);
         this.departureAirportPredicates = new StringPredicateListPredicate(departureAirportPredicates);
-        this.departuresOrArrivals = new ImmutableBooleanProperty(departuresOrArrivals);
+        this.departuresArrivalsOperator = new ImmutableObjectProperty<>(departuresArrivalsOperator);
         this.arrivalAirportPredicates = new StringPredicateListPredicate(arrivalAirportPredicates);
         this.pilotRatings = new CollectionPredicate<>(pilotRatings);
         this.controllerRatings = new CollectionPredicate<>(controllerRatings);
@@ -85,7 +85,7 @@ public class Filter implements Predicate<Client> {
             return false;
         }
 
-        if (testCallsignAndCid(client)) {
+        if (!testCallsignAndCid(client)) {
             return false;
         }
 
@@ -112,19 +112,15 @@ public class Filter implements Predicate<Client> {
                 }
             }
 
-            if (!testAirport(departureAirportPredicates, ((Pilot) client).getFlightPlan().getDepartureAirport())) {
+            if (!testDeparturesAndArrivals(pilot)) {
                 return false;
             }
 
-            if (!testAirport(arrivalAirportPredicates, ((Pilot) client).getFlightPlan().getArrivalAirport())) {
+            if (!testFlightStatus(pilot)) {
                 return false;
             }
 
-            if (testFlightStatus(pilot)) {
-                return false;
-            }
-
-            if (testFlightTypes(pilot)) {
+            if (!testFlightTypes(pilot)) {
                 return false;
             }
 
@@ -138,30 +134,42 @@ public class Filter implements Predicate<Client> {
         return false;
     }
 
+    private boolean testDeparturesAndArrivals(final Pilot client) {
+        final boolean departuresMatch = testAirport(departureAirportPredicates, client.getFlightPlan()
+                                                                                      .getDepartureAirport());
+        final boolean arrivalsMatch = testAirport(arrivalAirportPredicates, client.getFlightPlan().getArrivalAirport());
+
+        if (departuresArrivalsOperator.get() == Operator.OR) {
+            return departuresMatch || arrivalsMatch;
+        } else {
+            return departuresMatch && arrivalsMatch;
+        }
+    }
+
     private boolean testFlightStatus(final Pilot pilot) {
         if (pilot.getEta().isArriving()) {
-            return !flightStatuses.test(FlightStatus.ARRIVING);
+            return flightStatuses.test(FlightStatus.ARRIVING);
         }
         if (pilot.getEta().isDeparting()) {
-            return !flightStatuses.test(FlightStatus.DEPARTING);
+            return flightStatuses.test(FlightStatus.DEPARTING);
         }
         if (pilot.getEta().isUnknown()) {
-            return !flightStatuses.test(FlightStatus.UNKNOWN);
+            return flightStatuses.test(FlightStatus.UNKNOWN);
         }
         if (pilot.getEta().isEnRoute()) {
-            return !flightStatuses.test(FlightStatus.ENROUTE);
+            return flightStatuses.test(FlightStatus.ENROUTE);
         }
         return false;
     }
 
     private boolean testFlightTypes(final Pilot pilot) {
         if (pilot.getFlightPlan().isDomestic()) {
-            return !flightTypes.test(FlightType.DOMESTIC);
+            return flightTypes.test(FlightType.DOMESTIC);
         }
         if (pilot.getFlightPlan().isInternational()) {
-            return !flightTypes.test(FlightType.INTERNATIONAL);
+            return flightTypes.test(FlightType.INTERNATIONAL);
         }
-        return false;
+        return flightTypes.test(null);
     }
 
     private boolean testFlightRules(final Pilot pilot) {
@@ -191,10 +199,10 @@ public class Filter implements Predicate<Client> {
         final boolean callsignMatches = testCallsign(client);
         final boolean cidMatches = testCid(client);
 
-        if (callsignsOrCids.get()) {
-            return !callsignMatches && !cidMatches;
+        if (callsignsCidsOperator.get() == Operator.OR) {
+            return callsignMatches || cidMatches;
         } else {
-            return !callsignMatches || !cidMatches;
+            return callsignMatches && cidMatches;
         }
     }
 
@@ -234,12 +242,12 @@ public class Filter implements Predicate<Client> {
         return callsignPredicates.predicates;
     }
 
-    public boolean isCallsignsOrCids() {
-        return callsignsOrCids.get();
+    public Operator getCallsignsCidsOperator() {
+        return callsignsCidsOperator.get();
     }
 
-    public ReadOnlyBooleanProperty callsignsOrCidsProperty() {
-        return callsignsOrCids;
+    public ReadOnlyObjectProperty<Operator> callsignsCidsOperatorProperty() {
+        return callsignsCidsOperator;
     }
 
     public List<StringPredicate> getCidPredicates() {
@@ -250,12 +258,12 @@ public class Filter implements Predicate<Client> {
         return departureAirportPredicates.predicates;
     }
 
-    public boolean isDeparturesOrArrivals() {
-        return departuresOrArrivals.get();
+    public Operator getDeparturesArrivalsOperator() {
+        return departuresArrivalsOperator.get();
     }
 
-    public ReadOnlyBooleanProperty departuresOrArrivalsProperty() {
-        return departuresOrArrivals;
+    public ReadOnlyObjectProperty<Operator> departuresArrivalsOperatorProperty() {
+        return departuresArrivalsOperator;
     }
 
     public List<StringPredicate> getArrivalAirportPredicates() {
@@ -373,19 +381,25 @@ public class Filter implements Predicate<Client> {
         }
     }
 
+    public enum Operator {
+        AND, OR;
+    }
+
     public enum Type {
         PILOT,
         CONTROLLER
     }
 
     public enum FlightStatus {
+        UNKNOWN,
         DEPARTING,
         ENROUTE,
-        ARRIVING,
-        UNKNOWN
+        ARRIVING
     }
 
     public enum FlightType {
+        ANY,
+        UNKNOWN,
         DOMESTIC,
         INTERNATIONAL
     }

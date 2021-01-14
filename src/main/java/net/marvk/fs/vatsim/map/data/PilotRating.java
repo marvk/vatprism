@@ -3,19 +3,19 @@ package net.marvk.fs.vatsim.map.data;
 import lombok.Value;
 import net.marvk.fs.vatsim.api.data.VatsimPilotRating;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Value
 public class PilotRating implements Comparable<PilotRating> {
-    private static final Map<String, PilotRating> RATINGS = new HashMap<>();
+    private static final Map<Integer, PilotRating> RATINGS = new LinkedHashMap<>();
 
     int id;
     String shortName;
     String longName;
 
     public static PilotRating of(final int id, final String shortName, final String longName) {
-        return RATINGS.computeIfAbsent(shortName, s -> new PilotRating(id, shortName, longName));
+        return RATINGS.computeIfAbsent(id, key -> new PilotRating(id, shortName, longName));
     }
 
     public static PilotRating of(final VatsimPilotRating rating) {

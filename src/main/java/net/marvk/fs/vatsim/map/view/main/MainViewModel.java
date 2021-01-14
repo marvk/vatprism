@@ -91,8 +91,6 @@ public class MainViewModel implements ViewModel {
                         if (vatsimApi instanceof CachedVatsimApi) {
                             ((CachedVatsimApi) vatsimApi).clear();
                         }
-                        System.out.println(Arrays.toString(ControllerRating.values()));
-                        System.out.println(Arrays.toString(PilotRating.values()));
                     }
                 })
         );

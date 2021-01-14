@@ -29,3 +29,37 @@
 .split-pane:vertical > .split-pane-divider {
     -fx-background-color: -vatsim-background-color-very-very-light;
 }
+
+.static-label {
+    -fx-text-fill: -vatsim-text-greyed-out;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: -vatsim-background-color;
+}
+
+.list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: derive(-vatsim-background-color-very-light, 5%);
+    -fx-cursor: hand;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.list-cell:filled:selected:hover {
+    -fx-background-color: derive(-vatsim-background-color-very-very-light, 3%);
+}
+
+* .virtual-flow > .corner {
+    -fx-background-color: transparent;
+}
+
+.filter-list-icon {
+    -fx-icon-color: -vatsim-text-color;
+    -fx-icon-size: 16;
+}
