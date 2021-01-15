@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
 import net.marvk.fs.vatsim.map.configuration.JfxModule;
+import net.marvk.fs.vatsim.map.configuration.PathsModule;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -100,5 +101,6 @@ public class App extends MvvmfxGuiceApplication {
         modules.add(new AppModule());
         modules.add(new AopModule());
         modules.add(new JfxModule());
+        modules.add(new PathsModule());
     }
 }

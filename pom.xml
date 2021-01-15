@@ -188,6 +188,12 @@
         </dependency>
 
         <dependency>
+            <groupId>net.harawata</groupId>
+            <artifactId>appdirs</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>rtree2</artifactId>
             <version>0.9-RC1</version>
