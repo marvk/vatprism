@@ -60,6 +60,7 @@ public class MapViewModel implements ViewModel {
 
     private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
     private final Preferences preferences;
+    private final FilterRepository filterRepository;
 
     private ObservableList<PainterExecutor<?>> painterExecutors;
 
@@ -83,6 +84,7 @@ public class MapViewModel implements ViewModel {
             final InternationalDateLineRepository internationalDateLineRepository,
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final Preferences preferences,
+            final FilterRepository filterRepository,
             @Named("world") final List<Polygon> world,
             @Named("lakes") final List<Polygon> lakes
     ) {
@@ -93,6 +95,7 @@ public class MapViewModel implements ViewModel {
         this.upperInformationRegionRepository = upperInformationRegionRepository;
 
         this.preferences = preferences;
+        this.filterRepository = filterRepository;
 
         this.scrollSpeed.bind(preferences.doubleProperty("general.scroll_speed"));
 
@@ -225,6 +228,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
                 PainterExecutor.ofItem("Connections", new DepartureArrivalPathPainter(mapVariables), this.selectedItemProperty()::get),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
+                PainterExecutor.ofCollection("Filters", new FilterPainter(mapVariables, filterRepository.list()), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
                 PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
                 PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),

@@ -38,6 +38,13 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter(value = "Head/Tail length scaled with speed")
     private boolean headTailScaledWithSpeed = true;
 
+    public PilotPainter(final MapVariables mapVariables, final Color labelColor, final Color backgroundColor) {
+        super(mapVariables);
+        this.labelColor = labelColor;
+        this.backgroundColor = backgroundColor;
+        this.paintBackground = true;
+    }
+
     public PilotPainter(final MapVariables mapVariables, final Color labelColor, final boolean paintBackground) {
         super(mapVariables);
         this.labelColor = labelColor;

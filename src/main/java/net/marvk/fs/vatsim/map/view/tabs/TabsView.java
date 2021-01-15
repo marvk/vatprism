@@ -21,6 +21,7 @@ import net.marvk.fs.vatsim.map.view.datatable.controllerstable.ControllersTableV
 import net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundariestable.FlightInformationRegionBoundariesTableView;
 import net.marvk.fs.vatsim.map.view.datatable.pilotstable.PilotsTableView;
 import net.marvk.fs.vatsim.map.view.datatable.upperinformationregionstable.UpperInformationRegionsTableView;
+import net.marvk.fs.vatsim.map.view.filter.filteroutline.FilterOutlineView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
 import net.marvk.fs.vatsim.map.view.search.SearchView;
 
@@ -59,6 +60,7 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPane.getTabs().add(createJavaViewTab("Airports", AirportsTableView.class));
         tabPane.getTabs().add(createJavaViewTab("FIRs", FlightInformationRegionBoundariesTableView.class));
         tabPane.getTabs().add(createJavaViewTab("UIRs", UpperInformationRegionsTableView.class));
+        tabPane.getTabs().add(createFxmlViewTab("Filters", FilterOutlineView.class));
 
         searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
                 () -> tabPane.getSelectionModel().getSelectedIndex() == 0,
