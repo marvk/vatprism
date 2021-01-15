@@ -30,7 +30,7 @@ public class UirPainter extends CompositeMapPainter<UpperInformationRegion> {
     }
 
     @Override
-    protected Collection<Painter<?>> painters() {
+    protected Collection<? extends Painter<?>> painters() {
         return List.of(firbPainter);
     }
 

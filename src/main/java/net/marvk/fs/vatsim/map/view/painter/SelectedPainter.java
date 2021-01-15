@@ -38,7 +38,7 @@ public class SelectedPainter extends CompositeMapPainter<Data> {
     }
 
     @Override
-    protected Collection<Painter<?>> painters() {
+    protected Collection<? extends Painter<?>> painters() {
         return List.of(firbPainter);
     }
 

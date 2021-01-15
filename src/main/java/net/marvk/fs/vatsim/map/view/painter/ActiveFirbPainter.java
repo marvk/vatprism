@@ -24,7 +24,7 @@ public class ActiveFirbPainter extends CompositeMapPainter<FlightInformationRegi
     }
 
     @Override
-    protected Collection<Painter<?>> painters() {
+    protected Collection<? extends Painter<?>> painters() {
         return List.of(firbPainter);
     }
 

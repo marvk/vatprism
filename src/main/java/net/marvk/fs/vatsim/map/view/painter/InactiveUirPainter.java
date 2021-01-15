@@ -18,7 +18,7 @@ public class InactiveUirPainter extends CompositeMapPainter<UpperInformationRegi
     }
 
     @Override
-    protected Collection<Painter<?>> painters() {
+    protected Collection<? extends Painter<?>> painters() {
         return List.of(uirPainter);
     }
 

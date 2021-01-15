@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class CompositeMapPainter<T> extends DisableablePainter<T> {
-    private Collection<Painter<?>> painters = null;
+    private Collection<? extends Painter<?>> painters = null;
 
-    protected abstract Collection<Painter<?>> painters();
+    protected abstract Collection<? extends Painter<?>> painters();
 
-    private Collection<Painter<?>> getPainters() {
+    protected Collection<? extends Painter<?>> getPainters() {
         if (painters == null) {
             painters = painters();
         }
