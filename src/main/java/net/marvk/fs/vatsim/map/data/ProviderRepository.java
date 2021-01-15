@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map.data;
 import com.google.inject.Provider;
 import net.marvk.fs.vatsim.api.VatsimApi;
 
-public abstract class ProviderRepository<ViewModel extends Settable<Model>, Model> extends SimpleRepository<ViewModel, Model> {
+public abstract class ProviderRepository<ViewModel extends Settable<Model>, Model> extends SimpleDataRepository<ViewModel, Model> {
     private final Provider<ViewModel> provider;
 
     public ProviderRepository(final VatsimApi vatsimApi, final Provider<ViewModel> provider) {

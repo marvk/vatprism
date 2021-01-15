@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
-public class CountryRepository extends SimpleRepository<Country, CountryRepository.VatsimCountryWrapper> {
+public class CountryRepository extends SimpleDataRepository<Country, CountryRepository.VatsimCountryWrapper> {
 
     private final Lookup<Country> prefixLookup;
 

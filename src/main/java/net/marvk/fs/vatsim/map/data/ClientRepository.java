@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Log4j2
-public class ClientRepository extends SimpleRepository<Client, VatsimClient> {
+public class ClientRepository extends SimpleDataRepository<Client, VatsimClient> {
     private final ReadOnlyListWrapper<Pilot> pilots;
     private final ReadOnlyListWrapper<Controller> controllers;
     private final AirportRepository airportRepository;
