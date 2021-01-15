@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 
 @Log4j2
 public class FilterRepository implements Repository<Filter> {
+    private static final String FILTERS_DIRECTORY_NAME = "Filters";
+
     private final Path path;
     private final Serializer<Filter> serializer;
     private final ObservableList<Filter> items = FXCollections.observableArrayList();
@@ -38,6 +40,7 @@ public class FilterRepository implements Repository<Filter> {
                      .filter(Objects::nonNull)
                      .map(this::deserialize)
                      .filter(Objects::nonNull)
+                     .peek(e -> log.info(("Loading filter %s from disk").formatted(filterLogName(e))))
                      .forEach(this::createNoWrite);
             } catch (final IOException e) {
                 log.error("Failed to read directory", e);
@@ -69,11 +72,12 @@ public class FilterRepository implements Repository<Filter> {
 
     private Path tryCreateFilterDirectory(final Path path) {
         try {
-            return Files.createDirectories(path.resolve("filters"));
+            log.info(("Attempting to create filter directory %s").formatted(path));
+            return Files.createDirectories(path.resolve(FILTERS_DIRECTORY_NAME));
         } catch (final IOException e) {
             log.error("Unable to create filter directory, filters will not be saved", e);
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -84,10 +88,6 @@ public class FilterRepository implements Repository<Filter> {
     @Override
     public Filter getByKey(final String key) {
         throw new UnsupportedOperationException();
-    }
-
-    private void saveToDisk() {
-
     }
 
     @Override
@@ -101,27 +101,29 @@ public class FilterRepository implements Repository<Filter> {
     }
 
     private void createNoWrite(final Filter filter) {
+        log.info(("Creating filter %s").formatted(filterLogName(filter)));
         items.add(filter);
         uuidMap.put(filter.getUuid(), filter);
     }
 
     @Override
     public void update(final Filter filter) throws RepositoryException {
+        log.info(("Updating filter %s").formatted(filterLogName(filter)));
         delete(filter);
         create(filter);
     }
 
     @Override
     public void delete(final Filter filter) throws RepositoryException {
-        final UUID uuid = filter.getUuid();
+        log.info(("Deleting filter filter %s").formatted(filterLogName(filter)));
 
-        final Filter toRemove = uuidMap.get(uuid);
-        uuidMap.remove(uuid);
+        final Filter toRemove = uuidMap.get(filter.getUuid());
+        uuidMap.remove(filter.getUuid());
         items.remove(toRemove);
         items.remove(filter);
 
         try {
-            deleteFile(uuid);
+            deleteFile(filter);
         } catch (final IOException e) {
             throw new RepositoryException(e);
         }
@@ -129,17 +131,15 @@ public class FilterRepository implements Repository<Filter> {
 
     private void writeFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
+            log.info(("Attempting to write filter file %s").formatted(filterLogName(filter)));
             Files.writeString(path(filter), serializer.serialize(filter), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 
     private void deleteFile(final Filter filter) throws IOException {
-        deleteFile(filter.getUuid());
-    }
-
-    private void deleteFile(final UUID uuid) throws IOException {
         if (canSaveToDisk()) {
-            Files.delete(path(uuid));
+            log.info(("Attempting to deleting filter file %s").formatted(filterLogName(filter)));
+            Files.delete(path(filter.getUuid()));
         }
     }
 
@@ -151,4 +151,7 @@ public class FilterRepository implements Repository<Filter> {
         return path.resolve("%s.json".formatted(uuid));
     }
 
+    private static String filterLogName(final Filter filter) {
+        return "%s (%s)".formatted(filter.getUuid(), filter.getName());
+    }
 }

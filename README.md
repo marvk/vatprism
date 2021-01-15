@@ -36,8 +36,8 @@ excellent [VAT-Spy](http://www1.metacraft.com/VATSpy/), which, as of this time, 
 ## Issues
 
 Issue tracking takes place on this GitHub issue repository. You are most invited to contribute bugs, issues, feature or
-any other constructive feedback [as an issue.](https://github.com/marvk/vatprism/issues) Please check existing issues
-before creating a new one.
+any other constructive feedback [as an issue.](https://github.com/marvk/vatprism/issues) Before submitting an issue,
+please check existing issues for duplicates.
 
 ## Installation
 
@@ -46,9 +46,8 @@ before creating a new one.
 Simply download the latest installer (`.msi`) from the [releases page](https://github.com/marvk/vatprism/releases)
 and run it. The installer will guide you through the installation.
 
-If you have another version of VATprism installed, the installer may prompt you to remove an existing version. In this
-case, head to Windows' *add or remove programs* dialog, remove your existing version, and rerun the installer. Don't
-worry, your settings will not be removed.
+In some cases, the installer may prompt you to remove an existing version. In this case, head to Windows' *add or remove
+programs* dialog, remove your existing version, and rerun the installer. Don't worry, your settings will not be removed.
 
 #### Linux and macOS
 
@@ -63,7 +62,7 @@ builds via the linked issues.
 
 ## Build ![Build Status](https://github.com/marvk/vatprism/workflows/Build/badge.svg)
 
-If you want to build the project yourself, you require
+Building the project requires the following tools:
 
 * [Apache Maven](https://maven.apache.org/)
 
@@ -71,8 +70,8 @@ If you want to build the project yourself, you require
 
 * [WiX Toolset](https://wixtoolset.org/) (For building a Windows Installer via `jpackage`)
 
-To build the project, run clone the repository and run `mvn package`. Currently, this will fail if WiX Toolkit is not
-installed. To disable the Windows installer build, removed the Exec Maven Plugin from the `pom.xml`.
+To build the project, clone the repository and run `mvn package`. Currently, this will fail if WiX Toolkit is not
+installed. To disable the Windows installer build, remove the Exec Maven Plugin from the `pom.xml`.
 
 ## Acknowledgements
 
