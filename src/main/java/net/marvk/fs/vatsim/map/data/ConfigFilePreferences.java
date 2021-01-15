@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ConfigFilePreferences implements Preferences {
@@ -37,11 +38,21 @@ public class ConfigFilePreferences implements Preferences {
 
     private void tryLoadConfig() {
         try {
-            log.info(("Attempting to load config from %s").formatted(path));
-            final Map<String, ObservableValue<?>> deserialize = serializer.deserialize(Files.readString(path));
-            for (final Map.Entry<String, ObservableValue<?>> e : deserialize.entrySet()) {
+            log.info("Loading config from %s".formatted(path));
+            final String raw = Files.readString(path);
+            log.debug("Parsing config \n%s".formatted(raw));
+            final Map<String, ObservableValue<?>> deserialize = serializer.deserialize(raw);
+            final var entries = deserialize
+                    .entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toList());
+
+            log.debug("Loading config entries");
+            for (final var e : entries) {
+                log.debug("Loading config entry (%s, %s)".formatted(e.getKey(), e.getValue().getValue()));
                 observables.put(e.getKey(), e.getValue());
-                registerListener(e.getValue());
+                registerListener(e.getKey(), e.getValue());
             }
         } catch (final IOException e) {
             log.error("Failed to load config", e);
@@ -50,7 +61,7 @@ public class ConfigFilePreferences implements Preferences {
 
     private Path tryCreateFilterDirectory(final Path path) {
         try {
-            log.info(("Attempting to create config directory %s").formatted(path));
+            log.info(("Creating config directory %s").formatted(path));
             return Files.createDirectories(path);
         } catch (final IOException e) {
             log.error("Unable to create config directory, no user data will be saved", e);
@@ -118,22 +129,24 @@ public class ConfigFilePreferences implements Preferences {
             return v;
         });
         observables.computeIfAbsent(key, e -> {
-            final T result = createProperty(defaultSupplier);
+            final T result = createProperty(key, defaultSupplier);
             ifPresent.accept(result);
             return result;
         });
-        final T result = (T) observables.get(key);
-        return result;
+        return (T) observables.get(key);
     }
 
-    private <T extends ObservableValue<E>, E> T createProperty(final Supplier<T> propertySupplier) {
+    private <T extends ObservableValue<E>, E> T createProperty(final String key, final Supplier<T> propertySupplier) {
         final T result = propertySupplier.get();
-        registerListener(result);
+        registerListener(key, result);
         return result;
     }
 
-    private <T extends ObservableValue<E>, E> void registerListener(final T result) {
-        result.addListener((observable, oldValue, newValue) -> writeConfig());
+    private <T extends ObservableValue<E>, E> void registerListener(final String key, final T observableValue) {
+        observableValue.addListener((observable, oldValue, newValue) -> {
+            log.debug(() -> "Changing value of property %s from %s to %s".formatted(key, oldValue, newValue));
+            writeConfig();
+        });
     }
 
     @Override
@@ -143,10 +156,10 @@ public class ConfigFilePreferences implements Preferences {
 
     private void writeConfig() {
         try {
+            log.info("Writing config to %s".formatted(path));
             Files.writeString(path, serializer.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (final IOException e) {
             log.error("Failed to write config", e);
         }
     }
 }
-

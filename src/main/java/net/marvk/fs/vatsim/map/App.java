@@ -33,15 +33,17 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(final Stage primaryStage) {
-        final Parameters parameters = getParameters();
 
         loadFonts();
 
+        final Parameters parameters = getParameters();
+        log.info("Received parameters %s".formatted(parameters.getRaw()));
         final String logLevelString = parameters.getNamed().get("loglevel");
         if (logLevelString != null) {
             final Level level = Level.toLevel(logLevelString, null);
 
             if (level != null) {
+                log.info("Setting log level to %s from parameters".formatted(level));
                 Configurator.setRootLevel(level);
             } else {
                 log.warn("Failed to set log level to \"%s\"".formatted(logLevelString));
@@ -77,6 +79,7 @@ public class App extends MvvmfxGuiceApplication {
 
     private void loadFonts() {
         final String path = "/net/marvk/fs/vatsim/map/view/fonts/";
+        log.info("Loading fonts from %s".formatted(path));
         final List<String> fontFiles = List.of("B612-Bold.ttf",
                 "B612-BoldItalic.ttf",
                 "B612-Italic.ttf",
@@ -88,7 +91,9 @@ public class App extends MvvmfxGuiceApplication {
         );
 
         for (final String fontFile : fontFiles) {
-            Font.loadFont(getClass().getResourceAsStream(path + fontFile), -1);
+            final String absolutePath = path + fontFile;
+            log.debug("Loading font %s".formatted(absolutePath));
+            Font.loadFont(getClass().getResourceAsStream(absolutePath), -1);
         }
     }
 

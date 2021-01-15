@@ -27,41 +27,43 @@ public class FilterRepository implements Repository<Filter> {
 
     @Inject
     public FilterRepository(@Named("userConfigDir") final Path path, @Named("filterSerializer") final Serializer<Filter> serializer) {
-        this.path = tryCreateFilterDirectory(path);
         this.serializer = serializer;
 
-        loadExistingFilters();
-    }
-
-    private void loadExistingFilters() {
+        this.path = tryCreateFilterDirectory(path);
         if (canSaveToDisk()) {
-            try (Stream<Path> paths = Files.list(path)) {
-                paths.map(this::read)
-                     .filter(Objects::nonNull)
-                     .map(this::deserialize)
-                     .filter(Objects::nonNull)
-                     .peek(e -> log.info(("Loading filter %s from disk").formatted(filterLogName(e))))
-                     .forEach(this::createNoWrite);
-            } catch (final IOException e) {
-                log.error("Failed to read directory", e);
-            }
+            tryLoadingExistingFilters();
         }
     }
 
-    private Filter deserialize(final String s) {
-        try {
-            return serializer.deserialize(s);
-        } catch (final JsonParseException e) {
-            log.error("Failed to parse filter", e);
-            return null;
+    private void tryLoadingExistingFilters() {
+        try (Stream<Path> paths = Files.list(path)) {
+            log.info("Loading filters from %s".formatted(path));
+            paths.map(this::read)
+                 .filter(Objects::nonNull)
+                 .map(this::deserialize)
+                 .filter(Objects::nonNull)
+                 .forEach(this::createNoWrite);
+        } catch (final IOException e) {
+            log.error("Failed to read directory", e);
         }
     }
 
     private String read(final Path path) {
         try {
+            log.debug("Loading filter file %s".formatted(path));
             return Files.readString(path);
         } catch (final IOException e) {
-            log.error("Failed to load file", e);
+            log.error("Failed to load filter file", e);
+            return null;
+        }
+    }
+
+    private Filter deserialize(final String s) {
+        try {
+            log.debug("Deserializing filter \n%s".formatted(s));
+            return serializer.deserialize(s);
+        } catch (final JsonParseException e) {
+            log.error("Failed to deserialize filter", e);
             return null;
         }
     }
@@ -101,21 +103,21 @@ public class FilterRepository implements Repository<Filter> {
     }
 
     private void createNoWrite(final Filter filter) {
-        log.info(("Creating filter %s").formatted(filterLogName(filter)));
+        log.debug(("Creating filter %s").formatted(filterLogName(filter)));
         items.add(filter);
         uuidMap.put(filter.getUuid(), filter);
     }
 
     @Override
     public void update(final Filter filter) throws RepositoryException {
-        log.info(("Updating filter %s").formatted(filterLogName(filter)));
+        log.debug(("Updating filter %s").formatted(filterLogName(filter)));
         delete(filter);
         create(filter);
     }
 
     @Override
     public void delete(final Filter filter) throws RepositoryException {
-        log.info(("Deleting filter filter %s").formatted(filterLogName(filter)));
+        log.debug(("Deleting filter filter %s").formatted(filterLogName(filter)));
 
         final Filter toRemove = uuidMap.get(filter.getUuid());
         uuidMap.remove(filter.getUuid());
@@ -131,14 +133,14 @@ public class FilterRepository implements Repository<Filter> {
 
     private void writeFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
-            log.info(("Attempting to write filter file %s").formatted(filterLogName(filter)));
+            log.debug(("Attempting to write filter file %s").formatted(filterLogName(filter)));
             Files.writeString(path(filter), serializer.serialize(filter), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 
     private void deleteFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
-            log.info(("Attempting to deleting filter file %s").formatted(filterLogName(filter)));
+            log.debug(("Attempting to deleting filter file %s").formatted(filterLogName(filter)));
             Files.delete(path(filter.getUuid()));
         }
     }

@@ -18,8 +18,8 @@
         </Console>
         <RollingFile
                 name="File"
-                fileName="${}/vat-map.log"
-                filePattern="log/vat-map.%d{yyyy-MM-dd-HH-mm-ss}.log">
+                fileName="${}/vatprism.log"
+                filePattern="log/vatprism.%d{yyyy-MM-dd-HH-mm-ss}.log">
             <PatternLayout
                     pattern="${LOG_PATTERN_NO_ANSI}"
                     disableAnsi="true"
@@ -30,8 +30,8 @@
         </RollingFile>
         <RollingFile
                 name="LogDirectoryFile"
-                fileName="${sys:log4j2.saveDirectory}/vat-map.log"
-                filePattern="${sys:log4j2.saveDirectory}/vat-map.%d{yyyy-MM-dd-HH-mm-ss}.log">
+                fileName="${sys:log4j2.saveDirectory}/vatprism.log"
+                filePattern="${sys:log4j2.saveDirectory}/vatprism.%d{yyyy-MM-dd-HH-mm-ss}.log">
             <PatternLayout
                     pattern="${LOG_PATTERN_NO_ANSI}"
                     disableAnsi="true"
