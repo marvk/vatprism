@@ -3,18 +3,25 @@ package net.marvk.fs.vatsim.map.view.filter.filtereditor;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.ControllerRating;
 import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.data.Filter;
@@ -25,12 +32,21 @@ import org.kordamp.ikonli.octicons.Octicons;
 
 import java.util.function.Function;
 
+@Log4j2
 public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
 
     @FXML
-    private Label filterName;
+    private Parent container;
+
+    @FXML
+    private TextField filterName;
     @FXML
     private ToggleGroup filterType;
+
+    @FXML
+    private ColorPicker textColorPicker;
+    @FXML
+    private ColorPicker backgroundColorPicker;
 
     @FXML
     private ToggleGroup callsignCidAndOr;
@@ -98,10 +114,12 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     private FilterEditorViewModel viewModel;
 
     public void initialize() {
-        setupStringFilterList(callsignList, callsignRegex, callsignInput, callsignSubmit, viewModel.getCallsigns());
-        setupStringFilterList(cidList, cidRegex, cidInput, cidSubmit, viewModel.getCids());
-        setupStringFilterList(departuresList, departuresRegex, departuresInput, departuresSubmit, viewModel.getDepartures());
-        setupStringFilterList(arrivalsList, arrivalsRegex, arrivalsInput, arrivalsSubmit, viewModel.getArrivals());
+        container.disableProperty().bind(viewModel.enabledProperty().not());
+
+        new StringFilterList(callsignList, callsignRegex, callsignInput, callsignSubmit, viewModel.getCallsigns());
+        new StringFilterList(cidList, cidRegex, cidInput, cidSubmit, viewModel.getCids());
+        new StringFilterList(departuresList, departuresRegex, departuresInput, departuresSubmit, viewModel.getDepartures());
+        new StringFilterList(arrivalsList, arrivalsRegex, arrivalsInput, arrivalsSubmit, viewModel.getArrivals());
 
         setupMultiSelection(
                 ratingsList,
@@ -124,11 +142,41 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         setupMultiSelection(flightType, viewModel.getAvailableFlightTypes(), viewModel.flightTypesProperty());
         flightType.getSelectionModel().select(Filter.FlightType.ANY);
 
-        setupToggleGroup(callsignCidAndOr, callsignCidOr, callsignCidAnd);
-        setupToggleGroup(departuresArrivalsAndOr, departuresArrivalsOr, departuresArrivalsAnd);
+        setupToggleGroup(callsignCidAndOr, callsignCidOr, callsignCidAnd, viewModel.callsignsCidsOperatorProperty());
+        setupToggleGroup(departuresArrivalsAndOr, departuresArrivalsOr, departuresArrivalsAnd, viewModel.departuresArrivalsOperatorProperty());
+
+        filterName.textProperty()
+                  .addListener((observable, oldValue, newValue) -> viewModel.nameProperty().set(newValue));
+        viewModel.nameProperty()
+                 .addListener((observable, oldValue, newValue) -> filterName.textProperty().set(newValue));
+
+        bindColorPicker(textColorPicker, viewModel.textColorProperty());
+        bindColorPicker(backgroundColorPicker, viewModel.backgroundColorProperty());
+
+        viewModel.filterTypeProperty().addListener((observable, oldValue, newValue) ->
+                filterType.selectToggle(switch (newValue) {
+                    case PILOT -> filterType.getToggles().get(0);
+                    case CONTROLLER -> filterType.getToggles().get(1);
+                })
+        );
+        filterType.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+                viewModel.setFilterType(switch (filterType.getToggles().indexOf(filterType.getSelectedToggle())) {
+                    case 0 -> Filter.Type.PILOT;
+                    case 1 -> Filter.Type.CONTROLLER;
+                    default -> throw new IllegalStateException();
+                })
+        );
+        viewModel.flightPlanFiledProperty().bindBidirectional(flightPlanFiled.selectedProperty());
     }
 
-    private <T> void setupMultiSelection(
+    private static void bindColorPicker(final ColorPicker colorPicker, final ObjectProperty<Color> colorProperty) {
+        colorPicker.valueProperty()
+                   .addListener((observable, oldValue, newValue) -> colorProperty.set(newValue));
+        colorProperty
+                .addListener((observable, oldValue, newValue) -> colorPicker.valueProperty().set(newValue));
+    }
+
+    private static <T> void setupMultiSelection(
             final ListView<T> listView,
             final ReadOnlyListProperty<T> available,
             final ListProperty<T> selected,
@@ -137,37 +185,62 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         listView.setItems(available);
         listView.setCellFactory(param -> new StringMappedListCell<>(cellValueMapper));
         listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        //TODO
 
+//        listView.getSelectionModel().getSelectedItems().addListener(
+//                (ListChangeListener<T>) c -> {
+//                    while (c.next()) {
+//                        selected.removeAll(c.getRemoved());
+//                        selected.addAll(c.getAddedSubList())
+//                    }
+//                }
+//        );
+//        selected.addListener(
+//                (ListChangeListener<T>) c -> {
+//                    while (c.next()) {
+//                        for (final T t : c.getRemoved()) {
+//                            listView.getSelectionModel().select();
+//                        }
+//                        listView.addAll(c.getAddedSubList());
+//                    }
+//                }
+//        );
     }
 
-    private void setupToggleGroup(final ToggleGroup toggleGroup, final Label or, final Label and) {
+    private static void setupToggleGroup(final ToggleGroup toggleGroup, final Label or, final Label and, final ObjectProperty<Filter.Operator> operator) {
         or.setOnMouseClicked(e -> toggleGroup.selectToggle(toggleGroup.getToggles().get(0)));
         and.setOnMouseClicked(e -> toggleGroup.selectToggle(toggleGroup.getToggles().get(1)));
+
+        operator.addListener((observable, oldValue, newValue) ->
+                toggleGroup.selectToggle(switch (newValue) {
+                    case OR -> toggleGroup.getToggles().get(0);
+                    case AND -> toggleGroup.getToggles().get(1);
+                })
+        );
+        toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
+                operator.set(switch (toggleGroup.getToggles().indexOf(toggleGroup.getSelectedToggle())) {
+                    case 0 -> Filter.Operator.OR;
+                    case 1 -> Filter.Operator.AND;
+                    default -> throw new IllegalStateException();
+                })
+        );
     }
 
-    private <T> void setupMultiSelection(
+    private static <T> void setupMultiSelection(
             final ComboBox<T> comboBox,
             final ReadOnlyListProperty<T> available,
             final ListProperty<T> selected
     ) {
         comboBox.setItems(available);
+        comboBox.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> selected.set(FXCollections.observableArrayList(newValue)));
+        selected.addListener((ListChangeListener<T>) c -> comboBox.getSelectionModel().select(selected.get(0)));
     }
 
-    private void setupStringFilterList(
-            final ListView<FilterStringListViewModel> list,
-            final ToggleButton regex,
-            final TextField input,
-            final Button submit,
-            final ObservableList<FilterStringListViewModel> items
-    ) {
-        list.setItems(items);
-        list.setCellFactory(param -> new FilterStringListViewModelListCell());
-        input.setOnAction(e -> addToList(list, regex, input));
-        submit.setOnAction(e -> addToList(list, regex, input));
-    }
-
-    private void addToList(final ListView<FilterStringListViewModel> list, final ToggleButton regex, final TextField input) {
-        list.getItems().add(new FilterStringListViewModel(regex.isSelected(), input.getText()));
+    @FXML
+    private void save() {
+        viewModel.save();
     }
 
     private static class StringMappedListCell<T> extends ListCell<T> {
@@ -188,52 +261,187 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         }
     }
 
-    private static class FilterStringListViewModelListCell extends ListCell<FilterStringListViewModel> {
-        private HBox content;
-        private Label label;
-        private Button button;
-        private FontIcon fontIcon;
+    private static class StringFilterList {
+        private final ObjectProperty<FilterStringListViewModel> selected = new SimpleObjectProperty<>();
+        private final BooleanProperty inputDisabled = new SimpleBooleanProperty();
+        private final IntegerProperty height = new SimpleIntegerProperty(24);
 
-        private Parent content(final FilterStringListViewModel item) {
-            if (content == null) {
-                label = new Label();
-                button = new Button();
-                final FontIcon buttonIcon = new FontIcon(Octicons.X_16);
-                buttonIcon.getStyleClass().add("filter-list-icon");
-                button.setGraphic(buttonIcon);
-                fontIcon = new FontIcon();
-                fontIcon.getStyleClass().add("filter-list-icon");
-                final Region region = new Region();
-                region.setPrefWidth(0);
-                region.setPrefHeight(0);
-                HBox.setHgrow(region, Priority.ALWAYS);
-                final VBox fontIconHolder = new VBox(fontIcon);
-                fontIconHolder.setAlignment(Pos.CENTER);
-                fontIconHolder.setPadding(new Insets(0, 5, 0, 5));
-                content = new HBox(fontIconHolder, label, region, button);
-                content.setAlignment(Pos.CENTER_LEFT);
-            }
+        private final ListView<FilterStringListViewModel> list;
+        private final ToggleButton regex;
+        private final TextField input;
+        private final Button submit;
+        private final ObservableList<FilterStringListViewModel> items;
 
-            button.setOnAction(e -> getListView().getItems().remove(item));
+        public StringFilterList(final ListView<FilterStringListViewModel> list, final ToggleButton regex, final TextField input, final Button submit, final ObservableList<FilterStringListViewModel> items) {
+            this.list = list;
+            this.regex = regex;
+            this.input = input;
+            this.submit = submit;
+            this.items = items;
 
-            label.textProperty().bind(item.contentProperty());
-            fontIcon.iconCodeProperty().bind(Bindings.createObjectBinding(
-                    () -> item.isRegex() ? FileIcons.REGEX : Octicons.TYPOGRAPHY_16,
-                    item.regexProperty()
+            list.setItems(items);
+            final ChangeListener<Boolean> focusChange = (observable, oldValue, newValue) -> {
+                if (!list.isFocused() && !regex.isFocused() && !input.isFocused() && !submit.isFocused()) {
+                    clearSelection();
+                }
+            };
+            list.focusedProperty().addListener(focusChange);
+            regex.focusedProperty().addListener(focusChange);
+            input.focusedProperty().addListener(focusChange);
+            submit.focusedProperty().addListener(focusChange);
+
+            selected.bind(list.getSelectionModel().selectedItemProperty());
+            inputDisabled.bind(input.textProperty().isEmpty().or(input.textProperty().isNull()));
+
+            list.setCellFactory(param -> new FilterStringListViewModelListCell());
+            input.setOnAction(e -> addToList());
+            submit.setOnAction(e -> addToList());
+
+            final FontIcon graphic = (FontIcon) submit.getGraphic();
+
+            graphic.iconCodeProperty().bind(Bindings.createObjectBinding(
+                    () -> selected.get() == null ? Octicons.PLUS_16 : Octicons.PENCIL_16,
+                    selected
             ));
+            selected.addListener((observable, oldValue, newValue) -> {
+                if (newValue == null) {
+                    input.setText(null);
+                } else {
+                    input.setText(newValue.getContent());
+                }
+            });
+            list.setOnMouseClicked(e -> {
+                final EventTarget target = e.getTarget();
 
-            return content;
+                if (target instanceof FilterStringListViewModelListCell) {
+                    final FilterStringListViewModelListCell cell = (FilterStringListViewModelListCell) target;
+                    if (cell.getValue() == null) {
+                        clearSelection();
+                    }
+                } else if (target instanceof Group) {
+                    clearSelection();
+                }
+            });
+            regex.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (selected.get() != null) {
+                    selected.get().setRegex(newValue);
+                }
+            });
+            final Tooltip regexTooltip = new Tooltip();
+            regexTooltip.textProperty().bind(Bindings.createStringBinding(
+                    () -> "Set to %s matching".formatted(regex.isSelected() ? "regex" : "wildcard"),
+                    regex.selectedProperty()
+            ));
+            regex.setTooltip(regexTooltip);
+
+            regex.prefHeightProperty().bind(height);
+            input.prefHeightProperty().bind(height);
+            submit.prefHeightProperty().bind(height);
+            submit.disableProperty().bind(inputDisabled);
         }
 
-        @Override
-        public void updateItem(final FilterStringListViewModel item, final boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || empty) {
-                setText(null);
-                setGraphic(null);
+        private void clearSelection() {
+            list.getSelectionModel().clearSelection();
+        }
+
+        private void addToList() {
+            if (selected.get() == null && !inputDisabled.get()) {
+                list.getItems().add(new FilterStringListViewModel(regex.isSelected(), input.getText()));
+                input.setText(null);
             } else {
-                setGraphic(content(item));
+                if (!inputDisabled.get()) {
+                    selected.get().setContent(input.getText());
+                }
+                selected.get().setRegex(regex.isSelected());
+            }
+        }
+
+        private static class FilterStringListViewModelListCell extends ListCell<FilterStringListViewModel> {
+            private final ReadOnlyObjectWrapper<FilterStringListViewModel> value = new ReadOnlyObjectWrapper<>();
+
+            private HBox content;
+            private Label label;
+            private Button button;
+            private FontIcon typeIcon;
+            private FontIcon errorIcon;
+            private Tooltip errorTooltip;
+            private VBox errorIconHolder;
+
+            private Parent content(final FilterStringListViewModel item) {
+                if (content == null) {
+                    label = new Label();
+                    button = new Button();
+                    final FontIcon buttonIcon = new FontIcon(Octicons.TRASHCAN_16);
+                    buttonIcon.getStyleClass().add("filter-list-icon");
+                    button.setGraphic(buttonIcon);
+
+                    final Region region = new Region();
+                    region.setPrefWidth(0);
+                    region.setPrefHeight(0);
+                    HBox.setHgrow(region, Priority.ALWAYS);
+
+                    typeIcon = new FontIcon();
+                    typeIcon.getStyleClass().add("filter-list-icon");
+                    final VBox fontIconHolder = new VBox(typeIcon);
+                    fontIconHolder.setAlignment(Pos.CENTER);
+                    fontIconHolder.setPadding(new Insets(0, 20, 0, 5));
+
+                    errorIcon = new FontIcon(Octicons.ALERT_16);
+                    errorIcon.getStyleClass().addAll("filter-list-icon", "filter-list-icon-error");
+                    errorIconHolder = new VBox(errorIcon);
+                    errorIconHolder.setAlignment(Pos.CENTER);
+                    errorIconHolder.setPadding(new Insets(0, 5, 0, 5));
+                    errorTooltip = new Tooltip("Invalid regex");
+                    errorTooltip.setShowDelay(Duration.ZERO);
+
+                    content = new HBox(fontIconHolder, label, errorIconHolder, region, button);
+                    content.setAlignment(Pos.CENTER_LEFT);
+                }
+
+                button.setOnAction(e -> getListView().getItems().remove(item));
+                if (item == null) {
+                    errorIcon.visibleProperty().unbind();
+                    errorIcon.setVisible(false);
+                } else {
+                    errorIcon.visibleProperty().bind(item.validProperty().not());
+                    errorIcon.visibleProperty().addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            Tooltip.install(errorIconHolder, errorTooltip);
+                        } else {
+                            Tooltip.uninstall(errorIconHolder, errorTooltip);
+                        }
+                    });
+                }
+                label.textProperty().bind(item.contentProperty());
+                typeIcon.iconCodeProperty().bind(Bindings.createObjectBinding(
+                        () -> item.isRegex() ? FileIcons.REGEX : Octicons.TYPOGRAPHY_16,
+                        item.regexProperty()
+                ));
+
+                return content;
+            }
+
+            @Override
+            public void updateItem(final FilterStringListViewModel item, final boolean empty) {
+                super.updateItem(item, empty);
+                value.set(item);
+                if (item == null || empty) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setGraphic(content(item));
+                }
+            }
+
+            public FilterStringListViewModel getValue() {
+                return value.get();
+            }
+
+            public ReadOnlyObjectProperty<FilterStringListViewModel> valueProperty() {
+                return value.getReadOnlyProperty();
             }
         }
     }
 }
+
+

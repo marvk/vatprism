@@ -26,11 +26,12 @@ import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
+import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.Arrays;
 
-@ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class})
+@ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class, FilterScope.class})
 @Log4j2
 public class MainViewModel implements ViewModel {
     private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();

@@ -6,6 +6,9 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
+import net.marvk.fs.vatsim.map.data.Filter;
+import net.marvk.fs.vatsim.map.data.JsonFilterSerializer;
+import net.marvk.fs.vatsim.map.data.Serializer;
 
 import java.nio.file.Path;
 
@@ -69,5 +72,12 @@ public class PathsModule extends AbstractModule {
     @Named("userDataDir")
     public Path userDataDir(final AppDirs appDirs, @Named("appName") final String appName) {
         return Path.of(appDirs.getUserDataDir(appName, null, null));
+    }
+
+    @Provides
+    @Singleton
+    @Named("filterSerializer")
+    public Serializer<Filter> filterSerializer() {
+        return new JsonFilterSerializer();
     }
 }

@@ -118,6 +118,11 @@ public class ColumnBuilderFactory<Model extends Data> {
         }
 
         private TextFlow textFlowAdjusted(final String cellValue, final boolean mono) {
+            // TODO find cause of nullable cellValue
+            if (cellValue == null) {
+                return null;
+            }
+
             final TextFlow textFlow = textFlow(cellValue, mono);
             textFlow.setMinHeight(0);
             textFlow.setPrefHeight(Region.USE_PREF_SIZE);
@@ -132,7 +137,6 @@ public class ColumnBuilderFactory<Model extends Data> {
             }
             return textFlowHighlighter.createHighlightedTextFlow(cellValue, viewModel.getPattern(), mono);
         }
-
     }
 
     public interface TitleStep<Model extends Data, CellValue> {

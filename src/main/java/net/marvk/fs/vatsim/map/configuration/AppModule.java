@@ -34,6 +34,7 @@ public class AppModule extends AbstractModule {
         bind(InternationalDateLineRepository.class).in(Singleton.class);
         bind(CountryRepository.class).in(Singleton.class);
         bind(DependencyRepository.class).in(Singleton.class);
+        bind(FilterRepository.class).in(Singleton.class);
     }
 
     @Provides

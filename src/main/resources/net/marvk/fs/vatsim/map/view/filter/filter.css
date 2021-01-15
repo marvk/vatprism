@@ -63,3 +63,12 @@
     -fx-icon-color: -vatsim-text-color;
     -fx-icon-size: 16;
 }
+
+.filter-list-icon-error {
+    -fx-icon-color: -vatsim-error-color;
+    -fx-padding: 0, 5, 0, 5;
+}
+
+.center-left-cell {
+    -fx-alignment: CENTER-LEFT;
+}

@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 @Log4j2
 public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern AIRCRAFT_PATTERN = Pattern.compile("^(?:./)?(....?)(?:/.*)?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern AIRCRAFT_PATTERN = Pattern.compile("^(?:./)?(...[^/-]{0,2})(?:[/-].*)?$", Pattern.CASE_INSENSITIVE);
     private final Pilot pilot;
 
     private final StringProperty aircraft = new SimpleStringProperty();
@@ -215,19 +215,39 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     }
 
     public boolean isDomestic() {
-        return isDepartureAndArrivalPresent() && isDomesticNullVulnerable();
+        return isDepartureAndArrivalPresent() && isDomesticAirportsNullable();
     }
 
     public boolean isInternational() {
-        return isDepartureAndArrivalPresent() && !isDomesticNullVulnerable();
-    }
-
-    private boolean isDomesticNullVulnerable() {
-        return getDepartureAirport().getCountry().equals(getArrivalAirport().getCountry());
+        return isDepartureAndArrivalPresent() && isInternationalAirportsNullable();
     }
 
     private boolean isDepartureAndArrivalPresent() {
         return getDepartureAirport() != null && getArrivalAirport() != null;
+    }
+
+    private boolean isDomesticAirportsNullable() {
+        if (isDepartureCountryAndArrivalCountryPresent()) {
+            return isDomesticAirportsAndCountriesNullable();
+        }
+
+        return false;
+    }
+
+    private boolean isInternationalAirportsNullable() {
+        if (isDepartureCountryAndArrivalCountryPresent()) {
+            return !isDomesticAirportsAndCountriesNullable();
+        }
+
+        return false;
+    }
+
+    private boolean isDepartureCountryAndArrivalCountryPresent() {
+        return getDepartureAirport().getCountry() != null && getArrivalAirport().getCountry() != null;
+    }
+
+    private boolean isDomesticAirportsAndCountriesNullable() {
+        return getDepartureAirport().getCountry().equals(getArrivalAirport().getCountry());
     }
 
     private static Duration parseDuration(final String hoursMinutes) {

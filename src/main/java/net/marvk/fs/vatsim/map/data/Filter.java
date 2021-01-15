@@ -7,16 +7,20 @@ import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 @Log4j2
 public class Filter implements Predicate<Client> {
+    private final ReadOnlyObjectProperty<UUID> uuid;
+
     private final ReadOnlyObjectProperty<Type> type;
 
     private final ReadOnlyStringProperty name;
-    private final ReadOnlyObjectProperty<Color> color;
+    private final ReadOnlyObjectProperty<Color> textColor;
+    private final ReadOnlyObjectProperty<Color> backgroundColor;
 
     private final StringPredicateListPredicate callsignPredicates;
     private final ReadOnlyObjectProperty<Operator> callsignsCidsOperator;
@@ -37,9 +41,34 @@ public class Filter implements Predicate<Client> {
 
     private final ReadOnlyBooleanProperty flightPlanRequired;
 
+    public Filter() {
+        this(
+                UUID.randomUUID(),
+                "Unnamed",
+                Color.BLACK,
+                Color.hsb(ThreadLocalRandom.current().nextDouble(360), 0.8, 0.8),
+                Type.PILOT,
+                Collections.emptyList(),
+                Operator.OR,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Operator.OR,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                Collections.emptyList(),
+                List.of(FlightType.ANY),
+                Collections.emptyList(),
+                false
+        );
+    }
+
     public Filter(
+            final UUID uuid,
             final String name,
-            final Color color,
+            final Color textColor,
+            final Color backgroundColor,
             final Type type,
             final List<StringPredicate> callsignPredicates,
             final Operator callsignsCidsOperator,
@@ -55,9 +84,11 @@ public class Filter implements Predicate<Client> {
             final Collection<FlightRule> flightRules,
             final boolean flightPlanRequired
     ) {
+        this.uuid = new ImmutableObjectProperty<>(uuid);
         this.type = new ImmutableObjectProperty<>(type);
         this.name = new ImmutableStringProperty(name);
-        this.color = new ImmutableObjectProperty<>(color);
+        this.textColor = new ImmutableObjectProperty<>(textColor);
+        this.backgroundColor = new ImmutableObjectProperty<>(backgroundColor);
         this.callsignPredicates = new StringPredicateListPredicate(callsignPredicates);
         this.callsignsCidsOperator = new ImmutableObjectProperty<>(callsignsCidsOperator);
         this.cidPredicates = new StringPredicateListPredicate(cidPredicates);
@@ -131,7 +162,7 @@ public class Filter implements Predicate<Client> {
             throw new AssertionError();
         }
 
-        return false;
+        return true;
     }
 
     private boolean testDeparturesAndArrivals(final Pilot client) {
@@ -139,7 +170,8 @@ public class Filter implements Predicate<Client> {
                                                                                       .getDepartureAirport());
         final boolean arrivalsMatch = testAirport(arrivalAirportPredicates, client.getFlightPlan().getArrivalAirport());
 
-        if (departuresArrivalsOperator.get() == Operator.OR) {
+        if (departuresArrivalsOperator.get() == Operator.OR && !departureAirportPredicates.matchesAll() && !arrivalAirportPredicates
+                .matchesAll()) {
             return departuresMatch || arrivalsMatch;
         } else {
             return departuresMatch && arrivalsMatch;
@@ -163,6 +195,9 @@ public class Filter implements Predicate<Client> {
     }
 
     private boolean testFlightTypes(final Pilot pilot) {
+        if (flightTypes.test(FlightType.ANY)) {
+            return true;
+        }
         if (pilot.getFlightPlan().isDomestic()) {
             return flightTypes.test(FlightType.DOMESTIC);
         }
@@ -199,7 +234,7 @@ public class Filter implements Predicate<Client> {
         final boolean callsignMatches = testCallsign(client);
         final boolean cidMatches = testCid(client);
 
-        if (callsignsCidsOperator.get() == Operator.OR) {
+        if (callsignsCidsOperator.get() == Operator.OR && !cidPredicates.matchesAll() && !callsignPredicates.matchesAll()) {
             return callsignMatches || cidMatches;
         } else {
             return callsignMatches && cidMatches;
@@ -212,6 +247,14 @@ public class Filter implements Predicate<Client> {
 
     private boolean testCallsign(final Client client) {
         return callsignPredicates.test(client.getCallsign());
+    }
+
+    public UUID getUuid() {
+        return uuid.get();
+    }
+
+    public ReadOnlyObjectProperty<UUID> uuidProperty() {
+        return uuid;
     }
 
     public Type getType() {
@@ -230,12 +273,20 @@ public class Filter implements Predicate<Client> {
         return name;
     }
 
-    public Color getColor() {
-        return color.get();
+    public Color getTextColor() {
+        return textColor.get();
     }
 
-    public ReadOnlyObjectProperty<Color> colorProperty() {
-        return color;
+    public ReadOnlyObjectProperty<Color> textColorProperty() {
+        return textColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor.get();
+    }
+
+    public ReadOnlyObjectProperty<Color> backgroundColorProperty() {
+        return backgroundColor;
     }
 
     public List<StringPredicate> getCallsignPredicates() {
@@ -282,15 +333,35 @@ public class Filter implements Predicate<Client> {
         return flightRules.set;
     }
 
-    private static class EnumSetPredicate<E extends Enum<E>> implements Predicate<E> {
-        private final EnumSet<E> set;
+    public Collection<ControllerRating> getControllerRatings() {
+        return controllerRatings.items;
+    }
 
-        public EnumSetPredicate(final EnumSet<E> set) {
+    public Collection<PilotRating> getPilotRatings() {
+        return pilotRatings.items;
+    }
+
+    public Collection<ControllerType> getControllerTypes() {
+        return controllerTypes.set;
+    }
+
+    public boolean isFlightPlanRequired() {
+        return flightPlanRequired.get();
+    }
+
+    public ReadOnlyBooleanProperty flightPlanRequiredProperty() {
+        return flightPlanRequired;
+    }
+
+    private static class EnumSetPredicate<E extends Enum<E>> implements Predicate<E> {
+        private final Set<E> set;
+
+        public EnumSetPredicate(final Set<E> set) {
             this.set = set;
         }
 
         public EnumSetPredicate(final Collection<E> collection) {
-            this(EnumSet.copyOf(collection));
+            this(collection.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(collection));
         }
 
         @Override
@@ -304,6 +375,10 @@ public class Filter implements Predicate<Client> {
 
         public StringPredicateListPredicate(final List<StringPredicate> predicates) {
             this.predicates = predicates;
+        }
+
+        public boolean matchesAll() {
+            return predicates.isEmpty();
         }
 
         @Override
@@ -325,7 +400,7 @@ public class Filter implements Predicate<Client> {
         private final Collection<T> items;
 
         public CollectionPredicate(final Collection<T> items) {
-            this.items = items == null ? null : new HashSet<>(items);
+            this.items = items == null ? Collections.emptyList() : Collections.unmodifiableSet(new LinkedHashSet<>(items));
         }
 
         @Override
@@ -378,6 +453,18 @@ public class Filter implements Predicate<Client> {
 
         private static String simplePatternToRegex(final String simplePattern) {
             return String.join(".*", simplePattern.split("\\*", -1));
+        }
+
+        public Pattern getPattern() {
+            return pattern;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public boolean isRegex() {
+            return regex;
         }
     }
 

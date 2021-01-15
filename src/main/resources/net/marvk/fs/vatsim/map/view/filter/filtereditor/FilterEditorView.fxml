@@ -4,15 +4,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
-<VBox alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+<VBox fx:id="container" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+      minHeight="-Infinity"
       minWidth="300" prefWidth="500.0" spacing="5.0" styleClass="container"
       xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditorView">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label fx:id="filterName" text="Name"/>
-                <TextField HBox.hgrow="ALWAYS"/>
+                <Label text="Name"/>
+                <TextField fx:id="filterName" HBox.hgrow="ALWAYS"/>
+                <ColorPicker fx:id="textColorPicker"/>
+                <ColorPicker fx:id="backgroundColorPicker"/>
+                <Button styleClass="icon-button" onAction="#save">
+                    <graphic>
+                        <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
+                    </graphic>
+                </Button>
             </children>
         </HBox>
         <Separator prefWidth="200.0"/>
