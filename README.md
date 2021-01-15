@@ -58,7 +58,8 @@ running `java -jar vatprism-VERSION.jar`. This requires an installation of JDK 1
 the [AdoptOpenJDK website.](https://adoptopenjdk.net/index.html)
 
 If there is demand for macOS or Linux native binaries in the future, I will think about adding support. Feel free to
-request this as an issue, or submit a pull request.
+request [Linux](https://github.com/marvk/vatprism/issues/31) or [macOS](https://github.com/marvk/vatprism/issues/30)
+builds via the linked issues.
 
 ## Build ![Build Status](https://github.com/marvk/vatprism/workflows/Build/badge.svg)
 
