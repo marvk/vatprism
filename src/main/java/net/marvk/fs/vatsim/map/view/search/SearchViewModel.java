@@ -15,7 +15,6 @@ import net.marvk.fs.vatsim.map.view.BaseViewModel;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.time.Duration;
 import java.util.Collection;

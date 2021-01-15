@@ -20,7 +20,6 @@ import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;

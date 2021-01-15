@@ -27,7 +27,6 @@ import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.Arrays;
 

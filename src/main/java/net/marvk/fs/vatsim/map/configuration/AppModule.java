@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -35,6 +36,8 @@ public class AppModule extends AbstractModule {
         bind(CountryRepository.class).in(Singleton.class);
         bind(DependencyRepository.class).in(Singleton.class);
         bind(FilterRepository.class).in(Singleton.class);
+        bind(Preferences.class).to(ConfigFilePreferences.class).asEagerSingleton();
+        bind(PreferencesView.class).asEagerSingleton();
     }
 
     @Provides

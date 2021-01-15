@@ -3,8 +3,8 @@ package net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundaries
 import com.google.inject.Inject;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
+import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.view.datatable.SimpleTableViewModel;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 public class FlightInformationRegionBoundariesTableViewModel extends SimpleTableViewModel<FlightInformationRegionBoundary> {
     @Inject

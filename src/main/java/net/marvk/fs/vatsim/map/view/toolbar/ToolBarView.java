@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.toolbar;
 
+import com.google.inject.Inject;
 import com.sun.javafx.css.PseudoClassState;
 import de.saxsys.mvvmfx.*;
 import javafx.animation.Animation;
@@ -23,12 +24,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.about.AboutView;
+import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
-    private static final Duration SPIN_DURATION = Duration.minutes(1);
+    private final PreferencesView preferencesView;
     @FXML
     private Button reload;
     @FXML
@@ -50,6 +52,11 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
     @InjectContext
     private Context context;
+
+    @Inject
+    public ToolBarView(final PreferencesView preferencesView) {
+        this.preferencesView = preferencesView;
+    }
 
     private RotateTransition reloadRotateTransition;
 
@@ -164,7 +171,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @SneakyThrows
     @FXML
     private void openSettings(final ActionEvent actionEvent) {
-        viewModel.getPreferences().show();
+        preferencesView.show();
     }
 
     @FXML

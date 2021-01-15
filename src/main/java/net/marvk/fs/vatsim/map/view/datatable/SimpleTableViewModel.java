@@ -6,10 +6,10 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.data.DataVisitor;
+import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.data.SimplePredicatesDataVisitor;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 import java.util.regex.Pattern;
 

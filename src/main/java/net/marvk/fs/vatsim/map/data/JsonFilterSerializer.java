@@ -1,14 +1,14 @@
 package net.marvk.fs.vatsim.map.data;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import javafx.scene.paint.Color;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+
+import static net.marvk.fs.vatsim.map.data.JsonSerializationUtil.deserializeToClass;
+import static net.marvk.fs.vatsim.map.data.JsonSerializationUtil.deserializeToList;
 
 public class JsonFilterSerializer implements Serializer<Filter> {
     private final Gson gson;
@@ -31,9 +31,6 @@ public class JsonFilterSerializer implements Serializer<Filter> {
     @Override
     public Filter deserialize(final String s) {
         return gson.fromJson(s, Filter.class);
-    }
-
-    private interface Adapter<T> extends JsonSerializer<T>, JsonDeserializer<T> {
     }
 
     private static class FilterAdapter implements Adapter<Filter> {
@@ -122,27 +119,5 @@ public class JsonFilterSerializer implements Serializer<Filter> {
             result.addProperty("regex", src.isRegex());
             return result;
         }
-    }
-
-    private static class ColorAdapter implements Adapter<Color> {
-        @Override
-        public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
-            return Color.valueOf(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(final Color src, final Type typeOfSrc, final JsonSerializationContext context) {
-            return new JsonPrimitive(src.toString());
-        }
-    }
-
-    private static <T> List<T> deserializeToList(final JsonElement jsonElement, final JsonDeserializationContext context, final Class<T> clazz) {
-        return StreamSupport.stream(jsonElement.getAsJsonArray().spliterator(), false)
-                            .map(e -> deserializeToClass(e, context, clazz))
-                            .collect(Collectors.toList());
-    }
-
-    private static <T> T deserializeToClass(final JsonElement jsonElement, final JsonDeserializationContext context, final Class<T> clazz) {
-        return context.deserialize(jsonElement, TypeToken.get(clazz).getType());
     }
 }

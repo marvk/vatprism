@@ -6,7 +6,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
+import net.marvk.fs.vatsim.map.data.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;

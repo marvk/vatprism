@@ -7,10 +7,10 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.data.RepositoryException;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
-import net.marvk.fs.vatsim.map.view.preferences.Preferences;
 
 public class ToolBarViewModel implements ViewModel {
     private final ReadOnlyStringWrapper errorMessage = new ReadOnlyStringWrapper();
