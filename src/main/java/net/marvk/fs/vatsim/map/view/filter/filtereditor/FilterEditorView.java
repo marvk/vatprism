@@ -36,6 +36,9 @@ import java.util.function.Function;
 public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
 
     @FXML
+    private ToggleButton enabled;
+
+    @FXML
     private Parent container;
 
     @FXML
@@ -167,6 +170,11 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 })
         );
         viewModel.flightPlanFiledProperty().bindBidirectional(flightPlanFiled.selectedProperty());
+        viewModel.filterEnabledProperty().bindBidirectional(enabled.selectedProperty());
+        ((FontIcon) enabled.getGraphic()).iconCodeProperty().bind(Bindings.createObjectBinding(
+                () -> enabled.isSelected() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
+                enabled.selectedProperty()
+        ));
     }
 
     private static void bindColorPicker(final ColorPicker colorPicker, final ObjectProperty<Color> colorProperty) {

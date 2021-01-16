@@ -12,8 +12,13 @@
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
+                <ToggleButton fx:id="enabled" styleClass="icon-button" selected="true">
+                    <graphic>
+                        <FontIcon iconLiteral="oct-eye-16" iconSize="24"/>
+                    </graphic>
+                </ToggleButton>
                 <Label text="Name"/>
-                <TextField fx:id="filterName" HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="filterName" promptText="Name" HBox.hgrow="ALWAYS"/>
                 <ColorPicker fx:id="textColorPicker"/>
                 <ColorPicker fx:id="backgroundColorPicker"/>
                 <Button styleClass="icon-button" onAction="#save">

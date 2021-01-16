@@ -39,6 +39,7 @@ public class JsonFilterSerializer implements Serializer<Filter> {
             final JsonObject result = new JsonObject();
             result.add("uuid", context.serialize(src.getUuid()));
             result.add("name", context.serialize(src.getName()));
+            result.add("enabled", context.serialize(src.isEnabled()));
             result.add("textColor", context.serialize(src.getTextColor()));
             result.add("backgroundColor", context.serialize(src.getBackgroundColor()));
             result.add("type", context.serialize(src.getType()));
@@ -84,6 +85,7 @@ public class JsonFilterSerializer implements Serializer<Filter> {
             return new Filter(
                     UUID.fromString(o.get("uuid").getAsString()),
                     o.get("name").getAsString(),
+                    o.get("enabled").getAsBoolean(),
                     textColor,
                     backgroundColor,
                     type,

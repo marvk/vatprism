@@ -4,6 +4,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -24,17 +25,25 @@ public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
 
     public void initialize() {
         table.setItems(viewModel.getFilters());
+
         final TableColumn<FilterListViewModel, FilterListViewModel> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
         nameColumn.setCellFactory(param -> new NameCell());
         nameColumn.setPrefWidth(200);
         nameColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
+        table.getColumns().add(nameColumn);
+
         final TableColumn<FilterListViewModel, FilterListViewModel> deleteColumn = new TableColumn<>();
         deleteColumn.setPrefWidth(24);
         deleteColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
         deleteColumn.setCellFactory(param -> new RemoveButtonCell());
-        table.getColumns().add(nameColumn);
         table.getColumns().add(deleteColumn);
+
+        final TableColumn<FilterListViewModel, FilterListViewModel> enabledColumn = new TableColumn<>();
+        enabledColumn.setPrefWidth(24);
+        enabledColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
+        enabledColumn.setCellFactory(param -> new EnabledIndicatorCell());
+        table.getColumns().add(enabledColumn);
 
         table.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
@@ -103,6 +112,36 @@ public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
             } else {
                 setGraphic(getButton(item));
             }
+        }
+    }
+
+    private static class EnabledIndicatorCell extends TableCell<FilterListViewModel, FilterListViewModel> {
+        private FontIcon fontIcon;
+
+        @Override
+        protected void updateItem(final FilterListViewModel item, final boolean empty) {
+            super.updateItem(item, empty);
+            if (item == null || empty) {
+                setGraphic(null);
+            } else {
+                setGraphic(getIcon(item));
+            }
+        }
+
+        private Node getIcon(final FilterListViewModel item) {
+            if (fontIcon == null) {
+                fontIcon = new FontIcon();
+                fontIcon.setStyle("""
+                            -fx-icon-color: -vatsim-text-color;
+                            -fx-icon-size: -vatsim-toolbar-button-icon-size;
+                        """);
+            }
+            fontIcon.iconCodeProperty().bind(Bindings.createObjectBinding(
+                    () -> item.getFilter().isEnabled() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
+                    item.filterProperty()
+            ));
+
+            return fontIcon;
         }
     }
 }

@@ -17,8 +17,9 @@ public class Filter implements Predicate<Client> {
     private final ReadOnlyObjectProperty<UUID> uuid;
 
     private final ReadOnlyObjectProperty<Type> type;
-
     private final ReadOnlyStringProperty name;
+    private final ImmutableBooleanProperty enabled;
+
     private final ReadOnlyObjectProperty<Color> textColor;
     private final ReadOnlyObjectProperty<Color> backgroundColor;
 
@@ -44,7 +45,8 @@ public class Filter implements Predicate<Client> {
     public Filter() {
         this(
                 UUID.randomUUID(),
-                "Unnamed",
+                "Unnamed Filter",
+                true,
                 Color.BLACK,
                 Color.hsb(ThreadLocalRandom.current().nextDouble(360), 0.8, 0.8),
                 Type.PILOT,
@@ -67,6 +69,7 @@ public class Filter implements Predicate<Client> {
     public Filter(
             final UUID uuid,
             final String name,
+            final boolean enabled,
             final Color textColor,
             final Color backgroundColor,
             final Type type,
@@ -87,6 +90,7 @@ public class Filter implements Predicate<Client> {
         this.uuid = new ImmutableObjectProperty<>(uuid);
         this.type = new ImmutableObjectProperty<>(type);
         this.name = new ImmutableStringProperty(name);
+        this.enabled = new ImmutableBooleanProperty(enabled);
         this.textColor = new ImmutableObjectProperty<>(textColor);
         this.backgroundColor = new ImmutableObjectProperty<>(backgroundColor);
         this.callsignPredicates = new StringPredicateListPredicate(callsignPredicates);
@@ -106,6 +110,10 @@ public class Filter implements Predicate<Client> {
 
     @Override
     public boolean test(final Client client) {
+        if (!isEnabled()) {
+            return false;
+        }
+
         final boolean isPilot = client instanceof Pilot;
         if (isPilot && type.get() == Type.CONTROLLER) {
             return false;
@@ -271,6 +279,14 @@ public class Filter implements Predicate<Client> {
 
     public ReadOnlyStringProperty nameProperty() {
         return name;
+    }
+
+    public boolean isEnabled() {
+        return enabled.get();
+    }
+
+    public ImmutableBooleanProperty enabledProperty() {
+        return enabled;
     }
 
     public Color getTextColor() {

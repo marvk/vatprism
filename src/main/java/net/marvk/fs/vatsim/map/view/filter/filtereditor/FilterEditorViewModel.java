@@ -23,10 +23,12 @@ import java.util.stream.Collectors;
 @Log4j2
 public class FilterEditorViewModel implements ViewModel {
     private final ReadOnlyBooleanWrapper enabled = new ReadOnlyBooleanWrapper();
+
     private final ReadOnlyObjectWrapper<Filter> current = new ReadOnlyObjectWrapper<>();
 
     private final ObjectProperty<UUID> uuid = new SimpleObjectProperty<>();
 
+    private final BooleanProperty filterEnabled = new SimpleBooleanProperty();
     private final StringProperty name = new SimpleStringProperty();
     private final ObjectProperty<Color> textColor = new SimpleObjectProperty<>();
     private final ObjectProperty<Color> backgroundColor = new SimpleObjectProperty<>();
@@ -80,6 +82,7 @@ public class FilterEditorViewModel implements ViewModel {
         return new Filter(
                 uuid.get(),
                 name.get(),
+                filterEnabled.get(),
                 textColor.get(),
                 backgroundColor.get(),
                 filterType.get(),
@@ -106,6 +109,7 @@ public class FilterEditorViewModel implements ViewModel {
 
         setUuid(filter.getUuid());
         setName(filter.getName());
+        setFilterEnabled(filter.isEnabled());
         setTextColor(filter.getTextColor());
         setBackgroundColor(filter.getBackgroundColor());
         setFilterType(filter.getType());
@@ -168,6 +172,18 @@ public class FilterEditorViewModel implements ViewModel {
 
     public void setName(final String name) {
         this.name.set(name);
+    }
+
+    public boolean isFilterEnabled() {
+        return filterEnabled.get();
+    }
+
+    public BooleanProperty filterEnabledProperty() {
+        return filterEnabled;
+    }
+
+    public void setFilterEnabled(final boolean filterEnabled) {
+        this.filterEnabled.set(filterEnabled);
     }
 
     public Color getTextColor() {
