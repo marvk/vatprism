@@ -10,7 +10,10 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.function.Consumer;
 
 public class DepartureArrivalPathPainter extends MapPainter<Data> {
-    private static final int NUMBER_OF_GREAT_CIRCLE_POINTS = 50;
+
+    @Parameter("History")
+    private boolean history = true;
+
     @Parameter("Departure")
     private boolean departure = true;
     @Parameter("Departure Color")
@@ -55,8 +58,18 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
         painterHelper.strokeLine(c, c1.getX(), c1.getY(), c2.getX(), c2.getY());
     }
 
-    private void greatCircleLine(final GraphicsContext c, final Point2D p1, final Point2D p2) {
-        painterHelper.strokePolyline(c, GeomUtil.greatCirclePolyline(p1, p2, getGreatCircleBufferArray()));
+    private void greatCircleLine(final GraphicsContext c, final Pilot pilot, final Point2D airportPosition, final Type type) {
+        if (type == Type.ARRIVAL || !history) {
+            final Point2D[] points = GeomUtil.greatCirclePolyline(pilot.getPosition(), airportPosition, getGreatCircleBufferArray());
+            painterHelper.strokePolyline(c, points);
+        } else if (type == Type.DEPARTURE) {
+            final Point2D[] points = GeomUtil.greatCirclePolyline(pilot.getHistory()
+                                                                       .get(0), airportPosition, getGreatCircleBufferArray());
+            painterHelper.strokePolyline(c, points);
+            c.setLineDashes(null);
+            painterHelper.strokePolyline(c, pilot.getHistory().toArray(Point2D[]::new));
+        }
+
     }
 
     private Point2D[] getGreatCircleBufferArray() {
@@ -117,7 +130,7 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
             final Point2D airportPosition = airport.getPosition().add(airportOffsetX(pilot, airport), 0);
 
             if (greatCircle) {
-                greatCircleLine(context, pilot.getPosition(), airportPosition);
+                greatCircleLine(context, pilot, airportPosition, type);
             } else {
                 line(context, pilot.getPosition(), airportPosition, 0);
                 line(context, pilot.getPosition(), airportPosition, (int) (Math.signum(pilot.getPosition()

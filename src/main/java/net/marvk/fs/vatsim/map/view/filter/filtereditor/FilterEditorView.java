@@ -30,6 +30,7 @@ import org.kordamp.ikonli.fileicons.FileIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Log4j2
@@ -119,43 +120,93 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     public void initialize() {
         container.disableProperty().bind(viewModel.enabledProperty().not());
 
-        new StringFilterList(callsignList, callsignRegex, callsignInput, callsignSubmit, viewModel.getCallsigns());
-        new StringFilterList(cidList, cidRegex, cidInput, cidSubmit, viewModel.getCids());
-        new StringFilterList(departuresList, departuresRegex, departuresInput, departuresSubmit, viewModel.getDepartures());
-        new StringFilterList(arrivalsList, arrivalsRegex, arrivalsInput, arrivalsSubmit, viewModel.getArrivals());
+        new StringFilterList(
+                callsignList,
+                callsignRegex,
+                callsignInput,
+                callsignSubmit,
+                viewModel.getCallsigns()
+        );
+        new StringFilterList(
+                cidList,
+                cidRegex,
+                cidInput,
+                cidSubmit,
+                viewModel.getCids()
+        );
+        new StringFilterList(
+                departuresList,
+                departuresRegex,
+                departuresInput,
+                departuresSubmit,
+                viewModel.getDepartures()
+        );
+        new StringFilterList(
+                arrivalsList,
+                arrivalsRegex,
+                arrivalsInput,
+                arrivalsSubmit,
+                viewModel.getArrivals()
+        );
 
-        setupMultiSelection(
+        new MultipleSelection<>(
                 ratingsList,
                 viewModel.getAvailableRatings(),
                 viewModel.ratingsProperty(),
-                e -> "%s (%s)".formatted(e.getShortName(), e.getLongName())
+                e -> "%s (%s)".formatted(e.getShortName(), e.getLongName()),
+                ControllerRating::getId
         );
-        setupMultiSelection(
+        new MultipleSelection<>(
                 facilitiesList,
                 viewModel.getAvailableFacilities(),
                 viewModel.facilitiesProperty(),
-                Enum::toString
+                Enum::toString,
+                Enum::ordinal
         );
-        setupMultiSelection(
+        new MultipleSelection<>(
                 flightStatusList,
                 viewModel.getAvailableFlightStatuses(),
                 viewModel.flightStatusesProperty(),
-                Enum::toString
+                Enum::toString,
+                Enum::ordinal
         );
+
         setupMultiSelection(flightType, viewModel.getAvailableFlightTypes(), viewModel.flightTypesProperty());
         flightType.getSelectionModel().select(Filter.FlightType.ANY);
 
         setupToggleGroup(callsignCidAndOr, callsignCidOr, callsignCidAnd, viewModel.callsignsCidsOperatorProperty());
         setupToggleGroup(departuresArrivalsAndOr, departuresArrivalsOr, departuresArrivalsAnd, viewModel.departuresArrivalsOperatorProperty());
 
+        bindFilterName();
+
+        bindColorPickers();
+        bindType();
+
+        viewModel.flightPlanFiledProperty().bindBidirectional(flightPlanFiled.selectedProperty());
+        bindFilterEnabled();
+    }
+
+    private void bindFilterName() {
         filterName.textProperty()
                   .addListener((observable, oldValue, newValue) -> viewModel.nameProperty().set(newValue));
         viewModel.nameProperty()
                  .addListener((observable, oldValue, newValue) -> filterName.textProperty().set(newValue));
+    }
 
+    private void bindFilterEnabled() {
+        viewModel.filterEnabledProperty().bindBidirectional(enabled.selectedProperty());
+        ((FontIcon) enabled.getGraphic()).iconCodeProperty().bind(Bindings.createObjectBinding(
+                () -> enabled.isSelected() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
+                enabled.selectedProperty()
+        ));
+    }
+
+    private void bindColorPickers() {
         bindColorPicker(textColorPicker, viewModel.textColorProperty());
         bindColorPicker(backgroundColorPicker, viewModel.backgroundColorProperty());
+    }
 
+    private void bindType() {
         viewModel.filterTypeProperty().addListener((observable, oldValue, newValue) ->
                 filterType.selectToggle(switch (newValue) {
                     case PILOT -> filterType.getToggles().get(0);
@@ -169,12 +220,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                     default -> throw new IllegalStateException();
                 })
         );
-        viewModel.flightPlanFiledProperty().bindBidirectional(flightPlanFiled.selectedProperty());
-        viewModel.filterEnabledProperty().bindBidirectional(enabled.selectedProperty());
-        ((FontIcon) enabled.getGraphic()).iconCodeProperty().bind(Bindings.createObjectBinding(
-                () -> enabled.isSelected() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
-                enabled.selectedProperty()
-        ));
     }
 
     private static void bindColorPicker(final ColorPicker colorPicker, final ObjectProperty<Color> colorProperty) {
@@ -182,37 +227,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                    .addListener((observable, oldValue, newValue) -> colorProperty.set(newValue));
         colorProperty
                 .addListener((observable, oldValue, newValue) -> colorPicker.valueProperty().set(newValue));
-    }
-
-    private static <T> void setupMultiSelection(
-            final ListView<T> listView,
-            final ReadOnlyListProperty<T> available,
-            final ListProperty<T> selected,
-            final Function<T, String> cellValueMapper
-    ) {
-        listView.setItems(available);
-        listView.setCellFactory(param -> new StringMappedListCell<>(cellValueMapper));
-        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        //TODO
-
-//        listView.getSelectionModel().getSelectedItems().addListener(
-//                (ListChangeListener<T>) c -> {
-//                    while (c.next()) {
-//                        selected.removeAll(c.getRemoved());
-//                        selected.addAll(c.getAddedSubList())
-//                    }
-//                }
-//        );
-//        selected.addListener(
-//                (ListChangeListener<T>) c -> {
-//                    while (c.next()) {
-//                        for (final T t : c.getRemoved()) {
-//                            listView.getSelectionModel().select();
-//                        }
-//                        listView.addAll(c.getAddedSubList());
-//                    }
-//                }
-//        );
     }
 
     private static void setupToggleGroup(final ToggleGroup toggleGroup, final Label or, final Label and, final ObjectProperty<Filter.Operator> operator) {
@@ -252,6 +266,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     }
 
     private static class StringMappedListCell<T> extends ListCell<T> {
+
         private final Function<T, String> cellValueMapper;
 
         public StringMappedListCell(final Function<T, String> cellValueMapper) {
@@ -267,14 +282,16 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 setText(cellValueMapper.apply(item));
             }
         }
+
     }
 
     private static class StringFilterList {
+
         private final ObjectProperty<FilterStringListViewModel> selected = new SimpleObjectProperty<>();
         private final BooleanProperty inputDisabled = new SimpleBooleanProperty();
         private final IntegerProperty height = new SimpleIntegerProperty(24);
-
         private final ListView<FilterStringListViewModel> list;
+
         private final ToggleButton regex;
         private final TextField input;
         private final Button submit;
@@ -365,9 +382,10 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         }
 
         private static class FilterStringListViewModelListCell extends ListCell<FilterStringListViewModel> {
-            private final ReadOnlyObjectWrapper<FilterStringListViewModel> value = new ReadOnlyObjectWrapper<>();
 
+            private final ReadOnlyObjectWrapper<FilterStringListViewModel> value = new ReadOnlyObjectWrapper<>();
             private HBox content;
+
             private Label label;
             private Button button;
             private FontIcon typeIcon;
@@ -448,8 +466,66 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             public ReadOnlyObjectProperty<FilterStringListViewModel> valueProperty() {
                 return value.getReadOnlyProperty();
             }
+
+        }
+    }
+
+    private static class MultipleSelection<T> {
+        private final Function<T, Integer> idMapper;
+        private final SimpleIntegerProperty code = new SimpleIntegerProperty();
+
+        public MultipleSelection(
+                final ListView<T> listView,
+                final ReadOnlyListProperty<T> available,
+                final ListProperty<T> selected,
+                final Function<T, String> cellValueMapper,
+                final Function<T, Integer> idMapper
+        ) {
+            this.idMapper = idMapper;
+
+            listView.setItems(available);
+            listView.setCellFactory(param -> new StringMappedListCell<>(cellValueMapper));
+            listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            //TODO
+
+//            final ObservableList<T> selectedInUi = listView.getSelectionModel().getSelectedItems();
+//            selected.addListener((ListChangeListener<T>) c -> code.set(code(selected)));
+//            selectedInUi.addListener((ListChangeListener<T>) c -> code.set(code(selectedInUi)));
+//
+//            code.addListener((observable, oldValue, newValue) -> {
+//                listView.getSelectionModel().getSelectedIndices()
+//            });
+        }
+
+        private int code(final List<T> selected) {
+            return selected.stream().map(idMapper).mapToInt(e -> 2 >> e).sum();
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

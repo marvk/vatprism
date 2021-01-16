@@ -1,6 +1,8 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import lombok.Value;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
@@ -37,6 +39,9 @@ public class Pilot extends Client implements Data {
     private final ReadOnlyListWrapper<FlightInformationRegionBoundary> firbs =
             RelationshipReadOnlyListWrapper.withOtherList(this, FlightInformationRegionBoundary::pilots);
 
+    private final ObservableList<Point2D> history = FXCollections.observableArrayList();
+    private final ObservableList<Point2D> unmodifiableHistory = FXCollections.unmodifiableObservableList(history);
+
     public Pilot() {
         flightNumberAvailable.bind(airline.isNotNull().and(flightNumber.isNotNull()));
     }
@@ -59,6 +64,7 @@ public class Pilot extends Client implements Data {
         qnhInchesMercury.set(Double.parseDouble(pilot.getQnhInchesMercury()));
         qnhMilliBars.set(Double.parseDouble(pilot.getQnhMillibars()));
         position.set(GeomUtil.parsePoint(pilot.getLongitude(), pilot.getLatitude()));
+        history.add(position.get());
 
         parseAirlineAndFlightNumber(client.getCallsign());
         if (!Objects.equals(previousUpdatedTime, getLastUpdatedTime())) {
@@ -221,6 +227,10 @@ public class Pilot extends Client implements Data {
 
     public ReadOnlyObjectProperty<Eta> etaProperty() {
         return eta;
+    }
+
+    public ObservableList<Point2D> getHistory() {
+        return unmodifiableHistory;
     }
 
     SimpleListProperty<FlightInformationRegionBoundary> flightInformationRegionBoundariesWritable() {

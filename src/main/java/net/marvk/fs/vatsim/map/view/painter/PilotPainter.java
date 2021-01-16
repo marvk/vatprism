@@ -29,8 +29,14 @@ public class PilotPainter extends MapPainter<Pilot> {
     @Parameter("Background Color")
     private Color backgroundColor;
 
+    @Parameter("Head")
+    private boolean head = true;
+
     @Parameter(value = "Head Max Length", min = 0)
     private int headLength = 8;
+
+    @Parameter("Tail")
+    private boolean tail = true;
 
     @Parameter(value = "Tail Max Length", min = 0)
     private int tailLength = 50;
@@ -96,16 +102,16 @@ public class PilotPainter extends MapPainter<Pilot> {
         painterHelper.strokeRect(c, (int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
-        if (pilot.getGroundSpeed() > HEAD_SPEED_THRESHOLD) {
+        if ((head || tail) && pilot.getGroundSpeed() > HEAD_SPEED_THRESHOLD) {
             final double speedScale = speedScale(pilot);
             final double actualHeadLength = getActualHeadLength(this.headLength, speedScale);
             final double actualTailLength = getActualHeadLength(this.tailLength, speedScale);
 
-            if (actualHeadLength > 0) {
+            if (head && actualHeadLength > 0) {
                 paintLine(c, x, y, heading, actualHeadLength);
             }
 
-            if (pilot.getGroundSpeed() > TAIL_SPEED_THRESHOLD && actualTailLength > 0) {
+            if (tail && pilot.getGroundSpeed() > TAIL_SPEED_THRESHOLD && actualTailLength > 0) {
                 final double scale = mapVariables.getScale() / 64.;
                 c.setLineDashes((double) 1 / 16 * scale, 1 * scale);
                 c.setLineWidth(Math.min(1, (1.0 / 8) * scale));
