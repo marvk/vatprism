@@ -9,8 +9,11 @@ import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class PilotPainter extends MapPainter<Pilot> {
+    private static final int HEAD_SPEED_THRESHOLD = 5;
+    private static final int TAIL_SPEED_THRESHOLD = 50;
+
     private static final int MULTI_DRAW_BOUND = 10;
-    private static final int TEXT_OFFSET = 11;
+    private static final int TEXT_OFFSET = 4;
     private static final int RECT_SIZE = 4;
     private static final int SPEED_THRESHOLD = 25;
     private static final double MAX_SPEED = 600.0;
@@ -37,6 +40,8 @@ public class PilotPainter extends MapPainter<Pilot> {
 
     @Parameter(value = "Head/Tail length scaled with speed")
     private boolean headTailScaledWithSpeed = true;
+
+    private final TextAngleResolver textAngleResolver = new TextAngleResolver();
 
     public PilotPainter(final MapVariables mapVariables, final Color labelColor, final Color backgroundColor) {
         super(mapVariables);
@@ -91,38 +96,41 @@ public class PilotPainter extends MapPainter<Pilot> {
         painterHelper.strokeRect(c, (int) x - 1.5, (int) y - 1.5, RECT_SIZE, RECT_SIZE);
         final double heading = pilot.getHeading();
 
-        final double speedScale = speedScale(pilot);
-        final double actualHeadLength = getActualHeadLength(this.headLength, speedScale);
-        final double actualTailLength = getActualHeadLength(this.tailLength, speedScale);
+        if (pilot.getGroundSpeed() > HEAD_SPEED_THRESHOLD) {
+            final double speedScale = speedScale(pilot);
+            final double actualHeadLength = getActualHeadLength(this.headLength, speedScale);
+            final double actualTailLength = getActualHeadLength(this.tailLength, speedScale);
 
-        if (actualHeadLength > 0) {
-            paintLine(c, x, y, heading, actualHeadLength);
-        }
+            if (actualHeadLength > 0) {
+                paintLine(c, x, y, heading, actualHeadLength);
+            }
 
-        if (actualTailLength > 0) {
-            final double scale = mapVariables.getScale() / 64.;
-            c.setLineDashes((double) 1 / 16 * scale, 1 * scale);
-            c.setLineWidth(Math.min(1, (1.0 / 8) * scale));
-            paintLine(c, x, y, 180 + heading, actualTailLength);
+            if (pilot.getGroundSpeed() > TAIL_SPEED_THRESHOLD && actualTailLength > 0) {
+                final double scale = mapVariables.getScale() / 64.;
+                c.setLineDashes((double) 1 / 16 * scale, 1 * scale);
+                c.setLineWidth(Math.min(1, (1.0 / 8) * scale));
+                paintLine(c, x, y, 180 + heading, actualTailLength);
+            }
         }
 
         if (label) {
-            final int yOffset;
+            final TextAngleResolver.Octant quadrant = textAngleResolver.octant(heading);
 
-            if (heading >= 90 && heading <= 270) {
-                yOffset = -TEXT_OFFSET;
-            } else {
-                yOffset = TEXT_OFFSET;
-            }
+            final double xShift = textAngleResolver.xOffset(quadrant, TEXT_OFFSET);
+            final double yShift = textAngleResolver.yOffset(quadrant, TEXT_OFFSET);
+
+            final VPos vPos = textAngleResolver.vPos(quadrant);
+            final TextAlignment hPos = textAngleResolver.align(quadrant);
 
             c.setTextAlign(TextAlignment.CENTER);
             painterHelper.fillTextWithBackground(
                     c,
-                    (int) x,
-                    (int) y + yOffset,
+                    (int) (x + xShift),
+                    (int) (y + yShift),
                     pilot.getCallsign(),
                     paintBackground,
-                    VPos.CENTER,
+                    hPos,
+                    vPos,
                     labelColor,
                     backgroundColor
             );

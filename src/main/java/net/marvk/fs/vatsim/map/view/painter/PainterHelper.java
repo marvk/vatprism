@@ -7,6 +7,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Polygon;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
@@ -211,7 +212,20 @@ public class PainterHelper {
         );
     }
 
-    public void fillTextWithBackground(final GraphicsContext c, final double x, final double y, final String text, final boolean background, final VPos baseline, final Color textColor, final Color backgroundColor) {
+    public void fillTextWithBackground(
+            final GraphicsContext c,
+            final double x,
+            final double y,
+            final String text,
+            final boolean background,
+            final TextAlignment align,
+            final VPos baseline,
+            final Color textColor,
+            final Color backgroundColor
+    ) {
+        final int _x = (int) Math.round(x);
+        final int _y = (int) Math.round(y);
+
         if (background) {
             c.setTextBaseline(baseline);
             final FontMetrics fm = Toolkit.getToolkit().getFontLoader().getFontMetrics(c.getFont());
@@ -221,19 +235,30 @@ public class PainterHelper {
             final int height = Math.round(fm.getLineHeight());
 
             final double baselineOffset = switch (baseline) {
-                case BOTTOM -> 0;
-                case CENTER -> height / 2.0;
+                case TOP -> 0;
+                case CENTER -> -height / 2.0 - 1;
+                case BOTTOM -> -height;
                 default -> throw new IllegalArgumentException("Illegal baseline " + baseline);
             };
 
-            final double xRect = Math.floor(x - width / 2.0);
-            final double yRect = Math.ceil(y - 1 - baselineOffset) + 1;
-            fillRect(c, xRect, yRect, width + 1, height);
+            final double horizontalOffset = switch (align) {
+                case RIGHT -> -width;
+                case CENTER -> -width / 2.0;
+                case LEFT -> 0;
+                default -> throw new IllegalArgumentException("Illegal alignment " + align);
+            };
+
+            final double xRect = _x + horizontalOffset;
+            final double yRect = _y + baselineOffset;
+            fillRect(c, Math.round(xRect), Math.round(yRect), Math.ceil(width + 1), Math.ceil(height));
         }
 
+        if (align != null) {
+            c.setTextAlign(align);
+        }
         c.setTextBaseline(baseline);
         c.setFill(textColor);
-        fillText(c, text, x, y);
+        fillText(c, text, _x, _y);
     }
 
     public void fillText(final GraphicsContext c, final String text, final double x, final double y) {

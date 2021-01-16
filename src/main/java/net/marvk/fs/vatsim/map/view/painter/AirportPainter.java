@@ -24,7 +24,7 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-    @Parameter("Airport Color")
+//    @Parameter("Airport Color")
     private Color airportColor = Color.GREY;
 
     @Parameter("Label")
@@ -183,6 +183,7 @@ public class AirportPainter extends MapPainter<Airport> {
                     y - 10,
                     icao,
                     paintBackground,
+                    TextAlignment.CENTER,
                     VPos.CENTER,
                     textColor,
                     backgroundColor
