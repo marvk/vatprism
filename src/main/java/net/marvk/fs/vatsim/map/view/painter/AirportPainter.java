@@ -24,7 +24,7 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-//    @Parameter("Airport Color")
+    //    @Parameter("Airport Color")
     private Color airportColor = Color.GREY;
 
     @Parameter("Label")
@@ -107,18 +107,18 @@ public class AirportPainter extends MapPainter<Airport> {
                 .sorted(ControllerType.COMPARATOR)
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        c.setTextAlign(TextAlignment.CENTER);
-        c.setTextBaseline(VPos.BOTTOM);
         c.setLineDashes(null);
         c.setLineWidth(1);
 
         final String icao = airport.getIcao();
 
-        final boolean paintApproachCircle = mapVariables.getScale() > 32;
-        final boolean paintApproachLabel = mapVariables.getScale() > 32;
+        final double textScale = c.getFont().getSize() / 12.0;
+        final boolean paintApproachCircle = mapVariables.getScale() > 32 * textScale;
+        final boolean paintApproachLabel = mapVariables.getScale() > 32 * textScale;
         final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
 
         if (paintControllers) {
+            c.setTextAlign(TextAlignment.CENTER);
             if (paintApproach) {
                 final double r = APPROACH_RADIUS * mapVariables.getScale();
                 final double rHalf = r / 2.0;
@@ -130,6 +130,7 @@ public class AirportPainter extends MapPainter<Airport> {
 
                 if (paintApproachLabel && text) {
                     c.setFill(appColor);
+                    c.setTextBaseline(VPos.BOTTOM);
                     painterHelper.fillText(c, icao, x, y - rHalf);
                 }
             }
@@ -138,41 +139,42 @@ public class AirportPainter extends MapPainter<Airport> {
         c.setFill(textColor);
         painterHelper.fillRect(c, x, y, 1, 1);
 
-        c.setTextBaseline(VPos.CENTER);
         if (paintControllers) {
+            c.setTextBaseline(VPos.TOP);
             if (paintApproach && types.isEmpty() && !paintApproachCircle) {
                 types.add(ControllerType.APP);
             }
 
             final int n = types.size();
 
+            final int typesWidth = (int) Math.ceil(textScale * TYPES_WIDTH);
             for (int i = 0; i < n; i++) {
                 final ControllerType type = types.get(i);
                 c.setFill(color(type));
                 c.setStroke(typesBorderColor);
-                final double xCur = labelsX(x, n, i);
+                final double xCur = labelsX(x, n, i, typesWidth);
                 final double yCur = labelsY(y);
-                painterHelper.fillRect(c, xCur, yCur, TYPES_WIDTH, TYPES_WIDTH);
+                painterHelper.fillRect(c, xCur, yCur, typesWidth, typesWidth);
 
                 if (type != ControllerType.APP) {
                     c.setFill(typesLabelColor);
                     painterHelper.fillText(
                             c,
                             type.toString().substring(0, 1),
-                            xCur + TYPES_WIDTH / 2.0,
-                            yCur + TYPES_WIDTH / 2.0
+                            xCur + typesWidth / 2.0,
+                            yCur - 3
                     );
                 }
 
-                painterHelper.strokeRect(c, xCur - 0.5, yCur - 0.5, TYPES_WIDTH + 1, TYPES_WIDTH + 1);
+                painterHelper.strokeRect(c, xCur - 0.5, yCur - 0.5, typesWidth + 1, typesWidth + 1);
             }
 
             if (paintApproach && !paintApproachCircle) {
                 c.setStroke(appColor);
-                final double xCur = labelsX(x, n, 0);
+                final double xCur = labelsX(x, n, 0, typesWidth);
                 final double yCur = labelsY(y);
 
-                painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (TYPES_WIDTH + 1) + 2, TYPES_WIDTH + 3);
+                painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (typesWidth + 1) + 2, typesWidth + 3);
             }
         }
 
@@ -207,8 +209,8 @@ public class AirportPainter extends MapPainter<Airport> {
         return y + 4;
     }
 
-    private double labelsX(final double x, final int n, final int i) {
-        return 1 + x + i * (TYPES_WIDTH + 1) - (n / 2.0) * (TYPES_WIDTH + 1);
+    private double labelsX(final double x, final int n, final int i, final double typesWidth) {
+        return 1 + x + i * (typesWidth + 1) - (n / 2.0) * (typesWidth + 1);
     }
 
     private Color color(final ControllerType type) {
