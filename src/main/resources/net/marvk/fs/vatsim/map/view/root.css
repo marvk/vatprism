@@ -65,6 +65,8 @@
 .icon-button {
     -fx-background-insets: none;
     -fx-background-color: transparent;
+    -fx-min-width: -vatsim-toolbar-button-size;
+    -fx-min-height: -vatsim-toolbar-button-size;
     -fx-pref-width: -vatsim-toolbar-button-size;
     -fx-pref-height: -vatsim-toolbar-button-size;
     -fx-padding: 0;
