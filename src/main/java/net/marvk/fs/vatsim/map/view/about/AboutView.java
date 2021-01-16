@@ -12,12 +12,17 @@ import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.Dependency;
 import net.marvk.fs.vatsim.map.view.ListNoneSelectionModel;
 
+import java.time.LocalDateTime;
+
 public class AboutView implements FxmlView<AboutViewModel> {
     @FXML
-    public Label version;
+    private Label version;
 
     @FXML
-    public ListView<Dependency> dependenciesList;
+    private ListView<Dependency> dependenciesList;
+
+    @FXML
+    private Label createdBy;
 
     @InjectViewModel
     private AboutViewModel viewModel;
@@ -30,6 +35,7 @@ public class AboutView implements FxmlView<AboutViewModel> {
         dependenciesList.setSelectionModel(new ListNoneSelectionModel<>());
         dependenciesList.setFocusTraversable(false);
         version.requestFocus();
+        createdBy.setText("©2020-%s Marvin Kuhnke".formatted(LocalDateTime.now().getYear()));
     }
 
     private void setVersion() {
@@ -37,6 +43,11 @@ public class AboutView implements FxmlView<AboutViewModel> {
         if (versionString != null) {
             this.version.setText(versionString);
         }
+    }
+
+    @FXML
+    private void openIssuePage() {
+        viewModel.openIssuePage();
     }
 
     private class DependencyListCell extends ListCell<Dependency> {

@@ -41,3 +41,13 @@
     -fx-text-fill: #222222;
 }
 
+
+.hyperlink-label {
+    -fx-text-fill: white;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.hyperlink-label:hover {
+    -fx-text-fill: #dddddd;
+}

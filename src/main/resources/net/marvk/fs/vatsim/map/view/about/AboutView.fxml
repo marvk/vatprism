@@ -17,7 +17,7 @@
                         <String fx:value="white"/>
                     </styleClass>
                 </Label>
-                <Label text="Created by Marvin Kuhnke">
+                <Label fx:id="createdBy" text="Created by Marvin Kuhnke">
                     <styleClass>
                         <String fx:value="h2"/>
                         <String fx:value="white"/>
@@ -27,8 +27,10 @@
                     <Label styleClass="white" text="Version: "/>
                     <Label styleClass="white" fx:id="version" text="DEV"/>
                 </HBox>
-                <Region minHeight="20.0" VBox.vgrow="ALWAYS">
-                </Region>
+                <Region minHeight="20.0" VBox.vgrow="ALWAYS"/>
+                <Label onMouseClicked="#openIssuePage" styleClass="hyperlink-label"
+                       text="Report a bug or request a feature"/>
+                <Region minHeight="20.0" VBox.vgrow="ALWAYS"/>
                 <Label styleClass="white" text="Powered by Open Source Software"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>

@@ -36,4 +36,8 @@ public class AboutViewModel implements ViewModel {
             hostServices.showDocument(dependency.getProjectUrl());
         }
     }
+
+    public void openIssuePage() {
+        hostServices.showDocument("https://github.com/marvk/vatprism/issues/new/choose");
+    }
 }
