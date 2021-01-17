@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.Controller;
 import net.marvk.fs.vatsim.map.data.ControllerType;
+import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
 
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class ControllersDetailView extends DetailSubView<ControllersDetailViewModel, ObservableList<Controller>> {
+    @FXML
+    private DataDetailPane dataDetailPaine;
     @FXML
     private HBox noControllers;
     @FXML
@@ -62,12 +65,15 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
 
     protected void onDataChanged(final ListChangeListener.Change<? extends Controller> change) {
         controllersGrid.getChildren().clear();
-        final List<Controller> controllers = viewModel
-                .getData()
+
+        final ObservableList<Controller> data = viewModel
+                .getData();
+        final List<Controller> controllers = data
                 .stream()
                 .sorted((o1, o2) -> ControllerType.COMPARATOR.compare(o1.getControllerType(), o2.getControllerType()))
                 .collect(Collectors.toList());
 
+        dataDetailPaine.setHeaderText(headerText());
         setControllerPanes(!controllers.isEmpty());
 
         for (int i = 0; i < controllers.size(); i++) {
@@ -98,6 +104,15 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             final Label onlineFor = new Label(onlineForString(controller.getLogonTime()));
             onlineFor.getStyleClass().add("mono");
             controllersGrid.add(onlineFor, 4, i);
+        }
+    }
+
+    private String headerText() {
+        final ObservableList<Controller> data = getViewModel().getData();
+        if (data.isEmpty()) {
+            return "Controllers";
+        } else {
+            return "Controllers (%s)".formatted(data.size());
         }
     }
 }

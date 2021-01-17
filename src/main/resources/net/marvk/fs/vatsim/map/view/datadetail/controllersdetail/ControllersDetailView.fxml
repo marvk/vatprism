@@ -1,7 +1,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
-<DataDetailPane headerText="Controllers" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
+<DataDetailPane fx:id="dataDetailPaine" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
                 xmlns:fx="http://javafx.com/fxml/1"
                 fx:controller="net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView">
     <contentNode>
