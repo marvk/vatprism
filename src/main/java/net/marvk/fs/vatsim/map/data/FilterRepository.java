@@ -50,7 +50,7 @@ public class FilterRepository implements Repository<Filter> {
 
     private String read(final Path path) {
         try {
-            log.debug("Loading filter file %s".formatted(path));
+            log.info("Loading filter file %s".formatted(path));
             return Files.readString(path);
         } catch (final IOException e) {
             log.error("Failed to load filter file", e);

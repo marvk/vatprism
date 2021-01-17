@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map;
 
 import com.google.inject.Module;
 import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -10,12 +11,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.AopModule;
 import net.marvk.fs.vatsim.map.configuration.AppModule;
 import net.marvk.fs.vatsim.map.configuration.JfxModule;
 import net.marvk.fs.vatsim.map.configuration.PathsModule;
 import net.marvk.fs.vatsim.map.view.main.MainView;
+import net.marvk.fs.vatsim.map.view.main.MainViewModel;
+import net.marvk.fs.vatsim.map.view.preloader.PreloaderView;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.io.IoBuilder;
@@ -50,31 +54,55 @@ public class App extends MvvmfxGuiceApplication {
             }
         }
 
-        final var viewTuple = FluentViewLoader
-                .fxmlView(MainView.class)
-                .load();
+        startPreloader(primaryStage);
+    }
 
-        // TODO Ugly hack to stay in front...
-        primaryStage.focusedProperty()
-                    .addListener((observable, oldValue, newValue) -> {
-                        if (!newValue && primaryStage.isFullScreen()) {
-                            Platform.runLater(primaryStage::toFront);
-                        }
-                    });
+    private void startPreloader(final Stage preloaderStage) {
+        final var viewTuple = FluentViewLoader.fxmlView(PreloaderView.class).load();
 
-        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            if (KeyCode.F11 == event.getCode()) {
-                primaryStage.setFullScreen(!primaryStage.isFullScreen());
+        viewTuple.getViewModel().viewTupleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                preloaderStage.hide();
+                showMainView(newValue);
             }
         });
-        primaryStage.setOnCloseRequest(e -> {
+
+        preloaderStage.setScene(new Scene(viewTuple.getView()));
+        preloaderStage.initStyle(StageStyle.UNDECORATED);
+        preloaderStage.setAlwaysOnTop(true);
+        preloaderStage.show();
+        viewTuple.getViewModel().load();
+    }
+
+    private void showMainView(final ViewTuple<MainView, MainViewModel> viewTuple) {
+        final Stage secondaryStage = new Stage(StageStyle.DECORATED);
+
+        log.info("Loading view");
+
+        log.info("Configuring stage");
+        // TODO Ugly hack to stay in front...
+        secondaryStage.focusedProperty()
+                      .addListener((observable, oldValue, newValue) -> {
+                          if (!newValue && secondaryStage.isFullScreen()) {
+                              Platform.runLater(secondaryStage::toFront);
+                          }
+                      });
+
+        secondaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (KeyCode.F11 == event.getCode()) {
+                secondaryStage.setFullScreen(!secondaryStage.isFullScreen());
+            }
+        });
+        secondaryStage.setOnCloseRequest(e -> {
             Platform.exit();
             System.exit(0);
         });
-        primaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-24.png"), loadIcon("icon-32.png"));
-        primaryStage.setTitle("VATprism");
-        primaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
-        primaryStage.show();
+        secondaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-24.png"), loadIcon("icon-32.png"));
+        secondaryStage.setTitle("VATprism");
+        log.info("Creating scene");
+        secondaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
+        log.info("Showing stage");
+        secondaryStage.show();
     }
 
     private void loadFonts() {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
+    <children>
+        <ImageView fitHeight="10000.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../splash.png"/>
+            </image>
+        </ImageView>
+        <HBox VBox.vgrow="ALWAYS" maxHeight="0">
+            <children>
+                <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                             HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+    </children>
+</VBox>

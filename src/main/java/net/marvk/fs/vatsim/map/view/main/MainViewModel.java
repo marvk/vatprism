@@ -4,9 +4,7 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
-import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
-import de.saxsys.mvvmfx.utils.commands.CompositeCommand;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -19,13 +17,9 @@ import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
-import net.marvk.fs.vatsim.api.CachedVatsimApi;
-import net.marvk.fs.vatsim.api.VatsimApi;
-import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.view.Notifications;
-import net.marvk.fs.vatsim.map.view.SettingsScope;
-import net.marvk.fs.vatsim.map.view.StatusScope;
-import net.marvk.fs.vatsim.map.view.ToolbarScope;
+import net.marvk.fs.vatsim.map.data.ClientRepository;
+import net.marvk.fs.vatsim.map.data.Preferences;
+import net.marvk.fs.vatsim.map.view.*;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 
 import java.util.Arrays;
@@ -35,7 +29,7 @@ import java.util.Arrays;
 public class MainViewModel implements ViewModel {
     private final ReadOnlyStringWrapper style = new ReadOnlyStringWrapper();
 
-    private final DelegateCommand loadClients;
+    private final DelegateCommand loadClientsAsync;
 
     private final Preferences preferences;
 
@@ -47,64 +41,21 @@ public class MainViewModel implements ViewModel {
 
     @Inject
     public MainViewModel(
-            final RatingsLoader ratingsLoader,
-            final AirportRepository airportRepository,
             final ClientRepository clientRepository,
-            final FlightInformationRegionRepository flightInformationRegionRepository,
-            final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
-            final UpperInformationRegionRepository upperInformationRegionRepository,
-            final InternationalDateLineRepository internationalDateLineRepository,
-            final CountryRepository countryRepository,
-            final Preferences preferences,
-            final VatsimApi vatsimApi
+            final Preferences preferences
     ) {
         this.preferences = preferences;
 
-        final var loadRatings = new DelegateCommand(() -> new Action() {
-            @Override
-            protected void action() throws Exception {
-                ratingsLoader.loadRatings();
-            }
-        });
-        final var loadAirports = new ReloadRepositoryCommand(airportRepository, false);
-        final var loadInternationalDateLine = new ReloadRepositoryCommand(internationalDateLineRepository, false);
-        final var loadFirs = new ReloadRepositoryCommand(flightInformationRegionRepository, false);
-        final var loadFirbs = new ReloadRepositoryCommand(flightInformationRegionBoundaryRepository, false);
-        final var loadUirs = new ReloadRepositoryCommand(upperInformationRegionRepository, false);
-        final var loadCountries = new ReloadRepositoryCommand(countryRepository, false);
-
-        this.loadClients = new ReloadRepositoryCommand(clientRepository, true, Notifications.REPAINT::publish);
-
-        final CompositeCommand compositeCommand = new CompositeCommand(
-                loadRatings,
-                loadInternationalDateLine,
-                loadCountries,
-                loadFirs,
-                loadFirbs,
-                loadUirs,
-                loadAirports,
-                loadClients,
-                new DelegateCommand(() -> new Action() {
-                    @Override
-                    protected void action() {
-                        // Clear unneeded cached values
-                        if (vatsimApi instanceof CachedVatsimApi) {
-                            ((CachedVatsimApi) vatsimApi).clear();
-                        }
-                    }
-                })
-        );
-        compositeCommand.execute();
-
         Notifications.RELOAD_CLIENTS.subscribe(this::reloadClients);
 
-        clientReloadService = new ReloadService(loadClients);
+        this.loadClientsAsync = new ReloadRepositoryCommand(clientRepository, Notifications.REPAINT::publish);
+        clientReloadService = new ReloadService(loadClientsAsync);
         clientReloadService.setPeriod(RELOAD_PERIOD);
         clientReloadService.setDelay(RELOAD_PERIOD);
     }
 
     private void reloadClients() {
-        loadClients.execute();
+        loadClientsAsync.execute();
     }
 
     public void initialize() {
@@ -115,9 +66,9 @@ public class MainViewModel implements ViewModel {
             setServiceRunning(newValue);
         });
 
-        toolbarScope.reloadRunningProperty().bind(loadClients.runningProperty());
-        toolbarScope.reloadExecutableProperty().bind(loadClients.executableProperty());
-        toolbarScope.reloadExceptionProperty().bind(loadClients.exceptionProperty());
+        toolbarScope.reloadRunningProperty().bind(loadClientsAsync.runningProperty());
+        toolbarScope.reloadExecutableProperty().bind(loadClientsAsync.executableProperty());
+        toolbarScope.reloadExceptionProperty().bind(loadClientsAsync.exceptionProperty());
 
         final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
         final ObjectProperty<Color> baseColor = preferences.colorProperty("world.fill_color");
@@ -196,33 +147,6 @@ public class MainViewModel implements ViewModel {
 
     public ReadOnlyStringProperty styleProperty() {
         return style.getReadOnlyProperty();
-    }
-
-    private static final class ReloadRepositoryCommand extends DelegateCommand {
-        private ReloadRepositoryCommand(final ReloadableRepository<?> repository, final boolean background) {
-            this(repository, background, null);
-        }
-
-        private ReloadRepositoryCommand(final ReloadableRepository<?> repository, final boolean background, final Runnable onSucceed) {
-            super(() -> new ReloadRepositoryAction(repository, onSucceed), new ImmutableObjectProperty<>(true), background);
-        }
-
-        private static final class ReloadRepositoryAction extends Action {
-            private final ReloadableRepository<?> repository;
-            private final Runnable onSucceed;
-
-            public ReloadRepositoryAction(final ReloadableRepository<?> repository, final Runnable onSucceed) {
-                this.repository = repository;
-                this.onSucceed = onSucceed;
-            }
-
-            @Override
-            protected void action() throws Exception {
-                updateProgress(0, 1);
-                repository.reloadAsync(onSucceed);
-                updateProgress(1, 1);
-            }
-        }
     }
 
     private static class ReloadService extends ScheduledService<Void> {
