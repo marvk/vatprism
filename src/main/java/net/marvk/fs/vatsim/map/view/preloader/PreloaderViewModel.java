@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.ViewTuple;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.concurrent.Service;
@@ -25,12 +26,15 @@ import java.util.Locale;
 public class PreloaderViewModel implements ViewModel {
     private final ReadOnlyObjectWrapper<ViewTuple<MainView, MainViewModel>> viewTuple = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyStringWrapper taskDescription = new ReadOnlyStringWrapper();
+    private final ReadOnlyStringWrapper error = new ReadOnlyStringWrapper();
 
     private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
+    private final HostServices hostServices;
     private final RepositoryLoader repositoryLoader;
 
     @Inject
-    public PreloaderViewModel(final RepositoryLoader repositoryLoader) {
+    public PreloaderViewModel(final HostServices hostServices, final RepositoryLoader repositoryLoader) {
+        this.hostServices = hostServices;
         this.repositoryLoader = repositoryLoader;
     }
 
@@ -50,10 +54,7 @@ public class PreloaderViewModel implements ViewModel {
         });
         repositoryLoader.setOnFailed(e -> {
             log.error("Failed preloader task \"%s\"".formatted(getTaskDescription()), e);
-
-            final String message = getTaskDescription().substring(0, 1).toLowerCase(Locale.ROOT) +
-                    getTaskDescription().substring(1);
-            taskDescription.set(message);
+            error.set("Failed " + getTaskDescription().toLowerCase(Locale.ROOT));
         });
 
         repositoryLoader.start();
@@ -91,6 +92,19 @@ public class PreloaderViewModel implements ViewModel {
         return taskDescription.getReadOnlyProperty();
     }
 
+    public String getError() {
+        return error.get();
+    }
+
+    public ReadOnlyStringProperty errorProperty() {
+        return error.getReadOnlyProperty();
+    }
+
+    public void goToIssuePage() {
+        final String escapedError = error.get().replaceAll(" ", "+");
+        hostServices.showDocument("https://github.com/marvk/vatprism/issues/new?assignees=&labels=bug&template=bug_report.md&title=Error+during+startup%3A+" + escapedError);
+    }
+
     private static class CallableTask extends Task<Void> {
         private final String taskStarted;
         private final String taskCompleted;
@@ -125,6 +139,7 @@ public class PreloaderViewModel implements ViewModel {
         protected Void call() throws Exception {
             log.debug("Starting preloader tasks");
             final int n = tasks.size();
+
             for (int i = 0; i < n; i++) {
                 final CallableTask task = tasks.get(i);
                 final int progressDone = i;
@@ -134,7 +149,6 @@ public class PreloaderViewModel implements ViewModel {
                 });
 
                 task.call();
-                throw new RuntimeException();
             }
 
             Platform.runLater(() -> updateProgress(1, 1));

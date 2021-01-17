@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -29,10 +28,18 @@
                         </Label>
                     </children>
                 </HBox>
-                <VBox>
+                <VBox fx:id="taskHolder" alignment="BOTTOM_LEFT" minHeight="20.0">
                     <children>
                         <Label fx:id="task" text="Task"/>
+                        <HBox fx:id="errorHolder" spacing="5">
+                            <Label fx:id="error" styleClass="error" text="Error"/>
+                            <Label onMouseClicked="#goToIssuePage" styleClass="error, error-link"
+                                   text="Please submit an issue report by clicking on this link"/>
+                        </HBox>
                     </children>
+                    <VBox.margin>
+                        <Insets bottom="2.0"/>
+                    </VBox.margin>
                 </VBox>
             </children>
             <VBox.margin>

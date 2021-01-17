@@ -36,3 +36,17 @@
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
+
+.error {
+    -fx-text-fill: #bf1d00;
+    -fx-font-weight: bold;
+}
+
+.error-link {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.error-link:hover {
+    -fx-text-fill: #e21f00;
+}
