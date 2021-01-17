@@ -199,7 +199,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     }
 
     private double getChartHeight() {
-        return showAverages ? Math.max(325, chartHeight) : chartHeight;
+        return showAverages ? Math.max(375, chartHeight) : chartHeight;
     }
 
     private static DoubleStream averages(final List<FrameMetrics.Metric> metrics) {
