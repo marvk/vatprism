@@ -115,7 +115,7 @@
         </GridPane>
         <Separator prefWidth="200.0"/>
         <Label text="and" styleClass="static-label"/>
-        <GridPane disable="true">
+        <GridPane>
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="50.0"/>
