@@ -37,9 +37,6 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(final Stage primaryStage) {
-
-        loadFonts();
-
         final Parameters parameters = getParameters();
         log.info("Received parameters %s".formatted(parameters.getRaw()));
         final String logLevelString = parameters.getNamed().get("loglevel");
@@ -54,6 +51,7 @@ public class App extends MvvmfxGuiceApplication {
             }
         }
 
+        loadFonts();
         startPreloader(primaryStage);
     }
 
@@ -62,8 +60,8 @@ public class App extends MvvmfxGuiceApplication {
 
         viewTuple.getViewModel().viewTupleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                preloaderStage.hide();
-                showMainView(newValue);
+                preloaderStage.close();
+                App.this.showMainView(newValue);
             }
         });
 

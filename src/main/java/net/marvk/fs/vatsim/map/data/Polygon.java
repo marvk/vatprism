@@ -176,14 +176,14 @@ public class Polygon {
         for (int i = 0; i < n; i++) {                                                                       // edge from V[i] to  V[i+1]
             final int i1 = (i + 1) % n;
             if (r.pointsY[i] <= y) {                                                                        // start y <= P.y
-                if (r.pointsY[i1] > y) {                                                                 // an upward crossing
-                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) > 0) { // P left of  edge
+                if (r.pointsY[i1] > y) {                                                                    // an upward crossing
+                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) > 0) {       // P left of  edge
                         windingNumber += 1;                                                                 // have  a valid up intersect
                     }
                 }
             } else {                                                                                        // start y > P.y (no test needed)
-                if (i1 < n && r.pointsY[i1] <= y) {                                                   // a downward crossing
-                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) < 0) { // P right of  edge
+                if (i1 < n && r.pointsY[i1] <= y) {                                                         // a downward crossing
+                    if (isLeft(r.pointsX[i], r.pointsY[i], r.pointsX[i1], r.pointsY[i1], x, y) < 0) {       // P right of  edge
                         windingNumber -= 1;                                                                 // have  a valid down intersect
                     }
                 }

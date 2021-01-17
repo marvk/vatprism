@@ -1,0 +1,38 @@
+* {
+    -fx-text-fill: white;
+    -fx-font-smoothing-type: gray;
+}
+
+.container {
+    -fx-background-image: url("../../background-about.png");
+    -fx-background-position: center bottom;
+}
+
+
+.label .text {
+    -fx-font-family: B612;
+    -fx-text-fill: white;
+}
+
+.header {
+    -fx-font-weight: bold;
+    -fx-font-size: 72;
+}
+
+.progress-bar {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .track {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}

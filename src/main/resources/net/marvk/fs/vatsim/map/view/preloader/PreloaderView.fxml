@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<VBox prefWidth="600.0" styleClass="container" stylesheets="@preloader.css" xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
     <children>
-        <ImageView fitHeight="10000.0" fitWidth="500.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@../splash.png"/>
-            </image>
-        </ImageView>
-        <HBox VBox.vgrow="ALWAYS" maxHeight="0">
+        <VBox>
             <children>
-                <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                             HBox.hgrow="ALWAYS"/>
+                <HBox alignment="BOTTOM_CENTER">
+                    <children>
+                        <ImageView fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../icon-256.png"/>
+                            </image>
+                        </ImageView>
+                        <Label styleClass="header" text="VATprism">
+                            <font>
+                                <Font size="72.0"/>
+                            </font>
+                            <padding>
+                                <Insets left="-70.0"/>
+                            </padding>
+                        </Label>
+                    </children>
+                </HBox>
+                <VBox>
+                    <children>
+                        <Label fx:id="task" text="Task"/>
+                    </children>
+                </VBox>
             </children>
-        </HBox>
+            <VBox.margin>
+                <Insets left="10.0" right="10.0" top="10.0"/>
+            </VBox.margin>
+        </VBox>
+        <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                     progress="0.0"/>
     </children>
 </VBox>
