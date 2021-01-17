@@ -59,6 +59,7 @@
         <ikonli.version>12.1.0</ikonli.version>
         <lucene.version>8.7.0</lucene.version>
         <log4j.version>2.14.0</log4j.version>
+        <geotools.version>24.0</geotools.version>
     </properties>
 
     <dependencies>
@@ -93,12 +94,12 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
-            <version>24.0</version>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
-            <version>22-RC</version>
+            <version>${geotools.version}</version>
         </dependency>
 
         <dependency>
@@ -109,11 +110,6 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
             <version>${javafx.version}</version>
         </dependency>
 
@@ -127,12 +123,6 @@
             <artifactId>mvvmfx-guice</artifactId>
             <version>${mvvmfx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>eu.lestard</groupId>
-            <artifactId>easy-di</artifactId>
-            <version>0.3.0</version>
-        </dependency>
-
 
         <dependency>
             <groupId>org.slf4j</groupId>
