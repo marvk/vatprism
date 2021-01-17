@@ -41,7 +41,7 @@ import java.util.concurrent.*;
 @Log4j2
 public class MapView implements FxmlView<MapViewModel> {
     private static final double D_DRAG = 1;
-    private static final int MAX_SCALE = 4096;
+    private static final int MAX_SCALE = 16384;
     private static final int MIN_SCALE = 1;
 
     @FXML
@@ -67,6 +67,7 @@ public class MapView implements FxmlView<MapViewModel> {
     public MapView(@Named("open_hand_cursor") final Cursor openHand, @Named("closed_hand_cursor") final Cursor closedHand) {
         this.canvas = new Canvas(100, 100);
         this.canvas.setFocusTraversable(true);
+        // TODO is this required? Takes away focus from search
         this.canvas.addEventFilter(MouseEvent.ANY, e -> canvas.requestFocus());
 
         this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
@@ -250,13 +251,10 @@ public class MapView implements FxmlView<MapViewModel> {
             viewModel.scaleProperty().set(newScale);
             final Point2D worldCenter = viewModel.getWorldCenter();
             final Point2D mouseWorldPosition = viewModel.getMouseWorldPosition().multiply(-1);
-            final double f = 1.0 / fScroll;
-            if (scollingIn) {
-                viewModel.setWorldCenter(mouseWorldPosition.multiply(1 - f).add(worldCenter.multiply(f)));
-            } else {
-                viewModel.setWorldCenter(worldCenter.subtract(mouseWorldPosition.multiply(1 - f))
-                                                    .multiply(1.0 / f));
-            }
+
+            final double f = oldScale / newScale;
+
+            viewModel.setWorldCenter(mouseWorldPosition.multiply(1 - f).add(worldCenter.multiply(f)));
         }
 
         public void onKeyPressed(final KeyEvent keyEvent) {
