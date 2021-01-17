@@ -17,7 +17,7 @@
                 <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
             </graphic>
         </Button>
-        <ToggleButton fx:id="autoReload" styleClass="icon-button" onAction="#setAutoReload" mnemonicParsing="false">
+        <ToggleButton fx:id="autoReload" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-sync-16" iconSize="24"/>
             </graphic>

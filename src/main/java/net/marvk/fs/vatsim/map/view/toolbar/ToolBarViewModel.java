@@ -4,9 +4,7 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.*;
 import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.data.RepositoryException;
 import net.marvk.fs.vatsim.map.view.Notifications;
@@ -14,6 +12,7 @@ import net.marvk.fs.vatsim.map.view.ToolbarScope;
 
 public class ToolBarViewModel implements ViewModel {
     private final ReadOnlyStringWrapper errorMessage = new ReadOnlyStringWrapper();
+    private final BooleanProperty autoReload = new SimpleBooleanProperty();
 
     private final Preferences preferences;
 
@@ -30,6 +29,8 @@ public class ToolBarViewModel implements ViewModel {
                 () -> resolveException(toolbarScope.getReloadException()),
                 toolbarScope.reloadExceptionProperty()
         ));
+        toolbarScope.autoReloadProperty().bindBidirectional(autoReload);
+        toolbarScope.autoReloadProperty().bindBidirectional(preferences.booleanProperty("general.auto_reload"));
     }
 
     private String resolveException(final Throwable reloadException) {
@@ -50,10 +51,6 @@ public class ToolBarViewModel implements ViewModel {
 
     public Preferences getPreferences() {
         return preferences;
-    }
-
-    public void setAutoReload(final boolean autoReload) {
-        toolbarScope.setAutoReload(autoReload);
     }
 
     public void triggerRepaint() {
@@ -82,5 +79,17 @@ public class ToolBarViewModel implements ViewModel {
 
     public ReadOnlyStringProperty errorMessageProperty() {
         return errorMessage.getReadOnlyProperty();
+    }
+
+    public boolean isAutoReload() {
+        return autoReload.get();
+    }
+
+    public BooleanProperty autoReloadProperty() {
+        return autoReload;
+    }
+
+    public void setAutoReload(final boolean autoReload) {
+        this.autoReload.set(autoReload);
     }
 }

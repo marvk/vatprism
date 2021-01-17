@@ -31,6 +31,7 @@ public class ConfigFilePreferences implements Preferences {
         tryCreateFilterDirectory(path);
         tryLoadConfig();
         booleanProperty("general.debug", false);
+        booleanProperty("general.auto_reload", false);
         integerProperty("general.font_size", 12);
         integerProperty("general.map_font_size", 12);
         doubleProperty("general.scroll_speed", 2.25);

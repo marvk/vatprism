@@ -80,6 +80,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
         reload.disableProperty().bind(viewModel.reloadExecutableProperty().not());
         autoReload.disableProperty().bind(viewModel.reloadExecutableProperty().not());
+        autoReload.selectedProperty().bindBidirectional(viewModel.autoReloadProperty());
 
         reloadRotateTransition = new RotateTransition();
 
@@ -161,11 +162,6 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private void refresh(final ActionEvent actionEvent) {
         viewModel.refresh();
-    }
-
-    @FXML
-    public void setAutoReload(final ActionEvent actionEvent) {
-        viewModel.setAutoReload(autoReload.isSelected());
     }
 
     @SneakyThrows
