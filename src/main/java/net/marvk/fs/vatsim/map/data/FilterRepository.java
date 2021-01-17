@@ -21,13 +21,13 @@ public class FilterRepository implements Repository<Filter> {
     private static final String FILTERS_DIRECTORY_NAME = "Filters";
 
     private final Path path;
-    private final Serializer<Filter> serializer;
+    private final Adapter<Filter> adapter;
     private final ObservableList<Filter> items = FXCollections.observableArrayList();
     private final HashMap<UUID, Filter> uuidMap = new HashMap<>();
 
     @Inject
-    public FilterRepository(@Named("userConfigDir") final Path path, @Named("filterSerializer") final Serializer<Filter> serializer) {
-        this.serializer = serializer;
+    public FilterRepository(@Named("userConfigDir") final Path path, @Named("filterSerializer") final Adapter<Filter> adapter) {
+        this.adapter = adapter;
 
         this.path = tryCreateFilterDirectory(path);
         if (canSaveToDisk()) {
@@ -61,7 +61,7 @@ public class FilterRepository implements Repository<Filter> {
     private Filter deserialize(final String s) {
         try {
             log.debug("Deserializing filter \n%s".formatted(s));
-            return serializer.deserialize(s);
+            return adapter.deserialize(s);
         } catch (final JsonParseException e) {
             log.error("Failed to deserialize filter", e);
             return null;
@@ -134,7 +134,7 @@ public class FilterRepository implements Repository<Filter> {
     private void writeFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
             log.debug(("Attempting to write filter file %s").formatted(filterLogName(filter)));
-            Files.writeString(path(filter), serializer.serialize(filter), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(path(filter), adapter.serialize(filter), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 

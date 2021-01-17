@@ -10,14 +10,14 @@ import java.util.UUID;
 import static net.marvk.fs.vatsim.map.data.JsonSerializationUtil.deserializeToClass;
 import static net.marvk.fs.vatsim.map.data.JsonSerializationUtil.deserializeToList;
 
-public class JsonFilterSerializer implements Serializer<Filter> {
+public class JsonFilterAdapter implements Adapter<Filter> {
     private final Gson gson;
 
-    public JsonFilterSerializer() {
+    public JsonFilterAdapter() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(Filter.class, new FilterAdapter())
-                .registerTypeAdapter(Color.class, new ColorAdapter())
-                .registerTypeAdapter(Filter.StringPredicate.class, new StringPredicateAdapter())
+                .registerTypeAdapter(Filter.class, new FilterJsonAdapter())
+                .registerTypeAdapter(Color.class, new ColorJsonAdapter())
+                .registerTypeAdapter(Filter.StringPredicate.class, new StringPredicateJsonAdapter())
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
@@ -33,7 +33,7 @@ public class JsonFilterSerializer implements Serializer<Filter> {
         return gson.fromJson(s, Filter.class);
     }
 
-    private static class FilterAdapter implements Adapter<Filter> {
+    private static class FilterJsonAdapter implements JsonAdapter<Filter> {
         @Override
         public JsonElement serialize(final Filter src, final Type typeOfSrc, final JsonSerializationContext context) {
             final JsonObject result = new JsonObject();
@@ -106,7 +106,7 @@ public class JsonFilterSerializer implements Serializer<Filter> {
         }
     }
 
-    private static class StringPredicateAdapter implements Adapter<Filter.StringPredicate> {
+    private static class StringPredicateJsonAdapter implements JsonAdapter<Filter.StringPredicate> {
         @Override
         public Filter.StringPredicate deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
             final JsonObject o = json.getAsJsonObject();

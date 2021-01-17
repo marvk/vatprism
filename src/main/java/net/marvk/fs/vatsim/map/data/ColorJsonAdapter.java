@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 import java.lang.reflect.Type;
 
-class ColorAdapter implements Adapter<Color> {
+class ColorJsonAdapter implements JsonAdapter<Color> {
     @Override
     public Color deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
         return Color.valueOf(json.getAsString());

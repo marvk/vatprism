@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static net.marvk.fs.vatsim.map.data.JsonSerializationUtil.deserializeToClass;
 
-public class JsonObservablePreferencesSerializer implements Serializer<Map<String, ObservableValue<?>>> {
+public class JsonObservablePreferencesAdapter implements Adapter<Map<String, ObservableValue<?>>> {
     private static final Type MAP_TYPE = new TypeToken<Map<String, ObservableValue<?>>>() {
     }.getType();
 
@@ -21,11 +21,11 @@ public class JsonObservablePreferencesSerializer implements Serializer<Map<Strin
 
     private final Gson gson;
 
-    public JsonObservablePreferencesSerializer() {
+    public JsonObservablePreferencesAdapter() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(MAP_TYPE, new MapAdapter())
-                .registerTypeAdapter(OBSERVABLE_TYPE, new ObservableValueAdapter())
-                .registerTypeAdapter(Color.class, new ColorAdapter())
+                .registerTypeAdapter(MAP_TYPE, new MapJsonAdapter())
+                .registerTypeAdapter(OBSERVABLE_TYPE, new ObservableValueJsonAdapter())
+                .registerTypeAdapter(Color.class, new ColorJsonAdapter())
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
@@ -41,7 +41,7 @@ public class JsonObservablePreferencesSerializer implements Serializer<Map<Strin
         return gson.fromJson(s, MAP_TYPE);
     }
 
-    private static class MapAdapter implements Adapter<Map<String, ObservableValue<?>>> {
+    private static class MapJsonAdapter implements JsonAdapter<Map<String, ObservableValue<?>>> {
         @Override
         public Map<String, ObservableValue<?>> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
             final Map<String, ObservableValue<?>> result = new HashMap<>();
@@ -91,7 +91,7 @@ public class JsonObservablePreferencesSerializer implements Serializer<Map<Strin
         }
     }
 
-    private static class ObservableValueAdapter implements Adapter<ObservableValue<?>> {
+    private static class ObservableValueJsonAdapter implements JsonAdapter<ObservableValue<?>> {
         @Override
         public ObservableValue<?> deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
             final JsonObject o = json.getAsJsonObject();

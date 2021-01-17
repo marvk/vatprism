@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class ConfigFilePreferences implements Preferences {
     private final Map<String, ObservableValue<?>> observables = new HashMap<>();
     private final Path path;
-    private final Serializer<Map<String, ObservableValue<?>>> serializer;
+    private final Adapter<Map<String, ObservableValue<?>>> adapter;
 
     @Inject
-    public ConfigFilePreferences(@Named("userConfigDir") final Path path, @Named("configSerializer") final Serializer<Map<String, ObservableValue<?>>> serializer) {
+    public ConfigFilePreferences(@Named("userConfigDir") final Path path, @Named("configSerializer") final Adapter<Map<String, ObservableValue<?>>> adapter) {
         this.path = path.resolve("Config.json");
-        this.serializer = serializer;
+        this.adapter = adapter;
         tryCreateFilterDirectory(path);
         tryLoadConfig();
         booleanProperty("general.debug", false);
@@ -42,7 +42,7 @@ public class ConfigFilePreferences implements Preferences {
             log.info("Loading config from %s".formatted(path));
             final String raw = Files.readString(path);
             log.debug("Parsing config \n%s".formatted(raw));
-            final Map<String, ObservableValue<?>> deserialize = serializer.deserialize(raw);
+            final Map<String, ObservableValue<?>> deserialize = adapter.deserialize(raw);
             final var entries = deserialize
                     .entrySet()
                     .stream()
@@ -158,7 +158,7 @@ public class ConfigFilePreferences implements Preferences {
     private void writeConfig() {
         try {
             log.info("Writing config to %s".formatted(path));
-            Files.writeString(path, serializer.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(path, adapter.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (final IOException e) {
             log.error("Failed to write config", e);
         }

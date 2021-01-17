@@ -7,10 +7,10 @@ import com.google.inject.name.Named;
 import javafx.beans.value.ObservableValue;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
+import net.marvk.fs.vatsim.map.data.Adapter;
 import net.marvk.fs.vatsim.map.data.Filter;
-import net.marvk.fs.vatsim.map.data.JsonFilterSerializer;
-import net.marvk.fs.vatsim.map.data.JsonObservablePreferencesSerializer;
-import net.marvk.fs.vatsim.map.data.Serializer;
+import net.marvk.fs.vatsim.map.data.JsonFilterAdapter;
+import net.marvk.fs.vatsim.map.data.JsonObservablePreferencesAdapter;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -80,14 +80,14 @@ public class PathsModule extends AbstractModule {
     @Provides
     @Singleton
     @Named("filterSerializer")
-    public Serializer<Filter> filterSerializer() {
-        return new JsonFilterSerializer();
+    public Adapter<Filter> filterSerializer() {
+        return new JsonFilterAdapter();
     }
 
     @Provides
     @Singleton
     @Named("configSerializer")
-    public Serializer<Map<String, ObservableValue<?>>> configSerializer() {
-        return new JsonObservablePreferencesSerializer();
+    public Adapter<Map<String, ObservableValue<?>>> configSerializer() {
+        return new JsonObservablePreferencesAdapter();
     }
 }
