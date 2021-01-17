@@ -84,8 +84,8 @@ public class MapViewModel implements ViewModel {
             final UpperInformationRegionRepository upperInformationRegionRepository,
             final Preferences preferences,
             final FilterRepository filterRepository,
-            @Named("world") final List<Polygon> world,
-            @Named("lakes") final List<Polygon> lakes
+            @Named("world") final PolygonRepository world,
+            @Named("lakes") final PolygonRepository lakes
     ) {
         this.clientRepository = clientRepository;
         this.airportRepository = airportRepository;
@@ -100,8 +100,8 @@ public class MapViewModel implements ViewModel {
 
         this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
 
-        this.world = world;
-        this.lakes = lakes;
+        this.world = world.list();
+        this.lakes = lakes.list();
 
         this.mouseViewPosition.addListener((observable, oldValue, newValue) -> recalculateMouseWorldPosition());
 
