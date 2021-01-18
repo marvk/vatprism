@@ -13,10 +13,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j2;
-import net.marvk.fs.vatsim.map.configuration.AopModule;
-import net.marvk.fs.vatsim.map.configuration.AppModule;
-import net.marvk.fs.vatsim.map.configuration.JfxModule;
-import net.marvk.fs.vatsim.map.configuration.PathsModule;
+import net.marvk.fs.vatsim.map.configuration.*;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 import net.marvk.fs.vatsim.map.view.preloader.PreloaderView;
@@ -133,5 +130,6 @@ public class App extends MvvmfxGuiceApplication {
         modules.add(new AopModule());
         modules.add(new JfxModule());
         modules.add(new PathsModule());
+        modules.add(new MetarModule());
     }
 }
