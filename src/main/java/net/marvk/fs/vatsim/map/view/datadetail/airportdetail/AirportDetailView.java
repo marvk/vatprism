@@ -9,6 +9,7 @@ import net.marvk.fs.vatsim.map.view.BindingsUtil;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
+import net.marvk.fs.vatsim.map.view.datadetail.metardetail.MetarDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.trafficdetail.TrafficDetailView;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
 
     @FXML
     private ControllersDetailView controllersController;
+    @FXML
+    private MetarDetailView metarController;
     @FXML
     private TrafficDetailView arrivalsController;
     @FXML
@@ -75,11 +78,13 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
         controllersController.getViewModel().setData(airport.getControllers());
         arrivalsController.getViewModel().setData(airport.getArriving());
         departuresController.getViewModel().setData(airport.getDeparting());
+        metarController.getViewModel().setAirport(airport);
     }
 
     @Override
     protected void clear(final Airport oldValue) {
         super.clear(oldValue);
+        metarController.getViewModel().setAirport(null);
         if (oldValue != null) {
             controllersController.getViewModel().setData(null);
         }

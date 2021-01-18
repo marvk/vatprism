@@ -12,9 +12,9 @@ public class VatsimMetarApi implements MetarApi {
     private final Deserializer<Metar> vatsimMetarDeserializer;
 
     @Inject
-    public VatsimMetarApi(final VatsimApi vatsimApi, @Named("vatsimApiMetarDeserializer") final Deserializer<Metar> vatsimMetarDeserializer) {
+    public VatsimMetarApi(final VatsimApi vatsimApi, @Named("vatsimApiMetarDeserializer") final MetarDeserializer metarDeserializer) {
         this.vatsimApi = vatsimApi;
-        this.vatsimMetarDeserializer = vatsimMetarDeserializer;
+        this.vatsimMetarDeserializer = metarDeserializer;
     }
 
     @Override
