@@ -85,7 +85,13 @@ public class Polygon {
     }
 
     public double distance(final Point2D point) {
-        return distance(point.getX(), point.getY());
+        return Math.min(
+                Math.min(
+                        distance(point.getX() + 360, point.getY()),
+                        distance(point.getX() - 360, point.getY())
+                ),
+                distance(point.getX(), point.getY())
+        );
     }
 
     public double distance(final double x, final double y) {

@@ -79,14 +79,28 @@ public class ContextMenuViewModel {
     }
 
     private static Comparator<FlightInformationRegionBoundary> firbComparator(final Point2D worldPosition) {
-        return Comparator.<FlightInformationRegionBoundary, Double>comparing(e -> distance(e, worldPosition)).thenComparing(
-                Comparator.comparing(FlightInformationRegionBoundary::hasFirControllers).reversed().thenComparing(
-                        Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed()
-                )
+        return Comparator
+                .<FlightInformationRegionBoundary>comparingDouble(e -> distanceToPolygon(e, worldPosition))
+                .thenComparingDouble(e -> distanceToLabel(e, worldPosition))
+                .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasFirControllers).reversed())
+                .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed());
+    }
+
+    private static double distanceToLabel(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
+        return dist(point, flightInformationRegionBoundary.getPolygon().getExteriorRing().getPolyLabel());
+    }
+
+    private static double dist(final Point2D p1, final Point2D p2) {
+        return Math.min(
+                Math.min(
+                        p2.distance(p1.add(360, 0)),
+                        p2.distance(p1.subtract(360, 0))
+                ),
+                p2.distance(p1)
         );
     }
 
-    private static double distance(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
+    private static double distanceToPolygon(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
         return flightInformationRegionBoundary
                 .getPolygon()
                 .distance(point);
