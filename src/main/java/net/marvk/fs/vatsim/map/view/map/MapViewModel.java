@@ -226,7 +226,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Inactive Uirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
                 PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-                PainterExecutor.ofItem("Connections", new DepartureArrivalPathPainter(mapVariables), this.selectedItemProperty()::get),
+                PainterExecutor.ofItem("Connections", new ConnectionsPainter(mapVariables), this.selectedItemProperty()::get),
                 PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Filters", new FilterPainter(mapVariables, filterRepository.list()), this::pilots, this::isNotSelected),
                 PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),

@@ -9,7 +9,7 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.util.function.Consumer;
 
-public class DepartureArrivalPathPainter extends MapPainter<Data> {
+public class ConnectionsPainter extends MapPainter<Data> {
 
     @Parameter("History")
     private boolean history = true;
@@ -31,7 +31,7 @@ public class DepartureArrivalPathPainter extends MapPainter<Data> {
 
     private Point2D[] greatCircleBufferArray = null;
 
-    public DepartureArrivalPathPainter(final MapVariables mapVariables) {
+    public ConnectionsPainter(final MapVariables mapVariables) {
         super(mapVariables);
     }
 
