@@ -8,6 +8,11 @@
 <?import java.lang.*?>
 <VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.flightplandetail.FlightPlanDetailView">
+    <fx:define>
+        <Double fx:id="descriptionColumn" fx:value="80"/>
+        <Double fx:id="spacerColumn" fx:value="10"/>
+        <Double fx:id="contentColumn" fx:value="80"/>
+    </fx:define>
     <children>
         <DataDetailPane headerText="Flight Plan">
             <contentNode>
@@ -20,16 +25,18 @@
                         </HBox>
                         <GridPane fx:id="content" hgap="2.0" vgap="2.0">
                             <columnConstraints>
+                                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity"
+                                                   minWidth="10.0"
+                                                   prefWidth="$descriptionColumn"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0"
+                                                   prefWidth="$contentColumn"/>
                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
-                                                   prefWidth="75.0"/>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
-                                                   prefWidth="75.0"/>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
-                                                   prefWidth="10.0"/>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
-                                                   prefWidth="75.0"/>
-                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
-                                                   prefWidth="75.0"/>
+                                                   prefWidth="$spacerColumn"/>
+                                <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity"
+                                                   minWidth="10.0"
+                                                   prefWidth="$descriptionColumn"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="0.0"
+                                                   prefWidth="$contentColumn"/>
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>

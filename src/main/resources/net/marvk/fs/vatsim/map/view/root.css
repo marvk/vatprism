@@ -25,10 +25,6 @@
     -fx-effect: -vatsim-dropshadow;
 }
 
-.description {
-    /*-fx-font-weight: bold;*/
-}
-
 .button:hover {
     -fx-background-color: -vatsim-background-color-very-light;
 }
@@ -170,7 +166,7 @@
 
 .menu-item-data .label {
     -fx-font-family: "B612 Mono";
-    -fx-text-fill: -vatsim-text-greyed-out;
+    -fx-text-fill: -vatsim-text-color;
 }
 
 .menu-item-data:hover {
@@ -182,7 +178,7 @@
 }
 
 .menu-item-header .label {
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatsim-text-greyed-out;
 }
 
 .menu-item-header:hover {
@@ -215,4 +211,11 @@
     -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
     -fx-highlight-text-fill: -vatsim-text-color-light;
     -fx-prompt-text-fill: -vatsim-text-color-dark;
+}
+
+
+.description {
+    -fx-text-fill: -vatsim-text-color-dark;
+    /*-fx-font-size: 80%;*/
+    /*-fx-font-style: italic;*/
 }
