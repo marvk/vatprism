@@ -70,7 +70,7 @@
                                             <String fx:value="hyperlink-label"/>
                                         </styleClass>
                                     </Label>
-                                    <Label fx:id="departureName" text="Label"/>
+                                    <Label minWidth="0" fx:id="departureName" text="Label"/>
                                 </children>
                             </HBox>
                             <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647"
@@ -82,7 +82,7 @@
                                             <String fx:value="hyperlink-label"/>
                                         </styleClass>
                                     </Label>
-                                    <Label fx:id="arrivalName" text="Label"/>
+                                    <Label minWidth="0" fx:id="arrivalName" text="Label"/>
                                 </children>
                             </HBox>
                             <Label styleClass="description" text="Alternate" GridPane.rowIndex="2"/>
@@ -96,7 +96,7 @@
                                             <String fx:value="hyperlink-label"/>
                                         </styleClass>
                                     </Label>
-                                    <Label fx:id="alternateName" text="Label"/>
+                                    <Label minWidth="0" fx:id="alternateName" text="Label"/>
                                 </children>
                             </HBox>
                         </GridPane>

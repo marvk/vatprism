@@ -58,7 +58,7 @@
                             <String fx:value="hyperlink-label"/>
                         </styleClass>
                     </Label>
-                    <Label fx:id="firName" text="Label">
+                    <Label minWidth="0" fx:id="firName" text="Label">
                     </Label>
                 </HBox>
                 <Label fx:id="heading" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
