@@ -48,6 +48,7 @@ public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
         table.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
                 viewModel.setActive(table.getSelectionModel().getSelectedItem());
+                e.consume();
             }
         });
     }

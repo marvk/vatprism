@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -96,7 +97,12 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             callsign.getStyleClass().add("mono");
             callsign.getStyleClass().add("hyperlink-label");
             controllersGrid.add(callsign, 2, i);
-            callsign.setOnMouseClicked(e -> viewModel.setDataDetail(controller));
+            callsign.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setDataDetail(controller);
+                    e.consume();
+                }
+            });
 
             final Label name = new Label(controller.getRealName());
             controllersGrid.add(name, 3, i);

@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -124,7 +125,12 @@ public class FlightPlanDetailView extends DataDetailSubView<FlightPlanDetailView
                 },
                 airportProperty
         ));
-        icao.setOnMouseClicked(e -> viewModel.setDataDetail(airportProperty.get()));
+        icao.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                viewModel.setDataDetail(airportProperty.get());
+                e.consume();
+            }
+        });
         name.textProperty().bind(Bindings.createStringBinding(
                 () -> {
                     if (airportProperty.get() == null) {

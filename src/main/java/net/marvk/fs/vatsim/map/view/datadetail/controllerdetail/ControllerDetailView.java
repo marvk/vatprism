@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.data.Atis;
@@ -47,7 +48,6 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     public void initialize() {
         super.initialize();
         atis.setOnMouseClicked(atisPane::fireEvent);
-
     }
 
     @Override
@@ -100,7 +100,12 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
 
         controlling.setText(icaoVisitor.visit(controller.getWorkingLocation()));
         controllingDescription.setText(nameVisitor.visit(controller.getWorkingLocation()));
-        controlling.setOnMouseClicked(event -> viewModel.setDataDetail(controller.getWorkingLocation()));
+        controlling.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                viewModel.setDataDetail(controller.getWorkingLocation());
+                e.consume();
+            }
+        });
 
         setAtisHeaderBindings(controller);
     }

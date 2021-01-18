@@ -72,6 +72,7 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
                     viewModel.goTo(getItem());
                     viewModel.switchToMapTab();
                 }
+                e.consume();
             }
         }
     }

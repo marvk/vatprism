@@ -5,6 +5,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.GeomUtil;
@@ -69,7 +70,12 @@ public class UpperInformationRegionDetailView extends DataDetailSubView<DataDeta
             final Label icaoLabel = new Label(fir.getIcao());
             icaoLabel.getStyleClass().add("mono");
             icaoLabel.getStyleClass().add("hyperlink-label");
-            icaoLabel.setOnMouseClicked(e -> viewModel.setDataDetail(fir));
+            icaoLabel.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setDataDetail(fir);
+                    e.consume();
+                }
+            });
             firsGrid.add(icaoLabel, 0, i);
         }
     }

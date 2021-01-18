@@ -88,7 +88,12 @@ public class SearchView implements FxmlView<SearchViewModel> {
         StackPane.setAlignment(icon, Pos.CENTER_RIGHT);
         icon.visibleProperty().bind(searchBox.textProperty().isNotEmpty().or(viewModel.resultsProperty().isNotNull()));
         icon.setCursor(Cursor.HAND);
-        icon.setOnMouseClicked(e -> viewModel.clear());
+        icon.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                viewModel.clear();
+                e.consume();
+            }
+        });
         icon.getStyleClass().add("clear-icon");
         icon.iconSizeProperty().bind(searchBox.heightProperty().divide(2.0));
         return icon;
@@ -156,6 +161,7 @@ public class SearchView implements FxmlView<SearchViewModel> {
                     if (e.isControlDown()) {
                         viewModel.goTo(data.get());
                     }
+                    e.consume();
                 }
             });
             cursorProperty().bind(Bindings.createObjectBinding(

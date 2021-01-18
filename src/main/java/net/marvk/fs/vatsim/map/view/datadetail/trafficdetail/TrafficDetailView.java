@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -118,12 +119,22 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
 
             final Label callsign = new Label(flightPlan.getPilot().getCallsign());
             callsign.getStyleClass().addAll("mono", "hyperlink-label");
-            callsign.setOnMouseClicked(e -> viewModel.setDataDetail(flightPlan.getPilot()));
+            callsign.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setDataDetail(flightPlan.getPilot());
+                    e.consume();
+                }
+            });
             trafficGrid.add(callsign, 1, i);
 
             final Label icao = new Label(extractFromOppositeAirport(flightPlan, Airport::getIcao));
             icao.getStyleClass().addAll("mono", "hyperlink-label");
-            icao.setOnMouseClicked(e -> viewModel.setDataDetail(oppositeAirport(flightPlan)));
+            icao.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setDataDetail(oppositeAirport(flightPlan));
+                    e.consume();
+                }
+            });
             trafficGrid.add(icao, 2, i);
 
             final Label airportName = new Label(extractFromOppositeAirport(flightPlan, e -> e.getNames().get(0).get()));

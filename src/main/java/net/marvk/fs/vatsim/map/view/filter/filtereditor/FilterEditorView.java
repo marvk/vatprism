@@ -15,6 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -230,8 +231,18 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     }
 
     private static void setupToggleGroup(final ToggleGroup toggleGroup, final Label or, final Label and, final ObjectProperty<Filter.Operator> operator) {
-        or.setOnMouseClicked(e -> toggleGroup.selectToggle(toggleGroup.getToggles().get(0)));
-        and.setOnMouseClicked(e -> toggleGroup.selectToggle(toggleGroup.getToggles().get(1)));
+        or.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                toggleGroup.selectToggle(toggleGroup.getToggles().get(0));
+                e.consume();
+            }
+        });
+        and.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                toggleGroup.selectToggle(toggleGroup.getToggles().get(1));
+                e.consume();
+            }
+        });
 
         operator.addListener((observable, oldValue, newValue) ->
                 toggleGroup.selectToggle(switch (newValue) {
@@ -336,15 +347,18 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 }
             });
             list.setOnMouseClicked(e -> {
-                final EventTarget target = e.getTarget();
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    final EventTarget target = e.getTarget();
 
-                if (target instanceof FilterStringListViewModelListCell) {
-                    final FilterStringListViewModelListCell cell = (FilterStringListViewModelListCell) target;
-                    if (cell.getValue() == null) {
+                    if (target instanceof FilterStringListViewModelListCell) {
+                        final FilterStringListViewModelListCell cell = (FilterStringListViewModelListCell) target;
+                        if (cell.getValue() == null) {
+                            clearSelection();
+                        }
+                    } else if (target instanceof Group) {
                         clearSelection();
                     }
-                } else if (target instanceof Group) {
-                    clearSelection();
+                    e.consume();
                 }
             });
             regex.selectedProperty().addListener((observable, oldValue, newValue) -> {

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -86,7 +87,12 @@ public class AboutView implements FxmlView<AboutViewModel> {
                 if (!name.getStyleClass().contains("hl")) {
                     name.getStyleClass().add("hl");
                 }
-                name.setOnMouseClicked(e -> viewModel.openDependencyUrlInBrowser(item));
+                name.setOnMouseClicked(e -> {
+                    if (e.getButton() == MouseButton.PRIMARY) {
+                        viewModel.openDependencyUrlInBrowser(item);
+                        e.consume();
+                    }
+                });
             } else {
                 name.getStyleClass().remove("hl");
                 name.setOnMouseClicked(null);
