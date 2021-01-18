@@ -3,73 +3,56 @@ package net.marvk.fs.vatsim.map.view.painter;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import lombok.Value;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
-public class ConnectionsPainter extends MapPainter<Data> {
-
-    @Parameter("History")
-    private boolean history = true;
-
-    @Parameter("Departure")
-    private boolean departure = true;
+public class ConnectionsPainter extends CompositeMapPainter<Data> {
     @Parameter("Departure Color")
     private Color departureColor = Color.CORAL.deriveColor(0, 1, 1, 0.5);
 
-    @Parameter("Arrival")
-    private boolean arrival = true;
     @Parameter("Arrival Color")
     private Color arrivalColor = Color.DARKOLIVEGREEN.deriveColor(0, 1, 1, 0.5);
 
     @Parameter("Great Circle Lines")
     private boolean greatCircle = true;
 
+    @MetaPainter("Pilots")
+    private final ConnectionPainter pilots;
+
+    @MetaPainter("Airport Departures")
+    private final ConnectionPainter airportDepartures;
+
+    @MetaPainter("Airport Arrivals")
+    private final ConnectionPainter airportArrivals;
+
     private final PainterVisitor painterVisitor = new PainterVisitor();
 
     private Point2D[] greatCircleBufferArray = null;
 
     public ConnectionsPainter(final MapVariables mapVariables) {
-        super(mapVariables);
+        pilots = new ConnectionPainter(mapVariables, true, true, true);
+        airportArrivals = new ConnectionPainter(mapVariables, false, false, true);
+        airportDepartures = new ConnectionPainter(mapVariables, true, true, false);
+    }
+
+    @Override
+    protected Collection<? extends Painter<?>> painters() {
+        return List.of(
+                pilots,
+                airportDepartures,
+                airportArrivals
+        );
     }
 
     @Override
     public void paint(final GraphicsContext context, final Data data) {
         painterVisitor.visit(data).accept(context);
-    }
-
-    private static int airportOffsetX(final Pilot pilot, final Airport airport) {
-        if (Math.abs(pilot.getPosition().getX() - airport.getPosition().getX()) > 180) {
-            if (pilot.getPosition().getX() < 0) {
-                return -360;
-            } else {
-                return 360;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    private void line(final GraphicsContext c, final Point2D p1, final Point2D p2, final int offsetX) {
-        final Point2D c1 = mapVariables.toCanvas(p1.add(offsetX, 0));
-        final Point2D c2 = mapVariables.toCanvas(p2.add(offsetX, 0));
-        painterHelper.strokeLine(c, c1.getX(), c1.getY(), c2.getX(), c2.getY());
-    }
-
-    private void greatCircleLine(final GraphicsContext c, final Pilot pilot, final Point2D airportPosition, final Type type) {
-        if (type == Type.ARRIVAL || !history) {
-            final Point2D[] points = GeomUtil.greatCirclePolyline(pilot.getPosition(), airportPosition, getGreatCircleBufferArray());
-            painterHelper.strokePolyline(c, points);
-        } else if (type == Type.DEPARTURE) {
-            final Point2D[] points = GeomUtil.greatCirclePolyline(pilot.getHistory()
-                                                                       .get(0), airportPosition, getGreatCircleBufferArray());
-            painterHelper.strokePolyline(c, points);
-            c.setLineDashes(null);
-            painterHelper.strokePolyline(c, pilot.getHistory().toArray(Point2D[]::new));
-        }
-
     }
 
     private Point2D[] getGreatCircleBufferArray() {
@@ -78,10 +61,6 @@ public class ConnectionsPainter extends MapPainter<Data> {
         }
 
         return greatCircleBufferArray;
-    }
-
-    private enum Type {
-        DEPARTURE, ARRIVAL, ALTERNATE;
     }
 
     private class PainterVisitor extends DefaultingDataVisitor<Consumer<GraphicsContext>> {
@@ -94,48 +73,121 @@ public class ConnectionsPainter extends MapPainter<Data> {
         public Consumer<GraphicsContext> visit(final Airport airport) {
             return c -> {
                 for (final FlightPlan flightPlan : airport.getDeparting()) {
-                    paint(c, flightPlan.getPilot(), flightPlan.getDepartureAirport(), Type.DEPARTURE);
+                    airportDepartures.paint(c, new Connection(
+                            flightPlan.getDepartureAirport(),
+                            flightPlan.getPilot(),
+                            flightPlan.getArrivalAirport()
+                    ));
                 }
 
                 for (final FlightPlan flightPlan : airport.getArriving()) {
-                    paint(c, flightPlan.getPilot(), flightPlan.getArrivalAirport(), Type.ARRIVAL);
+                    airportArrivals.paint(c, new Connection(
+                            flightPlan.getDepartureAirport(),
+                            flightPlan.getPilot(),
+                            flightPlan.getArrivalAirport()
+                    ));
                 }
             };
         }
 
         @Override
         public Consumer<GraphicsContext> visit(final Pilot pilot) {
-            return c -> {
-                final FlightPlan flightPlan = pilot.getFlightPlan();
-                paint(c, flightPlan.getPilot(), flightPlan.getArrivalAirport(), Type.ARRIVAL);
-                paint(c, flightPlan.getPilot(), flightPlan.getDepartureAirport(), Type.DEPARTURE);
-            };
+            return c -> pilots.paint(c, new Connection(
+                    pilot.getFlightPlan().getDepartureAirport(),
+                    pilot,
+                    pilot.getFlightPlan().getArrivalAirport()
+            ));
+        }
+    }
+
+    private class ConnectionPainter extends MapPainter<Connection> {
+        @Parameter("History")
+        private boolean history;
+
+        @Parameter("Departure")
+        private boolean departure;
+
+        @Parameter("Arrival")
+        private boolean arrival;
+
+        public ConnectionPainter(final MapVariables mapVariables, final boolean history, final boolean departure, final boolean arrival) {
+            super(mapVariables);
+            this.history = history;
+            this.departure = departure;
+            this.arrival = arrival;
         }
 
-        private void paint(final GraphicsContext context, final Pilot pilot, final Airport airport, final Type type) {
-            if (type == Type.ARRIVAL && arrival) {
-                context.setLineDashes(1, 5);
-                context.setStroke(arrivalColor);
-            } else if (type == Type.DEPARTURE && departure) {
-                context.setLineDashes(1, 10);
-                context.setStroke(departureColor);
-            } else {
+        @Override
+        public void paint(final GraphicsContext c, final Connection connection) {
+            if (!enabled) {
                 return;
             }
 
-            if (pilot == null || airport == null || pilot.getPosition() == null || airport.getPosition() == null) {
-                return;
+            final Airport departureAirport = connection.getDeparture();
+            final Pilot pilot = connection.getPilot();
+            final Airport arrivalAirport = connection.getArrival();
+
+            if (arrival && arrivalAirport != null) {
+                setArrivalStroke(c);
+                connect(c, pilot.getPosition(), arrivalAirport.getPosition());
             }
 
-            final Point2D airportPosition = airport.getPosition().add(airportOffsetX(pilot, airport), 0);
+            if (history) {
+                setHistoryStroke(c);
+                painterHelper.strokePolyline(c, pilot.getHistory().toArray(Point2D[]::new));
+            }
 
+            if (departure && departureAirport != null) {
+                setDepartureStroke(c);
+                if (history) {
+                    connect(c, departureAirport.getPosition(), pilot.getHistory().get(0));
+                } else {
+                    connect(c, departureAirport.getPosition(), pilot.getPosition());
+                }
+            }
+        }
+
+        private void setArrivalStroke(final GraphicsContext c) {
+            c.setLineDashes(1, 5);
+            c.setStroke(arrivalColor);
+        }
+
+        private void setDepartureStroke(final GraphicsContext c) {
+            c.setLineDashes(1, 10);
+            c.setStroke(departureColor);
+        }
+
+        private void setHistoryStroke(final GraphicsContext c) {
+            c.setLineDashes(null);
+            c.setStroke(departureColor);
+        }
+
+        private void connect(final GraphicsContext c, final Point2D p1, final Point2D p2) {
             if (greatCircle) {
-                greatCircleLine(context, pilot, airportPosition, type);
+                greatCircleLine(c, p1, p2);
             } else {
-                line(context, pilot.getPosition(), airportPosition, 0);
-                line(context, pilot.getPosition(), airportPosition, (int) (Math.signum(pilot.getPosition()
-                                                                                            .getX()) * -360));
+                line(c, p1, p2, 0);
+                line(c, p1, p2, (int) (Math.signum(p2.getX()) * -360));
             }
         }
+
+        private void greatCircleLine(final GraphicsContext c, final Point2D p1, final Point2D p2) {
+            final Point2D[] points = GeomUtil.greatCirclePolyline(p1, p2, getGreatCircleBufferArray());
+            painterHelper.strokePolyline(c, points);
+        }
+
+        private void line(final GraphicsContext c, final Point2D p1, final Point2D p2, final int offsetX) {
+            final Point2D c1 = mapVariables.toCanvas(p1.add(offsetX, 0));
+            final Point2D c2 = mapVariables.toCanvas(p2.add(offsetX, 0));
+            painterHelper.strokeLine(c, c1.getX(), c1.getY(), c2.getX(), c2.getY());
+        }
+
+    }
+
+    @Value
+    private static class Connection {
+        Airport departure;
+        Pilot pilot;
+        Airport arrival;
     }
 }
