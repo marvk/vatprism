@@ -22,6 +22,7 @@ public class MetarDetailView extends DetailSubView<MetarDetailViewModel, Metar> 
         super.initialize();
         refreshMetar.disableProperty().bind(viewModel.fetchMetar().notExecutableProperty());
         refreshMetar.setOnAction(e -> viewModel.fetchMetar().execute());
+        metarText.setOnMouseClicked(container::fireEvent);
     }
 
     @Override
