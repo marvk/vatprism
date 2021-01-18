@@ -57,6 +57,9 @@ public class PainterHelper {
         double minX = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
 
+        strokePolyline(c, polyline, 0);
+
+        // TODO I don't think this is right for wrapping paths
         for (final Point2D p : polyline) {
             minX = Math.min(p.getX(), minX);
             maxX = Math.max(p.getX(), maxX);
@@ -69,8 +72,6 @@ public class PainterHelper {
         if (mapVariables.toCanvasX(maxX) < mapVariables.getViewWidth()) {
             strokePolyline(c, polyline, 360);
         }
-
-        strokePolyline(c, polyline, 0);
     }
 
     private void strokePolyline(final GraphicsContext c, final Point2D[] polyline, final double offsetX) {
@@ -131,11 +132,25 @@ public class PainterHelper {
     }
 
     private int writePolylineToBuffer(final Point2D[] polyline, final double offsetX) {
+        double lastX = polyline[0].getX();
+
+        double offset = 0;
+
         for (int i = 0; i < polyline.length; i++) {
             final Point2D p = polyline[i];
-            final double x = mapVariables.toCanvasX(p.getX() + offsetX);
+            final double curX = p.getX();
+            if (Math.abs(curX - lastX) >= 180) {
+                if (curX < 0) {
+                    offset += 360;
+                } else {
+                    offset -= 360;
+                }
+            }
+
+            final double x = mapVariables.toCanvasX(p.getX() + offsetX + offset);
             final double y = mapVariables.toCanvasY(p.getY());
             mapVariables.setBuf(i, x, y);
+            lastX = curX;
         }
         return polyline.length;
     }
