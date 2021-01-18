@@ -251,6 +251,10 @@ public class Polygon {
             throw new IllegalArgumentException();
         }
 
+        if (polygon2.name != null && polygon2.name.contains("ESOS")) {
+            System.out.println();
+        }
+
         final Map<Integer, Integer> sameMap = new HashMap<>();
         final List<Integer> sameJ = new ArrayList<>();
         final List<Integer> sameI = new ArrayList<>();
@@ -294,14 +298,38 @@ public class Polygon {
 
         final String mergedName = "%s_%s_merged".formatted(polygon1.name(), polygon2.name());
 
-        final List<Point2D> result = normalize(mergedName, merged);
+        final List<Point2D> normalized = normalize(mergedName, merged);
+        final List<Point2D> antimeridianMerged = mergeAlongAntimeridian(normalized);
 
-        return new Polygon(List.of(result),
+        return new Polygon(List.of(antimeridianMerged),
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
                 List::size,
                 mergedName
         );
+    }
+
+    private static List<Point2D> mergeAlongAntimeridian(final List<Point2D> merged) {
+        final List<Point2D> result = new ArrayList<>(merged.size());
+
+        double lastX = merged.get(0).getX();
+        double offsetX = 0;
+
+        for (final Point2D p : merged) {
+            final double curX = p.getX();
+            if (Math.abs(curX - lastX) >= 180) {
+                if (curX < 0) {
+                    offsetX += 360;
+                } else {
+                    offsetX -= 360;
+                }
+            }
+
+            result.add(p.add(offsetX, 0));
+            lastX = curX;
+        }
+
+        return result;
     }
 
     private static List<Point2D> normalize(final String name, final List<Point2D> merged) {
@@ -315,7 +343,7 @@ public class Polygon {
             return merged.stream().map(e -> e.add(-360, 0)).collect(Collectors.toList());
         }
 
-        if (merged.stream().mapToDouble(Point2D::getX).allMatch(e -> e < 180)) {
+        if (merged.stream().mapToDouble(Point2D::getX).allMatch(e -> e < -180)) {
             log.debug("Merged polygon %s lies beyond -180 degrees, shifting east by 360 degrees".formatted(name));
             return merged.stream().map(e -> e.add(360, 0)).collect(Collectors.toList());
         }
@@ -347,14 +375,14 @@ public class Polygon {
         final List<Point2D> result = new ArrayList<>();
 
         for (int i = 0; i < polygon1.numPoints(); i++) {
-            result.add(new Point2D(normalizeX(polygon1.pointsX[i]), polygon1.pointsY[i]));
+            result.add(new Point2D(polygon1.pointsX[i], polygon1.pointsY[i]));
         }
 
         final boolean reverse = sameMap.get(0) == 0;
 
         for (int i = 0; i < polygon2.numPoints(); i++) {
             final int index = reverse ? polygon2.numPoints() - i - 1 : i;
-            result.add(new Point2D(normalizeX(polygon2.pointsX[index]), polygon2.pointsY[index]));
+            result.add(new Point2D(polygon2.pointsX[index], polygon2.pointsY[index]));
         }
 
         return result;
@@ -372,7 +400,7 @@ public class Polygon {
         final int step = reverse ? 1 : -1;
 
         for (int i = 0; i < polygon1.numPoints(); i++) {
-            result.add(new Point2D(normalizeX(polygon1.pointsX[i]), polygon1.pointsY[i]));
+            result.add(new Point2D(polygon1.pointsX[i], polygon1.pointsY[i]));
 
             final Integer sameIndex = sameMap.get(i);
 
@@ -382,25 +410,13 @@ public class Polygon {
                         !sameMap.containsValue(j);
                         j = (polygon2.numPoints() + j + step) % polygon2.numPoints()
                 ) {
-                    result.add(new Point2D(normalizeX(polygon2.pointsX[j]), polygon2.pointsY[j]));
+                    result.add(new Point2D(polygon2.pointsX[j], polygon2.pointsY[j]));
                 }
 
                 i = sameI.get(sameI.size() - 1);
             }
         }
         return result;
-    }
-
-    private static double normalizeX(final double e) {
-        return e < 0 ? e + 360 : e;
-    }
-
-    private static void reverse(final double[] arr) {
-        for (int i = 0; i < arr.length / 2; i++) {
-            final double temp = arr[i];
-            arr[i] = arr[arr.length - i - 1];
-            arr[arr.length - i - 1] = temp;
-        }
     }
 
     @FunctionalInterface
