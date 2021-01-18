@@ -280,7 +280,7 @@
                                 --dest "target-installer"
                                 --main-class "${mainClass}"
                                 --type "msi"
-                                --description "VATSIM data explorer"
+                                --description "VATprism"
                                 --vendor "${developerName}"
                                 --app-version "${buildNumber}.0.0"
                                 --icon "src/main/resources/net/marvk/fs/vatsim/map/icon.ico"
