@@ -17,18 +17,6 @@
                     disableAnsi="false"/>
         </Console>
         <RollingFile
-                name="File"
-                fileName="${}/vatprism.log"
-                filePattern="log/vatprism.%d{yyyy-MM-dd-HH-mm-ss}.log">
-            <PatternLayout
-                    pattern="${LOG_PATTERN_NO_ANSI}"
-                    disableAnsi="true"
-                    noConsoleNoAnsi="true"/>
-            <Policies>
-                <OnStartupTriggeringPolicy/>
-            </Policies>
-        </RollingFile>
-        <RollingFile
                 name="LogDirectoryFile"
                 fileName="${sys:log4j2.saveDirectory}/vatprism.log"
                 filePattern="${sys:log4j2.saveDirectory}/vatprism.%d{yyyy-MM-dd-HH-mm-ss}.log">
