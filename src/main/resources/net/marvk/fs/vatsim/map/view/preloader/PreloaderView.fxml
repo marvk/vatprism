@@ -30,7 +30,7 @@
                 </HBox>
                 <VBox fx:id="taskHolder" alignment="BOTTOM_LEFT" minHeight="20.0">
                     <children>
-                        <Label fx:id="task" text="Task"/>
+                        <Label fx:id="task" text="Initializing"/>
                         <HBox fx:id="errorHolder" spacing="5">
                             <Label fx:id="error" styleClass="error" text="Error"/>
                             <Label onMouseClicked="#goToIssuePage" styleClass="error, error-link"

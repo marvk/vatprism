@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, ListExpression<FlightPlan>> {
+
     @FXML
     private GridPane trafficGrid;
     @FXML
@@ -106,21 +107,44 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
 
         for (int i = 0; i < data.size(); i++) {
             final FlightPlan flightPlan = viewModel.getFilteredSortedData().get(i);
+
+            final Label eta = new Label();
+            eta.textProperty().bind(Bindings.createStringBinding(
+                    () -> getEta(flightPlan.getPilot().getEta()),
+                    flightPlan.getPilot().etaProperty()
+            ));
+            eta.getStyleClass().add("mono");
+            trafficGrid.add(eta, 0, i);
+
             final Label callsign = new Label(flightPlan.getPilot().getCallsign());
             callsign.getStyleClass().addAll("mono", "hyperlink-label");
             callsign.setOnMouseClicked(e -> viewModel.setDataDetail(flightPlan.getPilot()));
-            trafficGrid.add(callsign, 0, i);
+            trafficGrid.add(callsign, 1, i);
 
             final Label icao = new Label(extractFromOppositeAirport(flightPlan, Airport::getIcao));
             icao.getStyleClass().addAll("mono", "hyperlink-label");
             icao.setOnMouseClicked(e -> viewModel.setDataDetail(oppositeAirport(flightPlan)));
-            trafficGrid.add(icao, 1, i);
+            trafficGrid.add(icao, 2, i);
 
             final Label airportName = new Label(extractFromOppositeAirport(flightPlan, e -> e.getNames().get(0).get()));
-            trafficGrid.add(airportName, 2, i);
+            airportName.setMaxWidth(200);
+            trafficGrid.add(airportName, 3, i);
 
             final Label name = new Label(flightPlan.getPilot().getRealName());
-            trafficGrid.add(name, 3, i);
+            name.setMaxWidth(150);
+            trafficGrid.add(name, 4, i);
+        }
+    }
+
+    private String getEta(final Pilot.Eta eta) {
+        if (eta.isDeparting()) {
+            return "⬈";
+        } else if (eta.isArriving()) {
+            return "⬊";
+        } else if (eta.isEnRoute()) {
+            return " ";
+        } else {
+            return " ";
         }
     }
 
@@ -203,17 +227,6 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
         }
     }
 
-    private static String flightNumber(final Pilot pilot, final int length) {
-        if (pilot.isFlightNumberAvailable()) {
-            final String icao = pilot.getAirline().getIcao();
-            final String flightNumber = pilot.getFlightNumber();
-
-            return " ".repeat(3 - icao.length()) + icao + " ".repeat((length - 3) - flightNumber.length()) + flightNumber;
-        } else {
-            return " ".repeat(length - pilot.getCallsign().length()) + pilot.getCallsign();
-        }
-    }
-
     public enum Type {
         ARRIVAL("Arrivals"), DEPARTURE("Departures");
 
@@ -223,53 +236,5 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
             this.label = label;
         }
     }
-
-    //    private static class PilotListCell extends ListCell<FlightPlan> {
-//        private static final DoubleProperty height = new SimpleDoubleProperty(15);
-//
-//        private final Label label;
-//        private final VBox container;
-//        private final HBox holder;
-//
-//        private FlightPlan flightPlan = null;
-//
-//        public PilotListCell(final TrafficDetailViewModel viewModel) {
-//            label = new Label();
-//            label.getStyleClass().addAll("mono", "hyperlink-label");
-//            label.setOnMouseClicked(e -> viewModel.setDataDetail(flightPlan.getPilot()));
-//
-//            holder = new HBox();
-//            holder.getChildren().add(label);
-//
-//            container = new VBox();
-//            container.getChildren().add(holder);
-//
-//            holder.heightProperty().addListener((observable, oldValue, newValue) -> {
-//                if (flightPlan != null) {
-//                    height.set(newValue.doubleValue());
-//                }
-//            });
-//
-//            prefHeightProperty().bind(height);
-//        }
-//
-//        @Override
-//        protected void updateItem(final FlightPlan flightPlan, final boolean empty) {
-//            super.updateItem(flightPlan, empty);
-//
-//            this.flightPlan = flightPlan;
-//
-//            if (empty || flightPlan == null) {
-//                setText(null);
-//                setGraphic(null);
-//            } else {
-//                final Pilot pilot = flightPlan.getPilot();
-//
-//                label.setText(flightNumber(pilot, 10));
-//                setGraphic(container);
-//            }
-//        }
-//    }
-
 }
 

@@ -7,11 +7,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import net.marvk.fs.vatsim.map.data.Airline;
+import net.marvk.fs.vatsim.map.data.Airport;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
+import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubViewModel;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Comparator;
-import java.util.Locale;
 
 public class TrafficDetailViewModel extends DetailSubViewModel<ListExpression<FlightPlan>> {
     private static final Comparator<FlightPlan> CALLSIGN_COMPARATOR;
@@ -34,6 +36,10 @@ public class TrafficDetailViewModel extends DetailSubViewModel<ListExpression<Fl
 
         CALLSIGN_COMPARATOR = airline.thenComparing(flightNumber).thenComparing(callsign);
     }
+
+    private final StringProperty title = new SimpleStringProperty();
+
+    private final ObjectProperty<TrafficDetailView.Type> type = new SimpleObjectProperty<>();
 
     private final ReadOnlyListWrapper<FlightPlan> filteredSortedData = new ReadOnlyListWrapper<>();
 
@@ -60,16 +66,36 @@ public class TrafficDetailViewModel extends DetailSubViewModel<ListExpression<Fl
             return true;
         }
 
-        return flightPlan
-                .getPilot()
-                .getCallsign()
-                .toLowerCase(Locale.ROOT)
-                .contains(query.get().toLowerCase(Locale.ROOT));
+        final Pilot pilot = flightPlan.getPilot();
+
+        if (StringUtils.containsIgnoreCase(pilot.getCallsign(), query.get())) {
+            return true;
+        }
+
+        if (StringUtils.containsIgnoreCase(pilot.getRealName(), query.get())) {
+            return true;
+        }
+
+        final Airport airport = switch (type.get()) {
+            case ARRIVAL -> flightPlan.getDepartureAirport();
+            case DEPARTURE -> flightPlan.getArrivalAirport();
+            default -> null;
+        };
+
+        if (airport == null) {
+            return false;
+        }
+
+        if (StringUtils.containsIgnoreCase(airport.getIcao(), query.get())) {
+            return true;
+        }
+
+        if (airport.getNames().stream().anyMatch(e -> StringUtils.containsIgnoreCase(e.get(), query.get()))) {
+            return true;
+        }
+
+        return false;
     }
-
-    private final StringProperty title = new SimpleStringProperty();
-
-    private final ObjectProperty<TrafficDetailView.Type> type = new SimpleObjectProperty<>();
 
     public String getTitle() {
         return title.get();

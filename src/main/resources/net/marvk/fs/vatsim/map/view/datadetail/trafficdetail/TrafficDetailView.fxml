@@ -11,8 +11,8 @@
             <content>
                 <GridPane fx:id="trafficGrid" hgap="10">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS"/>
                         <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
                         <ColumnConstraints hgrow="NEVER"/>
                         <ColumnConstraints hgrow="NEVER"/>
                         <ColumnConstraints hgrow="NEVER"/>
