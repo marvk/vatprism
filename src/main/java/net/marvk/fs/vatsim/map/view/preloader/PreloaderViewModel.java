@@ -31,11 +31,13 @@ public class PreloaderViewModel implements ViewModel {
     private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
     private final HostServices hostServices;
     private final RepositoryLoader repositoryLoader;
+    private final VersionProvider versionProvider;
 
     @Inject
-    public PreloaderViewModel(final HostServices hostServices, final RepositoryLoader repositoryLoader) {
+    public PreloaderViewModel(final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
         this.hostServices = hostServices;
         this.repositoryLoader = repositoryLoader;
+        this.versionProvider = versionProvider;
     }
 
     public void load() {
@@ -103,6 +105,10 @@ public class PreloaderViewModel implements ViewModel {
     public void goToIssuePage() {
         final String escapedError = error.get().replaceAll(" ", "+");
         hostServices.showDocument("https://github.com/marvk/vatprism/issues/new?assignees=&labels=bug&template=bug_report.md&title=Error+during+startup%3A+" + escapedError);
+    }
+
+    public String getVersionAndName() {
+        return "%s\nCreated by %s".formatted(versionProvider.get(), "Marvin Kuhnke");
     }
 
     private static class CallableTask extends Task<Void> {

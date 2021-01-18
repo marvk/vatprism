@@ -12,6 +12,9 @@ import javafx.scene.layout.VBox;
 
 public class PreloaderView implements FxmlView<PreloaderViewModel> {
     @FXML
+    private Label versionAndName;
+
+    @FXML
     private VBox taskHolder;
 
     @FXML
@@ -43,6 +46,7 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
                 taskHolder.getChildren().setAll(task);
             }
         });
+        versionAndName.setText(viewModel.getVersionAndName());
     }
 
     @FXML

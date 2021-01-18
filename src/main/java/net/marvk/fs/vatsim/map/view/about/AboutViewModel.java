@@ -6,13 +6,16 @@ import javafx.application.HostServices;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.map.data.Dependency;
 import net.marvk.fs.vatsim.map.data.DependencyRepository;
+import net.marvk.fs.vatsim.map.data.VersionProvider;
 
 public class AboutViewModel implements ViewModel {
+    private final VersionProvider versionProvider;
     private final HostServices hostServices;
     private final DependencyRepository dependencyRepository;
 
     @Inject
-    public AboutViewModel(final HostServices hostServices, final DependencyRepository dependencyRepository) {
+    public AboutViewModel(final VersionProvider versionProvider, final HostServices hostServices, final DependencyRepository dependencyRepository) {
+        this.versionProvider = versionProvider;
         this.hostServices = hostServices;
         this.dependencyRepository = dependencyRepository;
     }
@@ -22,13 +25,7 @@ public class AboutViewModel implements ViewModel {
     }
 
     public String getVersion() {
-        final String version = getClass().getPackage().getImplementationVersion();
-
-        if (version == null || version.isBlank()) {
-            return null;
-        }
-
-        return version;
+        return versionProvider.get();
     }
 
     public void openDependencyUrlInBrowser(final Dependency dependency) {

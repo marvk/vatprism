@@ -50,3 +50,7 @@
 .error-link:hover {
     -fx-text-fill: #e21f00;
 }
+
+.small {
+    -fx-font-size: 9;
+}

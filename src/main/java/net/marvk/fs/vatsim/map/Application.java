@@ -1,9 +1,9 @@
 package net.marvk.fs.vatsim.map;
 
-import com.sun.tools.javac.Main;
 import lombok.extern.log4j.Log4j2;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
+import net.marvk.fs.vatsim.map.data.VersionProvider;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
@@ -44,8 +44,7 @@ public final class Application {
     }
 
     private static void logSystemInformation() {
-        final String version = Main.class.getPackage().getImplementationVersion();
-        log.info("VATprism version:   %s".formatted(version == null ? "DEV" : version));
+        log.info("VATprism version:   %s".formatted(new VersionProvider().get()));
         log.info("Operating system:   %s".formatted(System.getProperty("os.name")));
         log.info("Available cores:    %s".formatted(Runtime.getRuntime().availableProcessors()));
         log.info("Total JVM memory:   %s".formatted(Runtime.getRuntime().freeMemory()));
