@@ -44,7 +44,7 @@
                 </Label>
                 <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1"
                       GridPane.columnSpan="2147483647">
-                    <Label fx:id="firIcao" onMouseClicked="#goToFir" text="Label">
+                    <Label minWidth="-Infinity" fx:id="firIcao" onMouseClicked="#goToFir" text="Label">
                         <styleClass>
                             <String fx:value="mono"/>
                             <String fx:value="hyperlink-label"/>
