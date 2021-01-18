@@ -62,7 +62,7 @@
     </DataDetailPane>
     <DataDetailPane fx:id="atisPane" headerMonospace="true" headerText="ATIS">
         <contentNode>
-            <TextArea fx:id="atis" editable="false" prefHeight="100.0" prefWidth="0.0" styleClass="mono"
+            <TextArea fx:id="atis" editable="false" prefHeight="200.0" prefWidth="0.0" styleClass="mono"
                       wrapText="true">
                 <VBox.margin>
                     <Insets/>
