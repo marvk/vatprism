@@ -1,18 +1,17 @@
 package net.marvk.fs.vatsim.map.data;
 
 import com.google.inject.Singleton;
-import com.sun.tools.javac.Main;
 
 @Singleton
 public final class VersionProvider {
-    private final String version;
+    private static final String VERSION;
 
-    public VersionProvider() {
-        final String version = Main.class.getPackage().getImplementationVersion();
-        this.version = version == null ? "DEV" : version;
+    static {
+        final String implementationVersion = VersionProvider.class.getPackage().getImplementationVersion();
+        VERSION = implementationVersion == null ? "DEV" : implementationVersion;
     }
 
     public String get() {
-        return version;
+        return VERSION;
     }
 }
