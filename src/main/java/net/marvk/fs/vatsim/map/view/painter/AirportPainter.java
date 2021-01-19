@@ -182,11 +182,11 @@ public class AirportPainter extends MapPainter<Airport> {
             painterHelper.fillTextWithBackground(
                     c,
                     x,
-                    y - 10,
+                    y - 4,
                     icao,
                     paintBackground,
                     TextAlignment.CENTER,
-                    VPos.CENTER,
+                    VPos.BOTTOM,
                     textColor,
                     backgroundColor
             );
