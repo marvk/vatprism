@@ -33,6 +33,8 @@ public class PreloaderViewModel implements ViewModel {
     private final RepositoryLoader repositoryLoader;
     private final VersionProvider versionProvider;
 
+    private final ObjectProperty<Throwable> exception = new SimpleObjectProperty<>();
+
     @Inject
     public PreloaderViewModel(final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
         this.hostServices = hostServices;
@@ -50,16 +52,24 @@ public class PreloaderViewModel implements ViewModel {
             log.debug("Loading view");
             Platform.runLater(() -> taskDescription.set("Loading View"));
             Platform.runLater(() -> {
-                viewTuple.set(FluentViewLoader.fxmlView(MainView.class).load());
-                progress.set(1);
+                try {
+                    final var viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
+                    this.viewTuple.set(viewTuple);
+                    progress.set(1);
+                } catch (final Exception ex) {
+                    failed(ex);
+                }
             });
         });
-        repositoryLoader.setOnFailed(e -> {
-            log.error("Failed preloader task \"%s\"".formatted(getTaskDescription()), e);
-            error.set("Failed " + getTaskDescription().toLowerCase(Locale.ROOT));
-        });
+        repositoryLoader.setOnFailed(e -> failed(repositoryLoader.getException()));
 
         repositoryLoader.start();
+    }
+
+    private void failed(final Throwable e) {
+        exception.set(e);
+        log.error("Failed preloader task \"%s\"".formatted(getTaskDescription()), e);
+        error.set("Failed " + getTaskDescription().toLowerCase(Locale.ROOT));
     }
 
     public ViewTuple<MainView, MainViewModel> getViewTuple() {
