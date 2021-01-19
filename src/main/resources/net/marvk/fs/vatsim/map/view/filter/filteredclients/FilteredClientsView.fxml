@@ -11,7 +11,7 @@
         <HBox spacing="5.0">
             <children>
                 <CheckBox fx:id="pilots" mnemonicParsing="false" selected="true" text="Pilots"/>
-                <CheckBox fx:id="controllers" mnemonicParsing="false" text="Controllers"/>
+                <CheckBox fx:id="controllers" mnemonicParsing="false" selected="true" text="Controllers"/>
             </children>
             <VBox.margin>
                 <Insets/>
