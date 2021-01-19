@@ -1,24 +1,24 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import com.sun.javafx.geom.Line2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import net.marvk.fs.vatsim.map.GeomUtil;
+import net.marvk.fs.vatsim.map.data.DistanceMeasure;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.time.Duration;
 
-public class DistanceMeasurePainter extends MapPainter<Line2D> {
+public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
     private static final double W = 10;
     private static final double W_HALF = W / 2.0;
     @Parameter("Color")
-    private Color color = Color.PINK;
+    private Color color = Color.web("#a05260");
 
     @Parameter("Text Color")
-    private Color textColor = Color.PINK;
+    private Color textColor = Color.web("#481720");
 
     @Parameter("Great Circle Line")
     private boolean greatCircle = true;
@@ -26,7 +26,7 @@ public class DistanceMeasurePainter extends MapPainter<Line2D> {
     @Parameter("Estimated Duration")
     private boolean displayEstimatedDuration = false;
 
-    @Parameter("Estimation Ground Speed In Knots")
+    @Parameter(value = "Estimation Ground Speed In Knots", min = 1)
     private int estimationKnots = 450;
 
     private Point2D[] polylineBuffer = new Point2D[51];
@@ -36,17 +36,20 @@ public class DistanceMeasurePainter extends MapPainter<Line2D> {
     }
 
     @Override
-    public void paint(final GraphicsContext c, final Line2D line2D) {
-        if (line2D == null) {
+    public void paint(final GraphicsContext c, final DistanceMeasure distanceMeasure) {
+        if (distanceMeasure == null) {
             return;
         }
-        final float x1 = line2D.x1;
-        final float y1 = line2D.y1;
-        final float x2 = line2D.x2;
-        final float y2 = line2D.y2;
+        final double x1 = mapVariables.toCanvasX(distanceMeasure.getFrom().getX());
+        final double y1 = mapVariables.toCanvasY(distanceMeasure.getFrom().getY());
+        final double x2 = mapVariables.toCanvasX(distanceMeasure.getTo().getX());
+        final double y2 = mapVariables.toCanvasY(distanceMeasure.getTo().getY());
 
         c.setStroke(color);
         painterHelper.strokeOval(c, x1 - W_HALF, y1 - W_HALF, W, W);
+        if (distanceMeasure.isReleased()) {
+            painterHelper.strokeOval(c, x2 - W_HALF, y2 - W_HALF, W, W);
+        }
 
         final Point2D from = mapVariables.toWorldBounded(new Point2D(x1, y1));
         final Point2D to = mapVariables.toWorldBounded(new Point2D(x2, y2));

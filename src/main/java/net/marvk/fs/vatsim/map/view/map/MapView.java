@@ -2,7 +2,6 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.sun.javafx.geom.Line2D;
 import com.sun.javafx.scene.control.ContextMenuContent;
 import de.saxsys.mvvmfx.*;
 import javafx.application.Platform;
@@ -112,6 +111,7 @@ public class MapView implements FxmlView<MapViewModel> {
         this.canvas.setOnMouseReleased(inputEventHandler::onRelease);
         this.canvas.setOnKeyPressed(inputEventHandler::onKeyPressed);
         this.canvas.setOnKeyReleased(inputEventHandler::onKeyReleased);
+        this.canvas.setOnMouseClicked(inputEventHandler::onMouseClicked);
 
         this.canvas.setOnMouseMoved(inputEventHandler::onMove);
 
@@ -185,7 +185,7 @@ public class MapView implements FxmlView<MapViewModel> {
             final boolean controlAndPrimary = event.isPrimaryButtonDown() && event.isControlDown();
             controlWasDownOnClick.set(controlAndPrimary);
 
-            if (!controlAndPrimary) {
+            if (!event.isControlDown()) {
                 if (event.isSecondaryButtonDown()) {
                     if (controlDown.get()) {
                         viewModel.openClosest();
@@ -211,8 +211,11 @@ public class MapView implements FxmlView<MapViewModel> {
             rightMouseDrag.set(event.isSecondaryButtonDown());
 
             if (controlWasDownOnClick.get()) {
-                viewModel.setDistanceMeasure(new Line2D((float) lastX, (float) lastY, (float) event.getX(), (float) event
-                        .getY()));
+                viewModel.setDistanceMeasureCanvas(new DistanceMeasure(
+                        new Point2D(lastX, lastY),
+                        new Point2D(event.getX(), event.getY()),
+                        false
+                ));
             } else if (leftMouseDown.get() && !controlDown.get()) {
                 doDrag(event);
             }
@@ -226,7 +229,13 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void onRelease(final MouseEvent event) {
             controlDown.set(event.isControlDown());
-            viewModel.setDistanceMeasure(null);
+            if (controlWasDownOnClick.get()) {
+                viewModel.setDistanceMeasureCanvas(new DistanceMeasure(
+                        new Point2D(lastX, lastY),
+                        new Point2D(event.getX(), event.getY()),
+                        true
+                ));
+            }
 
             controlWasDownOnClick.set(false);
 
@@ -294,6 +303,12 @@ public class MapView implements FxmlView<MapViewModel> {
 
             lastX = x;
             lastY = y;
+        }
+
+        public void onMouseClicked(final MouseEvent event) {
+            if (event.isStillSincePress()) {
+                viewModel.setDistanceMeasureCanvas(null);
+            }
         }
     }
 

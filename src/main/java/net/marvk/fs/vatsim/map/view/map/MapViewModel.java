@@ -2,7 +2,6 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.sun.javafx.geom.Line2D;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.animation.Animation;
@@ -59,7 +58,8 @@ public class MapViewModel implements ViewModel {
     private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
     private final ObjectProperty<Object> selectionShape = new SimpleObjectProperty<>();
-    private final ObjectProperty<Line2D> distanceMeasure = new SimpleObjectProperty<>();
+    private final ObjectProperty<DistanceMeasure> distanceMeasureCanvas = new SimpleObjectProperty<>();
+    private final ObjectProperty<DistanceMeasure> distanceMeasureWorld = new SimpleObjectProperty<>();
     private final Preferences preferences;
     private final FilterRepository filterRepository;
 
@@ -122,7 +122,18 @@ public class MapViewModel implements ViewModel {
         this.worldCenter.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.scale.addListener((observable, oldValue, newValue) -> triggerRepaint());
         this.selectionShape.addListener((observable, oldValue, newValue) -> triggerRepaint());
-        this.distanceMeasure.addListener((observable, oldValue, newValue) -> triggerRepaint());
+        this.distanceMeasureCanvas.addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                distanceMeasureWorld.set(null);
+            } else {
+                distanceMeasureWorld.set(new DistanceMeasure(
+                        mapVariables.toWorld(newValue.getFrom()),
+                        mapVariables.toWorld(newValue.getTo()),
+                        newValue.isReleased()
+                ));
+            }
+        });
+        this.distanceMeasureWorld.addListener((observable, oldValue, newValue) -> triggerRepaint());
 
         this.fontSize.bind(preferences.integerProperty("general.map_font_size"));
     }
@@ -236,7 +247,7 @@ public class MapViewModel implements ViewModel {
                 PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
                 PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
                 PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
-                PainterExecutor.ofItem("Distance Measure", new DistanceMeasurePainter(mapVariables), distanceMeasure::get),
+                PainterExecutor.ofItem("Distance Measure", new DistanceMeasurePainter(mapVariables), distanceMeasureWorld::get),
                 PainterExecutor.ofItem("Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
         );
     }
@@ -349,8 +360,8 @@ public class MapViewModel implements ViewModel {
         return fontSize.getReadOnlyProperty();
     }
 
-    public void setDistanceMeasure(final Line2D distanceMeasure) {
-        this.distanceMeasure.set(distanceMeasure);
+    public void setDistanceMeasureCanvas(final DistanceMeasure distanceMeasureCanvas) {
+        this.distanceMeasureCanvas.set(distanceMeasureCanvas);
     }
 
     public ContextMenuViewModel showingContextMenu() {

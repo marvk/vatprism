@@ -45,9 +45,13 @@ public class MapVariables {
     }
 
     public Point2D toWorld(final Point2D canvas) {
+        return toWorld(canvas.getX(), canvas.getY());
+    }
+
+    public Point2D toWorld(final double x, final double y) {
         return new Point2D(
-                toWorldX(canvas.getX()),
-                toWorldY(canvas.getY())
+                toWorldX(x),
+                toWorldY(y)
         );
     }
 
