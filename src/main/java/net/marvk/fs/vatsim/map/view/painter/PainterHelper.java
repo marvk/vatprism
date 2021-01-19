@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import com.sun.javafx.geom.Line2D;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
 import javafx.geometry.Point2D;
@@ -294,6 +295,14 @@ public class PainterHelper {
     public void strokeOval(final GraphicsContext c, final double x, final double y, final double w, final double h) {
         metric.getStrokeOval().increment();
         c.strokeOval(x, y, w, h);
+    }
+
+    public void strokeLine(final GraphicsContext c, final Line2D line) {
+        strokeLine(c, line.x1, line.y1, line.x2, line.y2);
+    }
+
+    public void strokeLine(final GraphicsContext c, final Point2D p1, final Point2D p2) {
+        strokeLine(c, p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
     public void strokeLine(final GraphicsContext c, final double x1, final double y1, final double x2, final double y2) {

@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.sun.javafx.geom.Line2D;
 import com.sun.javafx.scene.control.ContextMenuContent;
 import de.saxsys.mvvmfx.*;
 import javafx.application.Platform;
@@ -72,10 +73,10 @@ public class MapView implements FxmlView<MapViewModel> {
 
         this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
                 () -> {
-                    if (inputEventHandler.controlDown.get()) {
-                        return Cursor.HAND;
-                    } else if (inputEventHandler.rightMouseDown.get()) {
+                    if (inputEventHandler.controlDown.get() || inputEventHandler.controlWasDownOnClick.get()) {
                         return Cursor.CROSSHAIR;
+                    } else if (inputEventHandler.rightMouseDown.get()) {
+                        return Cursor.HAND;
                     } else if (inputEventHandler.leftMouseDown.get()) {
                         return closedHand;
                     } else if (inputEventHandler.middleMouseDown.get()) {
@@ -175,20 +176,25 @@ public class MapView implements FxmlView<MapViewModel> {
         private final BooleanProperty controlDown = new SimpleBooleanProperty();
         private Point2D currentMousePosition = null;
 
+        private final BooleanProperty controlWasDownOnClick = new SimpleBooleanProperty();
+
         public void onStart(final MouseEvent event) {
             controlDown.set(event.isControlDown());
             contextMenu.hideAndClear();
 
-            if (event.isPrimaryButtonDown() && event.isControlDown()) {
-                viewModel.openClosest();
-            } else if (event.isSecondaryButtonDown()) {
-                if (controlDown.get()) {
+            final boolean controlAndPrimary = event.isPrimaryButtonDown() && event.isControlDown();
+            controlWasDownOnClick.set(controlAndPrimary);
+
+            if (!controlAndPrimary) {
+                if (event.isSecondaryButtonDown()) {
+                    if (controlDown.get()) {
+                        viewModel.openClosest();
+                    } else {
+                        contextMenu.show(event.getX(), event.getY(), event.getScreenX(), event.getScreenY(), viewModel.showingContextMenu());
+                    }
+                } else if (event.isMiddleButtonDown()) {
                     viewModel.openClosest();
-                } else {
-                    contextMenu.show(event.getX(), event.getY(), event.getScreenX(), event.getScreenY(), viewModel.showingContextMenu());
                 }
-            } else if (event.isMiddleButtonDown()) {
-                viewModel.openClosest();
             }
 
             leftMouseDown.set(event.isPrimaryButtonDown());
@@ -204,15 +210,25 @@ public class MapView implements FxmlView<MapViewModel> {
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
 
-            if (!leftMouseDown.get() || controlDown.get()) {
-                return;
+            if (controlWasDownOnClick.get()) {
+                viewModel.setDistanceMeasure(new Line2D((float) lastX, (float) lastY, (float) event.getX(), (float) event
+                        .getY()));
+            } else if (leftMouseDown.get() && !controlDown.get()) {
+                doDrag(event);
             }
+        }
 
-            doDrag(event);
+        public void onMove(final MouseEvent event) {
+            controlDown.set(event.isControlDown());
+            currentMousePosition = new Point2D(event.getX(), event.getY());
+            refreshCurrentMousePosition();
         }
 
         public void onRelease(final MouseEvent event) {
             controlDown.set(event.isControlDown());
+            viewModel.setDistanceMeasure(null);
+
+            controlWasDownOnClick.set(false);
 
             leftMouseDown.set(event.isPrimaryButtonDown());
             rightMouseDown.set(event.isSecondaryButtonDown());
@@ -220,12 +236,6 @@ public class MapView implements FxmlView<MapViewModel> {
 
             leftMouseDrag.set(event.isPrimaryButtonDown());
             rightMouseDrag.set(event.isSecondaryButtonDown());
-        }
-
-        public void onMove(final MouseEvent event) {
-            controlDown.set(event.isControlDown());
-            currentMousePosition = new Point2D(event.getX(), event.getY());
-            refreshCurrentMousePosition();
         }
 
         public void refreshCurrentMousePosition() {

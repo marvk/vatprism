@@ -67,7 +67,6 @@ public final class GeomUtil {
     }
 
     public static Point2D pointBetween(final Point2D origin, final Point2D destination, final double fraction) {
-
         return pointBetween(origin, destination, fraction, distanceInRadiansOnMsl(origin, destination));
     }
 

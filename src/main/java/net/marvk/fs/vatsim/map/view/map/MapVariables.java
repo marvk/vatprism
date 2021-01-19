@@ -51,6 +51,14 @@ public class MapVariables {
         );
     }
 
+    public Point2D toWorldBounded(final Point2D canvas) {
+        final double y = toWorldY(canvas.getY());
+        return new Point2D(
+                toWorldX(canvas.getX()),
+                Math.min(Math.max(y, -WORLD_HALF_HEIGHT), WORLD_HALF_HEIGHT)
+        );
+    }
+
     public Point2D toCanvas(final Point2D world) {
         return new Point2D(
                 toCanvasX(world.getX()),
