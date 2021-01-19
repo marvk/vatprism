@@ -5,7 +5,6 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
@@ -31,11 +30,14 @@ import org.kordamp.ikonli.fileicons.FileIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
-import java.util.List;
 import java.util.function.Function;
 
 @Log4j2
 public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
+    @FXML
+    private CheckBox pilotsCheckbox;
+    @FXML
+    private CheckBox controllersCheckbox;
 
     @FXML
     private ToggleButton enabled;
@@ -45,8 +47,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
 
     @FXML
     private TextField filterName;
-    @FXML
-    private ToggleGroup filterType;
 
     @FXML
     private ColorPicker textColorPicker;
@@ -113,7 +113,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     @FXML
     private CheckBox flightPlanFiled;
     @FXML
-    private ComboBox<Filter.FlightType> flightType;
+    private ListView<Filter.FlightType> flightType;
 
     @InjectViewModel
     private FilterEditorViewModel viewModel;
@@ -154,26 +154,26 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 ratingsList,
                 viewModel.getAvailableRatings(),
                 viewModel.ratingsProperty(),
-                e -> "%s (%s)".formatted(e.getShortName(), e.getLongName()),
-                ControllerRating::getId
+                e -> "%s (%s)".formatted(e.getShortName(), e.getLongName())
         );
         new MultipleSelection<>(
                 facilitiesList,
                 viewModel.getAvailableFacilities(),
                 viewModel.facilitiesProperty(),
-                Enum::toString,
-                Enum::ordinal
+                Enum::toString
         );
         new MultipleSelection<>(
                 flightStatusList,
                 viewModel.getAvailableFlightStatuses(),
                 viewModel.flightStatusesProperty(),
-                Enum::toString,
-                Enum::ordinal
+                Enum::toString
         );
-
-        setupMultiSelection(flightType, viewModel.getAvailableFlightTypes(), viewModel.flightTypesProperty());
-        flightType.getSelectionModel().select(Filter.FlightType.ANY);
+        new MultipleSelection<>(
+                flightType,
+                viewModel.getAvailableFlightTypes(),
+                viewModel.flightTypesProperty(),
+                Enum::toString
+        );
 
         setupToggleGroup(callsignCidAndOr, callsignCidOr, callsignCidAnd, viewModel.callsignsCidsOperatorProperty());
         setupToggleGroup(departuresArrivalsAndOr, departuresArrivalsOr, departuresArrivalsAnd, viewModel.departuresArrivalsOperatorProperty());
@@ -208,19 +208,28 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     }
 
     private void bindType() {
-        viewModel.filterTypeProperty().addListener((observable, oldValue, newValue) ->
-                filterType.selectToggle(switch (newValue) {
-                    case PILOT -> filterType.getToggles().get(0);
-                    case CONTROLLER -> filterType.getToggles().get(1);
-                })
-        );
-        filterType.selectedToggleProperty().addListener((observable, oldValue, newValue) ->
-                viewModel.setFilterType(switch (filterType.getToggles().indexOf(filterType.getSelectedToggle())) {
-                    case 0 -> Filter.Type.PILOT;
-                    case 1 -> Filter.Type.CONTROLLER;
-                    default -> throw new IllegalStateException();
-                })
-        );
+        pilotsCheckbox.disableProperty().bind(controllersCheckbox.selectedProperty().not());
+        controllersCheckbox.disableProperty().bind(pilotsCheckbox.selectedProperty().not());
+
+        final ObservableList<Filter.Type> viewModelSelected = viewModel.getFilterTypes();
+        viewModelSelected.addListener((ListChangeListener<Filter.Type>) c -> {
+            pilotsCheckbox.setSelected(viewModelSelected.contains(Filter.Type.PILOT));
+            controllersCheckbox.setSelected(viewModelSelected.contains(Filter.Type.CONTROLLER));
+        });
+
+        setupCheckbox(pilotsCheckbox, Filter.Type.PILOT);
+        setupCheckbox(controllersCheckbox, Filter.Type.CONTROLLER);
+    }
+
+    private void setupCheckbox(final CheckBox controllersCheckbox, final Filter.Type controller) {
+        final ObservableList<Filter.Type> viewModelSelected = viewModel.getFilterTypes();
+        controllersCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                viewModelSelected.add(controller);
+            } else {
+                viewModelSelected.remove(controller);
+            }
+        });
     }
 
     private static void bindColorPicker(final ColorPicker colorPicker, final ObjectProperty<Color> colorProperty) {
@@ -259,18 +268,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         );
     }
 
-    private static <T> void setupMultiSelection(
-            final ComboBox<T> comboBox,
-            final ReadOnlyListProperty<T> available,
-            final ListProperty<T> selected
-    ) {
-        comboBox.setItems(available);
-        comboBox.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> selected.set(FXCollections.observableArrayList(newValue)));
-        selected.addListener((ListChangeListener<T>) c -> comboBox.getSelectionModel().select(selected.get(0)));
-    }
-
     @FXML
     private void save() {
         viewModel.save();
@@ -293,7 +290,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 setText(cellValueMapper.apply(item));
             }
         }
-
     }
 
     private static class StringFilterList {
@@ -485,34 +481,75 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     }
 
     private static class MultipleSelection<T> {
-        private final Function<T, Integer> idMapper;
         private final SimpleIntegerProperty code = new SimpleIntegerProperty();
+
+        private boolean changing = false;
 
         public MultipleSelection(
                 final ListView<T> listView,
                 final ReadOnlyListProperty<T> available,
-                final ListProperty<T> selected,
-                final Function<T, String> cellValueMapper,
-                final Function<T, Integer> idMapper
+                final ListProperty<T> selectedInModel,
+                final Function<T, String> cellValueMapper
         ) {
-            this.idMapper = idMapper;
-
             listView.setItems(available);
             listView.setCellFactory(param -> new StringMappedListCell<>(cellValueMapper));
-            listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            //TODO
+            final MultipleSelectionModel<T> selectionModel = listView.getSelectionModel();
+            selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
 
-//            final ObservableList<T> selectedInUi = listView.getSelectionModel().getSelectedItems();
-//            selected.addListener((ListChangeListener<T>) c -> code.set(code(selected)));
-//            selectedInUi.addListener((ListChangeListener<T>) c -> code.set(code(selectedInUi)));
-//
-//            code.addListener((observable, oldValue, newValue) -> {
-//                listView.getSelectionModel().getSelectedIndices()
-//            });
-        }
+            final ObservableList<T> selectedInView = selectionModel.getSelectedItems();
 
-        private int code(final List<T> selected) {
-            return selected.stream().map(idMapper).mapToInt(e -> 2 >> e).sum();
+            selectionModel.getSelectedIndices().addListener((ListChangeListener<Integer>) c -> {
+                if (!changing) {
+                    changing = true;
+
+                    while (c.next()) {
+                        for (final Integer i : c.getRemoved()) {
+                            final T t = available.get(i);
+
+                            if (selectedInModel.contains(t)) {
+                                selectedInModel.remove(t);
+                            }
+                        }
+
+                        for (final Integer i : c.getAddedSubList()) {
+                            final T t = available.get(i);
+
+                            if (!selectedInModel.contains(t)) {
+                                selectedInModel.add(t);
+                            }
+                        }
+                    }
+
+                    changing = false;
+                    System.out.println("selectedInView = " + selectedInView);
+                    System.out.println("selectedInModel = " + selectedInModel);
+                    System.out.println();
+                }
+            });
+
+            selectedInModel.addListener((ListChangeListener<T>) c -> {
+                if (!changing) {
+                    changing = true;
+
+                    System.out.println(c);
+
+                    while (c.next()) {
+                        for (final T t : c.getRemoved()) {
+                            selectionModel.clearSelection(available.indexOf(t));
+                        }
+
+                        for (final T t : c.getAddedSubList()) {
+                            selectionModel.select(available.indexOf(t));
+                        }
+                    }
+
+                    changing = false;
+
+                    System.out.println("selectedInView = " + selectedInView);
+                    System.out.println("selectedInModel = " + selectedInModel);
+                    System.out.println();
+                }
+            });
         }
     }
 }

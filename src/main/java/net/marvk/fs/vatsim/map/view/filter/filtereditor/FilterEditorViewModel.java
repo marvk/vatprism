@@ -33,7 +33,7 @@ public class FilterEditorViewModel implements ViewModel {
     private final ObjectProperty<Color> textColor = new SimpleObjectProperty<>();
     private final ObjectProperty<Color> backgroundColor = new SimpleObjectProperty<>();
 
-    private final ObjectProperty<Filter.Type> filterType = new SimpleObjectProperty<>();
+    private final ListProperty<Filter.Type> filterTypes = new SimpleListProperty<>(FXCollections.observableArrayList());
 
     private final ObjectProperty<Filter.Operator> callsignsCidsOperator = new SimpleObjectProperty<>();
     private final ObjectProperty<Filter.Operator> departuresArrivalsOperator = new SimpleObjectProperty<>();
@@ -51,7 +51,7 @@ public class FilterEditorViewModel implements ViewModel {
     private final ListProperty<ControllerRating> ratings = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ListProperty<ControllerType> facilities = new SimpleListProperty<>(FXCollections.observableArrayList());
     private final ListProperty<Filter.FlightStatus> flightStatuses = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<Filter.FlightType> flightTypes = new SimpleListProperty<>(FXCollections.observableArrayList(Filter.FlightType.ANY));
+    private final ListProperty<Filter.FlightType> flightTypes = new SimpleListProperty<>(FXCollections.observableArrayList());
 
     private final BooleanProperty flightPlanFiled = new SimpleBooleanProperty();
 
@@ -85,7 +85,7 @@ public class FilterEditorViewModel implements ViewModel {
                 filterEnabled.get(),
                 textColor.get(),
                 backgroundColor.get(),
-                filterType.get(),
+                filterTypes,
                 predicates(callsigns),
                 callsignsCidsOperator.get(),
                 predicates(cids),
@@ -112,7 +112,7 @@ public class FilterEditorViewModel implements ViewModel {
         setFilterEnabled(filter.isEnabled());
         setTextColor(filter.getTextColor());
         setBackgroundColor(filter.getBackgroundColor());
-        setFilterType(filter.getType());
+        filterTypes.setAll(filter.getTypes());
         callsigns.get().setAll(filterStringListViewModels(filter.getCallsignPredicates()));
         setCallsignsCidsOperator(filter.getCallsignsCidsOperator());
         cids.get().setAll(filterStringListViewModels(filter.getCidPredicates()));
@@ -174,6 +174,14 @@ public class FilterEditorViewModel implements ViewModel {
         this.name.set(name);
     }
 
+    public ObservableList<Filter.Type> getFilterTypes() {
+        return filterTypes.get();
+    }
+
+    public ListProperty<Filter.Type> filterTypesProperty() {
+        return filterTypes;
+    }
+
     public boolean isFilterEnabled() {
         return filterEnabled.get();
     }
@@ -208,18 +216,6 @@ public class FilterEditorViewModel implements ViewModel {
 
     public void setBackgroundColor(final Color backgroundColor) {
         this.backgroundColor.set(backgroundColor);
-    }
-
-    public Filter.Type getFilterType() {
-        return filterType.get();
-    }
-
-    public ObjectProperty<Filter.Type> filterTypeProperty() {
-        return filterType;
-    }
-
-    public void setFilterType(final Filter.Type filterType) {
-        this.filterType.set(filterType);
     }
 
     public Filter.Operator getCallsignsCidsOperator() {

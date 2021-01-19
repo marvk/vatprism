@@ -42,7 +42,7 @@ public class JsonFilterAdapter implements Adapter<Filter> {
             result.add("enabled", context.serialize(src.isEnabled()));
             result.add("textColor", context.serialize(src.getTextColor()));
             result.add("backgroundColor", context.serialize(src.getBackgroundColor()));
-            result.add("type", context.serialize(src.getType()));
+            result.add("types", context.serialize(src.getTypes()));
             result.add("callsignPredicates", context.serialize(src.getCallsignPredicates()));
             result.add("callsignCidOperator", context.serialize(src.getCallsignsCidsOperator()));
             result.add("cidPredicates", context.serialize(src.getCidPredicates()));
@@ -66,7 +66,7 @@ public class JsonFilterAdapter implements Adapter<Filter> {
 
             final Color textColor = deserializeToClass(o.get("textColor"), c, Color.class);
             final Color backgroundColor = deserializeToClass(o.get("backgroundColor"), c, Color.class);
-            final Filter.Type type = deserializeToClass(o.get("type"), c, Filter.Type.class);
+            final List<Filter.Type> types = deserializeToList(o.get("types"), c, Filter.Type.class);
             final List<Filter.StringPredicate> callsignPredicates = deserializeToList(o.get("callsignPredicates"), c, Filter.StringPredicate.class);
             final Filter.Operator callsignCidOperator = deserializeToClass(o.get("callsignCidOperator"), c, Filter.Operator.class);
             final List<Filter.StringPredicate> cidPredicates = deserializeToList(o.get("cidPredicates"), c, Filter.StringPredicate.class);
@@ -88,7 +88,7 @@ public class JsonFilterAdapter implements Adapter<Filter> {
                     o.get("enabled").getAsBoolean(),
                     textColor,
                     backgroundColor,
-                    type,
+                    types,
                     callsignPredicates,
                     callsignCidOperator,
                     cidPredicates,

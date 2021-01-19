@@ -8,7 +8,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<SplitPane styleClass="container" stylesheets="@../filter.css" xmlns="http://javafx.com/javafx/11.0.1"
+<SplitPane dividerPositions="0.3" styleClass="container" stylesheets="@../filter.css"
+           xmlns="http://javafx.com/javafx/11.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="net.marvk.fs.vatsim.map.view.filter.filteroutline.FilterOutlineView">
     <items>

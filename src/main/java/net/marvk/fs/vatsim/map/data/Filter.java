@@ -16,7 +16,7 @@ import java.util.regex.PatternSyntaxException;
 public class Filter implements Predicate<Client> {
     private final ReadOnlyObjectProperty<UUID> uuid;
 
-    private final ReadOnlyObjectProperty<Type> type;
+    private final EnumSetPredicate<Type> types;
     private final ReadOnlyStringProperty name;
     private final ImmutableBooleanProperty enabled;
 
@@ -49,7 +49,7 @@ public class Filter implements Predicate<Client> {
                 true,
                 Color.BLACK,
                 Color.hsb(ThreadLocalRandom.current().nextDouble(360), 0.8, 0.8),
-                Type.PILOT,
+                Collections.singletonList(Type.PILOT),
                 Collections.emptyList(),
                 Operator.OR,
                 Collections.emptyList(),
@@ -60,7 +60,7 @@ public class Filter implements Predicate<Client> {
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList(),
-                List.of(FlightType.ANY),
+                Collections.emptyList(),
                 Collections.emptyList(),
                 false
         );
@@ -72,7 +72,7 @@ public class Filter implements Predicate<Client> {
             final boolean enabled,
             final Color textColor,
             final Color backgroundColor,
-            final Type type,
+            final List<Type> types,
             final List<StringPredicate> callsignPredicates,
             final Operator callsignsCidsOperator,
             final List<StringPredicate> cidPredicates,
@@ -88,7 +88,7 @@ public class Filter implements Predicate<Client> {
             final boolean flightPlanRequired
     ) {
         this.uuid = new ImmutableObjectProperty<>(uuid);
-        this.type = new ImmutableObjectProperty<>(type);
+        this.types = new EnumSetPredicate<>(types);
         this.name = new ImmutableStringProperty(name);
         this.enabled = new ImmutableBooleanProperty(enabled);
         this.textColor = new ImmutableObjectProperty<>(textColor);
@@ -115,12 +115,12 @@ public class Filter implements Predicate<Client> {
         }
 
         final boolean isPilot = client instanceof Pilot;
-        if (isPilot && type.get() == Type.CONTROLLER) {
+        if (isPilot && !types.test(Type.PILOT)) {
             return false;
         }
 
         final boolean isController = client instanceof Controller;
-        if (isController && type.get() == Type.PILOT) {
+        if (isController && !types.test(Type.CONTROLLER)) {
             return false;
         }
 
@@ -139,9 +139,13 @@ public class Filter implements Predicate<Client> {
                 return false;
             }
 
-            // TODO test ratings
+            if (!controllerRatings.test(controller.getRating())) {
+                return false;
+            }
 
-            // TODO test facilities
+            if (!controllerTypes.test(controller.getControllerType())) {
+                return false;
+            }
         } else if (isPilot) {
             final Pilot pilot = (Pilot) client;
 
@@ -203,16 +207,13 @@ public class Filter implements Predicate<Client> {
     }
 
     private boolean testFlightTypes(final Pilot pilot) {
-        if (flightTypes.test(FlightType.ANY)) {
-            return true;
-        }
         if (pilot.getFlightPlan().isDomestic()) {
             return flightTypes.test(FlightType.DOMESTIC);
         }
         if (pilot.getFlightPlan().isInternational()) {
             return flightTypes.test(FlightType.INTERNATIONAL);
         }
-        return flightTypes.test(null);
+        return flightTypes.test(FlightType.UNKNOWN);
     }
 
     private boolean testFlightRules(final Pilot pilot) {
@@ -265,12 +266,8 @@ public class Filter implements Predicate<Client> {
         return uuid;
     }
 
-    public Type getType() {
-        return type.get();
-    }
-
-    public ReadOnlyObjectProperty<Type> typeProperty() {
-        return type;
+    public Set<Type> getTypes() {
+        return types.set;
     }
 
     public String getName() {
@@ -501,7 +498,6 @@ public class Filter implements Predicate<Client> {
     }
 
     public enum FlightType {
-        ANY,
         UNKNOWN,
         DOMESTIC,
         INTERNATIONAL
