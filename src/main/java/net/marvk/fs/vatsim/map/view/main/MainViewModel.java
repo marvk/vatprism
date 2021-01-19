@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.application.Platform;
@@ -18,8 +19,13 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.ClientRepository;
+import net.marvk.fs.vatsim.map.data.ImmutableObjectProperty;
 import net.marvk.fs.vatsim.map.data.Preferences;
-import net.marvk.fs.vatsim.map.view.*;
+import net.marvk.fs.vatsim.map.data.ReloadableRepository;
+import net.marvk.fs.vatsim.map.view.Notifications;
+import net.marvk.fs.vatsim.map.view.SettingsScope;
+import net.marvk.fs.vatsim.map.view.StatusScope;
+import net.marvk.fs.vatsim.map.view.ToolbarScope;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 
 import java.util.Arrays;
@@ -48,10 +54,15 @@ public class MainViewModel implements ViewModel {
 
         Notifications.RELOAD_CLIENTS.subscribe(this::reloadClients);
 
-        this.loadClientsAsync = new ReloadRepositoryCommand(clientRepository, Notifications.REPAINT::publish);
+        this.loadClientsAsync = new ReloadRepositoryCommand(clientRepository, this::clientReloadCompleted);
         clientReloadService = new ReloadService(loadClientsAsync);
         clientReloadService.setPeriod(RELOAD_PERIOD);
         clientReloadService.setDelay(RELOAD_PERIOD);
+    }
+
+    private void clientReloadCompleted() {
+        Notifications.REPAINT.publish();
+        Notifications.CLIENTS_RELOADED.publish();
     }
 
     private void reloadClients() {
@@ -174,6 +185,40 @@ public class MainViewModel implements ViewModel {
                     Platform.runLater(command::execute);
                 }
                 return null;
+            }
+        }
+    }
+
+    @Log4j2
+    public static final class ReloadRepositoryCommand extends DelegateCommand {
+        public ReloadRepositoryCommand(final ReloadableRepository<?> repository) {
+            this(repository, null);
+        }
+
+        public ReloadRepositoryCommand(final ReloadableRepository<?> repository, final Runnable onSucceed) {
+            super(() -> new ReloadRepositoryAction(repository, onSucceed), new ImmutableObjectProperty<>(true), onSucceed != null);
+        }
+
+        private static final class ReloadRepositoryAction extends Action {
+            private final ReloadableRepository<?> repository;
+            private final Runnable onSucceed;
+
+            public ReloadRepositoryAction(final ReloadableRepository<?> repository, final Runnable onSucceed) {
+                this.repository = repository;
+                this.onSucceed = onSucceed;
+            }
+
+            @Override
+            protected void action() throws Exception {
+                updateProgress(0, 1);
+                if (onSucceed != null) {
+                    log.info("Loading %s".formatted(repository.getClass().getSimpleName()));
+                    repository.reloadAsync(onSucceed);
+                } else {
+                    log.info("Async Loading %s".formatted(repository.getClass().getSimpleName()));
+                    repository.reload();
+                }
+                updateProgress(1, 1);
             }
         }
     }

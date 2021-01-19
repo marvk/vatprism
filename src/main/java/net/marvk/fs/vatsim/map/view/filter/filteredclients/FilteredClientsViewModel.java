@@ -3,17 +3,17 @@ package net.marvk.fs.vatsim.map.view.filter.filteredclients;
 import com.google.inject.Inject;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 
+import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
 public class FilteredClientsViewModel implements ViewModel {
     private final ReadOnlyObjectWrapper<Predicate<Client>> predicate = new ReadOnlyObjectWrapper<>();
+    private final ObjectProperty<LocalDateTime> lastUpdate = new SimpleObjectProperty<>();
 
     private final BooleanProperty controllers = new SimpleBooleanProperty();
     private final BooleanProperty pilots = new SimpleBooleanProperty();
@@ -32,8 +32,11 @@ public class FilteredClientsViewModel implements ViewModel {
                 filterRepository.list(),
                 controllers,
                 pilots,
-                selectedFilters
+                selectedFilters,
+                lastUpdate
         ));
+
+        Notifications.CLIENTS_RELOADED.subscribe(() -> lastUpdate.set(LocalDateTime.now()));
     }
 
     private Predicate<Client> predicate() {
