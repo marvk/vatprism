@@ -257,10 +257,6 @@ public class Polygon {
             throw new IllegalArgumentException();
         }
 
-        if (polygon2.name != null && polygon2.name.contains("ESOS")) {
-            System.out.println();
-        }
-
         final Map<Integer, Integer> sameMap = new HashMap<>();
         final List<Integer> sameJ = new ArrayList<>();
         final List<Integer> sameI = new ArrayList<>();

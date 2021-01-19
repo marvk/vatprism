@@ -23,6 +23,9 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
     @Parameter("Great Circle Line")
     private boolean greatCircle = true;
 
+    @Parameter("Persistent")
+    protected boolean persistent = true;
+
     @Parameter("Estimated Duration")
     private boolean displayEstimatedDuration = false;
 
@@ -37,7 +40,7 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
 
     @Override
     public void paint(final GraphicsContext c, final DistanceMeasure distanceMeasure) {
-        if (distanceMeasure == null) {
+        if (distanceMeasure == null || (!persistent && distanceMeasure.isReleased())) {
             return;
         }
         final double x1 = mapVariables.toCanvasX(distanceMeasure.getFrom().getX());
@@ -46,9 +49,12 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
         final double y2 = mapVariables.toCanvasY(distanceMeasure.getTo().getY());
 
         c.setStroke(color);
-        painterHelper.strokeOval(c, x1 - W_HALF, y1 - W_HALF, W, W);
+        c.setFill(color);
+        paintCircles(c, distanceMeasure.getFrom(), W, false);
         if (distanceMeasure.isReleased()) {
-            painterHelper.strokeOval(c, x2 - W_HALF, y2 - W_HALF, W, W);
+            paintCircles(c, distanceMeasure.getTo(), W, false);
+        } else {
+            paintCircles(c, distanceMeasure.getTo(), 3, true);
         }
 
         final Point2D from = mapVariables.toWorldBounded(new Point2D(x1, y1));
@@ -81,6 +87,20 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
         }
     }
 
+    private void paintCircles(final GraphicsContext c, final Point2D world, final double size, final boolean fill) {
+        paintCircle(c, world.getX(), world.getY(), size, 0, fill);
+        paintCircle(c, world.getX(), world.getY(), size, 360, fill);
+        paintCircle(c, world.getX(), world.getY(), size, -360, fill);
+    }
+
+    private void paintCircle(final GraphicsContext c, final double x1, final double y1, final double size, final double offset, final boolean fill) {
+        if (fill) {
+            painterHelper.fillOval(c, mapVariables.toCanvasX(x1 + offset) - (size / 2.0), mapVariables.toCanvasY(y1) - (size / 2.0), size, size);
+        } else {
+            painterHelper.strokeOval(c, mapVariables.toCanvasX(x1 + offset) - (size / 2.0), mapVariables.toCanvasY(y1) - (size / 2.0), size, size);
+        }
+    }
+
     private void paintText(final GraphicsContext c, final double distanceInMeters, final double distanceInNauticalMiles, final Point2D labelPosition) {
         distanceText(c, distanceInNauticalMiles, labelPosition, 0);
         distanceText(c, distanceInNauticalMiles, labelPosition, +360);
@@ -108,7 +128,7 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
         painterHelper.fillTextWithBackground(c,
                 mapVariables.toCanvasX(labelPosition.getX() + offset),
                 mapVariables.toCanvasY(labelPosition.getY()),
-                "est. %s".formatted(durationString),
+                "%s at %skts".formatted(durationString, estimationKnots),
                 true,
                 TextAlignment.CENTER,
                 VPos.TOP,

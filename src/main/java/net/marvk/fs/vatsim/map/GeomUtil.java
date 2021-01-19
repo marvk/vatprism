@@ -17,7 +17,6 @@ import static java.lang.Math.*;
  * @see <a href="https://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts - Calculate distance, bearing and more between Latitude/Longitude points</a>
  */
 public final class GeomUtil {
-
     private static final int EARTH_RADIUS = 6371;
     private static final int R = EARTH_RADIUS;
 
@@ -111,7 +110,7 @@ public final class GeomUtil {
             return null;
         }
 
-        return new Point2D(Double.parseDouble(longitude), Double.parseDouble(latitude));
+            return new Point2D(Double.parseDouble(longitude), Double.parseDouble(latitude));
     }
 
     public static String format(final Point2D point) {
@@ -147,7 +146,7 @@ public final class GeomUtil {
      * @return Distance in meters
      */
     public static double distanceOnMsl(final Point2D p1, final Point2D p2) {
-        return distance(p1.getX(), p1.getY(), 0, p2.getX(), p2.getY(), 0);
+        return distanceOnMslDegrees(p1.getY(), p1.getX(), p2.getY(), p2.getX());
     }
 
     public static double squareDistance(final double x1, final double y1, final double x2, final double y2) {
@@ -166,26 +165,21 @@ public final class GeomUtil {
         return Duration.ofSeconds((long) (meters / knotsToMs(knots)));
     }
 
-    /*
-    https://stackoverflow.com/a/16794680/3000387
-     */
-    private static double distance(
-            final double lat1, final double lon1, final double el1,
-            final double lat2, final double lon2, final double el2
+    private static double distanceOnMslDegrees(
+            final double lat1, final double lon1,
+            final double lat2, final double lon2
     ) {
-        final double latDistance = Math.toRadians(lat2 - lat1);
-        final double lonDistance = Math.toRadians(lon2 - lon1);
-        final double a = sin(latDistance / 2) * sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * sin(lonDistance / 2) * sin(lonDistance / 2);
-        final double c = 2 * atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        final double phi1 = Math.toRadians(lat1);
+        final double phi2 = Math.toRadians(lat2);
+        final double deltaPhi = Math.toRadians(lat2 - lat1);
+        final double deltaLambda = Math.toRadians(lon2 - lon1);
 
-        final double height = el1 - el2;
+        final double a =
+                sin(deltaPhi / 2.0) * sin(deltaPhi / 2.0) +
+                        cos(phi1) * cos(phi2) * sin(deltaLambda / 2.0) * sin(deltaLambda / 2.0);
 
-        distance = Math.pow(distance, 2) + Math.pow(height, 2);
-
-        return Math.sqrt(distance);
+        final double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+        return 1000.0 * R * c;
     }
 
     public static Point2D parsePoint(final Point position) {
