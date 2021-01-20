@@ -188,6 +188,13 @@
             <artifactId>rtree2</artifactId>
             <version>0.9-RC1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.kordamp.jipsy</groupId>
+            <artifactId>jipsy</artifactId>
+            <version>0.6.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
