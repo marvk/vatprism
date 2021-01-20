@@ -14,6 +14,10 @@ import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.CachedVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.version.VersionApi;
+import net.marvk.fs.vatsim.map.version.VersionApiException;
+import net.marvk.fs.vatsim.map.version.VersionProvider;
+import net.marvk.fs.vatsim.map.version.VersionResponse;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 
@@ -118,7 +122,7 @@ public class PreloaderViewModel implements ViewModel {
     }
 
     public String getVersionAndName() {
-        return "%s\nCreated by %s".formatted(versionProvider.get(), "Marvin Kuhnke");
+        return "%s\nCreated by %s".formatted(versionProvider.getString(), "Marvin Kuhnke");
     }
 
     private static class CallableTask extends Task<Void> {
@@ -207,8 +211,25 @@ public class PreloaderViewModel implements ViewModel {
                 final UpperInformationRegionRepository upperInformationRegionRepository,
                 final InternationalDateLineRepository internationalDateLineRepository,
                 final CountryRepository countryRepository,
-                final VatsimApi vatsimApi
+                final VatsimApi vatsimApi,
+                final VersionApi versionApi
         ) {
+            final var checkVersion = new CallableTask(
+                    "Checking Version",
+                    "Checked Version",
+                    () -> {
+                        try {
+                            final VersionResponse versionResponse = versionApi.checkVersion();
+                            if (versionResponse.getResult() == VersionResponse.Result.OUTDATED) {
+                                log.warn("Found newer version: %s".formatted(versionResponse.getLatestVersion()));
+                            } else {
+                                log.info("Version is current");
+                            }
+                        } catch (final VersionApiException e) {
+                            log.error("", e);
+                        }
+                    }
+            );
             final var loadWorld = new CallableTask(
                     "Loading World",
                     "Loaded World",
@@ -269,6 +290,7 @@ public class PreloaderViewModel implements ViewModel {
                     });
 
             tasks = List.of(
+                    checkVersion,
                     loadWorld,
                     loadLakes,
                     loadCountries,
