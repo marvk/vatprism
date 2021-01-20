@@ -521,17 +521,12 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                     }
 
                     changing = false;
-                    System.out.println("selectedInView = " + selectedInView);
-                    System.out.println("selectedInModel = " + selectedInModel);
-                    System.out.println();
                 }
             });
 
             selectedInModel.addListener((ListChangeListener<T>) c -> {
                 if (!changing) {
                     changing = true;
-
-                    System.out.println(c);
 
                     while (c.next()) {
                         for (final T t : c.getRemoved()) {
@@ -544,10 +539,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                     }
 
                     changing = false;
-
-                    System.out.println("selectedInView = " + selectedInView);
-                    System.out.println("selectedInModel = " + selectedInModel);
-                    System.out.println();
                 }
             });
         }

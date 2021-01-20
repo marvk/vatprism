@@ -42,7 +42,6 @@ public class FilteredClientsViewModel implements ViewModel {
     }
 
     private Predicate<Client> predicate() {
-        System.out.println("FilteredClientsViewModel.predicate");
         return this::testClient;
     }
 

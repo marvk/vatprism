@@ -231,12 +231,14 @@ public class Filter implements Predicate<Client> {
         return true;
     }
 
-    private boolean testAirport(final Predicate<String> predicate, final Airport airport) {
-        return airport != null && (predicate.test(airport.getIcao()) || testFirb(predicate, airport.getFlightInformationRegionBoundary()));
+    private boolean testAirport(final StringPredicateListPredicate predicate, final Airport airport) {
+        return predicate.matchesAll() ||
+                (airport != null && (predicate.test(airport.getIcao()) || testFirb(predicate, airport.getFlightInformationRegionBoundary())));
     }
 
-    private boolean testFirb(final Predicate<String> predicate, final FlightInformationRegionBoundary firb) {
-        return firb != null && predicate.test(firb.getIcao());
+    private boolean testFirb(final StringPredicateListPredicate predicate, final FlightInformationRegionBoundary firb) {
+        return predicate.matchesAll() ||
+                firb != null && predicate.test(firb.getIcao());
     }
 
     private boolean testCallsignAndCid(final Client client) {
