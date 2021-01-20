@@ -32,6 +32,8 @@ import org.kordamp.ikonli.octicons.Octicons;
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private final PreferencesView preferencesView;
     @FXML
+    private ToggleButton filter;
+    @FXML
     private Button reload;
     @FXML
     private ToggleButton autoReload;
@@ -65,7 +67,8 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
         bindBooleanBidirectional(enableDebug, "metrics.enabled");
         bindBooleanBidirectional(enablePilotCallsign, "pilots.label");
-        bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled");
+        bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled", true);
+        bindBooleanBidirectional(filter, "filters.enabled", true);
 
         booleanProperty("general.debug").addListener((observable, oldValue, newValue) -> {
             final ObservableList<Node> children = container.getChildren();
@@ -143,8 +146,16 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
         return viewModel.getPreferences().booleanProperty(key);
     }
 
+    private BooleanProperty booleanProperty(final String key, final boolean defaultValue) {
+        return viewModel.getPreferences().booleanProperty(key, defaultValue);
+    }
+
     private void bindBooleanBidirectional(final Toggle button, final String key) {
         bindBooleanBidirectional(button.selectedProperty(), key);
+    }
+
+    private void bindBooleanBidirectional(final ToggleButton button, final String key, final boolean defaultValue) {
+        bindBooleanBidirectional(button.selectedProperty(), booleanProperty(key, defaultValue));
     }
 
     private void bindBooleanBidirectional(final Property<Boolean> property, final String key) {

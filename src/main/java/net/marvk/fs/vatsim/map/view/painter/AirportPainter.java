@@ -30,7 +30,7 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Label")
     private boolean text = true;
     @Parameter("Label Color")
-    private Color textColor = Color.GREY;
+    private Color textColor = Color.web("80334d");
 
     @Parameter("Background")
     private boolean paintBackground = true;
@@ -48,8 +48,8 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Tower Color")
     private Color twrColor = Color.web("760023");
     @Parameter("Approach Color")
-    private Color appColor = Color.CYAN.darker().darker().darker();
-    @Parameter("Approach PlaceholderColor")
+    private Color appColor = Color.web("005757");
+    @Parameter("Approach Placeholder Color")
     private Color appPlaceholderColor = Color.web("17130a");
     @Parameter("Controller Label Color")
     private Color typesLabelColor = Color.WHITE.darker();

@@ -7,8 +7,9 @@
       maxWidth="-Infinity"
       minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
       prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-    <!--    <fx:include source="../menubar/MenuBarView.fxml" VBox.vgrow="NEVER"/>-->
-    <fx:include source="../toolbar/ToolbarView.fxml" VBox.vgrow="NEVER"/>
+    <!-- load tabs first so that preferences from map are put in first, the swap around in MainView -->
     <fx:include source="../tabs/TabsView.fxml" VBox.vgrow="ALWAYS"/>
+
+    <fx:include source="../toolbar/ToolbarView.fxml" VBox.vgrow="NEVER"/>
     <fx:include source="../statusbar/StatusBarView.fxml" VBox.vgrow="NEVER"/>
 </VBox>

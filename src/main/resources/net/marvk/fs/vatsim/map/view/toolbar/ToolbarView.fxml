@@ -23,14 +23,20 @@
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
-        <ToggleButton fx:id="enablePilotCallsign" styleClass="icon-button" mnemonicParsing="false">
+        <ToggleButton fx:id="enablePilotCallsign" userData="connections.enabled" styleClass="icon-button"
+                      mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-typography-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="enableDepartureArrivalLines" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
-                <FontIcon iconLiteral="oct-arrow-switch-16" iconSize="24"/>
+                <FontIcon iconLiteral="oct-share-android-16" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="filter" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="oct-filter-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Region HBox.hgrow="ALWAYS"/>
