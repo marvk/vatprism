@@ -35,11 +35,14 @@ public class FilteredClientsViewModel implements ViewModel {
                 selectedFilters,
                 lastUpdate
         ));
-
+        // TODO workaround for weak listener being collected for some reason
+        lastUpdate.addListener((observable, oldValue, newValue) -> {
+        });
         Notifications.CLIENTS_RELOADED.subscribe(() -> lastUpdate.set(LocalDateTime.now()));
     }
 
     private Predicate<Client> predicate() {
+        System.out.println("FilteredClientsViewModel.predicate");
         return this::testClient;
     }
 

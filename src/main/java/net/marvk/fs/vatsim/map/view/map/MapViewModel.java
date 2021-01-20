@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class MapViewModel implements ViewModel {
+    private static final int SELECTION_DISTANCE = 8;
     private final DoubleProperty scale = new SimpleDoubleProperty(1);
     private final ReadOnlyObjectWrapper<Point2D> worldCenter = new ReadOnlyObjectWrapper<>(new Point2D(0, 0));
     private final DoubleProperty viewWidth = new SimpleDoubleProperty();
@@ -226,7 +227,7 @@ public class MapViewModel implements ViewModel {
     }
 
     private double selectionDistance() {
-        return 10 / scale.get();
+        return SELECTION_DISTANCE / scale.get();
     }
 
     private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
