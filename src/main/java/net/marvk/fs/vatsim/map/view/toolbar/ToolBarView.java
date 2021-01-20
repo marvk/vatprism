@@ -29,10 +29,49 @@ import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
+import java.util.List;
+
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private final PreferencesView preferencesView;
     @FXML
-    private ToggleButton filter;
+    private ToggleButton airports;
+    @FXML
+    private ToggleButton airportsLabel;
+    @FXML
+    private ToggleButton airportsInactive;
+    @FXML
+    private ToggleButton firs;
+    @FXML
+    private ToggleButton firsInactive;
+    @FXML
+    private ToggleButton uirs;
+    @FXML
+    private ToggleButton uirsInactive;
+    @FXML
+    private ToggleButton filters;
+    @FXML
+    private ToggleButton pilotsLabel;
+    @FXML
+    private ToggleButton connections;
+    @FXML
+    private ToggleButton metrics;
+
+    private List<ToggleButton> painterToggles() {
+        return List.of(
+                airports,
+                airportsLabel,
+                airportsInactive,
+                firs,
+                firsInactive,
+                uirs,
+//                uirsInactive,
+                filters,
+                pilotsLabel,
+                connections,
+                metrics
+        );
+    }
+
     @FXML
     private Button reload;
     @FXML
@@ -43,12 +82,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private FontIcon fullScreenIcon;
     @FXML
     private HBox container;
-    @FXML
-    private ToggleButton enablePilotCallsign;
-    @FXML
-    private ToggleButton enableDepartureArrivalLines;
-    @FXML
-    private ToggleButton enableDebug;
+
     @InjectViewModel
     private ToolBarViewModel viewModel;
 
@@ -65,19 +99,16 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     public void initialize() {
         container.sceneProperty().addListener((observable, oldValue, newValue) -> setupWindowBindings(newValue));
 
-        bindBooleanBidirectional(enableDebug, "metrics.enabled");
-        bindBooleanBidirectional(enablePilotCallsign, "pilots.label");
-        bindBooleanBidirectional(enableDepartureArrivalLines, "connections.enabled", true);
-        bindBooleanBidirectional(filter, "filters.enabled", true);
+        painterToggles().forEach(this::setupToggle);
 
         booleanProperty("general.debug").addListener((observable, oldValue, newValue) -> {
             final ObservableList<Node> children = container.getChildren();
             if (newValue) {
-                if (!children.contains(enableDebug)) {
-                    children.add(children.size() - 1, enableDebug);
+                if (!children.contains(metrics)) {
+                    children.add(children.size() - 1, metrics);
                 }
             } else {
-                children.remove(enableDebug);
+                children.remove(metrics);
             }
         });
 
@@ -110,6 +141,10 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
                 reloadRotateTransition.play();
             }
         });
+    }
+
+    private void setupToggle(final ToggleButton enableDebug) {
+        bindBooleanBidirectional(enableDebug, (String) enableDebug.getUserData());
     }
 
     private void setupWindowBindings(final Scene scene) {

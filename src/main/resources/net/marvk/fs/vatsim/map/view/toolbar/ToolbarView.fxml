@@ -23,22 +23,66 @@
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
-        <ToggleButton fx:id="enablePilotCallsign" userData="connections.enabled" styleClass="icon-button"
-                      mnemonicParsing="false">
+        <ToggleButton fx:id="pilotsLabel" userData="pilots.label" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-typography-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
-        <ToggleButton fx:id="enableDepartureArrivalLines" styleClass="icon-button" mnemonicParsing="false">
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="connections" userData="connections.enabled" styleClass="icon-button"
+                      mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-share-android-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
-        <ToggleButton fx:id="filter" styleClass="icon-button" mnemonicParsing="false">
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="filters" userData="filters.enabled" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-filter-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="airports" userData="airports.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-airport" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="airportsLabel" userData="airports.label" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-airport-label" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="airportsInactive"
+                      userData="airports.paint_uncontrolled_airports_with_destinations_or_arrivals"
+                      styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-airport-inactive" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="firs" userData="active_firs.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-fir" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton fx:id="firsInactive" userData="inactive_firs.enabled" styleClass="icon-button"
+                      mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-fir-inactive" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="uirs" userData="active_uirs.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-uir" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <!--This toggle isn't really needed, I think this might only be used for debugging purposes and doesn't warrent quick access-->
+        <!--        <ToggleButton fx:id="uirsInactive" userData="inactive_uirs.enabled" styleClass="icon-button" mnemonicParsing="false">-->
+        <!--            <graphic>-->
+        <!--                <FontIcon iconLiteral="vatprism-uir-inactive" iconSize="24"/>-->
+        <!--            </graphic>-->
+        <!--        </ToggleButton>-->
         <Region HBox.hgrow="ALWAYS"/>
         <ToggleButton fx:id="fullScreen" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
@@ -46,7 +90,7 @@
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
-        <ToggleButton fx:id="enableDebug" styleClass="icon-button" mnemonicParsing="false">
+        <ToggleButton fx:id="metrics" styleClass="icon-button" userData="metrics.enabled" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>
             </graphic>
