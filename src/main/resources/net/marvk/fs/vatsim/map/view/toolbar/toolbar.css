@@ -1,5 +1,6 @@
 * {
     -blurple: #7289DA;
+    -greyple: #99AAB5;
 }
 
 .separator *.line {
@@ -13,27 +14,52 @@
 }
 
 .discord-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: -blurple;
+    -fx-background-radius: 3;
+    -fx-background-color: -blurple;
 }
 
-.discord-button:selected {
-    -fx-background-color: transparent;
+.discord-button:selected {;
+    -fx-background-color: -blurple;
 }
 
-.discord-button:hover {
-    -fx-background-color: transparent;
-    -fx-text-fill: derive(-blurple, 15%);
+.discord-button:hover {;
+    -fx-background-color: -blurple;
 }
 
-.discord-button:selected:hover {
-    -fx-background-color: transparent;
+.discord-button:selected:hover {;
+    -fx-background-color: -blurple;
 }
 
 .discord-button .ikonli-font-icon {
-    -fx-icon-color: -blurple;
+    -fx-icon-color: white;
 }
 
 .discord-button .ikonli-font-icon:hover {
-    -fx-icon-color: derive(-blurple, -50%);
+    -fx-icon-color: white;
+}
+
+
+.github-button {
+    -fx-background-radius: 3;
+    -fx-background-color: white;
+}
+
+.github-button:selected {
+    -fx-background-color: white;
+}
+
+.github-button:selected:hover {
+    -fx-background-color: white;
+}
+
+.github-button:hover {
+    -fx-background-color: white;
+}
+
+.github-button .ikonli-font-icon {
+    -fx-icon-color: black;
+}
+
+.github-button .ikonli-font-icon:hover {
+    -fx-icon-color: black;
 }

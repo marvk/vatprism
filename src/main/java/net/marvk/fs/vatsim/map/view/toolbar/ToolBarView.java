@@ -232,4 +232,9 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private void openDiscord() {
         viewModel.visitDiscord();
     }
+
+    @FXML
+    private void openGithub() {
+        viewModel.visitGithub();
+    }
 }

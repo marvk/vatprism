@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import org.kordamp.ikonli.javafx.*?>
-<HBox fx:id="container" stylesheets="@toolbar.css" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
+<HBox alignment="CENTER_LEFT" fx:id="container" stylesheets="@toolbar.css" styleClass="container"
+      xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.toolbar.ToolBarView">
     <children>
@@ -89,6 +91,17 @@
         <!--            </graphic>-->
         <!--        </ToggleButton>-->
         <Region HBox.hgrow="ALWAYS"/>
+        <Label style="-fx-font-weight: bold" text="VATprism"/>
+        <Label text=" is still in Development. Join the discourse!">
+            <padding>
+                <Insets right="10.0"/>
+            </padding>
+        </Label>
+        <Button onAction="#openGithub" styleClass="icon-button, github-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="oct-mark-github-16" iconSize="24"/>
+            </graphic>
+        </Button>
         <Button onAction="#openDiscord" styleClass="icon-button, discord-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="vatprism-discord" iconSize="24"/>

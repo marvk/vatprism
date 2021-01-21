@@ -99,4 +99,8 @@ public class ToolBarViewModel implements ViewModel {
     public void visitDiscord() {
         hostServices.showDocument("https://discord.gg/XPpFHhT8sk");
     }
+
+    public void visitGithub() {
+        hostServices.showDocument("https://github.com/marvk/vatprism");
+    }
 }

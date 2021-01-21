@@ -66,7 +66,7 @@
     -fx-pref-width: -vatsim-toolbar-button-size;
     -fx-pref-height: -vatsim-toolbar-button-size;
     -fx-padding: 0;
-    -fx-background-radius: 0;
+    -fx-background-radius: 3;
     -fx-cursor: hand;
 }
 
