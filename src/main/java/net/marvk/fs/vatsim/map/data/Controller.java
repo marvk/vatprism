@@ -41,6 +41,7 @@ public class Controller extends Client implements Data {
         frequency.set(controller.getFrequency());
         rating.set(ControllerRating.of(controller.getRating()));
         setAtisMessage(controller.getTextAtis());
+        setUrls(getAtisMessage());
     }
 
     @Override
@@ -50,9 +51,10 @@ public class Controller extends Client implements Data {
 
     private void setAtisMessage(final List<String> textAtis) {
         if (textAtis != null) {
-            final String msg = String
-                    .join(" ", textAtis);
+            final String msg = String.join(" ", textAtis);
             this.atisMessage.set(msg);
+        } else {
+            this.atisMessage.set(null);
         }
     }
 

@@ -80,6 +80,8 @@ public class Pilot extends Client implements Data {
         }
 
         eta.set(calculateEta());
+
+        setUrls(flightPlan.getRemarks());
     }
 
     private Eta calculateEta() {
