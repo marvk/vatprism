@@ -33,6 +33,9 @@ import java.util.List;
 
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private final PreferencesView preferencesView;
+    public ToggleButton pilots;
+    @FXML
+    private ToggleButton pilotsLabel;
     @FXML
     private ToggleButton airports;
     @FXML
@@ -50,14 +53,14 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private ToggleButton filters;
     @FXML
-    private ToggleButton pilotsLabel;
-    @FXML
     private ToggleButton connections;
     @FXML
     private ToggleButton metrics;
 
     private List<ToggleButton> painterToggles() {
         return List.of(
+                pilots,
+                pilotsLabel,
                 airports,
                 airportsLabel,
                 airportsInactive,
@@ -66,7 +69,6 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
                 uirs,
 //                uirsInactive,
                 filters,
-                pilotsLabel,
                 connections,
                 metrics
         );

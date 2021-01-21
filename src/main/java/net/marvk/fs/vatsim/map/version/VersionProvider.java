@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.version;
 
+import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;
 import com.google.inject.Singleton;
 
@@ -12,7 +13,15 @@ public final class VersionProvider {
     static {
         RAW_VERSION = VersionProvider.class.getPackage().getImplementationVersion();
         VERSION = RAW_VERSION == null ? "DEV" : RAW_VERSION;
-        SEM_VERSION = RAW_VERSION == null ? null : Version.valueOf(RAW_VERSION);
+        SEM_VERSION = tryParseRaw();
+    }
+
+    private static Version tryParseRaw() {
+        try {
+            return RAW_VERSION == null ? null : Version.valueOf(RAW_VERSION);
+        } catch (final UnexpectedCharacterException e) {
+            return null;
+        }
     }
 
     public String getString() {

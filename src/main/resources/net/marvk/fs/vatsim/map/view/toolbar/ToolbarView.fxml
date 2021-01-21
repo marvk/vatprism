@@ -23,9 +23,14 @@
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="pilots" userData="pilots.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-pilot" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
         <ToggleButton fx:id="pilotsLabel" userData="pilots.label" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
-                <FontIcon iconLiteral="oct-typography-16" iconSize="24"/>
+                <FontIcon iconLiteral="vatprism-pilot-label" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
