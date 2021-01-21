@@ -9,9 +9,11 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Map;
 
@@ -72,8 +74,10 @@ public class HttpVersionApi implements VersionApi {
 
     @SuppressWarnings("unchecked")
     private Map<String, Map<String, String>> requestVersion() throws URISyntaxException, IOException, InterruptedException {
-        final String formatted = this.url.formatted(versionProvider.getString(), channel);
-
+        final String formatted = this.url.formatted(
+                URLEncoder.encode(versionProvider.getString(), StandardCharsets.UTF_8),
+                URLEncoder.encode(channel.toString(), StandardCharsets.UTF_8)
+        );
         final HttpRequest build = HttpRequest
                 .newBuilder(new URI(formatted))
                 .timeout(timeout)
