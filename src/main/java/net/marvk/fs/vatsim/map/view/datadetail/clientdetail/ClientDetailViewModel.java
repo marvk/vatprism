@@ -25,7 +25,7 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
             twitchStream.bind(Bindings.createBooleanBinding(
                     () -> newValue.getUrls()
                                   .stream()
-                                  .anyMatch(e -> e.toString().contains("twitch")),
+                                  .anyMatch(e -> e.contains("twitch")),
                     newValue.getUrls()
             ));
             twitchStreamUrl.bind(Bindings.createObjectBinding(

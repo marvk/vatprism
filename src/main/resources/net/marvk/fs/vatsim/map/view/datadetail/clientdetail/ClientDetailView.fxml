@@ -20,7 +20,7 @@
         <StackPane onMouseClicked="#openStream" fx:id="headerPane">
             <Label StackPane.alignment="CENTER_LEFT" styleClass="live-dot" text="⬤">
                 <padding>
-                    <Insets left="4.0"/>
+                    <Insets left="5.0"/>
                 </padding>
             </Label>
             <Label styleClass="header-label" fx:id="headerLabel"/>

@@ -4,6 +4,8 @@
 
 .twitch-container {
     -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, -vatsim-background-color-light, -twitch);
+    -fx-background-radius: 0 10 10 0;
+    -fx-background-insets: 0 10 0 0;
     -fx-cursor: hand;
 }
 
@@ -15,7 +17,7 @@
     -fx-text-fill: white;
 }
 
-.live-dot {
+.header-pane .live-dot {
     -fx-text-fill: transparent;
 }
 
