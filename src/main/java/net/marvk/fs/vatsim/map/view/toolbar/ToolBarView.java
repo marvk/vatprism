@@ -227,4 +227,9 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
         popup.setAutoHide(true);
         popup.show(container.getScene().getWindow());
     }
+
+    @FXML
+    private void openDiscord() {
+        viewModel.visitDiscord();
+    }
 }

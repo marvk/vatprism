@@ -1,3 +1,7 @@
+* {
+    -blurple: #7289DA;
+}
+
 .separator *.line {
     -fx-border-style: solid;
     -fx-border-color: -vatsim-background-color-very-very-light;
@@ -6,4 +10,30 @@
 
 .separator {
     -fx-padding: 5, 2, 5, 2;
+}
+
+.discord-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -blurple;
+}
+
+.discord-button:selected {
+    -fx-background-color: transparent;
+}
+
+.discord-button:hover {
+    -fx-background-color: transparent;
+    -fx-text-fill: derive(-blurple, 15%);
+}
+
+.discord-button:selected:hover {
+    -fx-background-color: transparent;
+}
+
+.discord-button .ikonli-font-icon {
+    -fx-icon-color: -blurple;
+}
+
+.discord-button .ikonli-font-icon:hover {
+    -fx-icon-color: derive(-blurple, -50%);
 }

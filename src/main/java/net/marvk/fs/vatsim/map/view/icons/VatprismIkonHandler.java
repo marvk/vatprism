@@ -10,7 +10,7 @@ import java.net.URL;
 
 @ServiceProviderFor(IkonHandler.class)
 public class VatprismIkonHandler extends AbstractIkonHandler {
-    private static final String FONT_RESOURCE = "/net/marvk/fs/vatsim/map/vatprism.ttf";
+    private static final String FONT_RESOURCE = "/net/marvk/fs/vatsim/map/view/fonts/vatprism.ttf";
 
     @Override
     public boolean supports(final String description) {

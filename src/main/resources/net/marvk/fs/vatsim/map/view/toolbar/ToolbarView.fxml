@@ -89,6 +89,12 @@
         <!--            </graphic>-->
         <!--        </ToggleButton>-->
         <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#openDiscord" styleClass="icon-button, discord-button" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-discord" iconSize="24"/>
+            </graphic>
+        </Button>
+        <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="fullScreen" styleClass="icon-button" mnemonicParsing="false">
             <graphic>
                 <FontIcon fx:id="fullScreenIcon" iconLiteral="oct-screen-normal-16" iconSize="24"/>

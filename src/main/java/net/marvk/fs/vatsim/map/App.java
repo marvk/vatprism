@@ -110,7 +110,8 @@ public class App extends MvvmfxGuiceApplication {
                 "B612Mono-Bold.ttf",
                 "B612Mono-BoldItalic.ttf",
                 "B612Mono-Italic.ttf",
-                "B612Mono-Regular.ttf"
+                "B612Mono-Regular.ttf",
+                "vatprism.ttf"
         );
 
         for (final String fontFile : fontFiles) {

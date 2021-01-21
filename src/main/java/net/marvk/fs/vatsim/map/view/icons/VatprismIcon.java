@@ -3,15 +3,16 @@ package net.marvk.fs.vatsim.map.view.icons;
 import org.kordamp.ikonli.Ikon;
 
 public enum VatprismIcon implements Ikon {
-    FIR("vatprism-fir", '\u0061'),
-    FIR_INACTIVE("vatprism-fir-inactive", '\u0064'),
-    UIR("vatprism-uir", '\u0063'),
-    UIR_INACTIVE("vatprism-uir-inactive", '\uE800'),
-    AIRPORT("vatprism-airport", '\u0065'),
-    AIRPORT_INACTIVE("vatprism-airport-inactive", '\u0066'),
-    AIRPORT_LABEL("vatprism-airport-label", '\u0067'),
-    PILOT("vatprism-pilot", '\u0068'),
-    PILOT_LABEL("vatprism-pilot-label", '\u0069'),
+    FIR("vatprism-fir", '\ue800'),
+    FIR_INACTIVE("vatprism-fir-inactive", '\ue808'),
+    UIR("vatprism-uir", '\ue806'),
+    UIR_INACTIVE("vatprism-uir-inactive", '\ue807'),
+    AIRPORT("vatprism-airport", '\ue805'),
+    AIRPORT_INACTIVE("vatprism-airport-inactive", '\ue802'),
+    AIRPORT_LABEL("vatprism-airport-label", '\ue801'),
+    PILOT("vatprism-pilot", '\ue803'),
+    PILOT_LABEL("vatprism-pilot-label", '\ue804'),
+    DISCORD("vatprism-discord", '\ue809'),
     ;
 
     public static VatprismIcon findByDescription(final String description) {

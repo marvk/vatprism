@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.view.toolbar;
 import com.google.inject.Inject;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
+import javafx.application.HostServices;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import net.marvk.fs.vatsim.map.data.Preferences;
@@ -14,13 +15,15 @@ public class ToolBarViewModel implements ViewModel {
     private final ReadOnlyStringWrapper errorMessage = new ReadOnlyStringWrapper();
     private final BooleanProperty autoReload = new SimpleBooleanProperty();
 
+    private final HostServices hostServices;
     private final Preferences preferences;
 
     @InjectScope
     private ToolbarScope toolbarScope;
 
     @Inject
-    public ToolBarViewModel(final Preferences preferences) {
+    public ToolBarViewModel(final HostServices hostServices, final Preferences preferences) {
+        this.hostServices = hostServices;
         this.preferences = preferences;
     }
 
@@ -91,5 +94,9 @@ public class ToolBarViewModel implements ViewModel {
 
     public void setAutoReload(final boolean autoReload) {
         this.autoReload.set(autoReload);
+    }
+
+    public void visitDiscord() {
+        hostServices.showDocument("https://discord.gg/XPpFHhT8sk");
     }
 }
