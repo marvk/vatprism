@@ -6,10 +6,9 @@ import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimServer;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     private final ObjectProperty<ZonedDateTime> logonTime = new SimpleObjectProperty<>();
     private final ObjectProperty<ZonedDateTime> lastUpdatedTime = new SimpleObjectProperty<>();
 
-    private final ReadOnlyListWrapper<URL> urls = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+    private final ReadOnlyListWrapper<String> urls = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
 
     public Client() {
         cidString.bind(cid.asString());
@@ -104,11 +103,11 @@ public abstract class Client implements Settable<VatsimClient>, Data {
 
     public abstract ClientType clientType();
 
-    protected SimpleListProperty<URL> getUrlsWritable() {
+    protected SimpleListProperty<String> getUrlsWritable() {
         return urls;
     }
 
-    public ReadOnlyListProperty<URL> getUrls() {
+    public ReadOnlyListProperty<String> getUrls() {
         return urls.getReadOnlyProperty();
     }
 
@@ -120,21 +119,12 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         this.urls.setAll(parseUrls(s));
     }
 
-    private static List<URL> parseUrls(final String s) {
+    private static List<String> parseUrls(final String s) {
         return URL
                 .matcher(s.replaceAll("/./\s+$", ""))
                 .results()
                 .map(e -> e.group(1))
-                .map(Client::tryCreateUrl)
-                .filter(Objects::nonNull)
+                .map(e -> e.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList());
-    }
-
-    private static URL tryCreateUrl(final String url) {
-        try {
-            return new URL(url);
-        } catch (final MalformedURLException e) {
-            return null;
-        }
     }
 }

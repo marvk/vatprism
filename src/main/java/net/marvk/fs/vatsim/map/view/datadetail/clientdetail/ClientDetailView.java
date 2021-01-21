@@ -4,7 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
@@ -13,6 +13,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, Client> {
+    @FXML
+    private Label headerLabel;
+    @FXML
+    private StackPane headerPane;
     @FXML
     private DataDetailPane root;
     @FXML
@@ -42,6 +46,18 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        viewModel.twitchStreamProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                headerPane.getStyleClass().add("twitch-container");
+            } else {
+                headerPane.getStyleClass().remove("twitch-container");
+            }
+        });
+    }
+
+    @Override
     protected void setData(final Client client) {
         onlineSince.textProperty().bind(Bindings.createStringBinding(
                 () -> {
@@ -54,13 +70,18 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
                 client.logonTimeProperty()
         ));
         server.textProperty().bind(client.serverProperty());
-        root.headerTextProperty().bind(client.callsignProperty());
         cid.textProperty().bind(client.cidStringProperty());
         realName.textProperty().bind(client.realNameProperty());
+        headerLabel.textProperty().bind(client.callsignProperty());
     }
 
     @FXML
-    private void openStats(final MouseEvent event) {
+    private void openStats() {
         viewModel.openStats();
+    }
+
+    @FXML
+    private void openStream() {
+        viewModel.openStream();
     }
 }

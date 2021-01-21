@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.*?>
-<DataDetailPane headerMonospace="true" fx:id="root" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+<DataDetailPane stylesheets="@ClientDetail.css" headerMonospace="true" fx:id="root" maxHeight="1.7976931348623157E308"
+                maxWidth="1.7976931348623157E308"
                 minHeight="-Infinity"
                 minWidth="-Infinity" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"
                 xmlns:fx="http://javafx.com/fxml/1"
@@ -14,6 +16,16 @@
         <Double fx:id="spacerColumn" fx:value="10"/>
         <Double fx:id="contentColumn" fx:value="80"/>
     </fx:define>
+    <headerNode>
+        <StackPane onMouseClicked="#openStream" fx:id="headerPane">
+            <Label StackPane.alignment="CENTER_LEFT" styleClass="live-dot" text="⬤">
+                <padding>
+                    <Insets left="4.0"/>
+                </padding>
+            </Label>
+            <Label styleClass="header-label" fx:id="headerLabel"/>
+        </StackPane>
+    </headerNode>
     <contentNode>
         <GridPane hgap="2.0" vgap="2.0">
             <columnConstraints>
