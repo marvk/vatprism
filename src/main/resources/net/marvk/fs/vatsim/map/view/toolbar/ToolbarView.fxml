@@ -119,6 +119,11 @@
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
+        <Button styleClass="icon-button" onAction="#showUsageGuide" mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="oct-question-16" iconSize="24"/>
+            </graphic>
+        </Button>
         <Button styleClass="icon-button" onAction="#showAbout" mnemonicParsing="false">
             <graphic>
                 <FontIcon iconLiteral="oct-info-16" iconSize="24"/>

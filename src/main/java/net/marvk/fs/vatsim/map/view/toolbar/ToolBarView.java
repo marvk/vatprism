@@ -107,7 +107,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
             final ObservableList<Node> children = container.getChildren();
             if (newValue) {
                 if (!children.contains(metrics)) {
-                    children.add(children.size() - 1, metrics);
+                    children.add(children.size() - 2, metrics);
                 }
             } else {
                 children.remove(metrics);
@@ -236,5 +236,10 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private void openGithub() {
         viewModel.visitGithub();
+    }
+
+    @FXML
+    private void showUsageGuide() {
+        viewModel.visitUsageGuide();
     }
 }
