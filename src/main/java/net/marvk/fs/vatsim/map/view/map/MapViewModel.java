@@ -101,8 +101,6 @@ public class MapViewModel implements ViewModel {
 
         this.scrollSpeed.bind(preferences.doubleProperty("general.scroll_speed"));
 
-        this.mouseWorldPosition.addListener((observable, oldValue, newValue) -> setContextMenuItems(newValue));
-
         this.world = world.list();
         this.lakes = lakes.list();
 
@@ -154,7 +152,7 @@ public class MapViewModel implements ViewModel {
 
         this.frameMetrics = new FrameMetrics(names, 250);
 
-        Bindings.bindContent(statusScope.highlightedFirs(), contextMenu.getFirbs().getItems());
+//        Bindings.bindContent(statusScope.highlightedFirs(), contextMenu.getFirbs().getItems());
         statusScope.mouseViewPositionProperty().bind(mouseViewPosition);
         statusScope.mouseWorldPositionProperty().bind(mouseWorldPosition);
 
@@ -181,6 +179,7 @@ public class MapViewModel implements ViewModel {
     }
 
     public void openClosest() {
+        setContextMenuItems();
         selectedItem.set(contextMenu.closest(getMouseWorldPosition()).orElse(null));
     }
 
@@ -195,8 +194,10 @@ public class MapViewModel implements ViewModel {
         panTransition.playFromStart();
     }
 
-    private void setContextMenuItems(final Point2D mouseWorldPosition) {
-        final List<FlightInformationRegionBoundary> firbs = flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition, selectionDistance());
+    public void setContextMenuItems() {
+        System.out.println("MapViewModel.setContextMenuItems");
+        final List<FlightInformationRegionBoundary> firbs = flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition
+                .get(), selectionDistance());
         contextMenu.getFirbs()
                    .getItems()
                    .setAll(firbs);
@@ -212,7 +213,7 @@ public class MapViewModel implements ViewModel {
                    .setAll(uirs);
 
         final List<Airport> airports = airportRepository
-                .streamSearchByPosition(mouseWorldPosition, selectionDistance(), Integer.MAX_VALUE)
+                .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
                 .filter(Airport::hasControllers)
                 .limit(10)
                 .collect(Collectors.toList());
@@ -220,7 +221,7 @@ public class MapViewModel implements ViewModel {
                    .getItems()
                    .setAll(airports);
 
-        final List<Pilot> pilots = clientRepository.searchByPosition(mouseWorldPosition, selectionDistance(), 10);
+        final List<Pilot> pilots = clientRepository.searchByPosition(mouseWorldPosition.get(), selectionDistance(), 10);
         contextMenu.getPilots()
                    .getItems()
                    .setAll(pilots);
@@ -366,6 +367,7 @@ public class MapViewModel implements ViewModel {
     }
 
     public ContextMenuViewModel showingContextMenu() {
+        setContextMenuItems();
         selectionShape.set(
                 new Circle2D(mouseViewPosition.get(), selectionDistance())
         );

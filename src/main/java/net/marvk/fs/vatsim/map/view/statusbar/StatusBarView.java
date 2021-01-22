@@ -3,15 +3,12 @@ package net.marvk.fs.vatsim.map.view.statusbar;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.view.BindingsUtil;
 
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class StatusBarView implements FxmlView<StatusBarViewModel> {
     @FXML
@@ -19,26 +16,20 @@ public class StatusBarView implements FxmlView<StatusBarViewModel> {
     @FXML
     private Label mousePosition;
     @FXML
-    private Label highlightedFirs;
+    private Label information;
     @InjectViewModel
     private StatusBarViewModel viewModel;
 
     public void initialize() {
         mousePosition.textProperty().bind(BindingsUtil.position(viewModel.mouseWorldPositionProperty()));
 
-        highlightedFirs.textProperty().bind(Bindings.createStringBinding(() ->
-                        viewModel.getHighlightedFirs()
-                                 .stream()
-                                 .map(FlightInformationRegionBoundary::getIcao)
-                                 .collect(Collectors.joining(", ")),
-                viewModel.getHighlightedFirs()
-        ));
+        information.textProperty().bind(viewModel.informationProperty());
 
         viewModel.playerStatsProperty().addListener((observable, oldValue, newValue) -> setPlayerStats());
         setPlayerStats();
 
         bindTextToTooltip(playersOnline);
-        bindTextToTooltip(highlightedFirs);
+        bindTextToTooltip(information);
         bindTextToTooltip(mousePosition);
     }
 

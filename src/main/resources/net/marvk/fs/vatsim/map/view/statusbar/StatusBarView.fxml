@@ -18,7 +18,7 @@
             <children>
                 <Label fx:id="mousePosition" text="Label" GridPane.columnIndex="2"/>
                 <Label fx:id="playersOnline" text="PlayersOnline"/>
-                <Label fx:id="highlightedFirs" text="Label" GridPane.columnIndex="1"/>
+                <Label fx:id="information" text="Label" GridPane.columnIndex="1"/>
             </children>
             <HBox.margin>
                 <Insets left="2.0" right="2.0"/>

@@ -10,7 +10,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import net.marvk.fs.vatsim.map.data.Data;
-import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 
 @Singleton
 public class StatusScope implements Scope {
@@ -19,10 +18,10 @@ public class StatusScope implements Scope {
     private final ObservableList<Data> searchedData = FXCollections.observableArrayList();
     private final StringProperty searchQuery = new SimpleStringProperty();
 
-    private final ObservableList<FlightInformationRegionBoundary> highlightedFirs = FXCollections.observableArrayList();
+    private final ObservableList<? extends Data> highlightedData = FXCollections.observableArrayList();
 
-    public ObservableList<FlightInformationRegionBoundary> highlightedFirs() {
-        return highlightedFirs;
+    public ObservableList<? extends Data> highlightedFirs() {
+        return highlightedData;
     }
 
     public Point2D getMouseWorldPosition() {
