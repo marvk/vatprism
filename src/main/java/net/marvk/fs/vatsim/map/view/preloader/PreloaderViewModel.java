@@ -57,8 +57,10 @@ public class PreloaderViewModel implements ViewModel {
             Platform.runLater(() -> taskDescription.set("Loading View"));
             Platform.runLater(() -> {
                 try {
-                    final var viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
-                    this.viewTuple.set(viewTuple);
+                    runTimed(() -> {
+                        final var viewTuple = FluentViewLoader.fxmlView(MainView.class).load();
+                        this.viewTuple.set(viewTuple);
+                    }, "Loading view", "Loaded view");
                     progress.set(1);
                 } catch (final Exception ex) {
                     failed(ex);
@@ -125,6 +127,13 @@ public class PreloaderViewModel implements ViewModel {
         return "%s\nCreated by %s".formatted(versionProvider.getString(), "Marvin Kuhnke");
     }
 
+    private static void runTimed(final VoidCallable callable, final String startMessage, final String completeMessage) throws Exception {
+        final LocalDateTime start = LocalDateTime.now();
+        log.info(startMessage);
+        callable.call();
+        log.info("%s in %s".formatted(completeMessage, Duration.between(start, LocalDateTime.now())));
+    }
+
     private static class CallableTask extends Task<Void> {
         private final String taskStarted;
         private final String taskCompleted;
@@ -138,10 +147,7 @@ public class PreloaderViewModel implements ViewModel {
 
         @Override
         protected Void call() throws Exception {
-            final LocalDateTime start = LocalDateTime.now();
-            log.info(taskStarted);
-            callable.call();
-            log.info("%s in %s".formatted(taskCompleted, Duration.between(start, LocalDateTime.now())));
+            runTimed(callable, taskStarted, taskCompleted);
             updateProgress(1, 1);
             return null;
         }
