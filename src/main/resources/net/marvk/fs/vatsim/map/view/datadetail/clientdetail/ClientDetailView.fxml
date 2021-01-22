@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import java.lang.*?>
-<DataDetailPane stylesheets="@ClientDetail.css" headerMonospace="true" fx:id="root" maxHeight="1.7976931348623157E308"
+<DataDetailPane stylesheets="@clientdetail.css" headerMonospace="true" fx:id="root" maxHeight="1.7976931348623157E308"
                 maxWidth="1.7976931348623157E308"
                 minHeight="-Infinity"
                 minWidth="-Infinity" styleClass="container" xmlns="http://javafx.com/javafx/11.0.1"

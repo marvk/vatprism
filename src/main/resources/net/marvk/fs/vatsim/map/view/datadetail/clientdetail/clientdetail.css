@@ -18,9 +18,10 @@
 }
 
 .header-pane .live-dot {
-    -fx-text-fill: transparent;
+    visibility: hidden;
 }
 
 .twitch-container .live-dot {
     -fx-text-fill: red;
+    visibility: visible;
 }
