@@ -191,16 +191,16 @@ public class Filter implements Predicate<Client> {
     }
 
     private boolean testFlightStatus(final Pilot pilot) {
-        if (pilot.getEta().isArriving()) {
+        if (pilot.getEta().is(Eta.Status.ARRIVING)) {
             return flightStatuses.test(FlightStatus.ARRIVING);
         }
-        if (pilot.getEta().isDeparting()) {
+        if (pilot.getEta().is(Eta.Status.DEPARTING)) {
             return flightStatuses.test(FlightStatus.DEPARTING);
         }
-        if (pilot.getEta().isUnknown()) {
+        if (pilot.getEta().is(Eta.Status.UNKNOWN)) {
             return flightStatuses.test(FlightStatus.UNKNOWN);
         }
-        if (pilot.getEta().isEnRoute()) {
+        if (pilot.getEta().is(Eta.Status.EN_ROUTE)) {
             return flightStatuses.test(FlightStatus.ENROUTE);
         }
         return false;

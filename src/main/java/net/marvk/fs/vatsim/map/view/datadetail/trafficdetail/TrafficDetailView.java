@@ -18,8 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.Eta;
 import net.marvk.fs.vatsim.map.data.FlightPlan;
-import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.PlaceholderBox;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
@@ -147,12 +147,12 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
         }
     }
 
-    private String getEta(final Pilot.Eta eta) {
-        if (eta.isDeparting()) {
+    private String getEta(final Eta eta) {
+        if (eta.is(Eta.Status.DEPARTING)) {
             return "⬈";
-        } else if (eta.isArriving()) {
+        } else if (eta.is(Eta.Status.ARRIVING)) {
             return "⬊";
-        } else if (eta.isEnRoute()) {
+        } else if (eta.is(Eta.Status.EN_ROUTE)) {
             return " ";
         } else {
             return " ";

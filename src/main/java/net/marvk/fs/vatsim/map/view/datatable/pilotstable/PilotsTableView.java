@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.view.datatable.pilotstable;
 import com.google.inject.Inject;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.Eta;
 import net.marvk.fs.vatsim.map.data.FlightRule;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.EtaToStringMapper;
@@ -91,11 +92,11 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .widthFactor(0.7)
                 .build();
 
-        this.<Pilot.Eta>newColumnBuilder()
+        this.<Eta>newColumnBuilder()
                 .title("ETA")
                 .objectObservableValueFactory(Pilot::etaProperty)
                 .toStringMapper(ETA_MAPPER::map)
-                .sortable(Comparator.comparing(Pilot.Eta::getDuration))
+                .sortable(Comparator.comparing(Eta::getDuration))
                 .mono(true)
                 .widthFactor(0.7)
                 .build();
