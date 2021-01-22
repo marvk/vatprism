@@ -29,3 +29,7 @@
 #### Fully Customizable!
 
 [![](https://i.imgur.com/GkxMnGy.png)](https://i.imgur.com/oSE1y7s.png)
+
+## [Usage Guide](/usage-guide)
+
+## [Usage Guide](/streamers)

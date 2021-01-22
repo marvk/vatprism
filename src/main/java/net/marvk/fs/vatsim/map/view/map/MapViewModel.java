@@ -195,7 +195,6 @@ public class MapViewModel implements ViewModel {
     }
 
     public void setContextMenuItems() {
-        System.out.println("MapViewModel.setContextMenuItems");
         final List<FlightInformationRegionBoundary> firbs = flightInformationRegionBoundaryRepository.getByPosition(mouseWorldPosition
                 .get(), selectionDistance());
         contextMenu.getFirbs()

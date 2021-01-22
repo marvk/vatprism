@@ -249,7 +249,6 @@ public class MapView implements FxmlView<MapViewModel> {
 
         public void refreshCurrentMousePosition() {
             if (currentMousePosition != null) {
-                System.out.println("InputEventHandler.refreshCurrentMousePosition");
                 viewModel.mouseViewPositionProperty().set(currentMousePosition);
             }
         }
