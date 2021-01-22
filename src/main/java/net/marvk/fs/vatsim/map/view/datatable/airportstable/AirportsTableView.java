@@ -44,7 +44,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(e -> GeomUtil.formatLon(e.getY()))
                 .sortable(Comparator.comparingDouble(Point2D::getX))
                 .mono(true)
-                .widthFactor(0.85)
+                .widthFactor(0.9)
                 .build();
 
         this.<Point2D>newColumnBuilder()
@@ -53,7 +53,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .toStringMapper(e -> GeomUtil.formatLat(e.getX()))
                 .sortable(Comparator.comparingDouble(Point2D::getY))
                 .mono(true)
-                .widthFactor(0.85)
+                .widthFactor(0.9)
                 .build();
 
         this.<String>newColumnBuilder()

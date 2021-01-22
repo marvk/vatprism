@@ -98,7 +98,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .toStringMapper(ETA_MAPPER::map)
                 .sortable(Comparator.comparing(Eta::getDuration))
                 .mono(true)
-                .widthFactor(0.7)
+                .widthFactor(0.8)
                 .build();
     }
 

@@ -12,6 +12,7 @@ public enum VatprismIcon implements Ikon {
     AIRPORT_LABEL("vatprism-airport-label", '\ue801'),
     PILOT("vatprism-pilot", '\ue803'),
     PILOT_LABEL("vatprism-pilot-label", '\ue804'),
+    PILOT_ON_GROUND("vatprism-pilot-on-ground", '\ue80A'),
     DISCORD("vatprism-discord", '\ue809'),
     ;
 

@@ -5,6 +5,7 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import net.marvk.fs.vatsim.map.data.Eta;
 import net.marvk.fs.vatsim.map.data.Pilot;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
@@ -28,6 +29,9 @@ public class PilotPainter extends MapPainter<Pilot> {
     private boolean paintBackground = false;
     @Parameter("Background Color")
     private Color backgroundColor;
+
+    @Parameter("Pilots On Ground")
+    private boolean onGround = true;
 
     @Parameter("Head")
     private boolean head = true;
@@ -73,20 +77,24 @@ public class PilotPainter extends MapPainter<Pilot> {
     }
 
     @Override
-    public void paint(final GraphicsContext c, final Pilot client) {
-        final Point2D position = client.getPosition();
+    public void paint(final GraphicsContext c, final Pilot pilot) {
+        if (pilot.getEta().is(Eta.Status.GROUND) && !onGround) {
+            return;
+        }
+
+        final Point2D position = pilot.getPosition();
 
         final double centerX = mapVariables.toCanvasX(position.getX());
 
         if (centerX - MULTI_DRAW_BOUND < 0) {
-            draw(c, client, 360);
+            draw(c, pilot, 360);
         }
 
         if (centerX + MULTI_DRAW_BOUND > mapVariables.getViewWidth()) {
-            draw(c, client, -360);
+            draw(c, pilot, -360);
         }
 
-        draw(c, client, 0);
+        draw(c, pilot, 0);
     }
 
     private void draw(final GraphicsContext c, final Pilot pilot, final int xOffset) {

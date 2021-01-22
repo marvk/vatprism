@@ -35,6 +35,12 @@
                 <FontIcon iconLiteral="vatprism-pilot-label" iconSize="24"/>
             </graphic>
         </ToggleButton>
+        <ToggleButton fx:id="pilotsOnGround" userData="pilots.pilots_on_ground" styleClass="icon-button"
+                      mnemonicParsing="false">
+            <graphic>
+                <FontIcon iconLiteral="vatprism-pilot-on-ground" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="connections" userData="connections.enabled" styleClass="icon-button"
                       mnemonicParsing="false">
