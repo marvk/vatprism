@@ -43,7 +43,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger GitHub pages rebuild
-        run: |
-          curl --fail --request POST \
-            --url https://api.github.com/repos/${{ github.repository }}/pages/builds \
-            --header "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}"
+        run: curl -u marvk:${{secrets.PAGES_BUILD_KEY}} -X POST https://api.github.com/repos/${{ github.repository }}/pages/builds
