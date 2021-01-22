@@ -24,8 +24,8 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-    //    @Parameter("Airport Color")
-    private Color airportColor = Color.GREY;
+    @Parameter("Airport Color")
+    private Color airportColor = Color.WHITE;
 
     @Parameter("Label")
     private boolean text = true;
@@ -136,8 +136,9 @@ public class AirportPainter extends MapPainter<Airport> {
             }
         }
 
-        c.setFill(textColor);
-        painterHelper.fillRect(c, x, y, 1, 1);
+        c.setFill(airportColor);
+        painterHelper.fillRect(c, x - 2, y, 5, 1);
+        painterHelper.fillRect(c, x, y - 2, 1, 5);
 
         if (paintControllers) {
             c.setTextBaseline(VPos.TOP);
@@ -152,8 +153,8 @@ public class AirportPainter extends MapPainter<Airport> {
                 final ControllerType type = types.get(i);
                 c.setFill(color(type));
                 c.setStroke(typesBorderColor);
-                final double xCur = labelsX(x, n, i, typesWidth);
-                final double yCur = labelsY(y);
+                final double xCur = typeLabelX(x, n, i, typesWidth);
+                final double yCur = typeLabelY(y);
                 painterHelper.fillRect(c, xCur, yCur, typesWidth, typesWidth);
 
                 if (type != ControllerType.APP) {
@@ -171,8 +172,8 @@ public class AirportPainter extends MapPainter<Airport> {
 
             if (paintApproach && !paintApproachCircle) {
                 c.setStroke(appColor);
-                final double xCur = labelsX(x, n, 0, typesWidth);
-                final double yCur = labelsY(y);
+                final double xCur = typeLabelX(x, n, 0, typesWidth);
+                final double yCur = typeLabelY(y);
 
                 painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (typesWidth + 1) + 2, typesWidth + 3);
             }
@@ -182,7 +183,7 @@ public class AirportPainter extends MapPainter<Airport> {
             painterHelper.fillTextWithBackground(
                     c,
                     x,
-                    y - 4,
+                    labelY(y),
                     icao,
                     paintBackground,
                     TextAlignment.CENTER,
@@ -205,11 +206,15 @@ public class AirportPainter extends MapPainter<Airport> {
         }
     }
 
-    private double labelsY(final double y) {
-        return y + 4;
+    private double labelY(final double y) {
+        return y - 4;
     }
 
-    private double labelsX(final double x, final int n, final int i, final double typesWidth) {
+    private double typeLabelY(final double y) {
+        return y + 6;
+    }
+
+    private double typeLabelX(final double x, final int n, final int i, final double typesWidth) {
         return 1 + x + i * (typesWidth + 1) - (n / 2.0) * (typesWidth + 1);
     }
 
