@@ -81,9 +81,9 @@ public class ContextMenuViewModel {
     private static Comparator<FlightInformationRegionBoundary> firbComparator(final Point2D worldPosition) {
         return Comparator
                 .<FlightInformationRegionBoundary>comparingDouble(e -> distanceToPolygon(e, worldPosition))
-                .thenComparingDouble(e -> distanceToLabel(e, worldPosition))
                 .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasFirControllers).reversed())
-                .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed());
+                .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed())
+                .thenComparingDouble(e -> distanceToLabel(e, worldPosition));
     }
 
     private static double distanceToLabel(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
