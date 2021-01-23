@@ -46,7 +46,7 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
 
     public void openStream() {
         if (twitchStreamUrl.get() != null) {
-            hostServices.showDocument(twitchStreamUrl.get());
+            hostServices.showDocument("https://" + twitchStreamUrl.get());
         }
     }
 }

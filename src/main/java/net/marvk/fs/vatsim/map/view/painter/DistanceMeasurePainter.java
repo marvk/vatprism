@@ -48,6 +48,8 @@ public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
         final double x2 = mapVariables.toCanvasX(distanceMeasure.getTo().getX());
         final double y2 = mapVariables.toCanvasY(distanceMeasure.getTo().getY());
 
+        c.setLineDashes(null);
+        c.setLineWidth(1);
         c.setStroke(color);
         c.setFill(color);
         paintCircles(c, distanceMeasure.getFrom(), W, false);
