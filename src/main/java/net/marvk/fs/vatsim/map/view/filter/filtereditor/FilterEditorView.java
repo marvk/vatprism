@@ -329,9 +329,9 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             input.setOnAction(e -> addToList());
             submit.setOnAction(e -> addToList());
 
-            final FontIcon graphic = (FontIcon) submit.getGraphic();
+            final FontIcon submitGraphic = (FontIcon) submit.getGraphic();
 
-            graphic.iconCodeProperty().bind(Bindings.createObjectBinding(
+            submitGraphic.iconCodeProperty().bind(Bindings.createObjectBinding(
                     () -> selected.get() == null ? Octicons.PLUS_16 : Octicons.PENCIL_16,
                     selected
             ));
@@ -373,6 +373,13 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             input.prefHeightProperty().bind(height);
             submit.prefHeightProperty().bind(height);
             submit.disableProperty().bind(inputDisabled);
+
+            final FontIcon regexGraphic = (FontIcon) regex.getGraphic();
+
+            regexGraphic.iconCodeProperty().bind(Bindings.createObjectBinding(
+                    () -> regex.isSelected() ? FileIcons.REGEX : Octicons.TYPOGRAPHY_16,
+                    regex.selectedProperty()
+            ));
         }
 
         private void clearSelection() {
