@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.datatable.streamerstable;
 
 import com.google.inject.Inject;
+import javafx.scene.control.TableRow;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import net.marvk.fs.vatsim.map.view.datatable.clientstable.AbstractClientsTableView;
@@ -22,5 +23,10 @@ public class StreamersTableView extends AbstractClientsTableView<StreamersTableV
                 .sortable()
                 .widthFactor(2.0)
                 .build();
+    }
+
+    @Override
+    protected void onControlClick(final TableRow<Client> tableRow, final Client client) {
+        viewModel.openStream(client);
     }
 }

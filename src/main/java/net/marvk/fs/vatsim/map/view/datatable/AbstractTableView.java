@@ -60,6 +60,17 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
 
     protected abstract void initializeColumns();
 
+    protected void onClick(final TableRow<Model> tableRow, final Model model) {
+        if (model != null) {
+            viewModel.setDataDetail(model);
+            viewModel.goTo(model);
+            viewModel.switchToMapTab();
+        }
+    }
+
+    protected void onControlClick(final TableRow<Model> tableRow, final Model model) {
+    }
+
     private class DataTableRow extends TableRow<Model> {
         public DataTableRow() {
             setOnMouseClicked(this::handleMouseClicked);
@@ -67,11 +78,12 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
 
         private void handleMouseClicked(final javafx.scene.input.MouseEvent e) {
             if (e.getButton() == MouseButton.PRIMARY) {
-                if (getItem() != null) {
-                    viewModel.setDataDetail(getItem());
-                    viewModel.goTo(getItem());
-                    viewModel.switchToMapTab();
+                if (e.isControlDown()) {
+                    onControlClick(this, getItem());
+                } else {
+                    onClick(this, getItem());
                 }
+
                 e.consume();
             }
         }
