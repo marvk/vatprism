@@ -11,6 +11,7 @@ import net.marvk.fs.vatsim.map.view.map.MapVariables;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ConnectionsPainter extends CompositeMapPainter<Data> {
     @Parameter("Departure Color")
@@ -36,9 +37,30 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
     private Point2D[] greatCircleBufferArray = null;
 
     public ConnectionsPainter(final MapVariables mapVariables) {
-        pilots = new ConnectionPainter(mapVariables, true, true, true);
-        airportArrivals = new ConnectionPainter(mapVariables, false, false, true);
-        airportDepartures = new ConnectionPainter(mapVariables, true, true, false);
+        pilots = new ConnectionPainter(
+                mapVariables,
+                true,
+                true,
+                true,
+                () -> departureColor,
+                () -> arrivalColor
+        );
+        airportArrivals = new ConnectionPainter(
+                mapVariables,
+                false,
+                false,
+                true,
+                () -> arrivalColor,
+                () -> arrivalColor
+        );
+        airportDepartures = new ConnectionPainter(
+                mapVariables,
+                true,
+                true,
+                false,
+                () -> departureColor,
+                () -> departureColor
+        );
     }
 
     @Override
@@ -110,11 +132,23 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
         @Parameter("Arrival")
         private boolean arrival;
 
-        public ConnectionPainter(final MapVariables mapVariables, final boolean history, final boolean departure, final boolean arrival) {
+        private final Supplier<Color> departureColorSupplier;
+        private final Supplier<Color> arrivalColorSupplier;
+
+        public ConnectionPainter(
+                final MapVariables mapVariables,
+                final boolean history,
+                final boolean departure,
+                final boolean arrival,
+                final Supplier<Color> departureColorSupplier,
+                final Supplier<Color> arrivalColorSupplier
+        ) {
             super(mapVariables);
             this.history = history;
             this.departure = departure;
             this.arrival = arrival;
+            this.departureColorSupplier = departureColorSupplier;
+            this.arrivalColorSupplier = arrivalColorSupplier;
         }
 
         @Override
@@ -149,17 +183,17 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
 
         private void setArrivalStroke(final GraphicsContext c) {
             c.setLineDashes(1, 5);
-            c.setStroke(arrivalColor);
+            c.setStroke(arrivalColorSupplier.get());
         }
 
         private void setDepartureStroke(final GraphicsContext c) {
             c.setLineDashes(1, 10);
-            c.setStroke(departureColor);
+            c.setStroke(departureColorSupplier.get());
         }
 
         private void setHistoryStroke(final GraphicsContext c) {
             c.setLineDashes(null);
-            c.setStroke(departureColor);
+            c.setStroke(departureColorSupplier.get());
         }
 
         private void connect(final GraphicsContext c, final Point2D p1, final Point2D p2) {
