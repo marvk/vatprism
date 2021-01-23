@@ -56,8 +56,11 @@ public class PreferencesView {
 
     @SneakyThrows
     private PreferencesFx createPreferencesDialog() {
-        return PreferencesFx.of(App.class, general(), style(), painters())
-                            .saveSettings(false);
+        return PreferencesFx.of(
+                App.class,
+                general(),
+                painters()
+        ).saveSettings(false);
     }
 
     private Category style() {
