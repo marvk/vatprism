@@ -1,20 +1,13 @@
 package net.marvk.fs.vatsim.map.data;
 
 import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.api.data.VatsimClient;
 import net.marvk.fs.vatsim.api.data.VatsimServer;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public abstract class Client implements Settable<VatsimClient>, Data {
-    private static final Pattern URL = Pattern.compile("(?:(?:https?[: ]\\/\\/)?(?<content>(www)?(?:[a-z0-9-]{1,256}\\.)+(?:[a-z]{2,})(?:\\/[a-z0-9-_]+)*\\/?))", Pattern.CASE_INSENSITIVE);
     private final IntegerProperty cid = new SimpleIntegerProperty();
     private final StringProperty cidString = new SimpleStringProperty();
     private final StringProperty callsign = new SimpleStringProperty();
@@ -24,7 +17,7 @@ public abstract class Client implements Settable<VatsimClient>, Data {
     private final ObjectProperty<ZonedDateTime> logonTime = new SimpleObjectProperty<>();
     private final ObjectProperty<ZonedDateTime> lastUpdatedTime = new SimpleObjectProperty<>();
 
-    private final ReadOnlyListWrapper<String> urls = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+    private final Urls urls = new Urls();
 
     public Client() {
         cidString.bind(cid.asString());
@@ -103,28 +96,9 @@ public abstract class Client implements Settable<VatsimClient>, Data {
 
     public abstract ClientType clientType();
 
-    protected SimpleListProperty<String> getUrlsWritable() {
+    public Urls getUrls() {
         return urls;
     }
 
-    public ReadOnlyListProperty<String> getUrls() {
-        return urls.getReadOnlyProperty();
-    }
 
-    @SneakyThrows
-    protected void setUrls(final String s) {
-        if (s == null) {
-            return;
-        }
-        this.urls.setAll(parseUrls(s));
-    }
-
-    private static List<String> parseUrls(final String s) {
-        return URL
-                .matcher(s.replaceAll("/./\s+$", ""))
-                .results()
-                .map(e -> e.group(1))
-                .map(e -> e.toLowerCase(Locale.ROOT))
-                .collect(Collectors.toList());
-    }
 }

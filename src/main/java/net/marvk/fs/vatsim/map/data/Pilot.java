@@ -78,7 +78,7 @@ public class Pilot extends Client implements Data {
         }
 
         eta.set(Eta.of(getPosition(), getGroundSpeed(), flightPlan.getDepartureAirport(), flightPlan.getArrivalAirport()));
-        setUrls(flightPlan.getRemarks());
+        getUrls().setUrlsFromString(flightPlan.getRemarks());
     }
 
     private void parseAirlineAndFlightNumber(final String callsign) {

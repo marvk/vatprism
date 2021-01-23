@@ -41,7 +41,7 @@ public class Controller extends Client implements Data {
         frequency.set(controller.getFrequency());
         rating.set(ControllerRating.of(controller.getRating()));
         setAtisMessage(controller.getTextAtis());
-        setUrls(getAtisMessage());
+        getUrls().setUrlsFromString(getAtisMessage());
     }
 
     @Override

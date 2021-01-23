@@ -2,7 +2,6 @@ package net.marvk.fs.vatsim.map.view.datadetail.clientdetail;
 
 import com.google.inject.Inject;
 import javafx.application.HostServices;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanWrapper;
@@ -26,22 +25,8 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
         final BooleanProperty social = preferences.booleanProperty("general.social");
 
         data.addListener((observable, oldValue, newValue) -> {
-            twitchStream.bind(Bindings.createBooleanBinding(
-                    () -> social.get() && newValue.getUrls()
-                                                  .stream()
-                                                  .anyMatch(e -> e.contains("twitch")),
-                    newValue.getUrls(),
-                    social
-            ));
-            twitchStreamUrl.bind(Bindings.createObjectBinding(
-                    () -> newValue.getUrls()
-                                  .stream()
-                                  .filter(e -> e.contains("twitch"))
-                                  .findFirst()
-                                  .orElse(null),
-                    newValue.getUrls(),
-                    social
-            ));
+            twitchStream.bind(newValue.getUrls().twitchProperty().and(social));
+            twitchStreamUrl.bind(newValue.getUrls().twitchUrlProperty());
         });
     }
 
