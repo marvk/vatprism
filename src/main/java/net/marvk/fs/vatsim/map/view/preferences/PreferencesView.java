@@ -66,6 +66,7 @@ public class PreferencesView {
 
     private Category general() {
         final BooleanProperty debug = preferences.booleanProperty("general.debug");
+        final BooleanProperty social = preferences.booleanProperty("general.social");
         final IntegerProperty uiFontSize = preferences.integerProperty("general.font_size");
         final IntegerProperty property = preferences.integerProperty("general.map_font_size");
         final DoubleProperty scrollSpeed = preferences.doubleProperty("general.scroll_speed");
@@ -84,6 +85,7 @@ public class PreferencesView {
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Setting.of("Enable Debug Mode", debug),
+                Setting.of("Show Stream Links", social),
                 Setting.of("UI Font Size", uiFontSize, 4, 72),
                 Setting.of("Map Font Size", property, 4, 72),
                 Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
