@@ -28,7 +28,7 @@
                     <children>
                         <Label styleClass="description" text="Name(s)"/>
                         <Label wrapText="true" fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
-                        <Label text="Position" GridPane.rowIndex="1"/>
+                        <Label styleClass="description" text="Position" GridPane.rowIndex="1"/>
                         <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="1">
                             <styleClass>
@@ -36,7 +36,7 @@
                                 <String fx:value="hyperlink-label"/>
                             </styleClass>
                         </Label>
-                        <Label text="Country" GridPane.rowIndex="2"/>
+                        <Label styleClass="description" text="Country" GridPane.rowIndex="2"/>
                         <Label fx:id="country" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="2"/>
                     </children>

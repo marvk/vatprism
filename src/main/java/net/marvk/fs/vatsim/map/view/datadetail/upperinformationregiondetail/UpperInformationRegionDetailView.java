@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail;
 
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -10,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.GeomUtil;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
+import net.marvk.fs.vatsim.map.data.ImmutableStringProperty;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
@@ -19,6 +21,8 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewMo
 import java.util.List;
 
 public class UpperInformationRegionDetailView extends DataDetailSubView<DataDetailSubViewModel<UpperInformationRegion>, UpperInformationRegion> {
+    private static final ReadOnlyStringProperty EMPTY = new ImmutableStringProperty(null);
+
     @FXML
     private DataDetailPane status;
     @FXML
@@ -77,7 +81,16 @@ public class UpperInformationRegionDetailView extends DataDetailSubView<DataDeta
                 }
             });
             firsGrid.add(icaoLabel, 0, i);
+            firsGrid.add(new Label(nameProperty(fir).get()), 1, i);
         }
+    }
+
+    private static ReadOnlyStringProperty nameProperty(final FlightInformationRegionBoundary e) {
+        if (e.getFlightInformationRegions().isEmpty()) {
+            return EMPTY;
+        }
+
+        return e.getFlightInformationRegions().get(0).nameProperty();
     }
 
     private void setFirPanes(final boolean uirs) {
