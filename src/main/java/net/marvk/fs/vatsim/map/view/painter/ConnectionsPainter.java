@@ -73,8 +73,9 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
     }
 
     @Override
-    public void paint(final GraphicsContext context, final Data data) {
-        painterVisitor.visit(data).accept(context);
+    public void paint(final GraphicsContext c, final Data data) {
+        c.setLineWidth(1);
+        painterVisitor.visit(data).accept(c);
     }
 
     private Point2D[] getGreatCircleBufferArray() {
