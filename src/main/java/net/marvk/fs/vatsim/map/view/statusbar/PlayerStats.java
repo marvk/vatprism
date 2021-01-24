@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.data.Controller;
-import net.marvk.fs.vatsim.map.data.ControllerType;
-import net.marvk.fs.vatsim.map.data.Pilot;
 
 import java.util.Collection;
 
@@ -28,19 +26,17 @@ public final class PlayerStats {
         int unknown = 0;
 
         for (final Client client : clients) {
-            if (client instanceof Pilot) {
-                pilots++;
-            } else if (client instanceof Controller) {
-                final ControllerType controllerType = ((Controller) client).getControllerType();
-                if (controllerType == ControllerType.OBS) {
-                    observers++;
-                } else if (controllerType == ControllerType.NONE) {
-                    unknown++;
-                } else {
-                    controllers++;
+            switch (client.getClientType()) {
+                case PILOT -> pilots++;
+                case CONTROLLER, ATIS -> {
+                    final Controller controller = (Controller) client;
+                    switch (controller.getControllerType()) {
+                        case NONE -> unknown++;
+                        case OBS -> observers++;
+                        default -> controllers++;
+                    }
                 }
-            } else {
-                unknown++;
+                default -> unknown++;
             }
         }
 

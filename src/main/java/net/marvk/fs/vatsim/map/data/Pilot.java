@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Pilot extends Client implements Data {
+    private static final ReadOnlyObjectProperty<ClientType> CLIENT_TYPE = new ImmutableObjectProperty<>(ClientType.PILOT);
     private static final Pattern FLIGHT_NUMBER_PARSER = Pattern.compile("^(?<icao>[A-Z]{3})(?<number>[0-9][A-Z0-9]*)$");
     private final FlightPlan flightPlan = new FlightPlan(this);
 
@@ -97,8 +98,8 @@ public class Pilot extends Client implements Data {
     }
 
     @Override
-    public ClientType clientType() {
-        return ClientType.PILOT;
+    public ReadOnlyObjectProperty<ClientType> clientTypeProperty() {
+        return CLIENT_TYPE;
     }
 
     public FlightPlan getFlightPlan() {

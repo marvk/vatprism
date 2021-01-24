@@ -94,11 +94,14 @@ public abstract class Client implements Settable<VatsimClient>, Data {
         return lastUpdatedTime;
     }
 
-    public abstract ClientType clientType();
+    public ClientType getClientType() {
+        return clientTypeProperty().get();
+    }
+
+    public abstract ReadOnlyObjectProperty<ClientType> clientTypeProperty();
 
     public Urls getUrls() {
         return urls;
     }
-
 
 }

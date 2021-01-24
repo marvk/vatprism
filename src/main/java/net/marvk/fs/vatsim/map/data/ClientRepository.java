@@ -64,7 +64,7 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
 
     @Override
     protected String keyFromViewModel(final Client client) {
-        return client.getCid() + client.getCallsign() + client.clientType();
+        return client.getCid() + client.getCallsign() + client.getClientType();
     }
 
     @Override
@@ -78,18 +78,21 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
 
     @Override
     protected void onAdd(final Client toAdd, final VatsimClient vatsimClient) {
-        final ClientType type = toAdd.clientType();
-        if (type == ClientType.CONTROLLER || type == ClientType.ATIS) {
-            ((Controller) toAdd).setFromCallsignParserResult(callsignParser.parse((VatsimController) vatsimClient));
-        } else if (type == ClientType.PILOT) {
-            final Pilot pilot = (Pilot) toAdd;
-            final VatsimFlightPlan flightPlan = ((VatsimPilot) vatsimClient).getFlightPlan();
-            if (flightPlan != null) {
-                setAirports(pilot, flightPlan);
+        switch (toAdd.getClientType()) {
+            case CONTROLLER, ATIS -> {
+                final Controller controller = (Controller) toAdd;
+                controller.setFromCallsignParserResult(callsignParser.parse((VatsimController) vatsimClient));
             }
-            final List<FlightInformationRegionBoundary> firbs =
-                    flightInformationRegionBoundaryRepository.getByPosition(((Pilot) toAdd).getPosition());
-            ((Pilot) toAdd).flightInformationRegionBoundariesWritable().setAll(firbs);
+            case PILOT -> {
+                final Pilot pilot = (Pilot) toAdd;
+                final VatsimFlightPlan flightPlan = ((VatsimPilot) vatsimClient).getFlightPlan();
+                if (flightPlan != null) {
+                    setAirports(pilot, flightPlan);
+                }
+                final List<FlightInformationRegionBoundary> firbs =
+                        flightInformationRegionBoundaryRepository.getByPosition(((Pilot) toAdd).getPosition());
+                ((Pilot) toAdd).flightInformationRegionBoundariesWritable().setAll(firbs);
+            }
         }
     }
 
@@ -107,15 +110,18 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
 
     @Override
     protected void onRemove(final Client toRemove) {
-        if (toRemove instanceof Controller) {
-            final Controller controller = (Controller) toRemove;
-            controller.setFromCallsignParserResult(CallsignParser.Result.EMPTY);
-        } else if (toRemove instanceof Pilot) {
-            final Pilot pilot = (Pilot) toRemove;
-            pilot.getFlightPlan().departureAirportPropertyWritable().set(null);
-            pilot.getFlightPlan().arrivalAirportPropertyWritable().set(null);
-            pilot.getFlightPlan().alternativeAirportPropertyWritable().set(null);
-            pilot.flightInformationRegionBoundariesWritable().clear();
+        switch (toRemove.getClientType()) {
+            case CONTROLLER, ATIS -> {
+                final Controller controller = (Controller) toRemove;
+                controller.setFromCallsignParserResult(CallsignParser.Result.EMPTY);
+            }
+            case PILOT -> {
+                final Pilot pilot = (Pilot) toRemove;
+                pilot.getFlightPlan().departureAirportPropertyWritable().set(null);
+                pilot.getFlightPlan().arrivalAirportPropertyWritable().set(null);
+                pilot.getFlightPlan().alternativeAirportPropertyWritable().set(null);
+                pilot.flightInformationRegionBoundariesWritable().clear();
+            }
         }
     }
 

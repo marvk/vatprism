@@ -11,6 +11,7 @@ import java.util.List;
 @Log4j2
 @ToString
 public class Controller extends Client implements Data {
+    private static final ImmutableObjectProperty<ClientType> CLIENT_TYPE = new ImmutableObjectProperty<>(ClientType.CONTROLLER);
     private final StringProperty frequency = new SimpleStringProperty();
     private final StringProperty atisMessage = new SimpleStringProperty();
 
@@ -45,8 +46,8 @@ public class Controller extends Client implements Data {
     }
 
     @Override
-    public ClientType clientType() {
-        return ClientType.CONTROLLER;
+    public ReadOnlyObjectProperty<ClientType> clientTypeProperty() {
+        return CLIENT_TYPE;
     }
 
     private void setAtisMessage(final List<String> textAtis) {
