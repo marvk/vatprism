@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 @Log4j2
-public class Filter implements Predicate<Client> {
+public class Filter implements Predicate<Client>, UniquelyIdentifiable {
     private final ReadOnlyObjectProperty<UUID> uuid;
 
     private final EnumSetPredicate<Type> types;
@@ -260,6 +260,7 @@ public class Filter implements Predicate<Client> {
         return callsignPredicates.test(client.getCallsign());
     }
 
+    @Override
     public UUID getUuid() {
         return uuid.get();
     }
