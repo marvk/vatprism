@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Urls {
-    private static final Pattern URL = Pattern.compile("(?:(?:https?[: ]\\/\\/)?(?<content>(www)?(?:[a-z0-9-]{1,256}\\.)+(?:[a-z]{2,})(?:\\/[a-z0-9-_]+)*\\/?))", Pattern.CASE_INSENSITIVE);
+    private static final Pattern URL = Pattern.compile("(?<twitchWithSpace>twitch\\.tv[ /][A-Z0-9_]+)|(?:(?:https?[: ]\\/\\/)?(?<content>(www)?(?:[a-z0-9-]{1,256}\\.)+(?:[a-z]{2,})(?:\\/[a-z0-9-_]+)*\\/?))", Pattern.CASE_INSENSITIVE);
 
     private final ReadOnlyListWrapper<String> urls = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
 
@@ -55,8 +55,18 @@ public class Urls {
         return URL
                 .matcher(s.replaceAll("/./\s+$", ""))
                 .results()
-                .map(e -> e.group(1))
+                .map(Urls::getGroup)
                 .map(e -> e.toLowerCase(Locale.ROOT))
                 .collect(Collectors.toList());
+    }
+
+    private static String getGroup(final java.util.regex.MatchResult e) {
+        final String g1 = e.group(1);
+
+        if (g1 == null || g1.isEmpty()) {
+            return e.group(2);
+        }
+
+        return g1.replaceAll("(?i)twitch\\.tv ", "twitch\\.tv/");
     }
 }
