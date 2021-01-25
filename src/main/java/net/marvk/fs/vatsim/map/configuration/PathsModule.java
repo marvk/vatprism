@@ -7,10 +7,7 @@ import com.google.inject.name.Named;
 import javafx.beans.value.ObservableValue;
 import net.harawata.appdirs.AppDirs;
 import net.marvk.fs.vatsim.map.CustomAppDirsFactory;
-import net.marvk.fs.vatsim.map.data.Adapter;
-import net.marvk.fs.vatsim.map.data.Filter;
-import net.marvk.fs.vatsim.map.data.JsonFilterAdapter;
-import net.marvk.fs.vatsim.map.data.JsonObservablePreferencesAdapter;
+import net.marvk.fs.vatsim.map.data.*;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -89,5 +86,12 @@ public class PathsModule extends AbstractModule {
     @Named("configSerializer")
     public Adapter<Map<String, ObservableValue<?>>> configSerializer() {
         return new JsonObservablePreferencesAdapter();
+    }
+
+    @Provides
+    @Singleton
+    @Named("colorSchemeSerializer")
+    public Adapter<ColorScheme> colorSchemeSerializer() {
+        return new ColorSchemeAdapter();
     }
 }
