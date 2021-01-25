@@ -3,6 +3,8 @@ package net.marvk.fs.vatsim.map.data;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableObjectValue;
+import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
@@ -162,6 +164,25 @@ public class ConfigFilePreferences implements Preferences {
             Files.writeString(path, adapter.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (final IOException e) {
             log.error("Failed to write config", e);
+        }
+    }
+
+    public ColorScheme exportColorScheme(final String name) {
+        final HashMap<String, Color> result = new HashMap<>();
+
+        for (final Map.Entry<String, ObservableValue<?>> e : observables.entrySet()) {
+            final ObservableValue<?> observable = e.getValue();
+            if (!(observable instanceof ObservableStringValue) && (observable instanceof ObservableObjectValue)) {
+                result.put(e.getKey(), (Color) observable.getValue());
+            }
+        }
+
+        return new ColorScheme(name, result);
+    }
+
+    public void importColorScheme(final ColorScheme colorScheme) {
+        for (final Map.Entry<String, Color> e : colorScheme.getColorMap().entrySet()) {
+            colorProperty(e.getKey()).set(e.getValue());
         }
     }
 }

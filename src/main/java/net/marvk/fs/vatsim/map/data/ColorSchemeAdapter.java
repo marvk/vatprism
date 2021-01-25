@@ -5,8 +5,10 @@ import com.google.gson.reflect.TypeToken;
 import javafx.scene.paint.Color;
 
 import java.lang.reflect.Type;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ColorSchemeAdapter implements Adapter<ColorScheme> {
     private static final Type MAP_TYPE = new TypeToken<Map<String, Color>>() {
@@ -53,9 +55,23 @@ public class ColorSchemeAdapter implements Adapter<ColorScheme> {
         public JsonElement serialize(final ColorScheme src, final Type typeOfSrc, final JsonSerializationContext context) {
             final JsonObject result = new JsonObject();
 
+            final Map<String, Color> sortedMap = src
+                    .getColorMap()
+                    .entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByKey())
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (a, b) -> {
+                                throw new AssertionError();
+                            },
+                            LinkedHashMap::new
+                    ));
+
             result.addProperty("uuid", src.getUuid().toString());
             result.addProperty("name", src.getName());
-            result.add("values", context.serialize(src.getColorMap(), MAP_TYPE));
+            result.add("values", context.serialize(sortedMap, MAP_TYPE));
 
             return result;
         }

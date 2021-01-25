@@ -15,7 +15,7 @@ public class ColorScheme implements UniquelyIdentifiable {
     ColorScheme(final UUID uuid, final String name, final Map<String, Color> colorMap) {
         this.uuid = uuid;
         this.name = name;
-        this.colorMap = colorMap;
+        this.colorMap = Map.copyOf(colorMap);
     }
 
     public ColorScheme(final String name, final Map<String, Color> colorMap) {

@@ -8,12 +8,15 @@ import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import de.saxsys.mvvmfx.FluentViewLoader;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.Parent;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.App;
+import net.marvk.fs.vatsim.map.data.ColorSchemeRepository;
 import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
@@ -35,7 +38,7 @@ public class PreferencesView {
     private PreferencesFx preferencesFx;
 
     @Inject
-    public PreferencesView(final Preferences preferences, final SettingsScope settingsScope) {
+    public PreferencesView(final ColorSchemeRepository colorSchemeRepository, final Preferences preferences, final SettingsScope settingsScope) {
         this.preferences = preferences;
         this.settingsScope = settingsScope;
         this.settingsScope.getPainters()
@@ -59,8 +62,14 @@ public class PreferencesView {
         return PreferencesFx.of(
                 App.class,
                 general(),
+                colorSchemes(),
                 painters()
         ).saveSettings(false);
+    }
+
+    private static Category colorSchemes() {
+        final Parent view = FluentViewLoader.javaView(ColorSchemeView.class).load().getView();
+        return Category.of("Color Schemes", Setting.of(view));
     }
 
     private Category style() {
