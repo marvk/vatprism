@@ -74,10 +74,10 @@ public class FilterRepository implements Repository<Filter> {
 
     private Path tryCreateFilterDirectory(final Path path) {
         try {
-            log.info(("Attempting to create filter directory %s").formatted(path));
+            log.info(("Creating filter directory %s").formatted(path));
             return Files.createDirectories(path.resolve(FILTERS_DIRECTORY_NAME));
         } catch (final IOException e) {
-            log.error("Unable to create filter directory, filters will not be saved", e);
+            log.error("Failed to create filter directory, filters will not be saved", e);
             return null;
         }
     }
@@ -133,14 +133,14 @@ public class FilterRepository implements Repository<Filter> {
 
     private void writeFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
-            log.debug(("Attempting to write filter file %s").formatted(filterLogName(filter)));
+            log.debug(("Writing filter file %s").formatted(filterLogName(filter)));
             Files.writeString(path(filter), adapter.serialize(filter), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 
     private void deleteFile(final Filter filter) throws IOException {
         if (canSaveToDisk()) {
-            log.debug(("Attempting to deleting filter file %s").formatted(filterLogName(filter)));
+            log.debug(("Deleting filter file %s").formatted(filterLogName(filter)));
             Files.delete(path(filter.getUuid()));
         }
     }
