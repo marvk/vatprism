@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map;
 
 import lombok.extern.log4j.Log4j2;
 import net.harawata.appdirs.AppDirs;
+import net.harawata.appdirs.AppDirsFactory;
 import net.marvk.fs.vatsim.map.version.VersionProvider;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public final class Application {
     }
 
     private static void reconfigureLogger() throws IOException {
-        final AppDirs instance = CustomAppDirsFactory.createInstance();
+        final AppDirs instance = AppDirsFactory.getInstance();
         final String path = instance.getUserLogDir("VATprism", null, null);
         Files.createDirectories(Path.of(path));
         System.setProperty("log4j2.saveDirectory", path);

@@ -6,7 +6,7 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import javafx.beans.value.ObservableValue;
 import net.harawata.appdirs.AppDirs;
-import net.marvk.fs.vatsim.map.CustomAppDirsFactory;
+import net.harawata.appdirs.AppDirsFactory;
 import net.marvk.fs.vatsim.map.data.*;
 
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ public class PathsModule extends AbstractModule {
     @Provides
     @Singleton
     public AppDirs appDirs() {
-        return CustomAppDirsFactory.createInstance();
+        return AppDirsFactory.getInstance();
     }
 
     @Provides
