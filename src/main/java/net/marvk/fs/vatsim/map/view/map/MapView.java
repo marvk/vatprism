@@ -67,8 +67,6 @@ public class MapView implements FxmlView<MapViewModel> {
     public MapView(@Named("open_hand_cursor") final Cursor openHand, @Named("closed_hand_cursor") final Cursor closedHand) {
         this.canvas = new Canvas(100, 100);
         this.canvas.setFocusTraversable(true);
-        // TODO is this required? Takes away focus from search
-        this.canvas.addEventFilter(MouseEvent.ANY, e -> canvas.requestFocus());
 
         this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
                 () -> {

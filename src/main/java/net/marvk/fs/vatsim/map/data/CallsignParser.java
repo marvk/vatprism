@@ -78,7 +78,6 @@ public class CallsignParser {
         FirResult fir = FirResult.EMPTY;
 
         if (controllerType != ControllerType.OBS) {
-            // TODO NY_ISP_APP NY_ARD_APP NY_CSK_APP NY_HRP_APP NY_KEN_DEP
             if (controllerType != ControllerType.CTR && controllerType != ControllerType.FSS) {
                 airport = getAirport(controller, identifier);
 
