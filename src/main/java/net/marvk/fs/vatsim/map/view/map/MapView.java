@@ -21,7 +21,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -67,6 +66,8 @@ public class MapView implements FxmlView<MapViewModel> {
     public MapView(@Named("open_hand_cursor") final Cursor openHand, @Named("closed_hand_cursor") final Cursor closedHand) {
         this.canvas = new Canvas(100, 100);
         this.canvas.setFocusTraversable(true);
+
+        this.canvas.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> canvas.requestFocus());
 
         this.canvas.cursorProperty().bind(Bindings.createObjectBinding(
                 () -> {
@@ -275,14 +276,15 @@ public class MapView implements FxmlView<MapViewModel> {
         }
 
         public void onKeyPressed(final KeyEvent keyEvent) {
-            if (keyEvent.getCode() == KeyCode.CONTROL) {
-                controlDown.set(true);
+            switch (keyEvent.getCode()) {
+                case CONTROL -> controlDown.set(true);
+                case ESCAPE -> viewModel.setSelectedItem(null);
             }
         }
 
         public void onKeyReleased(final KeyEvent keyEvent) {
-            if (keyEvent.getCode() == KeyCode.CONTROL) {
-                controlDown.set(false);
+            switch (keyEvent.getCode()) {
+                case CONTROL -> controlDown.set(false);
             }
         }
 

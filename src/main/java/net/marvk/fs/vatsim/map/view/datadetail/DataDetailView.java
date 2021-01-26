@@ -1,14 +1,12 @@
 package net.marvk.fs.vatsim.map.view.datadetail;
 
 import de.saxsys.mvvmfx.*;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.*;
@@ -71,10 +69,15 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
     private void handleMousePressed(final MouseEvent event) {
         // TODO
 
-        if (event.getButton() == MouseButton.FORWARD) {
-            historyForward(null);
-        } else if (event.getButton() == MouseButton.BACK) {
-            historyBack(null);
+        switch (event.getButton()) {
+            case FORWARD -> historyForward();
+            case BACK -> historyBack();
+        }
+    }
+
+    private void handleKeyPressed(final KeyEvent event) {
+        switch (event.getCode()) {
+            case ESCAPE -> hide();
         }
     }
 
@@ -86,19 +89,23 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 //        }
     }
 
-    public void hide(final ActionEvent actionEvent) {
+    @FXML
+    private void hide() {
         viewModel.dataProperty().set(null);
     }
 
-    public void historyBack(final ActionEvent actionEvent) {
+    @FXML
+    private void historyBack() {
         viewModel.historyBack();
     }
 
-    public void historyForward(final ActionEvent actionEvent) {
+    @FXML
+    private void historyForward() {
         viewModel.historyForward();
     }
 
-    public void toggleFollow(final ActionEvent actionEvent) {
+    @FXML
+    private void toggleFollow() {
         viewModel.setFollow(follow.isSelected());
     }
 
