@@ -15,7 +15,7 @@ public class WorldPainter extends MapPainter<Polygon> {
     @Parameter("Stroke")
     private boolean stroke = false;
 
-    @Parameter("Stroke color")
+    @Parameter("Stroke Color")
     private Color strokeColor;
 
     @Parameter(value = "Stroke Width", min = 0, max = 10)

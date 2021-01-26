@@ -67,6 +67,6 @@ public class Urls {
             return e.group(2);
         }
 
-        return g1.replaceAll("(?i)twitch\\.tv ", "twitch\\.tv/");
+        return g1.replaceAll("(?i)twitch\\.tv\s+", "twitch\\.tv/");
     }
 }

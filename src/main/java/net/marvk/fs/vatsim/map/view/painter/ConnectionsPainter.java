@@ -14,6 +14,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ConnectionsPainter extends CompositeMapPainter<Data> {
+    @Parameter(value = "Stroke Width", min = 0, max = 10)
+    private double strokeWidth = 1;
+
     @Parameter("Departure Color")
     private Color departureColor = Color.CORAL.deriveColor(0, 1, 1, 0.5);
 
@@ -74,7 +77,7 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
 
     @Override
     public void paint(final GraphicsContext c, final Data data) {
-        c.setLineWidth(1);
+        c.setLineWidth(strokeWidth);
         painterVisitor.visit(data).accept(c);
     }
 
