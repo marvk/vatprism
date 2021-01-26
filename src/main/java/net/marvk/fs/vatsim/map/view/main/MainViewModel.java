@@ -112,27 +112,31 @@ public class MainViewModel implements ViewModel {
                     """.formatted(
                     (Object[]) fixColorStrings(
                             baseColor,
-                            baseColor.deriveColor(0, 1.00, mapBrightnessFactor(b, 1.50), 1.00),
-                            baseColor.deriveColor(0, 0.80, mapBrightnessFactor(b, 2.00), 1.00),
-                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(b, 2.00), 0.25),
-                            baseColor.deriveColor(0, 0.30, mapBrightnessFactor(b, 2.50), 1.00),
-                            baseColor.deriveColor(0, 0.20, mapBrightnessFactor(b, 3.00), 1.00),
+                            baseColor.deriveColor(0, 1.00, mapBrightnessFactor(baseColor, 1.50), 1.00),
+                            baseColor.deriveColor(0, 0.80, mapBrightnessFactor(baseColor, 2.00), 1.00),
+                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(baseColor, 2.00), 0.25),
+                            baseColor.deriveColor(0, 0.30, mapBrightnessFactor(baseColor, 2.50), 1.00),
+                            baseColor.deriveColor(0, 0.20, mapBrightnessFactor(baseColor, 3.00), 1.00),
 
-                            baseColor.deriveColor(0, 0.70, mapBrightnessFactor(b, 6.00), 1.00),
-                            baseColor.deriveColor(0, 0.60, mapBrightnessFactor(b, 7.50), 1.00),
-                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(b, 10.00), 1.00),
-                            baseColor.deriveColor(0, 0.00, mapBrightnessFactor(b, 7.50), 1.00)
+                            baseColor.deriveColor(0, 0.70, mapBrightnessFactor(baseColor, 6.00), 1.00),
+                            baseColor.deriveColor(0, 0.60, mapBrightnessFactor(baseColor, 7.50), 1.00),
+                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(baseColor, 10.00), 1.00),
+                            baseColor.deriveColor(0, 0.00, mapBrightnessFactor(baseColor, 7.50), 1.00)
                     )
             );
         }
     }
 
-    private static double mapBrightnessFactor(final double brightness, final double value) {
-        if (brightness > 0.5) {
+    private double mapBrightnessFactor(final Color originalColor, final double value) {
+        if (luminance(originalColor.brighter().brighter()) > 0.5) {
             return 1.0 / value;
         } else {
             return value;
         }
+    }
+
+    private double luminance(final Color c) {
+        return (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
     }
 
     private String[] fixColorStrings(final Color... colors) {
