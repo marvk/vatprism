@@ -2,6 +2,8 @@ package net.marvk.fs.vatsim.map.view.preferences;
 
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.ColorScheme;
@@ -18,16 +20,26 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
         comboBox.setItems(viewModel.colorSchemes());
         comboBox.setCellFactory(param -> new ColorSchemeListCell());
         comboBox.setButtonCell(new ColorSchemeListCell());
-        comboBox.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((observable, oldValue, newValue) -> viewModel.set(newValue));
+        comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Platform.runLater(() -> comboBox.getSelectionModel().clearSelection());
+                viewModel.set(newValue);
+            }
+        });
 
         final TextField textField = new TextField();
         textField.setPrefWidth(150);
         textField.setPromptText("Color Scheme Name");
 
-        final Button create = new Button("Create Color Scheme");
-        create.setOnAction(e -> viewModel.saveCurrent(textField.getText()));
+        final Button create = new Button();
+        create.textProperty().bind(Bindings.createStringBinding(
+                () -> viewModel.isUpdating() ? "Update Color Scheme" : "Create Color Scheme",
+                viewModel.updatingProperty()
+        ));
+        create.setOnAction(e -> viewModel.saveCurrent());
+        create.disableProperty().bind(viewModel.nameInputProperty().isEmpty());
+
+        viewModel.nameInputProperty().bind(textField.textProperty());
 
         final Label warning = new Label("This feature is experimental.");
         warning.setStyle("-fx-text-fill: darkred; -fx-font-weight: bold");
@@ -40,7 +52,6 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
     }
 
     private class ColorSchemeListCell extends ListCell<ColorScheme> {
-
         private Button button;
 
         @Override

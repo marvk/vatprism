@@ -168,6 +168,14 @@ public class ConfigFilePreferences implements Preferences {
     }
 
     public ColorScheme exportColorScheme(final String name) {
+        return new ColorScheme(name, exportColorSchemeMap());
+    }
+
+    public ColorScheme exportColorScheme(final ColorScheme previous) {
+        return new ColorScheme(previous.getUuid(), previous.getName(), exportColorSchemeMap());
+    }
+
+    private HashMap<String, Color> exportColorSchemeMap() {
         final HashMap<String, Color> result = new HashMap<>();
 
         for (final Map.Entry<String, ObservableValue<?>> e : observables.entrySet()) {
@@ -177,7 +185,7 @@ public class ConfigFilePreferences implements Preferences {
             }
         }
 
-        return new ColorScheme(name, result);
+        return result;
     }
 
     public void importColorScheme(final ColorScheme colorScheme) {
