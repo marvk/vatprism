@@ -4,7 +4,7 @@
 
 #### Latest: {{ site.github.releases[0].name }} ({{ site.github.releases[0].published_at }})
 
-[Download Installer (Windows)]({{ site.github.releases[0].assets[1].browser_download_url }})
+[Download Installer (Windows)]({{ site.github.releases[0].assets[2].browser_download_url }})
 
 [Download Source]({{ site.github.zip_url }})
 
