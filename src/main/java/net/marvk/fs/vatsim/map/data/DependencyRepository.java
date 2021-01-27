@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -85,7 +84,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
 
         return Stream
                 .concat(result, additionalDependencies)
-                .sorted(Comparator.comparing(Dependency::getProjectName))
+                .sorted((d1, d2) -> d1.getProjectName().compareToIgnoreCase(d2.getProjectName()))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableListProperty::new));
     }
 
