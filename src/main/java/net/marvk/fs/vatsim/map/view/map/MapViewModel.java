@@ -232,9 +232,9 @@ public class MapViewModel implements ViewModel {
 
     private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
         return FXCollections.observableArrayList(
-                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("17130a"))),
-                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("0f0c02")), this::world),
-                PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("17130a")), this::lakes),
+                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("291e0f"))),
+                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("1a130a")), this::world),
+                PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("291e0f")), this::lakes),
                 PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
                 PainterExecutor.of("Scale", new ScalePainter(mapVariables)),
                 PainterExecutor.ofCollection("Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
