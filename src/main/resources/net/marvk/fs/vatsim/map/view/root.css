@@ -25,10 +25,6 @@
     -fx-effect: -vatsim-dropshadow;
 }
 
-.button:hover {
-    -fx-background-color: -vatsim-background-color-very-light;
-}
-
 .table-row-cell {
     -fx-padding: 0;
 }
@@ -86,8 +82,12 @@
 }
 
 .icon-button .ikonli-font-icon {
-    -fx-icon-color: -vatsim-text-color;
+    -fx-icon-color: -vatsim-text-color-dark;
     -fx-icon-size: -vatsim-toolbar-button-icon-size;
+}
+
+.icon-button:selected .ikonli-font-icon {
+    -fx-icon-color: -vatsim-text-color-light;
 }
 
 .icon-button .ikonli-font-icon:error {
@@ -115,13 +115,6 @@
 }
 
 .tab * {
-    -fx-text-fill: -vatsim-text-color;
-}
-
-.button {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
     -fx-text-fill: -vatsim-text-color;
 }
 
