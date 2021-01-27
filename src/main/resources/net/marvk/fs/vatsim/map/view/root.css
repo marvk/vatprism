@@ -231,3 +231,12 @@
 .check-box:selected .mark {
     -fx-background-color: -vatsim-background-color;
 }
+
+.hyperlink-label {
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.hyperlink-label:hover {
+    -fx-text-fill: -vatsim-text-color-light;
+}
