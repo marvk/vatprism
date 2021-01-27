@@ -12,6 +12,14 @@
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
+                <Button styleClass="icon-button" onAction="#save">
+                    <tooltip>
+                        <Tooltip text="Save Filter"/>
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconLiteral="oct-file-symlink-file-16" iconSize="24"/>
+                    </graphic>
+                </Button>
                 <ToggleButton fx:id="enabled" styleClass="icon-button" selected="true">
                     <graphic>
                         <FontIcon iconLiteral="oct-eye-16" iconSize="24"/>
@@ -19,13 +27,16 @@
                 </ToggleButton>
                 <Label text="Name"/>
                 <TextField fx:id="filterName" promptText="Name" HBox.hgrow="ALWAYS"/>
-                <ColorPicker fx:id="textColorPicker"/>
-                <ColorPicker fx:id="backgroundColorPicker"/>
-                <Button styleClass="icon-button" onAction="#save">
-                    <graphic>
-                        <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
-                    </graphic>
-                </Button>
+                <ColorPicker fx:id="textColorPicker">
+                    <tooltip>
+                        <Tooltip text="Text Color"/>
+                    </tooltip>
+                </ColorPicker>
+                <ColorPicker fx:id="backgroundColorPicker">
+                    <tooltip>
+                        <Tooltip text="Background Color"/>
+                    </tooltip>
+                </ColorPicker>
             </children>
         </HBox>
         <Separator prefWidth="200.0"/>

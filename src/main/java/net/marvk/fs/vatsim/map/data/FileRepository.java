@@ -4,12 +4,14 @@ import com.google.gson.JsonParseException;
 import com.google.inject.Inject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,6 +22,7 @@ public abstract class FileRepository<E extends UniquelyIdentifiable> implements 
     protected final Path path;
     protected final Adapter<E> adapter;
     private final ObservableList<E> items = FXCollections.observableArrayList();
+    private final SortedList<E> sortedList = new SortedList<>(items);
     private final HashMap<UUID, E> uuidMap = new HashMap<>();
 
     @Inject
@@ -30,6 +33,15 @@ public abstract class FileRepository<E extends UniquelyIdentifiable> implements 
         if (canSaveToDisk()) {
             tryLoadingExistingElements();
         }
+
+        final Comparator<E> comparator = comparator();
+        if (comparator != null) {
+            this.sortedList.setComparator(comparator);
+        }
+    }
+
+    protected Comparator<E> comparator() {
+        return null;
     }
 
     protected abstract String elementDescriptor(final E e);
@@ -89,7 +101,7 @@ public abstract class FileRepository<E extends UniquelyIdentifiable> implements 
 
     @Override
     public ObservableList<E> list() {
-        return items;
+        return sortedList;
     }
 
     @Override

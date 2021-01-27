@@ -200,6 +200,12 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 () -> enabled.isSelected() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
                 enabled.selectedProperty()
         ));
+        final Tooltip tooltip = new Tooltip();
+        tooltip.textProperty().bind(Bindings.createStringBinding(
+                () -> enabled.isSelected() ? "Enable" : "Disable",
+                enabled.selectedProperty()
+        ));
+        enabled.setTooltip(tooltip);
     }
 
     private void bindColorPickers() {
@@ -415,7 +421,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                     label = new Label();
                     button = new Button();
                     final FontIcon buttonIcon = new FontIcon(Octicons.TRASHCAN_16);
-                    buttonIcon.getStyleClass().add("filter-list-icon");
+                    buttonIcon.getStyleClass().addAll("filter-list-icon");
                     button.setGraphic(buttonIcon);
 
                     final Region region = new Region();
@@ -483,13 +489,10 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             public ReadOnlyObjectProperty<FilterStringListViewModel> valueProperty() {
                 return value.getReadOnlyProperty();
             }
-
         }
     }
 
     private static class MultipleSelection<T> {
-        private final SimpleIntegerProperty code = new SimpleIntegerProperty();
-
         private boolean changing = false;
 
         public MultipleSelection(
@@ -502,8 +505,6 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             listView.setCellFactory(param -> new StringMappedListCell<>(cellValueMapper));
             final MultipleSelectionModel<T> selectionModel = listView.getSelectionModel();
             selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
-
-            final ObservableList<T> selectedInView = selectionModel.getSelectedItems();
 
             selectionModel.getSelectedIndices().addListener((ListChangeListener<Integer>) c -> {
                 if (!changing) {

@@ -16,6 +16,17 @@
     -fx-font-family: "B612";
 }
 
+.button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-text-fill: -vatsim-text-color;
+}
+
+.button:hover {
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
 .vatsim-font {
     -fx-text-fill: -vatsim-text-color;
 }
