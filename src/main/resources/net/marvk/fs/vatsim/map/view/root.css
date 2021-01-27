@@ -193,12 +193,12 @@
     -fx-font-family: "B612 Mono";
 }
 
-.hyperlink-label {
+.hl-white {
     -fx-underline: true;
     -fx-cursor: hand;
 }
 
-.hyperlink-label:hover {
+.hl-white:hover {
     -fx-text-fill: -vatsim-text-color-light;
 }
 

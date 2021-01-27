@@ -42,12 +42,13 @@
 }
 
 
-.hyperlink-label {
+.hl-white {
     -fx-text-fill: white;
     -fx-underline: true;
     -fx-cursor: hand;
 }
 
-.hyperlink-label:hover {
+.hl-white:hover {
     -fx-text-fill: #dddddd;
 }
+

@@ -5,7 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import java.lang.String?>
+<?import java.lang.*?>
 <VBox prefWidth="600" styleClass="about-container" stylesheets="@about.css" xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.about.AboutView">
     <children>
@@ -23,12 +23,22 @@
                         <String fx:value="white"/>
                     </styleClass>
                 </Label>
+                <HBox>
+                    <Label text="Licensed under " styleClass="white"/>
+                    <Label text="GNU AGPLv3" onMouseClicked="#openLicensePage">
+                        <styleClass>
+                            <String fx:value="hl-white"/>
+                        </styleClass>
+                    </Label>
+                    <Label text=" " styleClass="white"/>
+                    <Label text="?" styleClass="white" fx:id="licenseQuestionMark"/>
+                </HBox>
                 <HBox spacing="5">
                     <Label styleClass="white" text="Version: "/>
                     <Label styleClass="white" fx:id="version" text="DEV"/>
                 </HBox>
                 <Region minHeight="20.0" VBox.vgrow="ALWAYS"/>
-                <Label onMouseClicked="#openIssuePage" styleClass="hyperlink-label"
+                <Label onMouseClicked="#openIssuePage" styleClass="hl-white"
                        text="Report a bug or request a feature"/>
                 <Region minHeight="20.0" VBox.vgrow="ALWAYS"/>
                 <Label styleClass="white" text="Powered by Open Source Software"/>

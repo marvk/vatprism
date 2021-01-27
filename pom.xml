@@ -25,6 +25,14 @@
         </developer>
     </developers>
 
+    <licenses>
+        <license>
+            <name>GNU AGPLv3</name>
+            <url>https://github.com/marvk/vatprism/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <scm>
         <connection>scm:git:ssh://github.com:marvk/vatprism.git</connection>
         <developerConnection>scm:git:ssh://github.com:marvk/vatprism.git</developerConnection>

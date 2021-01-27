@@ -37,4 +37,8 @@ public class AboutViewModel implements ViewModel {
     public void openIssuePage() {
         hostServices.showDocument("https://github.com/marvk/vatprism/issues/new/choose");
     }
+
+    public void openLicensePage() {
+        hostServices.showDocument("https://github.com/marvk/vatprism/blob/master/LICENSE");
+    }
 }

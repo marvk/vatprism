@@ -6,16 +6,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import net.marvk.fs.vatsim.map.data.Dependency;
 import net.marvk.fs.vatsim.map.view.ListNoneSelectionModel;
 
 import java.time.LocalDateTime;
 
 public class AboutView implements FxmlView<AboutViewModel> {
+    @FXML
+    private Label licenseQuestionMark;
+
     @FXML
     private Label version;
 
@@ -36,7 +41,29 @@ public class AboutView implements FxmlView<AboutViewModel> {
         dependenciesList.setSelectionModel(new ListNoneSelectionModel<>());
         dependenciesList.setFocusTraversable(false);
         version.requestFocus();
-        createdBy.setText("©2020-%s Marvin Kuhnke".formatted(LocalDateTime.now().getYear()));
+        final String createdByText = "Copyright © 2020-%s Marvin Kuhnke".formatted(LocalDateTime.now().getYear());
+        createdBy.setText(createdByText);
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(licenseQuestionMarkString().formatted(createdByText));
+        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setWrapText(true);
+        tooltip.setMaxWidth(400);
+        tooltip.setAutoHide(false);
+        tooltip.setShowDuration(Duration.INDEFINITE);
+        licenseQuestionMark.setTooltip(tooltip);
+    }
+
+    private static String licenseQuestionMarkString() {
+        return """
+                VATprism is a data explorer for VATSIM, the Virtual Air Traffic Simulation Network. VATprism allows users to explore available ATC services, connected pilots, Airports, Flight and Upper Information Regions and more!
+                %s
+
+                This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+                This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+                You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/.
+                            """;
     }
 
     private void setVersion() {
@@ -49,6 +76,11 @@ public class AboutView implements FxmlView<AboutViewModel> {
     @FXML
     private void openIssuePage() {
         viewModel.openIssuePage();
+    }
+
+    @FXML
+    private void openLicensePage() {
+        viewModel.openLicensePage();
     }
 
     private class DependencyListCell extends ListCell<Dependency> {
