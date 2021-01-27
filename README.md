@@ -11,6 +11,10 @@ connected pilots, Airports, Flight and Upper Information Regions and more!
 VATprism was born out of a desire to simplify, and make more customizable, access to VATSIM data and is inspired by the
 excellent [VAT-Spy](http://www1.metacraft.com/VATSpy/), which, as of this time, unfortunately remains closed source.
 
+## Download
+
+For instructions on how to download VATprism, see the [Installation](##installation) section of this readme.
+
 ## Screenshots
 
 #### Airport Detail
@@ -43,7 +47,8 @@ please check existing issues for duplicates.
 
 #### Windows
 
-Simply download the latest installer (`.msi`) from the [releases page](https://github.com/marvk/vatprism/releases)
+Simply download the latest installer (`.msi`) from
+the [releases page](https://github.com/marvk/vatprism/releases/latest)
 and run it. The installer will guide you through the installation.
 
 In some cases, the installer may prompt you to remove an existing version. In this case, head to Windows' *add or remove
