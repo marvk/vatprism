@@ -13,7 +13,7 @@ excellent [VAT-Spy](http://www1.metacraft.com/VATSpy/), which, as of this time, 
 
 ## Download
 
-For instructions on how to download VATprism, see the [Installation](##installation) section of this readme.
+For instructions on how to download VATprism, see the [Installation](#installation) section of this readme.
 
 ## Screenshots
 
