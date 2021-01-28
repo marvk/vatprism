@@ -30,6 +30,13 @@
 
 [![](https://i.imgur.com/GkxMnGy.png)](https://i.imgur.com/oSE1y7s.png)
 
+#### Distance Measure
+
+<video autoplay loop>
+  <source src="assets/images/showcase/distance_measure.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video> 
+
 ## [Usage Guide](/usage-guide)
 
 ## [Usage Guide](/streamers)
