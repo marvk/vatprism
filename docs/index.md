@@ -14,7 +14,7 @@
 
 ### Detail Views
 
-VATprism allows you to simply click on any data displayed on the map: Airports, Flights, Controllers and FIRs. This
+VATprism allows you to simply click on any data displayed on the map: airports, flights, controllers and FIRs. This
 brings up a detailed overview of the item that is easily navigable by clicking on any provided links.
 
 #### Airports
@@ -33,7 +33,7 @@ Displays controller information, location and their atis.
 
 [![](assets/images/showcase/detail_pilot.png)](assets/images/showcase/detail_pilot.png)
 
-See a pilots information, location including vertical speed and ETA, and flight plan including route and remarks and if
+See a pilots' information, location including vertical speed and ETA, and flight plan including route and remarks and if
 they are streaming on Twitch.
 
 #### FIRs
@@ -52,7 +52,7 @@ more!
 
 [![](assets/images/showcase/table_airports.png)](assets/images/showcase/table_airports.png)
 
-Show all Airports with the number of incoming and outgoing flights and number of connected controllers.
+Show all airports with the number of incoming and outgoing flights and number of connected controllers.
 
 #### Controllers
 
