@@ -87,7 +87,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     @Override
     protected void updateList(final Collection<VatsimAirspace> updatedModels) {
         super.updateList(updatedModels);
-        mergeExtensions();
+//        mergeExtensions();
         createRTree();
         linkFirs();
     }
