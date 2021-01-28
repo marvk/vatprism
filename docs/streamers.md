@@ -1,6 +1,6 @@
-### [← back](/)
-
 # Streamers
+
+### [← back](/)
 
 VATprism will show users which clients are streaming on Twitch.
 
