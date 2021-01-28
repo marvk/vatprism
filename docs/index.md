@@ -107,5 +107,3 @@ customize the look of your VATprism map. Dark, light, colorful or muted, or anyt
 #### Basically Google Maps.
 
 [![](assets/images/showcase/color_scheme_real.png)](assets/images/showcase/color_scheme_real.png)
-
-## [Usage Guide](/usage-guide)
