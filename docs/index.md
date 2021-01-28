@@ -8,35 +8,104 @@
 
 [Download Source]({{ site.github.zip_url }})
 
-## Screenshots
+## Showcase
 
-#### Airport Detail
+[![](assets/images/showcase/overview.png)](assets/images/showcase/overview.png)
 
-[![](https://i.imgur.com/oSE1y7s.png)](https://i.imgur.com/oSE1y7s.png)
+### Detail Views
 
-#### Airport Table
+VATprism allows you to simply click on any data displayed on the map: Airports, Flights, Controllers and FIRs. This
+brings up a detailed overview of the item that is easily navigable by clicking on any provided links.
 
-[![](https://i.imgur.com/Py7kWgq.png)](https://i.imgur.com/Py7kWgq.png)
+#### Airports
 
-#### Pilot Detail
+[![](assets/images/showcase/detail_airport.png)](assets/images/showcase/detail_airport.png)
 
-[![](https://i.imgur.com/4GYHvDe.png)](https://i.imgur.com/4GYHvDe.png)
+See airport location, active controllers, metar, arrivals and departures!
 
-#### Full Text Search!
+#### Controllers
 
-[![](https://i.imgur.com/RKEhpk4.png)](https://i.imgur.com/oSE1y7s.png)
+[![](assets/images/showcase/detail_controller.png)](assets/images/showcase/detail_controller.png)
 
-#### Fully Customizable!
+Displays controller information, location and their atis.
 
-[![](https://i.imgur.com/GkxMnGy.png)](https://i.imgur.com/oSE1y7s.png)
+#### Pilots
+
+[![](assets/images/showcase/detail_pilot.png)](assets/images/showcase/detail_pilot.png)
+
+See a pilots information, location including vertical speed and ETA, and flight plan including route and remarks and if
+they are streaming on Twitch.
+
+#### FIRs
+
+[![](assets/images/showcase/detail_fir.png)](assets/images/showcase/detail_fir.png)
+
+Quickly check all controllers assigned to the FIR, including better FIR matching for controller callsigns with infixes,
+such as EDDG-E and EDDG-P.
+
+### Tables
+
+VATprism includes a number of tables showing all kinds of network data. Pilots, Controllers, Airports, FIRs, UIRs and
+more!
+
+#### Airports
+
+[![](assets/images/showcase/table_airports.png)](assets/images/showcase/table_airports.png)
+
+Show all Airports with the number of incoming and outgoing flights and number of connected controllers.
+
+#### Controllers
+
+[![](assets/images/showcase/table_controllers.png)](assets/images/showcase/table_controllers.png)
+
+See all controllers, including observers, with their location, rating and frequency.
+
+#### Pilots
+
+[![](assets/images/showcase/table_pilots.png)](assets/images/showcase/table_pilots.png)
+
+Lists all connected pilots with all kinds of data, including ETA, ground speed and altitude. Want to find the fastest or
+highest plane on the network? The longest flight? The flight that has been connected the longest? No problem!
+
+#### Streamers
+
+[![](assets/images/showcase/table_streamers.png)](assets/images/showcase/table_streamers.png)
+
+Want to find a VATSIM stream to watch? This table lists all users that have included a link to their twitch stream in
+their remarks. [Want to make sure you show up here when you're streaming?](/streamers)
 
 #### Distance Measure
 
-<video autoplay loop>
+<video autoplay loop controls>
   <source src="assets/images/showcase/distance_measure.mp4" type="video/mp4">
 Your browser does not support the video tag.
 </video> 
 
-## [Usage Guide](/usage-guide)
+Measure distance between any two positions on the map, with an optional approximate duration calculated from an
+adjustable ground speed.
 
-## [Usage Guide](/streamers)
+### Filters
+
+[![](assets/images/showcase/filters.png)](assets/images/showcase/filters.png)
+
+Create an infinite amount of filters, filtering callsigns, CIDs, departure and arrival airports and much more, including
+custom map colors. Filters are also disableable, and may be shared as a .json file.
+
+### Color Schemes
+
+VATprism allows you to customize every color drawn on the map individually. This gives you all the control you need to
+customize the look of your VATprism map. Dark, light, colorful or muted, or anything in between. Anything is possible!
+
+#### Longing for the true and trusted?
+
+[![](assets/images/showcase/color_scheme_vatspy.png)](assets/images/showcase/color_scheme_vatspy.png)
+
+#### Can I HazControl?
+
+[![](assets/images/showcase/color_scheme_haz.png)](assets/images/showcase/color_scheme_haz.png)
+
+#### Basically Google Maps.
+
+[![](assets/images/showcase/color_scheme_real.png)](assets/images/showcase/color_scheme_real.png)
+
+## [Usage Guide](/usage-guide)
