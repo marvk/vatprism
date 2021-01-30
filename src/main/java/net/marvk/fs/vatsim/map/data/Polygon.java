@@ -65,7 +65,9 @@ public class Polygon {
                 .map(e -> new Ring(e, xExtractor, yExtractor, lengthSupplier))
                 .collect(Collectors.toUnmodifiableList());
 
-        this.numPoints = exteriorRing.numPoints() + holeRings.stream().mapToInt(Ring::numPoints).sum();
+        this.numPoints = exteriorRing.numPoints() + holeRings.stream()
+                                                             .mapToInt(Ring::numPoints)
+                                                             .sum();
     }
 
     private String name() {
@@ -284,7 +286,7 @@ public class Polygon {
         final boolean reverse;
 
         //Some extension polygons have the wrong rotation
-        if (sameJ.get(0) > sameJ.get(sameJ.size() - 1)) {
+        if (isReverse(sameJ)) {
             Collections.reverse(sameJ);
             reverse = true;
         } else {
@@ -303,12 +305,27 @@ public class Polygon {
         final List<Point2D> normalized = normalize(mergedName, merged);
         final List<Point2D> antimeridianMerged = mergeAlongAntimeridian(normalized);
 
-        return new Polygon(List.of(antimeridianMerged),
+        final Polygon result = new Polygon(List.of(antimeridianMerged),
                 (e, i) -> e.get(i).getX(),
                 (e, i) -> e.get(i).getY(),
                 List::size,
                 mergedName
         );
+        result.exteriorRing.polyLabel = polygon1.exteriorRing.polyLabel();
+        return result;
+    }
+
+    private static boolean isReverse(final List<Integer> list) {
+        if (list.size() < 2) {
+            return false;
+        }
+
+        final int sum = IntStream
+                .range(0, list.size() - 1)
+                .map(i -> list.get(i) < list.get(i + 1) ? 1 : -1)
+                .sum();
+
+        return sum < 0;
     }
 
     private static List<Point2D> mergeAlongAntimeridian(final List<Point2D> merged) {
@@ -401,6 +418,7 @@ public class Polygon {
 
         final int step = reverse ? 1 : -1;
 
+        // TODO fix merging here
         for (int i = 0; i < polygon1.numPoints(); i++) {
             result.add(new Point2D(polygon1.pointsX[i], polygon1.pointsY[i]));
 

@@ -106,7 +106,19 @@ public class FlightInformationRegionBoundary implements Settable<VatsimAirspace>
 
     public void mergeInto(final FlightInformationRegionBoundary extension) {
         log.debug("Merging %s with it's extension".formatted(getIcao()));
-        polygon.set(Polygon.merge(getPolygon(), extension.getPolygon()));
+        // TODO fix polygon merging...
+        try {
+            final Polygon p = Polygon.merge(getPolygon(), extension.getPolygon());
+            polygon.set(p);
+        } catch (final Exception e1) {
+            log.warn("Failed to merge polygons for %s, trying again...".formatted(getIcao()), e1);
+            try {
+                final Polygon p = Polygon.merge(extension.getPolygon(), getPolygon());
+                polygon.set(p);
+            } catch (final Exception e2) {
+                log.error("Completely failed to merge polygons for %s".formatted(getIcao()), e2);
+            }
+        }
     }
 
     SimpleListProperty<FlightInformationRegion> getFlightInformationRegionsWritable() {
