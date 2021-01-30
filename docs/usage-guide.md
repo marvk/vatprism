@@ -2,12 +2,23 @@
 
 ### [← back](/)
 
-## Customize Settings
+## Navigation
 
-{% include youtubePlayer.html id="UIE7Wj1hr7M" %}
+#### Map
 
-## Create Filters
+| Input             | Action            |
+|:-------------     |:------------------|
+| LMB               | Pan the map       |
+| RMB               | Open Context Menu |
+| MMB               | Select Item       |
+| CTRL+LMB          | Distance Measure  |
+| ESC               | Clear Selection   |
 
-{% include youtubePlayer.html id="UIE7Wj1hr7M" %}
+#### Tables
+
+| Input             | Action            |
+|:-------------     |:------------------|
+| LMB               | Select Item       |
+| CTRL+LMB          | Open Stream (Streamer Table) |
 
 ### [← back](/)
