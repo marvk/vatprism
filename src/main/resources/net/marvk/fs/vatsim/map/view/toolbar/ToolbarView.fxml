@@ -10,57 +10,86 @@
       fx:controller="net.marvk.fs.vatsim.map.view.toolbar.ToolBarView">
     <children>
         <Button styleClass="icon-button" onAction="#openSettings" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Settings"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-gear-16" iconSize="24"/>
             </graphic>
         </Button>
         <Button styleClass="icon-button" fx:id="reload" onAction="#refresh" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Refresh"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-download-16" iconSize="24"/>
             </graphic>
         </Button>
         <ToggleButton fx:id="autoReload" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Refresh Automatically"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-sync-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="pilots" userData="pilots.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Flights"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-pilot" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="pilotsLabel" userData="pilots.label" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Flight Labels"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-pilot-label" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="pilotsOnGround" userData="pilots.pilots_on_ground" styleClass="icon-button"
                       mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Flights on Ground"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-pilot-on-ground" iconSize="24"/>
             </graphic>
         </ToggleButton>
-        <Separator orientation="VERTICAL"/>
-        <ToggleButton fx:id="connections" userData="connections.enabled" styleClass="icon-button"
-                      mnemonicParsing="false">
-            <graphic>
-                <FontIcon iconLiteral="oct-share-android-16" iconSize="24"/>
-            </graphic>
-        </ToggleButton>
-        <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="filters" userData="filters.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Filtered Flights"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-filter-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
+        <ToggleButton fx:id="connections" userData="connections.enabled" styleClass="icon-button"
+                      mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Connections"/>
+            </tooltip>
+            <graphic>
+                <FontIcon iconLiteral="oct-share-android-16" iconSize="24"/>
+            </graphic>
+        </ToggleButton>
+        <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="airports" userData="airports.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Airports"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-airport" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="airportsLabel" userData="airports.label" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Airport Labels"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-airport-label" iconSize="24"/>
             </graphic>
@@ -68,24 +97,36 @@
         <ToggleButton fx:id="airportsInactive"
                       userData="airports.paint_uncontrolled_airports_with_destinations_or_arrivals"
                       styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Airports with Flights but no Controllers"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-airport-inactive" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="firs" userData="active_firs.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Active FIRs"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-fir" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="firsInactive" userData="inactive_firs.enabled" styleClass="icon-button"
                       mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Inactive FIRs"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-fir-inactive" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="uirs" userData="active_uirs.enabled" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Active UIRs"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-uir" iconSize="24"/>
             </graphic>
@@ -104,33 +145,51 @@
             </padding>
         </Label>
         <Button onAction="#openGithub" styleClass="icon-button, github-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="GitHub"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-mark-github-16" iconSize="24"/>
             </graphic>
         </Button>
         <Button onAction="#openDiscord" styleClass="icon-button, discord-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Discord"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="vatprism-discord" iconSize="24"/>
             </graphic>
         </Button>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="fullScreen" styleClass="icon-button" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Fullscreen"/>
+            </tooltip>
             <graphic>
                 <FontIcon fx:id="fullScreenIcon" iconLiteral="oct-screen-normal-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Separator orientation="VERTICAL"/>
         <ToggleButton fx:id="metrics" styleClass="icon-button" userData="metrics.enabled" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Debug Information"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
         <Button styleClass="icon-button" onAction="#showUsageGuide" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="Usage Guide"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-question-16" iconSize="24"/>
             </graphic>
         </Button>
         <Button styleClass="icon-button" onAction="#showAbout" mnemonicParsing="false">
+            <tooltip>
+                <Tooltip text="About"/>
+            </tooltip>
             <graphic>
                 <FontIcon iconLiteral="oct-info-16" iconSize="24"/>
             </graphic>
