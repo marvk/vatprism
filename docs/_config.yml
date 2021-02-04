@@ -2,3 +2,5 @@ theme: jekyll-theme-minimal
 title: VATprism
 show_downloads: true
 logo: https://i.imgur.com/orfmevM.png
+plugins:
+  - jekyll-sitemap
