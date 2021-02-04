@@ -51,8 +51,9 @@ Simply download the latest installer (`.msi`) from
 the [releases page](https://github.com/marvk/vatprism/releases/latest)
 and run it. The installer will guide you through the installation.
 
-In some cases, the installer may prompt you to remove an existing version. In this case, head to Windows' *add or remove
-programs* dialog, remove your existing version, and rerun the installer. Don't worry, your settings will not be removed.
+Note: Windows Defender SmartScreen might show [a warning](assets/images/warning.png) about the installer not being a
+recognized app. This is harmless and simply an issue of the installer
+being [unsigned.](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-smartscreen/microsoft-defender-smartscreen-overview)
 
 #### Linux and macOS
 

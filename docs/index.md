@@ -6,6 +6,10 @@
 
 [Download Installer (Windows)]({{ site.github.releases[0].assets[2].browser_download_url }})
 
+Note: Windows Defender SmartScreen might show [a warning](assets/images/warning.png) about the installer not being a
+recognized app. This is harmless and simply an issue of the installer
+being [unsigned.](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-smartscreen/microsoft-defender-smartscreen-overview)
+
 [Download Source]({{ site.github.zip_url }})
 
 ## Why VATprism?
