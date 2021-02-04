@@ -8,6 +8,13 @@
 
 [Download Source]({{ site.github.zip_url }})
 
+## Why VATprism?
+
+VATprism has been build from the ground up to offer a no-fuss experience into the world of VATSIM data. VATprism makes
+it easy to find Flights, Airports and other Data and navigate between that data. It offers fully customizable color
+schemes, allowing you to adjust the interface colors to your liking. VATprism also allows you to create an unlimited
+amount of filters, marking flights you are interested in with any color you prefer.
+
 ## Showcase
 
 [![](assets/images/showcase/overview.png)](assets/images/showcase/overview.png)
