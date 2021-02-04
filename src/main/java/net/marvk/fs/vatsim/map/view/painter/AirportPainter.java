@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 public class AirportPainter extends MapPainter<Airport> {
     private static final int TYPES_WIDTH = 9;
-    private static final int APPROACH_RADIUS = 1;
 
     @Parameter("Paint Uncontrolled Airports")
     private boolean paintAll = false;
@@ -51,6 +50,8 @@ public class AirportPainter extends MapPainter<Airport> {
     private Color appColor = Color.web("005757");
     @Parameter("Approach Placeholder Color")
     private Color appPlaceholderColor = Color.web("17130a");
+    @Parameter(value = "Approach Radius", min = 0.25, max = 10)
+    private double approachRadius = 1;
     @Parameter("Controller Label Color")
     private Color typesLabelColor = Color.WHITE.darker();
     @Parameter("Controller Border Color")
@@ -113,14 +114,14 @@ public class AirportPainter extends MapPainter<Airport> {
         final String icao = airport.getIcao();
 
         final double textScale = c.getFont().getSize() / 12.0;
-        final boolean paintApproachCircle = mapVariables.getScale() > 32 * textScale;
-        final boolean paintApproachLabel = mapVariables.getScale() > 32 * textScale;
+        final boolean paintApproachCircle = mapVariables.getScale() > (40 / approachRadius) * textScale;
+        final boolean paintApproachLabel = paintApproachCircle;
         final boolean paintApproach = types.remove(ControllerType.DEP) | types.remove(ControllerType.APP);
 
         if (paintControllers) {
             c.setTextAlign(TextAlignment.CENTER);
             if (paintApproach) {
-                final double r = APPROACH_RADIUS * mapVariables.getScale();
+                final double r = approachRadius * mapVariables.getScale();
                 final double rHalf = r / 2.0;
 
                 if (paintApproachCircle) {
