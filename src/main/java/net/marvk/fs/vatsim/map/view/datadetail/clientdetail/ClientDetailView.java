@@ -9,6 +9,8 @@ import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -65,7 +67,8 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
                         return "";
                     }
 
-                    return "%s (%s)".formatted(FORMATTER.format(client.getLogonTime()), onlineForString(client.getLogonTime()));
+                    return "%s (%s)".formatted(FORMATTER.format(client.getLogonTime()), onlineForString(client.getLogonTime(), ZonedDateTime
+                            .now(ZoneId.of("Z"))));
                 },
                 client.logonTimeProperty()
         ));

@@ -32,6 +32,7 @@ public class AppModule extends AbstractModule {
         bind(ColorSchemeRepository.class).in(Singleton.class);
         bind(Preferences.class).to(ConfigFilePreferences.class).asEagerSingleton();
         bind(PreferencesView.class).asEagerSingleton();
+        bind(TimeProvider.class).toInstance(new UpdatingTimeProvider(Duration.ofMinutes(1), true));
     }
 
     @Provides

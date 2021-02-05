@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.datadetail.controllersdetail;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -107,7 +108,11 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             final Label name = new Label(controller.getRealName());
             controllersGrid.add(name, 3, i);
 
-            final Label onlineFor = new Label(onlineForString(controller.getLogonTime()));
+            final Label onlineFor = new Label();
+            onlineFor.textProperty().bind(Bindings.createStringBinding(
+                    () -> onlineForString(controller.getLogonTime(), viewModel.getCurrentTime()),
+                    viewModel.currentTimeProperty()
+            ));
             onlineFor.getStyleClass().add("mono");
             controllersGrid.add(onlineFor, 4, i);
         }
