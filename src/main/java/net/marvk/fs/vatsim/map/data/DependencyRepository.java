@@ -49,7 +49,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
 
         final Stream<Dependency> additionalDependencies = List.of(
                 new Dependency(
-                        "Unknown license",
+                        "Creative Commons Attribution Share Alike 4.0 International",
                         "VAT-Spy Data Project",
                         null,
                         null,

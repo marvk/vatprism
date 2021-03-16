@@ -85,7 +85,10 @@ public class App extends MvvmfxGuiceApplication {
 
         secondaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (KeyCode.F11 == event.getCode()) {
-                secondaryStage.setFullScreen(!secondaryStage.isFullScreen());
+                final boolean value = !secondaryStage.isFullScreen();
+                secondaryStage.setFullScreen(value);
+                secondaryStage.setAlwaysOnTop(value);
+                System.out.println(secondaryStage.isAlwaysOnTop());
             }
         });
         secondaryStage.setOnCloseRequest(e -> {
