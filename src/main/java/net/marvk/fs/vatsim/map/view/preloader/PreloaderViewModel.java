@@ -33,6 +33,8 @@ public class PreloaderViewModel implements ViewModel {
     private final ReadOnlyStringWrapper error = new ReadOnlyStringWrapper();
 
     private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
+    private final ReadOnlyObjectWrapper<VersionResponse> versionResponse = new ReadOnlyObjectWrapper<>();
+    private final VersionApi versionApi;
     private final HostServices hostServices;
     private final RepositoryLoader repositoryLoader;
     private final VersionProvider versionProvider;
@@ -40,7 +42,8 @@ public class PreloaderViewModel implements ViewModel {
     private final ObjectProperty<Throwable> exception = new SimpleObjectProperty<>();
 
     @Inject
-    public PreloaderViewModel(final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+    public PreloaderViewModel(final VersionApi versionApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+        this.versionApi = versionApi;
         this.hostServices = hostServices;
         this.repositoryLoader = repositoryLoader;
         this.versionProvider = versionProvider;
@@ -51,6 +54,8 @@ public class PreloaderViewModel implements ViewModel {
                         .addListener((observable, oldValue, newValue) -> progress.set(newValue.doubleValue()));
         repositoryLoader.currentTaskDescriptionProperty()
                         .addListener((observable, oldValue, newValue) -> taskDescription.set(newValue));
+
+        tryCheckVersion();
 
         repositoryLoader.setOnSucceeded(e -> {
             log.debug("Loading view");
@@ -70,6 +75,23 @@ public class PreloaderViewModel implements ViewModel {
         repositoryLoader.setOnFailed(e -> failed(repositoryLoader.getException()));
 
         repositoryLoader.start();
+    }
+
+    private void tryCheckVersion() {
+        repositoryLoader.currentTaskDescription.set("Checking Version");
+
+        try {
+            final VersionResponse versionResponse = versionApi.checkVersion();
+            if (versionResponse.getResult() == VersionResponse.Result.OUTDATED) {
+                log.warn("Found newer version: %s".formatted(versionResponse.getLatestVersion()));
+            } else {
+                log.info("Version is current");
+            }
+            repositoryLoader.currentTaskDescription.set("Checked Version");
+            this.versionResponse.set(versionResponse);
+        } catch (final VersionApiException e) {
+            log.error("Failed to fetch version", e);
+        }
     }
 
     private void failed(final Throwable e) {
@@ -102,6 +124,14 @@ public class PreloaderViewModel implements ViewModel {
         return progress;
     }
 
+    public VersionResponse getVersionResponse() {
+        return versionResponse.get();
+    }
+
+    public ReadOnlyObjectProperty<VersionResponse> versionResponseProperty() {
+        return versionResponse.getReadOnlyProperty();
+    }
+
     public String getTaskDescription() {
         return taskDescription.get();
     }
@@ -132,6 +162,13 @@ public class PreloaderViewModel implements ViewModel {
         log.info(startMessage);
         callable.call();
         log.info("%s in %s".formatted(completeMessage, Duration.between(start, LocalDateTime.now())));
+    }
+
+    public void downloadNewVersion() {
+        hostServices.showDocument(versionResponse.get().getUrl());
+
+        Platform.exit();
+        System.exit(0);
     }
 
     private static class CallableTask extends Task<Void> {
@@ -217,25 +254,8 @@ public class PreloaderViewModel implements ViewModel {
                 final UpperInformationRegionRepository upperInformationRegionRepository,
                 final InternationalDateLineRepository internationalDateLineRepository,
                 final CountryRepository countryRepository,
-                final VatsimApi vatsimApi,
-                final VersionApi versionApi
+                final VatsimApi vatsimApi
         ) {
-            final var checkVersion = new CallableTask(
-                    "Checking Version",
-                    "Checked Version",
-                    () -> {
-                        try {
-                            final VersionResponse versionResponse = versionApi.checkVersion();
-                            if (versionResponse.getResult() == VersionResponse.Result.OUTDATED) {
-                                log.warn("Found newer version: %s".formatted(versionResponse.getLatestVersion()));
-                            } else {
-                                log.info("Version is current");
-                            }
-                        } catch (final VersionApiException e) {
-                            log.error("", e);
-                        }
-                    }
-            );
             final var loadWorld = new CallableTask(
                     "Loading World",
                     "Loaded World",
@@ -296,7 +316,6 @@ public class PreloaderViewModel implements ViewModel {
                     });
 
             tasks = List.of(
-                    checkVersion,
                     loadWorld,
                     loadLakes,
                     loadCountries,

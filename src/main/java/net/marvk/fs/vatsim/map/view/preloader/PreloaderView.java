@@ -3,12 +3,13 @@ package net.marvk.fs.vatsim.map.view.preloader;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
+import net.marvk.fs.vatsim.map.version.VersionResponse;
 
 public class PreloaderView implements FxmlView<PreloaderViewModel> {
     @FXML
@@ -47,6 +48,36 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
             }
         });
         versionAndName.setText(viewModel.getVersionAndName());
+
+        viewModel.versionResponseProperty().addListener((observable, oldValue, response) -> {
+            if (response != null && response.getResult() == VersionResponse.Result.OUTDATED) {
+                showNewVersionDialog(response);
+
+            }
+        });
+    }
+
+    private void showNewVersionDialog(final VersionResponse response) {
+        final ButtonType download = new ButtonType("Download");
+        final ButtonType postpone = new ButtonType("Postpone");
+
+        final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(taskHolder.getScene().getWindow());
+        alert.setTitle("New Version Available!");
+        alert.setHeaderText("A new Version of VATprism (%s) is available.".formatted(response.getLatestVersion()));
+        alert.setContentText("Would you like to download the latest version?");
+        alert.getButtonTypes().setAll(download, postpone);
+        final Window window = alert.getDialogPane().getScene().getWindow();
+        window.setOnCloseRequest(e -> window.hide());
+
+        ((Button) alert.getDialogPane().lookupButton(download)).setDefaultButton(true);
+        ((Button) alert.getDialogPane().lookupButton(postpone)).setDefaultButton(false);
+
+        alert.showAndWait()
+             .stream()
+             .filter(e -> e == download)
+             .findAny()
+             .ifPresent(e -> viewModel.downloadNewVersion());
     }
 
     @FXML
