@@ -59,15 +59,14 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <java.version>15</java.version>
-        <lombok.version>1.18.16</lombok.version>
-        <javafx.version>15.0.1</javafx.version>
-        <slf4j.version>1.7.30</slf4j.version>
+        <lombok.version>1.18.20</lombok.version>
+        <javafx.version>16</javafx.version>
+        <slf4j.version>1.7.31</slf4j.version>
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
-        <guice.version>5.0.0-BETA-1</guice.version>
-        <ikonli.version>12.1.0</ikonli.version>
-        <lucene.version>8.7.0</lucene.version>
-        <log4j.version>2.14.0</log4j.version>
-        <geotools.version>24.0</geotools.version>
+        <guice.version>5.0.1</guice.version>
+        <ikonli.version>12.2.0</ikonli.version>
+        <log4j.version>2.14.1</log4j.version>
+        <geotools.version>25.1</geotools.version>
     </properties>
 
     <dependencies>
@@ -83,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-fileicons-pack</artifactId>
+            <artifactId>ikonli-ionicons4-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
 
