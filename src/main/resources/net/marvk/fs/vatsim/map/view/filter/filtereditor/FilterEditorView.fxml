@@ -17,7 +17,7 @@
                         <Tooltip text="Save Filter"/>
                     </tooltip>
                     <graphic>
-                        <FontIcon iconLiteral="oct-file-symlink-file-16" iconSize="24"/>
+                        <FontIcon iconLiteral="ion4-ios-save" iconSize="24"/>
                     </graphic>
                 </Button>
                 <ToggleButton fx:id="enabled" styleClass="icon-button" selected="true">

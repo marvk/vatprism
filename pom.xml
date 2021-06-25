@@ -85,6 +85,11 @@
             <artifactId>ikonli-ionicons4-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fileicons-pack</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
