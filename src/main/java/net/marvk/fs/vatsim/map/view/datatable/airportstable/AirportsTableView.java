@@ -39,22 +39,22 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
                 .build();
 
         this.<Point2D>newColumnBuilder()
-                .title("Longitude")
-                .objectObservableValueFactory(Airport::positionProperty)
-                .toStringMapper(e -> GeomUtil.formatLon(e.getY()))
-                .sortable(Comparator.comparingDouble(Point2D::getX))
-                .mono(true)
-                .widthFactor(0.9)
-                .build();
+            .title("Longitude")
+            .objectObservableValueFactory(Airport::positionProperty)
+            .toStringMapper(e -> GeomUtil.formatLon(e.getY()))
+            .sortable(Comparator.comparingDouble(Point2D::getY))
+            .mono(true)
+            .widthFactor(0.9)
+            .build();
 
         this.<Point2D>newColumnBuilder()
-                .title("Latitude")
-                .objectObservableValueFactory(Airport::positionProperty)
-                .toStringMapper(e -> GeomUtil.formatLat(e.getX()))
-                .sortable(Comparator.comparingDouble(Point2D::getY))
-                .mono(true)
-                .widthFactor(0.9)
-                .build();
+            .title("Latitude")
+            .objectObservableValueFactory(Airport::positionProperty)
+            .toStringMapper(e -> GeomUtil.formatLat(e.getX()))
+            .sortable(Comparator.comparingDouble(Point2D::getX))
+            .mono(true)
+            .widthFactor(0.9)
+            .build();
 
         this.<String>newColumnBuilder()
                 .title("FIR")
