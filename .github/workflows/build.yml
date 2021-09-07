@@ -28,7 +28,7 @@ jobs:
       - name: Rename artifacts
         run: ren target-fat-jar/vatsim-map-${{env.VERSION_NAME}}+${{steps.short-sha.outputs.sha}}-fat.jar VATprism-${{env.VERSION_NAME}}.jar; ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.VERSION_NAME}}.msi;
       - name: Github Release
-        uses: marvinpinto/@latest
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           automatic_release_tag: latest
