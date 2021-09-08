@@ -83,9 +83,6 @@ public class MainViewModel implements ViewModel {
         toolbarScope.reloadExecutableProperty().bind(loadClientsAsync.executableProperty());
         toolbarScope.reloadExceptionProperty().bind(loadClientsAsync.exceptionProperty());
 
-        final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
-        final ObjectProperty<Color> baseColor = preferences.colorProperty("world.fill_color");
-
         style.bind(new StyleBindingGenerator(preferences).styleBinding());
     }
 

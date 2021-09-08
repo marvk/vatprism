@@ -12,6 +12,7 @@ import de.saxsys.mvvmfx.FluentViewLoader;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class PreferencesView {
+    private static final String INFO_STYLE = "-fx-text-fill: #aaaaaa; -fx-font-size: 10;";
+    private static final String WARNING_STYLE = "-fx-text-fill: darkred; -fx-font-weight: bold; -fx-font-size: 10;";
     private final Preferences preferences;
     private final SettingsScope settingsScope;
     private PreferencesFx preferencesFx;
@@ -44,6 +47,7 @@ public class PreferencesView {
         this.settingsScope = settingsScope;
         this.settingsScope.getPainters()
                           .addListener((ListChangeListener<PainterExecutor<?>>) c -> getPreferencesDialog());
+
     }
 
     public void show() {
@@ -79,12 +83,21 @@ public class PreferencesView {
 
         return Category.of("User Interface",
                 Setting.of("World Color As Base", autoColor),
+                Setting.of(infoLabel("Enable if the color if ui colors should by synced with the color of the World Fill", INFO_STYLE)),
                 Setting.of("Background Color Base", backgroundColor),
                 Setting.of("Text Color Base", textColor),
                 Setting.of("Shade Automatically", autoShade),
+                Setting.of(infoLabel("Enable if VATprism should attempt to automatically detect the best shading options", INFO_STYLE)),
                 Setting.of("Invert Background Color Shading", backgroundShadingInverted),
                 Setting.of("Invert Text Color Shading", textShadingInverted)
         );
+    }
+
+    private Label infoLabel(final String s, final String style) {
+        final Label result = new Label(s);
+        result.setPadding(new Insets(0, 0, 0, 20));
+        result.setStyle(style);
+        return result;
     }
 
     private Category colorSchemes() {
@@ -110,22 +123,19 @@ public class PreferencesView {
         final IntegerProperty uiScale = preferences.integerProperty("general.ui_scale");
         uiScale.bind(uiFontSize.divide(12.0));
 
-        final Label warning = new Label("        Be warned: Prerelease updates are not stable, anything might break at any time.");
-        warning.setStyle("-fx-text-fill: darkred; -fx-font-weight: bold");
-
         return Category.of(
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
                 Group.of(
-                        Setting.of("Show Stream Links", social),
+                        Setting.of("Show Twitch Stream Links", social),
                         Setting.of("UI Font Size", uiFontSize, 4, 72),
                         Setting.of("Map Font Size", property, 4, 72),
                         Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
                 ),
                 Group.of("Advanced",
                         Setting.of("Enable Debug Mode", debug),
-                        Setting.of(warning),
-                        Setting.of("Prerelease Updates", prereleases)
+                        Setting.of("Prerelease Updates", prereleases),
+                        Setting.of(infoLabel("Be warned: Prerelease updates are not stable, anything might break at any time.", WARNING_STYLE))
                 )
         );
     }

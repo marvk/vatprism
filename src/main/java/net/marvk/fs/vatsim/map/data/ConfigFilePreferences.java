@@ -17,8 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j2
 public class ConfigFilePreferences implements Preferences {
@@ -39,6 +41,13 @@ public class ConfigFilePreferences implements Preferences {
         integerProperty("general.map_font_size", 12);
         doubleProperty("general.scroll_speed", 2.25);
         booleanProperty("general.prereleases", false);
+
+        booleanProperty("ui.auto_color", true);
+        booleanProperty("ui.auto_shade", true);
+        colorProperty("ui.background_base_color", Color.valueOf("1a130a"));
+        booleanProperty("ui.invert_background_shading", false);
+        colorProperty("ui.text_base_color", Color.valueOf("1a130a"));
+        booleanProperty("ui.invert_text_shading", false);
     }
 
     private void tryLoadConfig() {
@@ -169,14 +178,19 @@ public class ConfigFilePreferences implements Preferences {
     }
 
     public ColorScheme exportColorScheme(final String name) {
-        return new ColorScheme(name, exportColorSchemeMap());
+        return new ColorScheme(name, exportColorSchemeColorMap(), exportColorSchemeToggleMap());
     }
 
     public ColorScheme exportColorScheme(final ColorScheme previous) {
-        return new ColorScheme(previous.getUuid(), previous.getName(), exportColorSchemeMap());
+        return new ColorScheme(previous.getUuid(), ColorScheme.CURRENT_VERSION, previous.getName(), exportColorSchemeColorMap(), exportColorSchemeToggleMap());
     }
 
-    private HashMap<String, Color> exportColorSchemeMap() {
+    private Map<String, Boolean> exportColorSchemeToggleMap() {
+        return Stream.of("ui.auto_color", "ui.auto_shade", "ui.invert_background_shading", "ui.invert_text_shading")
+                     .collect(Collectors.toMap(Function.identity(), e -> booleanProperty(e).get(), (a, b) -> b, HashMap::new));
+    }
+
+    private HashMap<String, Color> exportColorSchemeColorMap() {
         final HashMap<String, Color> result = new HashMap<>();
 
         for (final Map.Entry<String, ObservableValue<?>> e : observables.entrySet()) {
@@ -192,6 +206,10 @@ public class ConfigFilePreferences implements Preferences {
     public void importColorScheme(final ColorScheme colorScheme) {
         for (final Map.Entry<String, Color> e : colorScheme.getColorMap().entrySet()) {
             colorProperty(e.getKey()).set(e.getValue());
+        }
+
+        for (final Map.Entry<String, Boolean> e : colorScheme.getToggleMap().entrySet()) {
+            booleanProperty(e.getKey()).set(e.getValue());
         }
     }
 }
