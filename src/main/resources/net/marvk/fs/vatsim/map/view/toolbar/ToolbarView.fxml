@@ -4,10 +4,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import org.kordamp.ikonli.javafx.*?>
-<HBox alignment="CENTER_LEFT" fx:id="container" stylesheets="@toolbar.css" styleClass="container"
+<HBox alignment="CENTER_LEFT" fx:id="container" spacing="1" stylesheets="@toolbar.css" styleClass="container"
       xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.toolbar.ToolBarView">
+    <padding>
+        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+    </padding>
     <children>
         <Button styleClass="icon-button" onAction="#openSettings" mnemonicParsing="false">
             <tooltip>

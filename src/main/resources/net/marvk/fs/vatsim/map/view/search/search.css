@@ -2,6 +2,7 @@
 .search-box {
     -fx-pref-width: 200;
     -fx-max-width: 200;
+    -fx-background-radius: 0 8 8 0;
 }
 
 .search-box .ikonli-font-icon {
