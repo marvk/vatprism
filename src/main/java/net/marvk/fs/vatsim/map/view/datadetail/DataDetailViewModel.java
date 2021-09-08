@@ -25,7 +25,9 @@ public class DataDetailViewModel implements ViewModel {
 
     public DataDetailViewModel() {
         this.data.addListener((observable, oldValue, newValue) -> {
-            if (!Objects.equals(history.current(), newValue)) {
+            if (newValue == null) {
+                history.clear();
+            } else if (!Objects.equals(history.current(), newValue)) {
                 history.add(newValue);
             }
             updateAvailableHistory();
