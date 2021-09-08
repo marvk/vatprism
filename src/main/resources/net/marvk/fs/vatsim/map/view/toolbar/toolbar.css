@@ -63,3 +63,8 @@
 .github-button .ikonli-font-icon:hover {
     -fx-icon-color: black;
 }
+
+.tooltip {
+    -fx-text-fill: -vatsim-text-color;
+    -fx-background-color: -vatsim-background-color-very-light;
+}
