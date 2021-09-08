@@ -18,7 +18,6 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.App;
-import net.marvk.fs.vatsim.map.data.ColorSchemeRepository;
 import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
@@ -42,7 +41,7 @@ public class PreferencesView {
     private PreferencesFx preferencesFx;
 
     @Inject
-    public PreferencesView(final ColorSchemeRepository colorSchemeRepository, final Preferences preferences, final SettingsScope settingsScope) {
+    public PreferencesView(final Preferences preferences, final SettingsScope settingsScope) {
         this.preferences = preferences;
         this.settingsScope = settingsScope;
         this.settingsScope.getPainters()
@@ -106,12 +105,14 @@ public class PreferencesView {
     }
 
     private Category general() {
-        final BooleanProperty debug = preferences.booleanProperty("general.debug");
         final BooleanProperty social = preferences.booleanProperty("general.social");
         final IntegerProperty uiFontSize = preferences.integerProperty("general.font_size");
         final IntegerProperty property = preferences.integerProperty("general.map_font_size");
         final DoubleProperty scrollSpeed = preferences.doubleProperty("general.scroll_speed");
+
+        final BooleanProperty debug = preferences.booleanProperty("general.debug");
         final BooleanProperty prereleases = preferences.booleanProperty("general.prereleases");
+        final BooleanProperty deleteOldLogs = preferences.booleanProperty("general.delete_old_logs");
 
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -125,7 +126,6 @@ public class PreferencesView {
 
         return Category.of(
                 "General",
-                FontIcon.of(Octicons.GEAR_16),
                 Group.of(
                         Setting.of("Show Twitch Stream Links", social),
                         Setting.of("UI Font Size", uiFontSize, 4, 72),
@@ -134,8 +134,11 @@ public class PreferencesView {
                 ),
                 Group.of("Advanced",
                         Setting.of("Enable Debug Mode", debug),
+                        Setting.of(infoLabel("Enables the debug monitor button and possibly other debug information", INFO_STYLE)),
                         Setting.of("Prerelease Updates", prereleases),
-                        Setting.of(infoLabel("Be warned: Prerelease updates are not stable, anything might break at any time.", WARNING_STYLE))
+                        Setting.of(infoLabel("Be warned: Prerelease updates are not stable, anything might break at any time.", WARNING_STYLE)),
+                        Setting.of("Prune old logs", deleteOldLogs),
+                        Setting.of(infoLabel("Automatically delete logs older than 14 days at startup", INFO_STYLE))
                 )
         );
     }

@@ -18,10 +18,15 @@ import net.marvk.fs.vatsim.map.version.*;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class PreloaderViewModel implements ViewModel {
@@ -257,7 +262,9 @@ public class PreloaderViewModel implements ViewModel {
                 final UpperInformationRegionRepository upperInformationRegionRepository,
                 final InternationalDateLineRepository internationalDateLineRepository,
                 final CountryRepository countryRepository,
-                final VatsimApi vatsimApi
+                final VatsimApi vatsimApi,
+                final Preferences preferences,
+                @Named("userLogDir") final Path logDir
         ) {
             final var loadWorld = new CallableTask(
                     "Loading World",
@@ -317,6 +324,15 @@ public class PreloaderViewModel implements ViewModel {
                             ((CachedVatsimApi) vatsimApi).clear();
                         }
                     });
+            final var deletingOldLogs = new CallableTask(
+                    "Deleting Old Logs",
+                    "Old Logs Deleted",
+                    () -> {
+                        if (preferences.booleanProperty("general.delete_old_logs").get()) {
+                            deleteOldLogs(logDir);
+                        }
+                    }
+            );
 
             tasks = List.of(
                     loadWorld,
@@ -329,8 +345,26 @@ public class PreloaderViewModel implements ViewModel {
                     loadAirports,
                     loadRatings,
                     loadClients,
-                    clearCaches
+                    clearCaches,
+                    deletingOldLogs
             );
+        }
+
+        private void deleteOldLogs(final Path logDir) throws IOException {
+            final List<Path> files = Files.list(logDir).collect(Collectors.toList());
+            for (final Path file : files) {
+                if (isOlderThan14Days(file)) {
+                    Files.delete(file);
+                }
+            }
+        }
+
+        private boolean isOlderThan14Days(final Path e) throws IOException {
+            return Duration
+                    .ofDays(14)
+                    .minus(Duration.between(LocalDateTime.ofInstant(Files.getLastModifiedTime(e)
+                                                                         .toInstant(), ZoneId.systemDefault()), LocalDateTime.now()))
+                    .isNegative();
         }
 
         @Override

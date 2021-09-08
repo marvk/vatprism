@@ -41,6 +41,7 @@ public class ConfigFilePreferences implements Preferences {
         integerProperty("general.map_font_size", 12);
         doubleProperty("general.scroll_speed", 2.25);
         booleanProperty("general.prereleases", false);
+        booleanProperty("general.delete_old_logs", true);
 
         booleanProperty("ui.auto_color", true);
         booleanProperty("ui.auto_shade", true);
