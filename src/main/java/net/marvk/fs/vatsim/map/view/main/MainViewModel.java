@@ -9,10 +9,8 @@ import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
@@ -28,7 +26,11 @@ import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ScopeProvider({StatusScope.class, ToolbarScope.class, SettingsScope.class, FilterScope.class})
 @Log4j2
@@ -84,63 +86,7 @@ public class MainViewModel implements ViewModel {
         final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
         final ObjectProperty<Color> baseColor = preferences.colorProperty("world.fill_color");
 
-        style.bind(Bindings.createStringBinding(this::style, fontSize, baseColor));
-    }
-
-    private String style() {
-        final IntegerProperty fontSize = preferences.integerProperty("general.font_size");
-        final Color baseColor = preferences.colorProperty("world.fill_color").get();
-
-        final String fontSizeStyle = "-fx-font-size: %spx;".formatted(fontSize.get());
-
-        if (baseColor == null) {
-            return fontSizeStyle;
-        } else {
-            final double b = baseColor.getBrightness();
-            return fontSizeStyle + """
-                    -vatsim-background-color: #%s;
-                    -vatsim-background-color-light: #%s;
-                    -vatsim-background-color-very-light: #%s;
-                    -vatsim-background-color-very-light-25: #%s;
-                    -vatsim-background-color-very-very-light: #%s;
-                    -vatsim-background-color-very-very-very-light: #%s;
-                                        
-                    -vatsim-text-color-dark: #%s;
-                    -vatsim-text-color: #%s;
-                    -vatsim-text-color-light: #%s;
-                    -vatsim-text-greyed-out: #%s;
-                    """.formatted(
-                    (Object[]) fixColorStrings(
-                            baseColor,
-                            baseColor.deriveColor(0, 1.00, mapBrightnessFactor(baseColor, 1.50), 1.00),
-                            baseColor.deriveColor(0, 0.80, mapBrightnessFactor(baseColor, 2.00), 1.00),
-                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(baseColor, 2.00), 0.25),
-                            baseColor.deriveColor(0, 0.30, mapBrightnessFactor(baseColor, 2.50), 1.00),
-                            baseColor.deriveColor(0, 0.20, mapBrightnessFactor(baseColor, 3.00), 1.00),
-
-                            baseColor.deriveColor(0, 0.70, mapBrightnessFactor(baseColor, 6.00), 1.00),
-                            baseColor.deriveColor(0, 0.60, mapBrightnessFactor(baseColor, 7.50), 1.00),
-                            baseColor.deriveColor(0, 0.50, mapBrightnessFactor(baseColor, 10.00), 1.00),
-                            baseColor.deriveColor(0, 0.00, mapBrightnessFactor(baseColor, 7.50), 1.00)
-                    )
-            );
-        }
-    }
-
-    private double mapBrightnessFactor(final Color originalColor, final double value) {
-        if (luminance(originalColor.brighter().brighter()) > 0.5) {
-            return 1.0 / value;
-        } else {
-            return value;
-        }
-    }
-
-    private double luminance(final Color c) {
-        return (0.299 * c.getRed() + 0.587 * c.getGreen() + 0.114 * c.getBlue());
-    }
-
-    private String[] fixColorStrings(final Color... colors) {
-        return Arrays.stream(colors).map(Color::toString).map(e -> e.substring(2, 8)).toArray(String[]::new);
+        style.bind(new StyleBindingGenerator(preferences).styleBinding());
     }
 
     private void setServiceRunning(final boolean running) {
@@ -224,6 +170,120 @@ public class MainViewModel implements ViewModel {
                 }
                 updateProgress(1, 1);
             }
+        }
+    }
+
+    private static class StyleBindingGenerator {
+        private final IntegerProperty fontSize;
+        private final BooleanProperty autoColor;
+        private final BooleanProperty autoShade;
+        private final ObjectProperty<Color> backgroundColor;
+        private final BooleanProperty backgroundShadingInverted;
+        private final ObjectProperty<Color> textColor;
+        private final BooleanProperty textShadingInverted;
+        private final ObjectProperty<Color> worldColor;
+
+        public StyleBindingGenerator(final Preferences preferences) {
+            this.fontSize = preferences.integerProperty("general.font_size");
+            this.autoColor = preferences.booleanProperty("ui.auto_color");
+            this.autoShade = preferences.booleanProperty("ui.auto_shade");
+            this.backgroundColor = preferences.colorProperty("ui.background_base_color");
+            this.backgroundShadingInverted = preferences.booleanProperty("ui.invert_background_shading");
+            this.textColor = preferences.colorProperty("ui.text_base_color");
+            this.textShadingInverted = preferences.booleanProperty("ui.invert_text_shading");
+            this.worldColor = preferences.colorProperty("world.fill_color");
+        }
+
+        public ObservableValue<String> styleBinding() {
+            return Bindings.createStringBinding(this::style,
+                    fontSize,
+                    autoColor,
+                    autoShade,
+                    backgroundColor,
+                    backgroundShadingInverted,
+                    textColor,
+                    textShadingInverted,
+                    worldColor
+            );
+        }
+
+        private String style() {
+            final Color backgroundBase = autoColor.get() ? worldColor.get() : backgroundColor.get();
+            final Color textBase = autoColor.get() ? worldColor.get() : textColor.get();
+
+            final String fontSizeStyle = "-fx-font-size: %spx;".formatted(fontSize.get());
+
+            if (backgroundBase == null) {
+                return fontSizeStyle;
+            } else {
+                final double luminance = luminance(backgroundBase.brighter().brighter());
+                final boolean bright = luminance > 0.5;
+
+                final boolean invertBackgroundShading = (autoShade.get() && bright) || (!autoShade.get() && backgroundShadingInverted.get());
+                final boolean invertTextShading = !autoShade.get() && textShadingInverted.get();
+
+                final List<String> colors = fixColorStrings(
+                        backgroundBase,
+                        backgroundBase.deriveColor(0, 1.00, mapBrightnessFactor(1.50, bright), 1.00),
+                        backgroundBase.deriveColor(0, 0.80, mapBrightnessFactor(2.00, bright), 1.00),
+                        backgroundBase.deriveColor(0, 0.50, mapBrightnessFactor(2.00, bright), 0.25),
+                        backgroundBase.deriveColor(0, 0.30, mapBrightnessFactor(2.50, bright), 1.00),
+                        backgroundBase.deriveColor(0, 0.20, mapBrightnessFactor(3.00, bright), 1.00),
+
+                        textBase.deriveColor(0, 0.70, mapBrightnessFactor(6.00, invertTextShading), 1.00),
+                        textBase.deriveColor(0, 0.60, mapBrightnessFactor(7.50, invertTextShading), 1.00),
+                        textBase.deriveColor(0, 0.50, mapBrightnessFactor(10.00, invertTextShading), 1.00),
+                        textBase.deriveColor(0, 0.00, mapBrightnessFactor(7.50, invertTextShading), 1.00)
+                );
+
+                if (invertBackgroundShading) {
+                    Collections.swap(colors, 0, 5);
+                    Collections.swap(colors, 1, 4);
+                    Collections.swap(colors, 2, 3);
+                }
+
+                return fontSizeStyle + """
+                        -vatsim-background-color: #%s;
+                        -vatsim-background-color-light: #%s;
+                        -vatsim-background-color-very-light: #%s;
+                        -vatsim-background-color-very-light-25: #%s;
+                        -vatsim-background-color-very-very-light: #%s;
+                        -vatsim-background-color-very-very-very-light: #%s;
+                                            
+                        -vatsim-text-color-dark: #%s;
+                        -vatsim-text-color: #%s;
+                        -vatsim-text-color-light: #%s;
+                        -vatsim-text-greyed-out: #%s;
+                        """.formatted(
+                        colors.toArray()
+                );
+            }
+        }
+
+        private static double mapBrightnessFactor(final double value, final boolean bright) {
+            if (bright) {
+                return 1.0 / value;
+            } else {
+                return value;
+            }
+        }
+
+        /**
+         * @see <a href="https://alienryderflex.com/hsp.html">HSP Color Model — Alternative to HSV (HSB) and HSL</a>
+         */
+        private static double luminance(final Color c) {
+            final double r = c.getRed();
+            final double g = c.getGreen();
+            final double b = c.getBlue();
+
+            return Math.sqrt(0.299 * r * r + 0.587 * g * g + 0.114 * b * b);
+        }
+
+        private static List<String> fixColorStrings(final Color... colors) {
+            return Arrays.stream(colors)
+                         .map(Color::toString)
+                         .map(e -> e.substring(2, 8))
+                         .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 }

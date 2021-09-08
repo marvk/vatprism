@@ -64,17 +64,32 @@ public class PreferencesView {
                 App.class,
                 general(),
                 colorSchemes(),
+                ui(),
                 painters()
         ).saveSettings(false);
     }
 
-    private static Category colorSchemes() {
-        final Parent view = FluentViewLoader.javaView(ColorSchemeView.class).load().getView();
-        return Category.of("Color Schemes", Setting.of(view));
+    private Category ui() {
+        final BooleanProperty autoColor = preferences.booleanProperty("ui.auto_color");
+        final BooleanProperty autoShade = preferences.booleanProperty("ui.auto_shade");
+        final ObjectProperty<Color> backgroundColor = preferences.colorProperty("ui.background_base_color");
+        final BooleanProperty backgroundShadingInverted = preferences.booleanProperty("ui.invert_background_shading");
+        final ObjectProperty<Color> textColor = preferences.colorProperty("ui.text_base_color");
+        final BooleanProperty textShadingInverted = preferences.booleanProperty("ui.invert_text_shading");
+
+        return Category.of("User Interface",
+                Setting.of("World Color As Base", autoColor),
+                Setting.of("Background Color Base", backgroundColor),
+                Setting.of("Text Color Base", textColor),
+                Setting.of("Shade Automatically", autoShade),
+                Setting.of("Invert Background Color Shading", backgroundShadingInverted),
+                Setting.of("Invert Text Color Shading", textShadingInverted)
+        );
     }
 
-    private Category style() {
-        return Category.of("Style");
+    private Category colorSchemes() {
+        final Parent view = FluentViewLoader.javaView(ColorSchemeView.class).load().getView();
+        return Category.of("Color Schemes", Setting.of(view));
     }
 
     private Category general() {
