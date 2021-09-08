@@ -251,3 +251,8 @@
 .hyperlink-label:hover {
     -fx-text-fill: -vatsim-text-color-light;
 }
+
+.tooltip {
+    -fx-text-fill: -vatsim-text-color;
+    -fx-background-color: -vatsim-background-color-very-light;
+}

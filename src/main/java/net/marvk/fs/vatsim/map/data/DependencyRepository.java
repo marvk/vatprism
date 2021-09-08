@@ -8,7 +8,6 @@ import javafx.collections.ObservableList;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +46,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         .filter(Optional::isPresent)
                         .map(Optional::get);
 
-        final Stream<Dependency> additionalDependencies = List.of(
+        final Stream<Dependency> additionalDependencies = Stream.of(
                 new Dependency(
                         "Creative Commons Attribution Share Alike 4.0 International",
                         "VAT-Spy Data Project",
@@ -57,7 +56,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         "https://github.com/vatsimnetwork/vatspy-data-project"
                 ),
                 new Dependency(
-                        "Unknown license",
+                        "Restricted",
                         "VATSIM API",
                         null,
                         null,
@@ -80,7 +79,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         null,
                         "https://code2art.jetbrains.com//"
                 )
-        ).stream();
+        );
 
         return Stream
                 .concat(result, additionalDependencies)

@@ -27,11 +27,13 @@
                 </ToggleButton>
                 <Label text="Name"/>
                 <TextField fx:id="filterName" promptText="Name" HBox.hgrow="ALWAYS"/>
+                <Label text="Font"/>
                 <ColorPicker fx:id="textColorPicker">
                     <tooltip>
                         <Tooltip text="Text Color"/>
                     </tooltip>
                 </ColorPicker>
+                <Label text="Background"/>
                 <ColorPicker fx:id="backgroundColorPicker">
                     <tooltip>
                         <Tooltip text="Background Color"/>
