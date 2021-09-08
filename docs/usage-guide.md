@@ -4,6 +4,18 @@
 
 ## Navigation
 
+#### General
+
+| Input             | Action            |
+|:-------------     |:------------------|
+| CTRL + F          | Focus Search Box  |
+
+#### Search
+
+| Input             | Action            |
+|:-------------     |:------------------|
+| ESC               | Clear selection   |
+
 #### Map
 
 | Input             | Action            |
@@ -11,7 +23,7 @@
 | LMB               | Pan the map       |
 | RMB               | Open Context Menu |
 | MMB               | Select Item       |
-| CTRL+LMB          | Distance Measure  |
+| CTRL + LMB        | Distance Measure  |
 | ESC               | Clear Selection   |
 
 #### Tables

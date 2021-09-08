@@ -11,7 +11,8 @@ public final class Notifications {
     public static final DataNotification<Integer> SWITCH_TO_TAB = new DataNotification<>("SWITCH_TO_TAB");
     public static final VoidNotification REPAINT = new VoidNotification("REPAINT");
     public static final VoidNotification RELOAD_CLIENTS = new VoidNotification("RELOAD_CLIENTS");
-    public static final VoidNotification CLIENTS_RELOADED = new VoidNotification("CLIENTS_RELOADED ");
+    public static final VoidNotification CLIENTS_RELOADED = new VoidNotification("CLIENTS_RELOADED");
+    public static final VoidNotification SEARCH = new VoidNotification("SEARCH");
 
     private Notifications() {
         throw new AssertionError("No instances of utility class " + Notifications.class);

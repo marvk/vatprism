@@ -236,7 +236,6 @@ public class MainViewModel implements ViewModel {
                 if (invertBackgroundShading) {
                     Collections.swap(colors, 0, 5);
                     Collections.swap(colors, 1, 4);
-                    Collections.swap(colors, 2, 3);
                 }
 
                 return fontSizeStyle + """

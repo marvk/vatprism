@@ -14,12 +14,15 @@ import javafx.scene.Cursor;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -76,6 +79,15 @@ public class SearchView implements FxmlView<SearchViewModel> {
         container.maxWidthProperty().bind(widthBinding());
         searchBox.prefWidthProperty().bind(widthBinding());
         searchBox.maxWidthProperty().bind(widthBinding());
+
+        searchBox.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                viewModel.setQuery("");
+                viewModel.search();
+            }
+        });
+
+        Notifications.SEARCH.subscribe(() -> searchBox.requestFocus());
     }
 
     private DoubleBinding widthBinding() {

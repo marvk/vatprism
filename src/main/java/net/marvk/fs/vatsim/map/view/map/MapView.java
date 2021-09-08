@@ -279,6 +279,12 @@ public class MapView implements FxmlView<MapViewModel> {
             switch (keyEvent.getCode()) {
                 case CONTROL -> controlDown.set(true);
                 case ESCAPE -> viewModel.setSelectedItem(null);
+                // Discard controlDown when focus changes to search box
+                case F -> {
+                    if (controlDown.get()) {
+                        controlDown.set(false);
+                    }
+                }
             }
         }
 

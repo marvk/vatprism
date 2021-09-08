@@ -79,17 +79,14 @@
 
 .icon-button:selected {
     -fx-background-color: -vatsim-background-color-very-light;
-    /*-fx-background-color: green;*/
 }
 
 .icon-button:hover {
     -fx-background-color: -vatsim-background-color-light;
-    /*-fx-background-color: pink;*/
 }
 
 .icon-button:selected:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
-    /*-fx-background-color: red;*/
 }
 
 .icon-button .ikonli-font-icon {

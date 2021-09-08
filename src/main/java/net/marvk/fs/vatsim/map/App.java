@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 import net.marvk.fs.vatsim.map.view.preloader.PreloaderView;
@@ -71,6 +72,12 @@ public class App extends MvvmfxGuiceApplication {
 
     private void showMainView(final ViewTuple<MainView, MainViewModel> viewTuple) {
         final Stage secondaryStage = new Stage(StageStyle.DECORATED);
+
+        secondaryStage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.F && event.isControlDown()) {
+                Notifications.SEARCH.publish();
+            }
+        });
 
         log.info("Loading view");
 

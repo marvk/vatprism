@@ -86,6 +86,9 @@ public class SearchViewModel extends BaseViewModel {
     }
 
     public void setQuery(final String query) {
+        if (query == null) {
+            throw new IllegalArgumentException();
+        }
         this.query.set(query);
     }
 
