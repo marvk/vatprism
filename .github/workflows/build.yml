@@ -1,13 +1,18 @@
 name: Build
-on: [ push ]
-env:
-  VERSION_NAME: 0.1.0-alpha.${{github.run_number}}
+on:
+  push:
+    branches:
+      - 'master'
+      - 'releases/**'
 jobs:
   build_windows:
     runs-on: windows-latest
+    if: ${{ !contains(github.event.head_commit.message, '#docs-only') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Create short SHA
         uses: benjlevesque/short-sha@v1.2
         id: short-sha
@@ -17,6 +22,31 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 15
+      - name: Master Version
+        if: github.ref == 'refs/heads/master'
+        run: |
+          $version = $(mvn -q -DforceStdout org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression="project.version")
+          echo "Version: ${version}"
+          echo "PROJECT_VERSION=$version" >> $env:GITHUB_ENV
+      - name: Branch Version
+        if: github.ref != 'refs/heads/master'
+        run: |
+          $current_branch = $(git branch --show-current)
+          echo "Current Branch: ${current_branch}"
+          $current_version_stub = ${current_branch} | Select-String -Pattern 'releases/(\d\.\d\.\d)' | % {$($_.matches.groups[1].value)}
+          echo "Current Version Stub: ${current_version_stub}"
+          echo "PROJECT_VERSION_TAG_PRERELEASE=$current_version_stub" >> $env:GITHUB_ENV
+          $branch_commit = $(git rev-list --all -1 --grep=#v${current_version_stub})
+          echo "Branch Commit: ${branch_commit}"
+          $build_number = $(git rev-list --count "${branch_commit}..")
+          echo "Build Number: ${build_number}"
+          $commit_message = $(git log --format=%B -n 1 ${branch_commit})
+          echo "Commit Message: ${commit_message}"
+          $current_version = ${commit_message} | Select-String -Pattern '(:?#v(\d\.\d\.\d[^\s]*))' | % {$($_.matches.groups[2].value)}
+          echo "Current Version: ${current_version}"
+          $version = "${current_version}.$([int]${build_number}+1)"
+          echo "Version: ${version}"
+          echo "PROJECT_VERSION=$version" >> $env:GITHUB_ENV
       - name: Download WiX Toolset
         run: Invoke-WebRequest https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -OutFile wix.zip
       - name: Unzip WiX Toolset
@@ -24,16 +54,29 @@ jobs:
       - name: Install WiX Toolset
         run: echo wix | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Maven Build
-        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.VERSION_NAME}}+${{steps.short-sha.outputs.sha}}" "-DbuildNumber=${{github.run_number}}"
+        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}" "-DbuildNumber=${{github.run_number}}"
       - name: Rename artifacts
-        run: ren target-fat-jar/vatsim-map-${{env.VERSION_NAME}}+${{steps.short-sha.outputs.sha}}-fat.jar VATprism-${{env.VERSION_NAME}}.jar; ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.VERSION_NAME}}.msi;
-      - name: Github Release
+        run: ren target-fat-jar/vatsim-map-${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}-fat.jar VATprism-${{env.PROJECT_VERSION}}.jar; ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.PROJECT_VERSION}}.msi;
+      - name: Master Release
         uses: marvinpinto/action-automatic-releases@latest
+        if: github.ref == 'refs/heads/master'
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
-          automatic_release_tag: latest
+          automatic_release_tag: v${{env.PROJECT_VERSION}}
+          prerelease: false
+          title: v${{env.PROJECT_VERSION}}
+          files: |
+            target-fat-jar/*
+            target-installer/*
+            LICENSE
+      - name: Branch Release
+        uses: marvinpinto/action-automatic-releases@latest
+        if: github.ref != 'refs/heads/master'
+        with:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
+          automatic_release_tag: v${{env.PROJECT_VERSION_TAG_PRERELEASE}}
           prerelease: true
-          title: v${{env.VERSION_NAME}}
+          title: v${{env.PROJECT_VERSION}}
           files: |
             target-fat-jar/*
             target-installer/*

@@ -349,6 +349,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-help-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-version-file</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>evaluate</goal>
+                        </goals>
+                        <configuration>
+                            <expression>project.version</expression>
+                            <output>${project.build.directory}/version.txt</output>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
