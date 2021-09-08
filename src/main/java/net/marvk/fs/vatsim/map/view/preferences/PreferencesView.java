@@ -13,6 +13,7 @@ import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.App;
@@ -82,6 +83,7 @@ public class PreferencesView {
         final IntegerProperty uiFontSize = preferences.integerProperty("general.font_size");
         final IntegerProperty property = preferences.integerProperty("general.map_font_size");
         final DoubleProperty scrollSpeed = preferences.doubleProperty("general.scroll_speed");
+        final BooleanProperty prereleases = preferences.booleanProperty("general.prereleases");
 
         debug.addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
@@ -93,14 +95,23 @@ public class PreferencesView {
         final IntegerProperty uiScale = preferences.integerProperty("general.ui_scale");
         uiScale.bind(uiFontSize.divide(12.0));
 
+        final Label warning = new Label("        Be warned: Prerelease updates are not stable, anything might break at any time.");
+        warning.setStyle("-fx-text-fill: darkred; -fx-font-weight: bold");
+
         return Category.of(
                 "General",
                 FontIcon.of(Octicons.GEAR_16),
-                Setting.of("Enable Debug Mode", debug),
-                Setting.of("Show Stream Links", social),
-                Setting.of("UI Font Size", uiFontSize, 4, 72),
-                Setting.of("Map Font Size", property, 4, 72),
-                Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
+                Group.of(
+                        Setting.of("Show Stream Links", social),
+                        Setting.of("UI Font Size", uiFontSize, 4, 72),
+                        Setting.of("Map Font Size", property, 4, 72),
+                        Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
+                ),
+                Group.of("Advanced",
+                        Setting.of("Enable Debug Mode", debug),
+                        Setting.of(warning),
+                        Setting.of("Prerelease Updates", prereleases)
+                )
         );
     }
 

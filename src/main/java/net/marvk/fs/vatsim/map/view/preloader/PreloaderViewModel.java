@@ -14,10 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.CachedVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
 import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.version.VersionApi;
-import net.marvk.fs.vatsim.map.version.VersionApiException;
-import net.marvk.fs.vatsim.map.version.VersionProvider;
-import net.marvk.fs.vatsim.map.version.VersionResponse;
+import net.marvk.fs.vatsim.map.version.*;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 
@@ -34,6 +31,7 @@ public class PreloaderViewModel implements ViewModel {
 
     private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
     private final ReadOnlyObjectWrapper<VersionResponse> versionResponse = new ReadOnlyObjectWrapper<>();
+    private final Preferences preferences;
     private final VersionApi versionApi;
     private final HostServices hostServices;
     private final RepositoryLoader repositoryLoader;
@@ -42,7 +40,8 @@ public class PreloaderViewModel implements ViewModel {
     private final ObjectProperty<Throwable> exception = new SimpleObjectProperty<>();
 
     @Inject
-    public PreloaderViewModel(final VersionApi versionApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+    public PreloaderViewModel(final Preferences preferences, final VersionApi versionApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+        this.preferences = preferences;
         this.versionApi = versionApi;
         this.hostServices = hostServices;
         this.repositoryLoader = repositoryLoader;
@@ -80,8 +79,12 @@ public class PreloaderViewModel implements ViewModel {
     private void tryCheckVersion() {
         repositoryLoader.currentTaskDescription.set("Checking Version");
 
+        final UpdateChannel channel =
+                preferences.booleanProperty("general.prereleases").get()
+                        ? UpdateChannel.EXPERIMENTAL
+                        : UpdateChannel.STABLE;
         try {
-            final VersionResponse versionResponse = versionApi.checkVersion();
+            final VersionResponse versionResponse = versionApi.checkVersion(channel);
             if (versionResponse.getResult() == VersionResponse.Result.OUTDATED) {
                 log.warn("Found newer version: %s".formatted(versionResponse.getLatestVersion()));
             } else {

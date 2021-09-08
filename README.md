@@ -1,6 +1,6 @@
 <p align="center"><img src="https://i.imgur.com/orfmevM.png"  alt="logo"/></p>
 
-# VATprism [![Discord](https://img.shields.io/discord/801211199592857672.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/XPpFHhT8sk) [![Build Status](https://github.com/marvk/vatprism/workflows/Build/badge.svg)](https://github.com/marvk/vatprism/actions?query=workflow%3ABuild)  ![GitHub downloads](https://img.shields.io/github/downloads-pre/marvk/vatprism/latest/total)
+# VATprism [![Discord](https://img.shields.io/discord/801211199592857672.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/XPpFHhT8sk) [![Build Status](https://github.com/marvk/vatprism/workflows/Build/badge.svg)](https://github.com/marvk/vatprism/actions?query=workflow%3ABuild)  ![GitHub downloads](https://img.shields.io/github/downloads/marvk/vatprism/total)
 
 Welcome to the VATprism repository! VATprism is a data explorer for [VATSIM](https://www.vatsim.net/), the
 **V**irtual **A**ir **T**raffic **Sim**ulation Network. VATprism allows users to explore available ATC services,

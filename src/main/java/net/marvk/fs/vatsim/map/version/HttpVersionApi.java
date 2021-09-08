@@ -20,23 +20,21 @@ import java.util.Map;
 @Log4j2
 public class HttpVersionApi implements VersionApi {
     private final VersionProvider versionProvider;
-    private final UpdateChannel channel;
     private final String url;
     private final Duration timeout;
 
     @Inject
-    public HttpVersionApi(final VersionProvider versionProvider, final UpdateChannel channel, @Named("versionApiUrl") final String url, @Named("versionApiTimeout") final Duration timeout) {
+    public HttpVersionApi(final VersionProvider versionProvider, @Named("versionApiUrl") final String url, @Named("versionApiTimeout") final Duration timeout) {
         this.versionProvider = versionProvider;
-        this.channel = channel;
         this.url = url;
         this.timeout = timeout;
     }
 
     @Override
-    public VersionResponse checkVersion() throws VersionApiException {
-        final Map<String, Map<String, String>> response = tryRequestVersion();
+    public VersionResponse checkVersion(final UpdateChannel channel) throws VersionApiException {
+        final Map<String, Map<String, String>> response = tryRequestVersion(channel);
         log.info("Version response: %s".formatted(response));
-        final Map<String, String> latestVersion = getVersionResponse(response);
+        final Map<String, String> latestVersion = getVersionResponse(response, channel);
 
         final String latestVersionName = latestVersion.get("version");
         final String latestVersionUrl = latestVersion.get("downloadUrl");
@@ -54,7 +52,7 @@ public class HttpVersionApi implements VersionApi {
         }
     }
 
-    private Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response) throws VersionApiException {
+    private Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response, final UpdateChannel channel) throws VersionApiException {
         for (final Map.Entry<String, Map<String, String>> e : response.entrySet()) {
             if (e.getKey().equalsIgnoreCase(channel.toString())) {
                 return e.getValue();
@@ -64,16 +62,16 @@ public class HttpVersionApi implements VersionApi {
         throw new VersionApiException();
     }
 
-    private Map<String, Map<String, String>> tryRequestVersion() throws VersionApiException {
+    private Map<String, Map<String, String>> tryRequestVersion(final UpdateChannel channel) throws VersionApiException {
         try {
-            return requestVersion();
+            return requestVersion(channel);
         } catch (URISyntaxException | IOException | InterruptedException e) {
             throw new VersionApiException("Failed to fetch version from server", e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<String, String>> requestVersion() throws URISyntaxException, IOException, InterruptedException {
+    private Map<String, Map<String, String>> requestVersion(final UpdateChannel channel) throws URISyntaxException, IOException, InterruptedException {
         final String formatted = this.url.formatted(
                 URLEncoder.encode(versionProvider.getString(), StandardCharsets.UTF_8),
                 URLEncoder.encode(channel.toString(), StandardCharsets.UTF_8)
