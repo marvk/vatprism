@@ -77,16 +77,20 @@
     -fx-cursor: hand;
 }
 
-.icon-button:selected {
-    -fx-background-color: -vatsim-background-color-very-light;
-}
-
 .icon-button:hover {
     -fx-background-color: -vatsim-background-color-light;
 }
 
+.icon-button:selected {
+    -fx-background-color: -vatsim-background-color-very-light;
+}
+
 .icon-button:selected:hover {
     -fx-background-color: -vatsim-background-color-very-very-light;
+}
+
+.icon-button:pressed, .icon-button:selected:pressed {
+    -fx-background-color: -vatsim-background-color-very-very-very-light;
 }
 
 .icon-button .ikonli-font-icon {
