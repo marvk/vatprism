@@ -25,3 +25,17 @@
     -fx-text-fill: red;
     visibility: visible;
 }
+
+.header-pane .live-twitch-logo {
+    visibility: hidden;
+}
+
+.twitch-container .live-twitch-logo {
+    -fx-icon-color: -twitch;
+    visibility: visible;
+}
+
+.twitch-container:hover .live-twitch-logo {
+    -fx-icon-color: white;
+    visibility: visible;
+}

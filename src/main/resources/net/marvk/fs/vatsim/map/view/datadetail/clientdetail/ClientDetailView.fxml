@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import java.lang.*?>
 <DataDetailPane stylesheets="@clientdetail.css" headerMonospace="true" fx:id="root" maxHeight="1.7976931348623157E308"
                 maxWidth="1.7976931348623157E308"
@@ -17,12 +18,15 @@
         <Double fx:id="contentColumn" fx:value="80"/>
     </fx:define>
     <headerNode>
-        <StackPane onMouseClicked="#openStream" fx:id="headerPane">
-            <Label StackPane.alignment="CENTER_LEFT" styleClass="live-dot" text="⬤">
-                <padding>
-                    <Insets left="5.0"/>
-                </padding>
-            </Label>
+        <StackPane StackPane.alignment="CENTER_LEFT" onMouseClicked="#openStream" fx:id="headerPane">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <Label styleClass="live-dot" text="⬤">
+                    <padding>
+                        <Insets left="5.0"/>
+                    </padding>
+                </Label>
+                <FontIcon styleClass="live-twitch-logo" iconLiteral="ion4-logo-twitch"/>
+            </HBox>
             <Label styleClass="header-label" fx:id="headerLabel"/>
         </StackPane>
     </headerNode>
