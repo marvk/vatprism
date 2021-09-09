@@ -8,15 +8,18 @@ import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.App;
 import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.view.Notifications;
@@ -28,22 +31,29 @@ import net.marvk.fs.vatsim.map.view.painter.Parameter;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
+import java.awt.*;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
+@Log4j2
 public class PreferencesView {
     private static final String INFO_STYLE = "-fx-text-fill: #aaaaaa; -fx-font-size: 10;";
     private static final String WARNING_STYLE = "-fx-text-fill: darkred; -fx-font-weight: bold; -fx-font-size: 10;";
     private final Preferences preferences;
     private final SettingsScope settingsScope;
+    private final Path configDirectory;
     private PreferencesFx preferencesFx;
 
     @Inject
-    public PreferencesView(final Preferences preferences, final SettingsScope settingsScope) {
+    public PreferencesView(final Preferences preferences, final SettingsScope settingsScope, @Named("userConfigDir") final Path configDirectory) {
         this.preferences = preferences;
         this.settingsScope = settingsScope;
+        this.configDirectory = configDirectory;
         this.settingsScope.getPainters()
                           .addListener((ListChangeListener<PainterExecutor<?>>) c -> getPreferencesDialog());
 
@@ -105,10 +115,10 @@ public class PreferencesView {
     }
 
     private Category general() {
-        final BooleanProperty social = preferences.booleanProperty("general.social");
         final IntegerProperty uiFontSize = preferences.integerProperty("general.font_size");
         final IntegerProperty property = preferences.integerProperty("general.map_font_size");
         final DoubleProperty scrollSpeed = preferences.doubleProperty("general.scroll_speed");
+        final BooleanProperty social = preferences.booleanProperty("general.social");
 
         final BooleanProperty debug = preferences.booleanProperty("general.debug");
         final BooleanProperty prereleases = preferences.booleanProperty("general.prereleases");
@@ -124,13 +134,16 @@ public class PreferencesView {
         final IntegerProperty uiScale = preferences.integerProperty("general.ui_scale");
         uiScale.bind(uiFontSize.divide(12.0));
 
+        final Button openConfigDirectory = new Button("Open Config Directory");
+        openConfigDirectory.setOnAction(e -> openConfigDirectory());
         return Category.of(
                 "General",
                 Group.of(
-                        Setting.of("Show Twitch Stream Links", social),
                         Setting.of("UI Font Size", uiFontSize, 4, 72),
                         Setting.of("Map Font Size", property, 4, 72),
-                        Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2)
+                        Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2),
+                        Setting.of("Show Twitch Stream Links", social),
+                        Setting.of(openConfigDirectory)
                 ),
                 Group.of("Advanced",
                         Setting.of("Enable Debug Mode", debug),
@@ -141,6 +154,21 @@ public class PreferencesView {
                         Setting.of(infoLabel("Automatically delete logs older than 14 days at startup", INFO_STYLE))
                 )
         );
+    }
+
+    private void openConfigDirectory() {
+        try {
+            Desktop.getDesktop().browseFileDirectory(configDirectory.toFile());
+        } catch (final UnsupportedOperationException e1) {
+            log.warn("Failed to open config directory via Desktop API, trying explorer...");
+            try {
+                final String pathString = configDirectory.toAbsolutePath().toString().replaceAll("/", "\\\\");
+                final Process proc = Runtime.getRuntime().exec("explorer.exe " + pathString);
+                proc.waitFor();
+            } catch (final IOException | InterruptedException e2) {
+                log.error("Failed to open config directory", e2);
+            }
+        }
     }
 
     private Category painters() throws IllegalAccessException {
