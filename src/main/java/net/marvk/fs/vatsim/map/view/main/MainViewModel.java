@@ -223,13 +223,15 @@ public class MainViewModel implements ViewModel {
                 final boolean invertBackgroundShading = (autoShade.get() && bright) || (!autoShade.get() && backgroundShadingInverted.get());
                 final boolean invertTextShading = !autoShade.get() && textShadingInverted.get();
 
+                final double brightnessFactor = Math.min(1, Math.max(0.3, 1.2 - luminance * 1.5));
+
                 final List<String> colors = fixColorStrings(
                         backgroundBase,
-                        backgroundBase.deriveColor(0, 1.00, mapBrightnessFactor(1.50, invertBackgroundShading), 1.00),
-                        backgroundBase.deriveColor(0, 0.80, mapBrightnessFactor(2.00, invertBackgroundShading), 1.00),
-                        backgroundBase.deriveColor(0, 0.50, mapBrightnessFactor(2.00, invertBackgroundShading), 0.25),
-                        backgroundBase.deriveColor(0, 0.30, mapBrightnessFactor(2.50, invertBackgroundShading), 1.00),
-                        backgroundBase.deriveColor(0, 0.20, mapBrightnessFactor(3.00, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 1.00, mapBrightnessFactor(1 + 0.50 * brightnessFactor, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.80, mapBrightnessFactor(1 + 1.00 * brightnessFactor, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.50, mapBrightnessFactor(1 + 1.00 * brightnessFactor, invertBackgroundShading), 0.25),
+                        backgroundBase.deriveColor(0, 0.30, mapBrightnessFactor(1 + 1.50 * brightnessFactor, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.20, mapBrightnessFactor(1 + 2.00 * brightnessFactor, invertBackgroundShading), 1.00),
 
                         textBase.deriveColor(0, 0.70, mapBrightnessFactor(6.00, invertTextShading), 1.00),
                         textBase.deriveColor(0, 0.60, mapBrightnessFactor(7.50, invertTextShading), 1.00),
