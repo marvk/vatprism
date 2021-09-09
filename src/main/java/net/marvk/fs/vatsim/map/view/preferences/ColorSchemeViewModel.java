@@ -5,8 +5,11 @@ import de.saxsys.mvvmfx.ViewModel;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.data.*;
+
+import java.util.Comparator;
 
 public class ColorSchemeViewModel implements ViewModel {
     private final StringProperty nameInput = new SimpleStringProperty();
@@ -36,7 +39,10 @@ public class ColorSchemeViewModel implements ViewModel {
     }
 
     public ObservableList<ColorScheme> colorSchemes() {
-        return FXCollections.unmodifiableObservableList(colorSchemes);
+        final SortedList<ColorScheme> sortedSchemes = new SortedList<>(this.colorSchemes);
+        sortedSchemes.setComparator(Comparator.comparing(ColorScheme::getName));
+
+        return FXCollections.unmodifiableObservableList(sortedSchemes);
     }
 
     public void set(final ColorScheme colorScheme) {

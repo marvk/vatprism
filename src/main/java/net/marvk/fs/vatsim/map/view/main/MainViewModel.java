@@ -176,6 +176,7 @@ public class MainViewModel implements ViewModel {
         private final BooleanProperty autoShade;
         private final ObjectProperty<Color> backgroundColor;
         private final BooleanProperty backgroundShadingInverted;
+        private final BooleanProperty backgroundShadingReversed;
         private final ObjectProperty<Color> textColor;
         private final BooleanProperty textShadingInverted;
         private final ObjectProperty<Color> worldColor;
@@ -186,6 +187,7 @@ public class MainViewModel implements ViewModel {
             this.autoShade = preferences.booleanProperty("ui.auto_shade");
             this.backgroundColor = preferences.colorProperty("ui.background_base_color");
             this.backgroundShadingInverted = preferences.booleanProperty("ui.invert_background_shading");
+            this.backgroundShadingReversed = preferences.booleanProperty("ui.reverse_background_shading");
             this.textColor = preferences.colorProperty("ui.text_base_color");
             this.textShadingInverted = preferences.booleanProperty("ui.invert_text_shading");
             this.worldColor = preferences.colorProperty("world.fill_color");
@@ -198,6 +200,7 @@ public class MainViewModel implements ViewModel {
                     autoShade,
                     backgroundColor,
                     backgroundShadingInverted,
+                    backgroundShadingReversed,
                     textColor,
                     textShadingInverted,
                     worldColor
@@ -216,16 +219,17 @@ public class MainViewModel implements ViewModel {
                 final double luminance = luminance(backgroundBase.brighter().brighter());
                 final boolean bright = luminance > 0.5;
 
+                final boolean reverseBackgroundShading = (autoShade.get() && bright) || (!autoShade.get() && backgroundShadingReversed.get());
                 final boolean invertBackgroundShading = (autoShade.get() && bright) || (!autoShade.get() && backgroundShadingInverted.get());
                 final boolean invertTextShading = !autoShade.get() && textShadingInverted.get();
 
                 final List<String> colors = fixColorStrings(
                         backgroundBase,
-                        backgroundBase.deriveColor(0, 1.00, mapBrightnessFactor(1.50, bright), 1.00),
-                        backgroundBase.deriveColor(0, 0.80, mapBrightnessFactor(2.00, bright), 1.00),
-                        backgroundBase.deriveColor(0, 0.50, mapBrightnessFactor(2.00, bright), 0.25),
-                        backgroundBase.deriveColor(0, 0.30, mapBrightnessFactor(2.50, bright), 1.00),
-                        backgroundBase.deriveColor(0, 0.20, mapBrightnessFactor(3.00, bright), 1.00),
+                        backgroundBase.deriveColor(0, 1.00, mapBrightnessFactor(1.50, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.80, mapBrightnessFactor(2.00, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.50, mapBrightnessFactor(2.00, invertBackgroundShading), 0.25),
+                        backgroundBase.deriveColor(0, 0.30, mapBrightnessFactor(2.50, invertBackgroundShading), 1.00),
+                        backgroundBase.deriveColor(0, 0.20, mapBrightnessFactor(3.00, invertBackgroundShading), 1.00),
 
                         textBase.deriveColor(0, 0.70, mapBrightnessFactor(6.00, invertTextShading), 1.00),
                         textBase.deriveColor(0, 0.60, mapBrightnessFactor(7.50, invertTextShading), 1.00),
@@ -233,7 +237,7 @@ public class MainViewModel implements ViewModel {
                         textBase.deriveColor(0, 0.00, mapBrightnessFactor(7.50, invertTextShading), 1.00)
                 );
 
-                if (invertBackgroundShading) {
+                if (reverseBackgroundShading) {
                     Collections.swap(colors, 0, 5);
                     Collections.swap(colors, 1, 4);
                 }

@@ -87,6 +87,7 @@ public class PreferencesView {
         final BooleanProperty autoShade = preferences.booleanProperty("ui.auto_shade");
         final ObjectProperty<Color> backgroundColor = preferences.colorProperty("ui.background_base_color");
         final BooleanProperty backgroundShadingInverted = preferences.booleanProperty("ui.invert_background_shading");
+        final BooleanProperty backgroundShadingReversed = preferences.booleanProperty("ui.reverse_background_shading");
         final ObjectProperty<Color> textColor = preferences.colorProperty("ui.text_base_color");
         final BooleanProperty textShadingInverted = preferences.booleanProperty("ui.invert_text_shading");
 
@@ -98,6 +99,7 @@ public class PreferencesView {
                 Setting.of("Shade Automatically", autoShade),
                 Setting.of(infoLabel("Enable if VATprism should attempt to automatically detect the best shading options", INFO_STYLE)),
                 Setting.of("Invert Background Color Shading", backgroundShadingInverted),
+                Setting.of("Reverse Background Color Shading", backgroundShadingReversed),
                 Setting.of("Invert Text Color Shading", textShadingInverted)
         );
     }

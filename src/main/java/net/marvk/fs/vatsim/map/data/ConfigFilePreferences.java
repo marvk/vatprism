@@ -47,6 +47,7 @@ public class ConfigFilePreferences implements Preferences {
         booleanProperty("ui.auto_shade", true);
         colorProperty("ui.background_base_color", Color.valueOf("1a130a"));
         booleanProperty("ui.invert_background_shading", false);
+        booleanProperty("ui.reverse_background_shading", false);
         colorProperty("ui.text_base_color", Color.valueOf("1a130a"));
         booleanProperty("ui.invert_text_shading", false);
     }
@@ -187,7 +188,7 @@ public class ConfigFilePreferences implements Preferences {
     }
 
     private Map<String, Boolean> exportColorSchemeToggleMap() {
-        return Stream.of("ui.auto_color", "ui.auto_shade", "ui.invert_background_shading", "ui.invert_text_shading")
+        return Stream.of("ui.auto_color", "ui.auto_shade", "ui.reverse_background_shading", "ui.invert_background_shading", "ui.invert_text_shading")
                      .collect(Collectors.toMap(Function.identity(), e -> booleanProperty(e).get(), (a, b) -> b, HashMap::new));
     }
 

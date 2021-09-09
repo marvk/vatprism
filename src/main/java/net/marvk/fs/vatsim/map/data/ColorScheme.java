@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Value
 public class ColorScheme implements UniquelyIdentifiable {
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
     int version;
     UUID uuid;
     String name;

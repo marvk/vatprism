@@ -67,6 +67,7 @@ public class ColorSchemeAdapter implements Adapter<ColorScheme> {
                         "ui.auto_color", true,
                         "ui.auto_shade", true,
                         "ui.invert_background_shading", false,
+                        "ui.reverse_background_shading", false,
                         "ui.invert_text_shading", false
                 ));
             } else {
