@@ -67,6 +67,13 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         alert.setHeaderText("A new Version of VATprism (%s) is available.".formatted(response.getLatestVersion()));
         alert.setContentText("Would you like to download the latest version?");
         alert.getButtonTypes().setAll(download, postpone);
+        final TextArea textArea = new TextArea(response.getChangelog());
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefHeight(100);
+        final VBox changelogBox = new VBox(new Label("Changelog:"), textArea);
+        alert.getDialogPane().setExpandableContent(changelogBox);
+        alert.getDialogPane().setExpanded(true);
         final Window window = alert.getDialogPane().getScene().getWindow();
         window.setOnCloseRequest(e -> window.hide());
 

@@ -7,9 +7,10 @@ public class VersionResponse {
     Result result;
     String latestVersion;
     String url;
+    String changelog;
 
-    public static VersionResponse of(final boolean outdated, final String name, final String url) {
-        return new VersionResponse(outdated ? Result.OUTDATED : Result.CURRENT, name, url);
+    public static VersionResponse of(final boolean outdated, final String name, final String url, final String changelog) {
+        return new VersionResponse(outdated ? Result.OUTDATED : Result.CURRENT, name, url, changelog);
     }
 
     public enum Result {

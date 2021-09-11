@@ -38,9 +38,11 @@ public class HttpVersionApi implements VersionApi {
 
         final String latestVersionName = latestVersion.get("version");
         final String latestVersionUrl = latestVersion.get("downloadUrl");
-        final boolean outdated = isOutdated(latestVersionName);
+        final String body = latestVersion.get("body");
+        // TODO change back
+        final boolean outdated = true;
 
-        return VersionResponse.of(outdated, latestVersionName, latestVersionUrl);
+        return VersionResponse.of(outdated, latestVersionName, latestVersionUrl, body);
     }
 
     private boolean isOutdated(final String latestVersionName) {
