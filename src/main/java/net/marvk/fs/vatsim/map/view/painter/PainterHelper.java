@@ -264,7 +264,7 @@ public class PainterHelper {
                 default -> throw new IllegalArgumentException("Illegal alignment " + align);
             };
 
-            final double xRect = _x + horizontalOffset;
+            final double xRect = _x + horizontalOffset - 1;
             final double yRect = _y + baselineOffset;
             fillRect(c, Math.round(xRect), Math.round(yRect), Math.ceil(width + 1), Math.ceil(height));
         }
