@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.view.Notifications;
 
 import java.util.Comparator;
 
@@ -42,6 +43,10 @@ public class ColorSchemeViewModel implements ViewModel {
             colorSchemeToUpdate.set(maybeColorSchemeToUpdate);
         });
         this.updating.bind(colorSchemeToUpdate.isNotNull());
+
+        Notifications.SET_THEME.subscribe(s ->
+                packagedColorSchemeRepository.findByName(s).ifPresent(ColorSchemeViewModel.this::set)
+        );
     }
 
     public ObservableList<ColorScheme> packagedColorSchemes() {

@@ -1,0 +1,57 @@
+* {
+    -fx-font-smoothing-type: gray;
+    -onboarding-grey: #CCCCCC;
+    -onboarding-text: #171717;
+}
+
+.container {
+    -fx-background-color: -onboarding-grey;
+}
+
+.label {
+    -fx-font-family: B612;
+    -fx-font-size: 14;
+    -fx-text-fill: -onboarding-text;
+}
+
+.header {
+    -fx-text-fill: -onboarding-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 48;
+}
+
+.test {
+    -fx-border-color: white;
+    -fx-border-width: 10;
+}
+
+.color-theme-container .label {
+    -fx-font-weight: bold;
+}
+
+.color-theme-container {
+    -fx-padding: 5;
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.color-theme-container:hover {
+    -fx-background-color: derive(-onboarding-grey, -10%);
+}
+
+.color-theme-container:hover:pressed {
+    -fx-background-color: derive(-onboarding-grey, -20%);
+}
+
+.skip-button {
+    -fx-cursor: hand;
+}
+
+.skip-button:hover {
+    -fx-text-fill: derive(-onboarding-text, 10%);
+}
+
+.skip-button:hover:pressed {
+    -fx-text-fill: derive(-onboarding-text, 20%);
+}

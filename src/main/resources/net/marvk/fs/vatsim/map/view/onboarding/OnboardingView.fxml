@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<HBox styleClass="root,container"
+      stylesheets="@../root.css, @../list.css, @../scrollbar.css, @../table.css, @onboarding.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.onboarding.OnboardingView">
+    <VBox spacing="15.0">
+        <HBox.margin>
+            <Insets/>
+        </HBox.margin>
+        <children>
+            <HBox alignment="CENTER_LEFT" spacing="20.0">
+                <children>
+                    <ImageView fitHeight="96.0" fitWidth="96.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../../icon-256.png"/>
+                        </image>
+                    </ImageView>
+                    <Label styleClass="header" text="Welcome to VATprism!"/>
+                </children>
+            </HBox>
+            <HBox alignment="CENTER">
+                <VBox.margin>
+                    <Insets/>
+                </VBox.margin>
+                <children>
+                    <VBox spacing="10.0">
+                        <children>
+                            <Label text="Please choose a theme (You can always change this later):">
+                                <padding>
+                                    <Insets left="10.0"/>
+                                </padding>
+                            </Label>
+                            <GridPane hgap="15.0" vgap="15.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES"/>
+                                    <ColumnConstraints hgrow="SOMETIMES"/>
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints vgrow="SOMETIMES"/>
+                                    <RowConstraints vgrow="SOMETIMES"/>
+                                </rowConstraints>
+                                <children>
+                                    <VBox onMouseClicked="#setThemeToLight" styleClass="color-theme-container">
+                                        <children>
+                                            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
+                                                       preserveRatio="true">
+                                                <image>
+                                                    <Image url="@light.png"/>
+                                                </image>
+                                            </ImageView>
+                                            <Label text="VATprism Light"/>
+                                        </children>
+                                    </VBox>
+                                    <VBox onMouseClicked="#setThemeToClassicSepia" styleClass="color-theme-container"
+                                          GridPane.rowIndex="1">
+                                        <children>
+                                            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
+                                                       preserveRatio="true" styleClass="test">
+                                                <image>
+                                                    <Image url="@classic-sepia.png"/>
+                                                </image>
+                                            </ImageView>
+                                            <Label text="VATprism Classic Sepia"/>
+                                        </children>
+                                    </VBox>
+                                    <VBox onMouseClicked="#setThemeToDark" styleClass="color-theme-container"
+                                          GridPane.columnIndex="1">
+                                        <children>
+                                            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
+                                                       preserveRatio="true">
+                                                <image>
+                                                    <Image url="@dark.png"/>
+                                                </image>
+                                            </ImageView>
+                                            <Label text="VATprism Dark"/>
+                                        </children>
+                                    </VBox>
+                                    <VBox onMouseClicked="#setThemeToEarth" styleClass="color-theme-container"
+                                          GridPane.columnIndex="1"
+                                          GridPane.rowIndex="1">
+                                        <children>
+                                            <ImageView fitHeight="250.0" fitWidth="250.0" pickOnBounds="true"
+                                                       preserveRatio="true">
+                                                <image>
+                                                    <Image url="@earth.png"/>
+                                                </image>
+                                            </ImageView>
+                                            <Label text="VATprism Earth"/>
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </GridPane>
+                            <HBox alignment="CENTER_RIGHT">
+                                <children>
+                                    <Label styleClass="skip-button" onMouseClicked="#skip" alignment="CENTER_RIGHT"
+                                           text="Skip...">
+                                        <padding>
+                                            <Insets right="10.0"/>
+                                        </padding>
+                                    </Label>
+                                </children>
+                            </HBox>
+                        </children>
+                    </VBox>
+                </children>
+                <padding>
+                    <Insets top="20.0"/>
+                </padding>
+            </HBox>
+        </children>
+        <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/>
+        </padding>
+    </VBox>
+</HBox>

@@ -20,6 +20,7 @@ import net.marvk.fs.vatsim.map.data.ClientRepository;
 import net.marvk.fs.vatsim.map.data.ImmutableObjectProperty;
 import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.data.ReloadableRepository;
+import net.marvk.fs.vatsim.map.version.VersionProvider;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
@@ -44,13 +45,16 @@ public class MainViewModel implements ViewModel {
     private static final Duration RELOAD_PERIOD = Duration.seconds(30);
     private final ReloadService clientReloadService;
 
+    private final ReadOnlyBooleanWrapper onboarding = new ReadOnlyBooleanWrapper();
+
     @InjectScope
     private ToolbarScope toolbarScope;
 
     @Inject
     public MainViewModel(
             final ClientRepository clientRepository,
-            final Preferences preferences
+            final Preferences preferences,
+            final VersionProvider versionProvider
     ) {
         this.preferences = preferences;
 
@@ -60,6 +64,13 @@ public class MainViewModel implements ViewModel {
         clientReloadService = new ReloadService(loadClientsAsync);
         clientReloadService.setPeriod(RELOAD_PERIOD);
         clientReloadService.setDelay(RELOAD_PERIOD);
+
+        final StringProperty version = preferences.stringProperty("meta.version");
+        if (version.get() == null || "0.0.0".equals(version.get())) {
+            onboarding.set(true);
+        }
+
+        version.set(versionProvider.getString());
     }
 
     private void clientReloadCompleted() {
@@ -105,6 +116,14 @@ public class MainViewModel implements ViewModel {
 
     public ReadOnlyStringProperty styleProperty() {
         return style.getReadOnlyProperty();
+    }
+
+    public boolean isOnboarding() {
+        return onboarding.get();
+    }
+
+    public ReadOnlyBooleanProperty onboardingProperty() {
+        return onboarding.getReadOnlyProperty();
     }
 
     private static class ReloadService extends ScheduledService<Void> {

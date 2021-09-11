@@ -9,6 +9,7 @@ public final class Notifications {
     public static final DataNotification<Data> PAN_TO_DATA = new DataNotification<>("PAN_TO_DATA");
     public static final DataNotification<Data> SET_DATA_DETAIL = new DataNotification<>("SET_DATA_DETAIL");
     public static final DataNotification<Integer> SWITCH_TO_TAB = new DataNotification<>("SWITCH_TO_TAB");
+    public static final DataNotification<String> SET_THEME = new DataNotification<>("SET_THEME");
     public static final VoidNotification REPAINT = new VoidNotification("REPAINT");
     public static final VoidNotification RELOAD_CLIENTS = new VoidNotification("RELOAD_CLIENTS");
     public static final VoidNotification CLIENTS_RELOADED = new VoidNotification("CLIENTS_RELOADED");

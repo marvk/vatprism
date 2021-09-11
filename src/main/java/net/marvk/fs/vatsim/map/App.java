@@ -12,11 +12,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
+import net.marvk.fs.vatsim.map.view.onboarding.OnboardingView;
 import net.marvk.fs.vatsim.map.view.preloader.PreloaderView;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -59,7 +61,7 @@ public class App extends MvvmfxGuiceApplication {
         viewTuple.getViewModel().viewTupleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 preloaderStage.close();
-                App.this.showMainView(newValue);
+                App.this.postPreloader(newValue);
             }
         });
 
@@ -68,6 +70,15 @@ public class App extends MvvmfxGuiceApplication {
         preloaderStage.setAlwaysOnTop(true);
         preloaderStage.show();
         viewTuple.getViewModel().load();
+    }
+
+    @SneakyThrows
+    private void postPreloader(final ViewTuple<MainView, MainViewModel> viewTuple) {
+        if (viewTuple.getViewModel().isOnboarding()) {
+            showOnboardingView(() -> showMainView(viewTuple));
+        } else {
+            showMainView(viewTuple);
+        }
     }
 
     private void showMainView(final ViewTuple<MainView, MainViewModel> viewTuple) {
@@ -95,7 +106,6 @@ public class App extends MvvmfxGuiceApplication {
                 final boolean value = !secondaryStage.isFullScreen();
                 secondaryStage.setFullScreen(value);
                 secondaryStage.setAlwaysOnTop(value);
-                System.out.println(secondaryStage.isAlwaysOnTop());
             }
         });
         secondaryStage.setOnCloseRequest(e -> {
@@ -108,6 +118,20 @@ public class App extends MvvmfxGuiceApplication {
         secondaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         log.info("Showing stage");
         secondaryStage.show();
+    }
+
+    private void showOnboardingView(final Runnable showMainView) {
+        final Stage stage = new Stage(StageStyle.UNDECORATED);
+
+        final var viewTuple = FluentViewLoader.fxmlView(OnboardingView.class).load();
+
+        stage.setScene(new Scene(viewTuple.getView()));
+        stage.show();
+
+        viewTuple.getViewModel().onboardingCompleteProperty().addListener((observable, oldValue, newValue) -> {
+            stage.close();
+            showMainView.run();
+        });
     }
 
     private void loadFonts() {

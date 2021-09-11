@@ -9,6 +9,7 @@ import org.reflections.scanners.ResourcesScanner;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,5 +63,9 @@ public class PackagedColorSchemeRepository implements ReadOnlyRepository<ColorSc
     @Override
     public ColorScheme getByKey(final String key) {
         return colorSchemes.stream().filter(e -> e.getUuid().equals(UUID.fromString(key))).findFirst().orElse(null);
+    }
+
+    public Optional<ColorScheme> findByName(final String name) {
+        return list().stream().filter(e -> e.getName().equalsIgnoreCase(name)).findFirst();
     }
 }

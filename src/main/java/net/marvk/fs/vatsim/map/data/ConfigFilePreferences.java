@@ -42,6 +42,7 @@ public class ConfigFilePreferences implements Preferences {
         doubleProperty("general.scroll_speed", 2.25);
         booleanProperty("general.prereleases", false);
         booleanProperty("general.delete_old_logs", true);
+        stringProperty("meta.version", "0.0.0");
 
         booleanProperty("ui.auto_color", true);
         booleanProperty("ui.auto_shade", true);

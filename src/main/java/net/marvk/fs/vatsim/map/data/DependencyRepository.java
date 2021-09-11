@@ -77,7 +77,7 @@ public class DependencyRepository implements ReadOnlyRepository<Dependency> {
                         null,
                         null,
                         null,
-                        "https://code2art.jetbrains.com//"
+                        "https://code2art.jetbrains.com/"
                 )
         );
 
