@@ -51,8 +51,8 @@ Simply download the latest installer (`.msi`) from
 the [releases page](https://github.com/marvk/vatprism/releases/latest)
 and run it. The installer will guide you through the installation.
 
-Note: Windows Defender SmartScreen might show [a warning](assets/images/warning.png) about the installer not being a
-recognized app. This is harmless and simply an issue of the installer
+Note: Windows Defender SmartScreen might show [a warning](docs/assets/images/warning.png) about the installer not being
+a recognized app. This is harmless and simply an issue of the installer
 being [unsigned.](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-smartscreen/microsoft-defender-smartscreen-overview)
 
 #### Linux and macOS
@@ -82,4 +82,4 @@ installed. To disable the Windows installer build, remove the Exec Maven Plugin 
 ## Acknowledgements
 
 VATprism uses the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy-data-project) as a source
-of Data.
+of static data and the [VATSIM API](https://api.vatsim.net/api/) as a source of dynamic data.
