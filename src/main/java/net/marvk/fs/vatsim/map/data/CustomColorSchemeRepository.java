@@ -5,9 +5,9 @@ import com.google.inject.name.Named;
 
 import java.nio.file.Path;
 
-public class ColorSchemeRepository extends FileRepository<ColorScheme> {
+public class CustomColorSchemeRepository extends FileRepository<ColorScheme> {
     @Inject
-    public ColorSchemeRepository(@Named("userConfigDir") final Path path, @Named("colorSchemeSerializer") final Adapter<ColorScheme> adapter) {
+    public CustomColorSchemeRepository(@Named("userConfigDir") final Path path, @Named("colorSchemeSerializer") final Adapter<ColorScheme> adapter) {
         super(path, adapter);
     }
 

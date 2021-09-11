@@ -5,6 +5,7 @@ import de.saxsys.mvvmfx.JavaView;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -24,17 +25,7 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
     public void initialize() {
         setSpacing(10);
 
-        final ComboBox<ColorScheme> comboBox = new ComboBox<>();
-        comboBox.setPrefWidth(250);
-        comboBox.setItems(viewModel.colorSchemes());
-        comboBox.setCellFactory(param -> new ColorSchemeListCell());
-        comboBox.setButtonCell(new ColorSchemeListCell());
-        comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                Platform.runLater(() -> comboBox.getSelectionModel().clearSelection());
-                viewModel.set(newValue);
-            }
-        });
+        final ComboBox<ColorScheme> comboBox = createComboBox(viewModel.customColorSchemes(), true);
 
         final TextField textField = new TextField();
         textField.setPrefWidth(150);
@@ -50,7 +41,7 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
 
         viewModel.nameInputProperty().bind(textField.textProperty());
 
-        final Label warning = new Label("This feature is experimental.");
+        final Label warning = new Label("Warning: Custom Color Schemes are subject to change.");
         warning.setStyle("-fx-text-fill: darkred; -fx-font-weight: bold");
         final Label explanation = new Label("""
                 Selecting a Scheme from the combo box below will override ALL colors with that schemes colors.
@@ -65,18 +56,40 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
 
         final HBox outdatedSchemesContainer = new HBox(5, generateAlertIcon(), outdatedSchemes);
         outdatedSchemesContainer.setAlignment(Pos.CENTER_LEFT);
-        getChildren().addAll(warning, explanation, comboBox, textField, create, outdatedSchemesContainer);
+        getChildren().addAll(new Label("Color Schemes"), createComboBox(viewModel.packagedColorSchemes(), false), warning, explanation, new Label("Custom Color Schemes"), comboBox, textField, create, outdatedSchemesContainer);
 
-        viewModel.colorSchemes().addListener((ListChangeListener<ColorScheme>) c ->
-                outdatedSchemesContainer.setVisible(viewModel.colorSchemes().stream().anyMatch(ColorScheme::isOutdated))
+        viewModel.customColorSchemes().addListener((ListChangeListener<ColorScheme>) c ->
+                outdatedSchemesContainer.setVisible(viewModel.customColorSchemes()
+                                                             .stream()
+                                                             .anyMatch(ColorScheme::isOutdated))
         );
     }
 
+    private ComboBox<ColorScheme> createComboBox(final ObservableList<ColorScheme> colorSchemes, final boolean modifiable) {
+        final ComboBox<ColorScheme> comboBox = new ComboBox<>();
+        comboBox.setPrefWidth(250);
+        comboBox.setItems(colorSchemes);
+        comboBox.setCellFactory(param -> new ColorSchemeListCell(modifiable));
+        comboBox.setButtonCell(new ColorSchemeListCell(modifiable));
+        comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Platform.runLater(() -> comboBox.getSelectionModel().clearSelection());
+                viewModel.set(newValue);
+            }
+        });
+        return comboBox;
+    }
+
     private class ColorSchemeListCell extends ListCell<ColorScheme> {
-        private Node graphic;
+        private final boolean modifiable;
+        private HBox graphic;
         private Label label;
         private Button button;
         private HBox warningHolder;
+
+        public ColorSchemeListCell(final boolean modifiable) {
+            this.modifiable = modifiable;
+        }
 
         @Override
         protected void updateItem(final ColorScheme item, final boolean empty) {
@@ -106,10 +119,17 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
                 warningHolder.setAlignment(Pos.CENTER);
 
                 label = new Label();
-                final HBox container = new HBox(5, button, label, region, warningHolder);
+                final HBox container = new HBox(5, label, region, warningHolder);
                 container.setPadding(new Insets(0, 10, 0, 0));
                 container.setAlignment(Pos.CENTER_LEFT);
                 this.graphic = container;
+            }
+            if (modifiable) {
+                if (!graphic.getChildren().contains(button)) {
+                    graphic.getChildren().add(0, button);
+                }
+            } else {
+                graphic.getChildren().remove(button);
             }
             button.setOnMousePressed(e -> viewModel.delete(colorScheme));
             label.setText(colorScheme.getName());

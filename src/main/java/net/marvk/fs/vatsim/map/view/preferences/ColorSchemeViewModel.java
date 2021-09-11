@@ -16,17 +16,23 @@ public class ColorSchemeViewModel implements ViewModel {
     private final ReadOnlyBooleanWrapper updating = new ReadOnlyBooleanWrapper(false);
     private final ObjectProperty<ColorScheme> colorSchemeToUpdate = new SimpleObjectProperty<>();
 
-    private final ColorSchemeRepository colorSchemeRepository;
+    private final PackagedColorSchemeRepository packagedColorSchemeRepository;
+    private final CustomColorSchemeRepository customColorSchemeRepository;
     private final Preferences preferences;
     private final ObservableList<ColorScheme> colorSchemes;
 
     @Inject
-    public ColorSchemeViewModel(final ColorSchemeRepository colorSchemeRepository, final Preferences preferences) {
-        this.colorSchemeRepository = colorSchemeRepository;
+    public ColorSchemeViewModel(
+            final PackagedColorSchemeRepository packagedColorSchemeRepository,
+            final CustomColorSchemeRepository customColorSchemeRepository,
+            final Preferences preferences
+    ) {
+        this.packagedColorSchemeRepository = packagedColorSchemeRepository;
+        this.customColorSchemeRepository = customColorSchemeRepository;
         this.preferences = preferences;
-        this.colorSchemes = colorSchemeRepository.list();
+        this.colorSchemes = customColorSchemeRepository.list();
         this.nameInput.addListener((observable, oldValue, newValue) -> {
-            final ColorScheme maybeColorSchemeToUpdate = colorSchemeRepository
+            final ColorScheme maybeColorSchemeToUpdate = customColorSchemeRepository
                     .list()
                     .stream()
                     .filter(e -> e.getName().equals(newValue))
@@ -38,7 +44,11 @@ public class ColorSchemeViewModel implements ViewModel {
         this.updating.bind(colorSchemeToUpdate.isNotNull());
     }
 
-    public ObservableList<ColorScheme> colorSchemes() {
+    public ObservableList<ColorScheme> packagedColorSchemes() {
+        return packagedColorSchemeRepository.list();
+    }
+
+    public ObservableList<ColorScheme> customColorSchemes() {
         final SortedList<ColorScheme> sortedSchemes = new SortedList<>(this.colorSchemes);
         sortedSchemes.setComparator(Comparator.comparing(ColorScheme::getName));
 
@@ -65,15 +75,15 @@ public class ColorSchemeViewModel implements ViewModel {
         final ColorScheme previousColorScheme = colorSchemeToUpdate.get();
 
         if (previousColorScheme == null) {
-            colorSchemeRepository.create(preferences.exportColorScheme(name));
+            customColorSchemeRepository.create(preferences.exportColorScheme(name));
         } else {
-            colorSchemeRepository.update(preferences.exportColorScheme(previousColorScheme));
+            customColorSchemeRepository.update(preferences.exportColorScheme(previousColorScheme));
         }
     }
 
     @SneakyThrows
     public void delete(final ColorScheme colorScheme) {
-        colorSchemeRepository.delete(colorScheme);
+        customColorSchemeRepository.delete(colorScheme);
     }
 
     public String getNameInput() {
