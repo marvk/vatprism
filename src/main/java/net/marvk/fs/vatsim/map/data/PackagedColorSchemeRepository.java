@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -13,13 +15,13 @@ import java.util.stream.Stream;
 
 @Log4j2
 public class PackagedColorSchemeRepository implements ReadOnlyRepository<ColorScheme> {
-    private static final String PATH = "/net/marvk/fs/vatsim/map/color_schemes";
+    private static final String PREFIX = "net.marvk.fs.vatsim.map.color_schemes";
 
     private final ObservableList<ColorScheme> colorSchemes;
 
     @Inject
     public PackagedColorSchemeRepository(final ColorSchemeAdapter adapter) {
-        colorSchemes = fileNamesStream(PATH)
+        colorSchemes = fileNamesStream()
                 .peek(e -> log.info("Loading built in color scheme %s".formatted(e)))
                 .map(PackagedColorSchemeRepository::createResourceStream)
                 .map(PackagedColorSchemeRepository::toBytes)
@@ -35,12 +37,12 @@ public class PackagedColorSchemeRepository implements ReadOnlyRepository<ColorSc
     }
 
     @SneakyThrows
-    public static Stream<String> fileNamesStream(final String path) {
-        final byte[] bytes = PackagedColorSchemeRepository.class
-                .getResourceAsStream(path)
-                .readAllBytes();
-
-        return new String(bytes).lines().map(String::trim).filter(e -> !e.isBlank());
+    public static Stream<String> fileNamesStream() {
+        log.info("Scanning for packaged color schemes in %s".formatted(PREFIX));
+        return new Reflections(PREFIX, new ResourcesScanner())
+                .getResources(x -> true)
+                .stream()
+                .map(e -> "/" + e);
     }
 
     @SneakyThrows
@@ -48,8 +50,8 @@ public class PackagedColorSchemeRepository implements ReadOnlyRepository<ColorSc
         return e.readAllBytes();
     }
 
-    private static InputStream createResourceStream(final String fileName) {
-        return PackagedColorSchemeRepository.class.getResourceAsStream(PATH + "/" + fileName);
+    private static InputStream createResourceStream(final String filePath) {
+        return PackagedColorSchemeRepository.class.getResourceAsStream(filePath);
     }
 
     @Override
