@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import net.marvk.fs.vatsim.map.version.VersionResponse;
+import net.marvk.fs.vatsim.map.api.VersionResponse;
 
 public class PreloaderView implements FxmlView<PreloaderViewModel> {
     @FXML

@@ -3,15 +3,15 @@ package net.marvk.fs.vatsim.map.configuration;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import net.marvk.fs.vatsim.map.version.HttpVersionApi;
-import net.marvk.fs.vatsim.map.version.VersionApi;
+import net.marvk.fs.vatsim.map.api.HttpVatprismApi;
+import net.marvk.fs.vatsim.map.api.VatprismApi;
 
 import java.time.Duration;
 
-public class VersionModule extends AbstractModule {
+public class ApiModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(VersionApi.class).to(HttpVersionApi.class).in(Singleton.class);
+        bind(VatprismApi.class).to(HttpVatprismApi.class).in(Singleton.class);
         bind(String.class).annotatedWith(Names.named("apiVersionUrl"))
                           .toInstance("https://version.vatprism.org:6300/versionRequest?version=%s&channel=%s");
         bind(String.class).annotatedWith(Names.named("apiThemeUrl"))

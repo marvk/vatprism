@@ -166,6 +166,6 @@ public class App extends MvvmfxGuiceApplication {
         modules.add(new JfxModule());
         modules.add(new PathsModule());
         modules.add(new MetarModule());
-        modules.add(new VersionModule());
+        modules.add(new ApiModule());
     }
 }

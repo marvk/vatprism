@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.version;
+package net.marvk.fs.vatsim.map.api;
 
 import lombok.Value;
 

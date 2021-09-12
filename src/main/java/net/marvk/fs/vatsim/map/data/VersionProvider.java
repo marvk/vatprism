@@ -1,4 +1,4 @@
-package net.marvk.fs.vatsim.map.version;
+package net.marvk.fs.vatsim.map.data;
 
 import com.github.zafarkhaja.semver.UnexpectedCharacterException;
 import com.github.zafarkhaja.semver.Version;

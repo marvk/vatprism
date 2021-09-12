@@ -1,10 +1,11 @@
-package net.marvk.fs.vatsim.map.version;
+package net.marvk.fs.vatsim.map.api;
 
 import com.github.zafarkhaja.semver.Version;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import lombok.extern.log4j.Log4j2;
+import net.marvk.fs.vatsim.map.data.VersionProvider;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,14 +19,14 @@ import java.time.Duration;
 import java.util.Map;
 
 @Log4j2
-public class HttpVersionApi implements VersionApi {
+public class HttpVatprismApi implements VatprismApi {
     private final VersionProvider versionProvider;
     private final String versionUrl;
     private final String themeUrl;
     private final Duration timeout;
 
     @Inject
-    public HttpVersionApi(
+    public HttpVatprismApi(
             final VersionProvider versionProvider,
             @Named("apiVersionUrl") final String versionUrl,
             @Named("apiThemeUrl") final String themeUrl,
@@ -38,7 +39,7 @@ public class HttpVersionApi implements VersionApi {
     }
 
     @Override
-    public VersionResponse checkVersion(final UpdateChannel channel) throws VersionApiException {
+    public VersionResponse checkVersion(final UpdateChannel channel) throws VatprismApiException {
         final Map<String, Map<String, String>> response = tryRequestVersion(channel);
         log.info("Version response: %s".formatted(response));
         final Map<String, String> latestVersion = getVersionResponse(response, channel);
@@ -52,7 +53,7 @@ public class HttpVersionApi implements VersionApi {
     }
 
     @Override
-    public void submitThemeChoice(final String themeName) throws VersionApiException {
+    public void submitThemeChoice(final String themeName) throws VatprismApiException {
         tryPostTheme(themeName);
     }
 
@@ -65,21 +66,21 @@ public class HttpVersionApi implements VersionApi {
         }
     }
 
-    private static Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response, final UpdateChannel channel) throws VersionApiException {
+    private static Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response, final UpdateChannel channel) throws VatprismApiException {
         for (final Map.Entry<String, Map<String, String>> e : response.entrySet()) {
             if (e.getKey().equalsIgnoreCase(channel.toString())) {
                 return e.getValue();
             }
         }
 
-        throw new VersionApiException();
+        throw new VatprismApiException();
     }
 
-    private void tryPostTheme(final String themeName) throws VersionApiException {
+    private void tryPostTheme(final String themeName) throws VatprismApiException {
         try {
             postTheme(themeName);
         } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new VersionApiException("Failed to submit theme to server", e);
+            throw new VatprismApiException("Failed to submit theme to server", e);
         }
     }
 
@@ -100,11 +101,11 @@ public class HttpVersionApi implements VersionApi {
         );
     }
 
-    private Map<String, Map<String, String>> tryRequestVersion(final UpdateChannel channel) throws VersionApiException {
+    private Map<String, Map<String, String>> tryRequestVersion(final UpdateChannel channel) throws VatprismApiException {
         try {
             return requestVersion(channel);
         } catch (URISyntaxException | IOException | InterruptedException e) {
-            throw new VersionApiException("Failed to fetch version from server", e);
+            throw new VatprismApiException("Failed to fetch version from server", e);
         }
     }
 

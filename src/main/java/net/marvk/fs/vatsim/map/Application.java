@@ -3,7 +3,7 @@ package net.marvk.fs.vatsim.map;
 import lombok.extern.log4j.Log4j2;
 import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
-import net.marvk.fs.vatsim.map.version.VersionProvider;
+import net.marvk.fs.vatsim.map.data.VersionProvider;
 
 import java.io.IOException;
 import java.nio.file.Files;

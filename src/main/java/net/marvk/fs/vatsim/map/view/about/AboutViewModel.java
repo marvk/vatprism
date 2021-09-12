@@ -6,7 +6,7 @@ import javafx.application.HostServices;
 import javafx.collections.ObservableList;
 import net.marvk.fs.vatsim.map.data.Dependency;
 import net.marvk.fs.vatsim.map.data.DependencyRepository;
-import net.marvk.fs.vatsim.map.version.VersionProvider;
+import net.marvk.fs.vatsim.map.data.VersionProvider;
 
 public class AboutViewModel implements ViewModel {
     private final VersionProvider versionProvider;

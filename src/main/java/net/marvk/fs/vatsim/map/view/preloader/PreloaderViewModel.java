@@ -13,8 +13,11 @@ import javafx.concurrent.Task;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.api.CachedVatsimApi;
 import net.marvk.fs.vatsim.api.VatsimApi;
+import net.marvk.fs.vatsim.map.api.UpdateChannel;
+import net.marvk.fs.vatsim.map.api.VatprismApi;
+import net.marvk.fs.vatsim.map.api.VatprismApiException;
+import net.marvk.fs.vatsim.map.api.VersionResponse;
 import net.marvk.fs.vatsim.map.data.*;
-import net.marvk.fs.vatsim.map.version.*;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
 
@@ -37,7 +40,7 @@ public class PreloaderViewModel implements ViewModel {
     private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
     private final ReadOnlyObjectWrapper<VersionResponse> versionResponse = new ReadOnlyObjectWrapper<>();
     private final Preferences preferences;
-    private final VersionApi versionApi;
+    private final VatprismApi vatprismApi;
     private final HostServices hostServices;
     private final RepositoryLoader repositoryLoader;
     private final VersionProvider versionProvider;
@@ -45,9 +48,9 @@ public class PreloaderViewModel implements ViewModel {
     private final ObjectProperty<Throwable> exception = new SimpleObjectProperty<>();
 
     @Inject
-    public PreloaderViewModel(final Preferences preferences, final VersionApi versionApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+    public PreloaderViewModel(final Preferences preferences, final VatprismApi vatprismApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
         this.preferences = preferences;
-        this.versionApi = versionApi;
+        this.vatprismApi = vatprismApi;
         this.hostServices = hostServices;
         this.repositoryLoader = repositoryLoader;
         this.versionProvider = versionProvider;
@@ -89,7 +92,7 @@ public class PreloaderViewModel implements ViewModel {
                         ? UpdateChannel.EXPERIMENTAL
                         : UpdateChannel.STABLE;
         try {
-            final VersionResponse versionResponse = versionApi.checkVersion(channel);
+            final VersionResponse versionResponse = vatprismApi.checkVersion(channel);
             if (versionResponse.getResult() == VersionResponse.Result.OUTDATED) {
                 log.warn("Found newer version: %s".formatted(versionResponse.getLatestVersion()));
             } else {
@@ -97,7 +100,7 @@ public class PreloaderViewModel implements ViewModel {
             }
             repositoryLoader.currentTaskDescription.set("Checked Version");
             this.versionResponse.set(versionResponse);
-        } catch (final VersionApiException e) {
+        } catch (final VatprismApiException e) {
             log.error("Failed to fetch version", e);
         }
     }
