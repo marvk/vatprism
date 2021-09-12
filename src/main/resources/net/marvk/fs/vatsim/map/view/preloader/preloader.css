@@ -4,7 +4,7 @@
 }
 
 .container {
-    -fx-background-image: url("../../background-about.png");
+    -fx-background-image: url("../../background-splash.png");
     -fx-background-position: center bottom;
 }
 
