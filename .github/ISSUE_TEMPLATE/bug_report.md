@@ -24,4 +24,5 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Additional context**
-Add any other context about the problem here. Please also attach the latest logs.
+Add any other context about the problem here. Please also attach the latest logs. Information on how to obtain log files
+can be found [here](https://vatprism.org/usage-guide).
