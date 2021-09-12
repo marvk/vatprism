@@ -46,7 +46,7 @@
 
     <properties>
         <!--Defaults, should be passed as command line argument for real builds-->
-        <versionName>DEV</versionName>
+        <versionName>0.1.0</versionName>
         <buildNumber>0</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>

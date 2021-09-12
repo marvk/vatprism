@@ -49,7 +49,11 @@ public class HttpVatprismApi implements VatprismApi {
         final String body = latestVersion.get("body");
         final boolean outdated = isOutdated(latestVersionName);
 
-        return VersionResponse.of(outdated, latestVersionName, latestVersionUrl, body);
+        return VersionResponse.of(outdated, latestVersionName, sanitize(latestVersionUrl), body);
+    }
+
+    private static String sanitize(final String latestVersionUrl) {
+        return "https://github.com/" + latestVersionUrl.replaceFirst("https://github\\.com/", "");
     }
 
     @Override

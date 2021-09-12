@@ -35,23 +35,23 @@
 
 ## Configuration Directories
 
-###### Root Configuration Directory
+##### Root Configuration Directory
 
     %LOCALAPPDATA%\VATPrism
 
-###### General Configuration
+##### General Configuration
 
     %LOCALAPPDATA%\VATPrism\Config.json
 
-###### Color Schemes
+##### Color Schemes
 
     %LOCALAPPDATA%\VATPrism\ColorSchemes
 
-###### Filters
+##### Filters
 
     %LOCALAPPDATA%\VATPrism\Filters
 
-###### Logs
+##### Logs
 
     %LOCALAPPDATA%\VATPrism\Logs
 
