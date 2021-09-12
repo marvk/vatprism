@@ -21,6 +21,8 @@ public class ColorSchemeViewModel implements ViewModel {
     private final CustomColorSchemeRepository customColorSchemeRepository;
     private final Preferences preferences;
     private final ObservableList<ColorScheme> colorSchemes;
+    private final SortedList<ColorScheme> packagedColorSchemes;
+    private final SortedList<ColorScheme> sortedColorSchemes;
 
     @Inject
     public ColorSchemeViewModel(
@@ -47,17 +49,24 @@ public class ColorSchemeViewModel implements ViewModel {
         Notifications.SET_THEME.subscribe(s ->
                 packagedColorSchemeRepository.findByName(s).ifPresent(ColorSchemeViewModel.this::set)
         );
+
+        this.packagedColorSchemes = new SortedList<>(packagedColorSchemeRepository.list(),
+                Comparator
+                        .comparing(ColorScheme::getName, (o1, o2) -> Boolean.compare(o1.startsWith("VATprism"), o2.startsWith("VATprism")))
+                        .reversed()
+                        .thenComparing(ColorScheme::getName, String::compareTo)
+        );
+        this.sortedColorSchemes = new SortedList<>(this.colorSchemes,
+                Comparator.comparing(ColorScheme::getName)
+        );
     }
 
     public ObservableList<ColorScheme> packagedColorSchemes() {
-        return packagedColorSchemeRepository.list();
+        return FXCollections.unmodifiableObservableList(packagedColorSchemes);
     }
 
     public ObservableList<ColorScheme> customColorSchemes() {
-        final SortedList<ColorScheme> sortedSchemes = new SortedList<>(this.colorSchemes);
-        sortedSchemes.setComparator(Comparator.comparing(ColorScheme::getName));
-
-        return FXCollections.unmodifiableObservableList(sortedSchemes);
+        return FXCollections.unmodifiableObservableList(sortedColorSchemes);
     }
 
     public void set(final ColorScheme colorScheme) {

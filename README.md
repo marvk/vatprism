@@ -19,23 +19,25 @@ For instructions on how to download VATprism, see the [Installation](#installati
 
 #### Airport Detail
 
-![Screenshot1](https://i.imgur.com/oSE1y7s.png)
+![Screenshot1](docs/assets/images/showcase/detail_airport.png)
 
 #### Airport Table
 
-![Screenshot2](https://i.imgur.com/Py7kWgq.png)
+![Screenshot2](docs/assets/images/showcase/table_airports.png)
 
 #### Pilot Detail
 
-![Screenshot3](https://i.imgur.com/4GYHvDe.png)
+![Screenshot3](docs/assets/images/showcase/detail_pilot.png)
 
 #### Full text search!
 
-![Screenshot4](https://i.imgur.com/RKEhpk4.png)
+![Screenshot4](docs/assets/images/showcase/search.png)
 
 #### Fully customizable!
 
-![Screenshot5](https://i.imgur.com/GkxMnGy.png)
+![Screenshot5](docs/assets/images/showcase/color_scheme_light.png)
+
+More information can be found on [vatprism.org](https://vatprism.org/)
 
 ## Issues
 

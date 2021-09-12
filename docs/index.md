@@ -102,6 +102,12 @@ adjustable ground speed.
 Create an infinite amount of filters, filtering callsigns, CIDs, departure and arrival airports and much more, including
 custom map colors. Filters are also disableable, and may be shared as a .json file.
 
+### Full Text Search
+
+[![](assets/images/showcase/search.png)](assets/images/showcase/search.png)
+
+VATprism supports full text search, making it easy to search for airport names, ICAO codes, client names and more.
+
 ### Color Schemes
 
 VATprism allows you to customize every color drawn on the map individually. This gives you all the control you need to
@@ -111,10 +117,14 @@ customize the look of your VATprism map. Dark, light, colorful or muted, or anyt
 
 [![](assets/images/showcase/color_scheme_vatspy.png)](assets/images/showcase/color_scheme_vatspy.png)
 
-#### Can I HazControl?
+#### Dark
 
-[![](assets/images/showcase/color_scheme_haz.png)](assets/images/showcase/color_scheme_haz.png)
+[![](assets/images/showcase/color_scheme_dark.png)](assets/images/showcase/color_scheme_dark.png)
 
-#### Basically Google Maps.
+#### or light?
+
+[![](assets/images/showcase/color_scheme_light.png)](assets/images/showcase/color_scheme_light.png)
+
+#### Basically Google Maps
 
 [![](assets/images/showcase/color_scheme_real.png)](assets/images/showcase/color_scheme_real.png)
