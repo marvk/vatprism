@@ -16,7 +16,7 @@
                       fx:id="metarText"
                       editable="false"
                       wrapText="true"/>
-            <Button HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="icon-button" maxHeight="Infinity"
+            <Button HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="icon-button,square-button" maxHeight="Infinity"
                     fx:id="refreshMetar">
                 <graphic>
                     <FontIcon iconLiteral="oct-download-16"/>

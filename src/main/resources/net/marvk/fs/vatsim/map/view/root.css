@@ -257,3 +257,7 @@
     -fx-text-fill: -vatsim-text-color;
     -fx-background-color: -vatsim-background-color-very-light;
 }
+
+.square-button {
+    -fx-background-radius: 0;
+}
