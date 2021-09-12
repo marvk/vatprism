@@ -11,10 +11,12 @@ import java.util.EnumSet;
 @Value
 public class Eta {
     private static final Eta GROUND = new Eta(ChronoUnit.FOREVER.getDuration(), Status.GROUND);
-    private static final Eta ARRIVING = new Eta(Duration.ZERO, Status.GROUND, Status.ARRIVING);
-    private static final Eta DEPARTING = new Eta(ChronoUnit.FOREVER.getDuration(), Status.GROUND, Status.DEPARTING);
-    private static final Eta UNKNOWN = new Eta(ChronoUnit.FOREVER.getDuration(), Status.UNKNOWN);
-    private static final Eta MID_AIR = new Eta(ChronoUnit.FOREVER.getDuration(), Status.MID_AIR);
+    private static final Eta ARRIVING = new Eta(Duration.ZERO.minus(Duration.ofDays(365)), Status.GROUND, Status.ARRIVING);
+    private static final Eta DEPARTING = new Eta(ChronoUnit.FOREVER.getDuration()
+                                                                   .minus(Duration.ofSeconds(10)), Status.GROUND, Status.DEPARTING);
+    private static final Eta UNKNOWN = new Eta(ChronoUnit.FOREVER.getDuration().negated(), Status.UNKNOWN);
+    private static final Eta MID_AIR = new Eta(ChronoUnit.FOREVER.getDuration()
+                                                                 .minus(Duration.ofSeconds(20)), Status.MID_AIR);
 
     Duration duration;
     EnumSet<Status> statuses;

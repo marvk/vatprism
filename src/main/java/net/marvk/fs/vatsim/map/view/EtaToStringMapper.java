@@ -9,7 +9,7 @@ public class EtaToStringMapper {
         } else if (eta.is(Eta.Status.DEPARTING)) {
             return "DEPARTING";
         } else if (eta.is(Eta.Status.EN_ROUTE)) {
-            return "%02d:%02d".formatted(eta.getDuration().toHoursPart(), eta.getDuration().toMinutesPart());
+            return "%02d:%02d".formatted(eta.getDuration().toHours(), eta.getDuration().toMinutesPart());
         } else if (eta.is(Eta.Status.GROUND)) {
             return "ON GROUND";
         } else if (eta.is(Eta.Status.MID_AIR)) {
