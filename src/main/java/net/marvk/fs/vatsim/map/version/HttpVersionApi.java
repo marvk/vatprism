@@ -20,13 +20,20 @@ import java.util.Map;
 @Log4j2
 public class HttpVersionApi implements VersionApi {
     private final VersionProvider versionProvider;
-    private final String url;
+    private final String versionUrl;
+    private final String themeUrl;
     private final Duration timeout;
 
     @Inject
-    public HttpVersionApi(final VersionProvider versionProvider, @Named("versionApiUrl") final String url, @Named("versionApiTimeout") final Duration timeout) {
+    public HttpVersionApi(
+            final VersionProvider versionProvider,
+            @Named("apiVersionUrl") final String versionUrl,
+            @Named("apiThemeUrl") final String themeUrl,
+            @Named("versionApiTimeout") final Duration timeout
+    ) {
         this.versionProvider = versionProvider;
-        this.url = url;
+        this.versionUrl = versionUrl;
+        this.themeUrl = themeUrl;
         this.timeout = timeout;
     }
 
@@ -44,6 +51,11 @@ public class HttpVersionApi implements VersionApi {
         return VersionResponse.of(outdated, latestVersionName, latestVersionUrl, body);
     }
 
+    @Override
+    public void submitThemeChoice(final String themeName) throws VersionApiException {
+        tryPostTheme(themeName);
+    }
+
     private boolean isOutdated(final String latestVersionName) {
         final Version currentVersion = versionProvider.getVersion();
         if (currentVersion == null) {
@@ -53,7 +65,7 @@ public class HttpVersionApi implements VersionApi {
         }
     }
 
-    private Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response, final UpdateChannel channel) throws VersionApiException {
+    private static Map<String, String> getVersionResponse(final Map<String, Map<String, String>> response, final UpdateChannel channel) throws VersionApiException {
         for (final Map.Entry<String, Map<String, String>> e : response.entrySet()) {
             if (e.getKey().equalsIgnoreCase(channel.toString())) {
                 return e.getValue();
@@ -61,6 +73,31 @@ public class HttpVersionApi implements VersionApi {
         }
 
         throw new VersionApiException();
+    }
+
+    private void tryPostTheme(final String themeName) throws VersionApiException {
+        try {
+            postTheme(themeName);
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            throw new VersionApiException("Failed to submit theme to server", e);
+        }
+    }
+
+    private void postTheme(final String themeName) throws URISyntaxException, IOException, InterruptedException {
+        final String formatted = themeUrl.formatted(
+                URLEncoder.encode(versionProvider.getString(), StandardCharsets.UTF_8),
+                URLEncoder.encode(themeName, StandardCharsets.UTF_8)
+        );
+        final HttpRequest build = HttpRequest
+                .newBuilder(new URI(formatted))
+                .timeout(timeout)
+                .GET()
+                .build();
+
+        HttpClient.newHttpClient().send(
+                build,
+                HttpResponse.BodyHandlers.ofString()
+        );
     }
 
     private Map<String, Map<String, String>> tryRequestVersion(final UpdateChannel channel) throws VersionApiException {
@@ -73,7 +110,7 @@ public class HttpVersionApi implements VersionApi {
 
     @SuppressWarnings("unchecked")
     private Map<String, Map<String, String>> requestVersion(final UpdateChannel channel) throws URISyntaxException, IOException, InterruptedException {
-        final String formatted = this.url.formatted(
+        final String formatted = versionUrl.formatted(
                 URLEncoder.encode(versionProvider.getString(), StandardCharsets.UTF_8),
                 URLEncoder.encode(channel.toString(), StandardCharsets.UTF_8)
         );
