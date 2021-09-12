@@ -113,7 +113,7 @@ VATprism supports full text search, making it easy to search for airport names, 
 VATprism allows you to customize every color drawn on the map individually. This gives you all the control you need to
 customize the look of your VATprism map. Dark, light, colorful or muted, or anything in between. Anything is possible!
 
-#### Longing for the true and trusted?
+#### Longing for the tried and trusted?
 
 [![](assets/images/showcase/color_scheme_vatspy.png)](assets/images/showcase/color_scheme_vatspy.png)
 
@@ -121,7 +121,7 @@ customize the look of your VATprism map. Dark, light, colorful or muted, or anyt
 
 [![](assets/images/showcase/color_scheme_dark.png)](assets/images/showcase/color_scheme_dark.png)
 
-#### or light?
+#### or Light?
 
 [![](assets/images/showcase/color_scheme_light.png)](assets/images/showcase/color_scheme_light.png)
 

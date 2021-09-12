@@ -7,6 +7,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -41,8 +42,7 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
 
         viewModel.nameInputProperty().bind(textField.textProperty());
 
-        final Label warning = new Label("Warning: Custom Color Schemes are subject to change.");
-        warning.setStyle("-fx-text-fill: darkred; -fx-font-weight: bold");
+        final Label warning = new Label("Note: The way custom color schemes work may change in the future.");
         final Label explanation = new Label("""
                 Selecting a Scheme from the combo box below will override ALL colors with that schemes colors.
                 This will override colors you have set.
@@ -56,13 +56,19 @@ public class ColorSchemeView extends VBox implements JavaView<ColorSchemeViewMod
 
         final HBox outdatedSchemesContainer = new HBox(5, generateAlertIcon(), outdatedSchemes);
         outdatedSchemesContainer.setAlignment(Pos.CENTER_LEFT);
-        getChildren().addAll(new Label("Color Schemes"), createComboBox(viewModel.packagedColorSchemes(), false), warning, explanation, new Label("Custom Color Schemes"), comboBox, textField, create, outdatedSchemesContainer);
 
         viewModel.customColorSchemes().addListener((ListChangeListener<ColorScheme>) c ->
                 outdatedSchemesContainer.setVisible(viewModel.customColorSchemes()
                                                              .stream()
                                                              .anyMatch(ColorScheme::isOutdated))
         );
+
+        final Label packagedLabel = new Label("VATprism Color Schemes");
+        packagedLabel.setStyle("-fx-font-size: 16");
+        final Label customLabel = new Label("Custom Color Schemes");
+        customLabel.setStyle("-fx-font-size: 16");
+
+        getChildren().addAll(explanation, packagedLabel, createComboBox(viewModel.packagedColorSchemes(), false), new Separator(Orientation.HORIZONTAL), warning, customLabel, comboBox, textField, create, outdatedSchemesContainer);
     }
 
     private ComboBox<ColorScheme> createComboBox(final ObservableList<ColorScheme> colorSchemes, final boolean modifiable) {
