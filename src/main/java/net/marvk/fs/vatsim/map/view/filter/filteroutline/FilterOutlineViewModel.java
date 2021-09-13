@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.Filter;
 import net.marvk.fs.vatsim.map.data.FilterRepository;
 import net.marvk.fs.vatsim.map.data.RepositoryException;
+import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.filter.FilterListViewModel;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 
@@ -55,6 +56,8 @@ public class FilterOutlineViewModel implements ViewModel {
             filterRepository.create(filter);
         } catch (final RepositoryException e) {
             log.error("Failed to create filter file", e);
+        } finally {
+            Notifications.REPAINT.publish();
         }
     }
 
@@ -64,6 +67,8 @@ public class FilterOutlineViewModel implements ViewModel {
             filterRepository.update(filter);
         } catch (final RepositoryException e) {
             log.error("Failed to update filter file", e);
+        } finally {
+            Notifications.REPAINT.publish();
         }
     }
 
@@ -81,6 +86,8 @@ public class FilterOutlineViewModel implements ViewModel {
             filterRepository.delete(viewModel.getFilter());
         } catch (final RepositoryException e) {
             log.error("Failed to delete filter file", e);
+        } finally {
+            Notifications.REPAINT.publish();
         }
     }
 
