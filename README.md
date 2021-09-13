@@ -57,16 +57,24 @@ Note: Windows Defender SmartScreen might show [a warning](docs/assets/images/war
 a recognized app. This is harmless and simply an issue of the installer
 being [unsigned.](https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-smartscreen/microsoft-defender-smartscreen-overview)
 
-#### Linux and macOS
+#### macOS
 
-Currently, there is no support for native linux or macOS binaries. It is still possible to run VATprism with `java` by
-downloading the `.jar` from the [releases page](https://github.com/marvk/vatprism/releases) and
-running `java -jar vatprism-VERSION.jar`. This requires an installation of JDK 15+ or JRE 15+, which are available on
-the [AdoptOpenJDK website.](https://adoptopenjdk.net/index.html)
+Simply download the latest image (`.dmg`) from the [releases page](https://github.com/marvk/vatprism/releases/latest)
+and run it.
 
-If there is demand for macOS or Linux native binaries in the future, I will think about adding support. Feel free to
-request [Linux](https://github.com/marvk/vatprism/issues/31) or [macOS](https://github.com/marvk/vatprism/issues/30)
-builds via the linked issues.
+Note: macOS might warn you that VATprism can not be trusted because it has been downloaded from the internet. To open
+VATprism anyway, right click it and press open. Additionally, after updating, you might receive a message saying the
+application is damaged and cannot be opened. This is an issue with codesign. Navigate to `/Applications/` and
+run `codesign --remove-signature VATprism.app`, then start VATprism as usual. I hope to be able to resolve this issue in
+the future, see the [corresponding issue](https://github.com/marvk/vatprism/issues/30) for more information.
+
+#### Linux
+
+Currently, there is no support for native linux binaries. It is still possible to run VATprism, though you are going to
+have to compile it yourself. For this, please refer to the [Build](#build) section of this readme.
+
+If there is demand for Linux native binaries in the future, I will think about adding support. Feel free to
+request [Linux](https://github.com/marvk/vatprism/issues/31) builds via the linked issue.
 
 ## Build
 
@@ -76,10 +84,10 @@ Building the project requires the following tools:
 
 * [JDK 15+](https://adoptopenjdk.net/)
 
-* [WiX Toolset](https://wixtoolset.org/) (For building a Windows Installer via `jpackage`)
+* [WiX Toolset](https://wixtoolset.org/) (Windows Only)
 
-To build the project, clone the repository and run `mvn package`. Currently, this will fail if WiX Toolkit is not
-installed. To disable the Windows installer build, remove the Exec Maven Plugin from the `pom.xml`.
+To build the project, clone the repository and run `mvn package`. To run the project, navigate to `target-fat-jar` and
+run `java -jar vatsim-map-[VERSION]-fat.jar`
 
 ## Acknowledgements
 
