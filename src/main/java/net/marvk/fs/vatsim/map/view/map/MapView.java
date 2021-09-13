@@ -39,9 +39,11 @@ import java.util.concurrent.*;
 
 @Log4j2
 public class MapView implements FxmlView<MapViewModel> {
-    private static final double D_DRAG = 1;
+    private static final double D_MOUSE_PAN = 1;
     private static final int MAX_SCALE = 16384;
     private static final int MIN_SCALE = 1;
+    private static final double D_KEY_ZOOM = 0.1;
+    private static final double D_KEY_PAN = 10;
 
     @FXML
     private StackPane stackPane;
@@ -255,8 +257,64 @@ public class MapView implements FxmlView<MapViewModel> {
         public void onScroll(final ScrollEvent event) {
             contextMenu.hideAndClear();
             viewModel.recalculateMouseWorldPosition();
-            final boolean scollingIn = event.getDeltaY() > 0;
+            zoomMap(event.getDeltaY());
+        }
+
+        public void onKeyPressed(final KeyEvent keyEvent) {
+            switch (keyEvent.getCode()) {
+                case CONTROL -> controlDown.set(true);
+                case ESCAPE -> viewModel.setSelectedItem(null);
+                // Discard controlDown when focus changes to search box
+                case F -> {
+                    if (controlDown.get()) {
+                        controlDown.set(false);
+                    }
+                }
+                case PLUS, E, ADD -> zoomMap(D_KEY_ZOOM);
+                case MINUS, Q, SUBTRACT -> zoomMap(-D_KEY_ZOOM);
+                case W -> panMap(0, -D_KEY_PAN);
+                case A -> panMap(D_KEY_PAN, 0);
+                case S -> panMap(0, D_KEY_PAN);
+                case D -> panMap(-D_KEY_PAN, 0);
+            }
+        }
+
+        public void onKeyReleased(final KeyEvent keyEvent) {
+            switch (keyEvent.getCode()) {
+                case CONTROL -> controlDown.set(false);
+            }
+        }
+
+        private void doDrag(final MouseEvent event) {
+            final double x = event.getX();
+            final double y = event.getY();
+            final double dx = (x - lastX) * D_MOUSE_PAN / MapVariables.WORLD_ASPECT_RATIO;
+            final double dy = -(y - lastY) * D_MOUSE_PAN / MapVariables.WORLD_ASPECT_RATIO;
+
+            lastX = x;
+            lastY = y;
+
+            panMap(dx, dy);
+        }
+
+        public void onMouseClicked(final MouseEvent event) {
+            if (event.isStillSincePress()) {
+                viewModel.setDistanceMeasureCanvas(null);
+            }
+        }
+
+        private void panMap(final double dx, final double dy) {
+            final double aspect = (
+                    2 * MapVariables.WORLD_WIDTH * (1 / viewModel.scaleProperty().get())) /
+                    viewModel.viewWidthProperty().get();
+
+            final Point2D worldCenter = viewModel.getWorldCenter();
+            viewModel.setWorldCenter(worldCenter.add(dx * aspect, dy * aspect));
+        }
+
+        private void zoomMap(final double d) {
             final double fScroll = Math.pow(viewModel.getScrollSpeed(), 1. / 4);
+            final boolean scollingIn = d > 0;
             final double delta = scollingIn ? fScroll : 1.0 / fScroll;
 
             final double oldScale = viewModel.scaleProperty().get();
@@ -273,48 +331,6 @@ public class MapView implements FxmlView<MapViewModel> {
             final double f = oldScale / newScale;
 
             viewModel.setWorldCenter(mouseWorldPosition.multiply(1 - f).add(worldCenter.multiply(f)));
-        }
-
-        public void onKeyPressed(final KeyEvent keyEvent) {
-            switch (keyEvent.getCode()) {
-                case CONTROL -> controlDown.set(true);
-                case ESCAPE -> viewModel.setSelectedItem(null);
-                // Discard controlDown when focus changes to search box
-                case F -> {
-                    if (controlDown.get()) {
-                        controlDown.set(false);
-                    }
-                }
-            }
-        }
-
-        public void onKeyReleased(final KeyEvent keyEvent) {
-            switch (keyEvent.getCode()) {
-                case CONTROL -> controlDown.set(false);
-            }
-        }
-
-        private void doDrag(final MouseEvent event) {
-            final double x = event.getX();
-            final double y = event.getY();
-            final double dx = (x - lastX) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
-            final double dy = -(y - lastY) * D_DRAG / MapVariables.WORLD_ASPECT_RATIO;
-
-            final double aspect = (
-                    2 * MapVariables.WORLD_WIDTH * (1 / viewModel.scaleProperty().get())) /
-                    viewModel.viewWidthProperty().get();
-
-            final Point2D worldCenter = viewModel.getWorldCenter();
-            viewModel.setWorldCenter(worldCenter.add(dx * aspect, dy * aspect));
-
-            lastX = x;
-            lastY = y;
-        }
-
-        public void onMouseClicked(final MouseEvent event) {
-            if (event.isStillSincePress()) {
-                viewModel.setDistanceMeasureCanvas(null);
-            }
         }
     }
 

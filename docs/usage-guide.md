@@ -25,6 +25,9 @@
 | MMB               | Select Item       |
 | CTRL + LMB        | Distance Measure  |
 | ESC               | Clear Selection   |
+| +, E              | Zoom In           |
+| -, Q              | Zoom Out          |
+| W, A, S, D        | Pan Map           |
 
 #### Tables
 
