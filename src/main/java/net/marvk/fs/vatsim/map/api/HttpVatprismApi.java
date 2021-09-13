@@ -45,7 +45,17 @@ public class HttpVatprismApi implements VatprismApi {
         final Map<String, String> latestVersion = getVersionResponse(response, channel);
 
         final String latestVersionName = latestVersion.get("version");
-        final String latestVersionUrl = latestVersion.get("downloadUrl");
+
+        final String os = System.getProperty("os.name").toLowerCase();
+        final String latestVersionUrl;
+        if (os.startsWith("mac os x")) {
+            latestVersionUrl = latestVersion.get("macosUrl");
+        } else if (os.startsWith("windows")) {
+            latestVersionUrl = latestVersion.get("windowsUrl");
+        } else {
+            latestVersionUrl = "https://github.com/marvk/vatprism";
+        }
+
         final String body = latestVersion.get("body");
         final boolean outdated = isOutdated(latestVersionName);
 

@@ -5,7 +5,7 @@ on:
       - 'master'
       - 'releases/**'
 jobs:
-  build_windows:
+  build-windows:
     runs-on: windows-latest
     if: ${{ !contains(github.event.head_commit.message, '#docs-only') }}
     steps:
@@ -28,6 +28,7 @@ jobs:
           $version = $(mvn -q -DforceStdout org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression="project.version")
           echo "Version: ${version}"
           echo "PROJECT_VERSION=$version" >> $env:GITHUB_ENV
+          echo "${version}" | Out-File PROJECT_VERSION.var -NoNewline
       - name: Branch Version
         if: github.ref != 'refs/heads/master'
         run: |
@@ -47,6 +48,8 @@ jobs:
           $version = "${current_version}.$([int]${build_number}+1)"
           echo "Version: ${version}"
           echo "PROJECT_VERSION=$version" >> $env:GITHUB_ENV
+          echo "${current_version_stub}" | Out-File PROJECT_VERSION_TAG_PRERELEASE.var -NoNewline
+          echo "${version}" | Out-File PROJECT_VERSION.var -NoNewline
       - name: Download WiX Toolset
         run: Invoke-WebRequest https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip -OutFile wix.zip
       - name: Unzip WiX Toolset
@@ -54,9 +57,80 @@ jobs:
       - name: Install WiX Toolset
         run: echo wix | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
       - name: Maven Build
-        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}" "-DbuildNumber=${{github.run_number}}"
+        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}.win64" "-DbuildNumber=${{github.run_number}}"
       - name: Rename artifacts
-        run: ren target-fat-jar/vatsim-map-${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}-fat.jar VATprism-${{env.PROJECT_VERSION}}.jar; ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.PROJECT_VERSION}}.msi;
+        run: ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.PROJECT_VERSION}}.msi;
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows
+          path: |
+            target-installer/*
+            LICENSE
+      - name: Upload Vars
+        uses: actions/upload-artifact@v2
+        with:
+          name: vars
+          path: ./*.var
+  build-osx:
+    runs-on: macos-latest
+    needs: build-windows
+    if: ${{ !contains(github.event.head_commit.message, '#docs-only') }}
+    steps:
+      - name: Download Vars
+        uses: actions/download-artifact@v2
+        with:
+          name: vars
+      - name: Read Vars
+        run: |
+          echo "PROJECT_VERSION=$(cat PROJECT_VERSION.var)" >> $GITHUB_ENV
+          echo "PROJECT_VERSION_TAG_PRERELEASE=$(cat PROJECT_VERSION_TAG_PRERELEASE.var)" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Create short SHA
+        uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 6
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Maven Build
+        run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}.macos" "-DbuildNumber=${{github.run_number}}"
+      - name: Rename artifacts
+        run: mv target-installer/VATprism-${{github.run_number}}.0.0.dmg target-installer/VATprism-${{env.PROJECT_VERSION}}.dmg;
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos
+          path: target-installer/*
+  release:
+    runs-on: windows-latest
+    if: ${{ !contains(github.event.head_commit.message, '#docs-only') }}
+    needs: [ build-windows, build-osx ]
+    steps:
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: windows
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: macos
+          path: target-installer/
+      - name: Download Vars
+        uses: actions/download-artifact@v2
+        with:
+          name: vars
+      - run: ls
+      - name: Read Vars
+        run: |
+          echo ls
+          echo "PROJECT_VERSION=$(cat PROJECT_VERSION.var)" >> $env:GITHUB_ENV
+          echo "PROJECT_VERSION_TAG_PRERELEASE=$(cat PROJECT_VERSION_TAG_PRERELEASE.var)" >> $env:GITHUB_ENV
       - name: Master Release
         uses: marvinpinto/action-automatic-releases@latest
         if: github.ref == 'refs/heads/master'
@@ -66,7 +140,6 @@ jobs:
           prerelease: false
           title: v${{env.PROJECT_VERSION}}
           files: |
-            target-fat-jar/*
             target-installer/*
             LICENSE
       - name: Branch Release
@@ -78,13 +151,12 @@ jobs:
           prerelease: true
           title: v${{env.PROJECT_VERSION}}
           files: |
-            target-fat-jar/*
             target-installer/*
             LICENSE
   deploy-pages:
     if:
       github.ref == 'refs/heads/master'
-    needs: build_windows
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: Trigger GitHub pages rebuild

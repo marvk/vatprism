@@ -47,7 +47,7 @@
     <properties>
         <!--Defaults, should be passed as command line argument for real builds-->
         <versionName>DEV</versionName>
-        <buildNumber>0</buildNumber>
+        <buildNumber>1</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
         <developerName>Marvin Kuhnke</developerName>
@@ -67,7 +67,52 @@
         <ikonli.version>12.2.0</ikonli.version>
         <log4j.version>2.14.1</log4j.version>
         <geotools.version>25.1</geotools.version>
+        <jpackage.args.crossPlatform>
+            --input "target-fat-jar/"
+            --name "${project.name}"
+            --main-jar "vatsim-map-${project.version}-fat.jar"
+            --dest "target-installer"
+            --main-class "${mainClass}"
+            --description "VATprism"
+            --vendor "${developerName}"
+            --app-version "${buildNumber}.0.0"
+        </jpackage.args.crossPlatform>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>Windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.args.platformSpecific>
+                    --icon "src/main/resources/net/marvk/fs/vatsim/map/icon-256.ico"
+                    --win-dir-chooser
+                    --win-menu
+                    --win-menu-group ${project.name}
+                    --type "msi"
+                </jpackage.args.platformSpecific>
+            </properties>
+        </profile>
+        <profile>
+            <id>macOS</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <jpackage.args.platformSpecific>
+                    --icon "src/main/resources/net/marvk/fs/vatsim/map/icon-256.icns"
+                    --mac-package-identifier ${project.name}
+                    --type "dmg"
+                </jpackage.args.platformSpecific>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -304,20 +349,7 @@
                         </goals>
                         <configuration>
                             <executable>jpackage</executable>
-                            <commandlineArgs>
-                                --input "target-fat-jar/"
-                                --name "${project.name}"
-                                --main-jar "vatsim-map-${project.version}-fat.jar"
-                                --dest "target-installer"
-                                --main-class "${mainClass}"
-                                --type "msi"
-                                --description "VATprism"
-                                --vendor "${developerName}"
-                                --app-version "${buildNumber}.0.0"
-                                --icon "src/main/resources/net/marvk/fs/vatsim/map/icon.ico"
-                                --win-dir-chooser
-                                --win-menu
-                                --win-menu-group ${project.name}
+                            <commandlineArgs>${jpackage.args.crossPlatform} ${jpackage.args.platformSpecific}
                             </commandlineArgs>
                         </configuration>
                     </execution>

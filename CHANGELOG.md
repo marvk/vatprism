@@ -4,6 +4,7 @@
 
 ### Added
 
+- macOS releases
 - Keybindings for panning and zooming the map
 
 ### Fixed
@@ -12,4 +13,4 @@
 
 ## [0.1.0](https://github.com/marvk/vatprism/releases/tag/v0.1.0) - 2021-09-13
 
-Initial release.
+Initial release
