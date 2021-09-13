@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
@@ -19,7 +20,10 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(VatsimApiUrlProvider.class).to(UrlProviderV3.class).in(Singleton.class);
-        bind(VatsimApiDataSource.class).to(HttpDataSource.class).in(Singleton.class);
+        bind(VatsimApiDataSource.class).annotatedWith(Names.named("httpDataSource"))
+                                       .to(HttpDataSource.class)
+                                       .in(Singleton.class);
+        bind(VatsimApiDataSource.class).to(ProxyDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
         bind(FlightInformationRegionRepository.class).in(Singleton.class);

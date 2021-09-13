@@ -6,6 +6,7 @@
 
 - macOS releases
 - Keybindings for panning and zooming the map
+- Ability to load local data files by placing `VATSpy.dat` and/or `FIRBoundaries.dat` inside the config directory
 
 ### Fixed
 
