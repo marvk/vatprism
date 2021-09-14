@@ -12,6 +12,8 @@ public @interface Parameter {
 
     String bind() default "";
 
+    boolean disabled() default false;
+
     boolean visible() default true;
 
     double min() default -Double.MAX_VALUE;

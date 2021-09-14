@@ -278,8 +278,9 @@ public class PreferencesView {
         final double max = parameter.max();
 
         final String bindToKey = parameter.bind();
-        final boolean bind = !bindToKey.isBlank();
-        final boolean visible = parameter.visible();
+        final boolean enabled = !parameter.disabled();
+        final boolean visible = parameter.visible() && enabled;
+        final boolean bind = !bindToKey.isBlank() && enabled;
         final String key = key(prefix, name);
         if (Color.class.isAssignableFrom(field.getType())) {
             final ObjectProperty<Color> property = preferences.colorProperty(key, (Color) field.get(painter));

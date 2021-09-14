@@ -58,4 +58,15 @@
 
     %LOCALAPPDATA%\VATPrism\Logs
 
+##### Data Files
+
+If you want to test changes to the data files locally, you can place the files in the following locations. Either or
+both work and will replace the version fetched when VATprism is starting up.
+
+    %LOCALAPPDATA%\VATPrism\VATSpy.dat
+
+<!-- -->
+
+    %LOCALAPPDATA%\VATPrism\FIRBoundaries.dat
+
 ### [← back](/)

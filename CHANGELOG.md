@@ -1,12 +1,16 @@
 # Changelog
 
-## [0.1.1](https://github.com/marvk/vatprism/compare/v0.1.0...v0.1.1) - Unreleased
+## [0.2.0](https://github.com/marvk/vatprism/compare/v0.1.0...v0.1.1) - Unreleased
 
 ### Added
 
 - macOS releases
 - Keybindings for panning and zooming the map
 - Ability to load local data files by placing `VATSpy.dat` and/or `FIRBoundaries.dat` inside the config directory
+
+### Removed
+
+- Outlines (Strokes) on the World and Lakes have been disabled due to performance issues and artifacts on the map
 
 ### Fixed
 

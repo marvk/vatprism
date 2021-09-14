@@ -12,13 +12,13 @@ public class WorldPainter extends MapPainter<Polygon> {
     @Parameter("Fill color")
     private Color fillColor;
 
-    @Parameter("Stroke")
+    @Parameter(value = "Stroke", disabled = true)
     private boolean stroke = false;
 
-    @Parameter("Stroke Color")
+    @Parameter(value = "Stroke Color", disabled = true)
     private Color strokeColor;
 
-    @Parameter(value = "Stroke Width", min = 0, max = 10)
+    @Parameter(value = "Stroke Width", min = 0, max = 10, disabled = true)
     private double strokeWidth = 1;
 
     public WorldPainter(final MapVariables mapVariables, final Color color) {
