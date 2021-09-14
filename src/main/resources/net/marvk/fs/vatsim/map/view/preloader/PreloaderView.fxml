@@ -6,7 +6,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox prefWidth="600.0" styleClass="container" stylesheets="@preloader.css" xmlns="http://javafx.com/javafx/11.0.1"
+<VBox fx:id="container" prefWidth="600.0" styleClass="container" stylesheets="@preloader.css"
+      xmlns="http://javafx.com/javafx/11.0.1"
       xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
     <children>
         <VBox>
@@ -20,7 +21,7 @@
                         </ImageView>
                         <StackPane alignment="BOTTOM_RIGHT">
                             <children>
-                                <Label styleClass="header" text="VATprism">
+                                <Label fx:id="header" styleClass="header" text="VATprism">
                                     <font>
                                         <Font size="72.0"/>
                                     </font>

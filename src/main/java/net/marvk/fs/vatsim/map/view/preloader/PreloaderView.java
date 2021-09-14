@@ -11,7 +11,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import net.marvk.fs.vatsim.map.api.VersionResponse;
 
+import java.time.LocalDate;
+import java.util.Base64;
+
 public class PreloaderView implements FxmlView<PreloaderViewModel> {
+    @FXML
+    private Label header;
+
+    @FXML
+    private VBox container;
+
     @FXML
     private Label versionAndName;
 
@@ -52,9 +61,10 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         viewModel.versionResponseProperty().addListener((observable, oldValue, response) -> {
             if (response != null && response.getResult() == VersionResponse.Result.OUTDATED) {
                 showNewVersionDialog(response);
-
             }
         });
+
+        checkSpecial();
     }
 
     private void showNewVersionDialog(final VersionResponse response) {
@@ -92,5 +102,18 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         if (event.getButton() == MouseButton.PRIMARY) {
             viewModel.goToIssuePage();
         }
+    }
+
+    private void checkSpecial() {
+        final LocalDate now = LocalDate.now();
+        if (now.isEqual(LocalDate.of(now.getYear(), Integer.parseInt(decode("NA==")), Integer.parseInt(decode("MQ=="))))) {
+            container.getStyleClass().add("container-special");
+            header.setText(decode("Q0FUcHJpc20="));
+            header.setStyle(decode("LWZ4LWZvbnQtZmFtaWx5OiAnQ29taWMgU2FucyBNUyc="));
+        }
+    }
+
+    private static String decode(final String s) {
+        return new String(Base64.getDecoder().decode(s));
     }
 }

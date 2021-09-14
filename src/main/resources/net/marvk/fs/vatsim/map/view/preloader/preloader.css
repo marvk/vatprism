@@ -8,6 +8,9 @@
     -fx-background-position: center bottom;
 }
 
+.container-special {
+    -fx-background-image: url('../../background-splash-special.png');
+}
 
 .label .text {
     -fx-font-family: B612;
