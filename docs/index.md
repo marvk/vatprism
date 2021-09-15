@@ -1,4 +1,4 @@
-[![Discord](https://img.shields.io/discord/801211199592857672.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/XPpFHhT8sk) ![GitHub downloads](https://img.shields.io/github/downloads/marvk/vatprism/total)
+[![Discord](https://img.shields.io/discord/801211199592857672.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/XPpFHhT8sk) ![GitHub downloads](https://img.shields.io/github/downloads/marvk/vatprism/total) ![GitHub Repo stars](https://img.shields.io/github/stars/marvk/vatprism?style=social)
 
 ## Download
 
