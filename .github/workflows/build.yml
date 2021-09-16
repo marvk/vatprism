@@ -29,6 +29,7 @@ jobs:
           echo "Version: ${version}"
           echo "PROJECT_VERSION=$version" >> $env:GITHUB_ENV
           echo "${version}" | Out-File PROJECT_VERSION.var -NoNewline
+          echo "unused" | Out-File PROJECT_VERSION_TAG_PRERELEASE.var -NoNewline
       - name: Branch Version
         if: github.ref != 'refs/heads/master'
         run: |
