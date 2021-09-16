@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
-public class BackgroundPainter extends MapPainter<Void> {
+public class BackgroundPainter extends AlwaysOnMapPainter<Void> {
     @Parameter("Color")
     private Color color;
 
@@ -15,7 +15,12 @@ public class BackgroundPainter extends MapPainter<Void> {
 
     @Override
     public void paint(final GraphicsContext c, final Void unused) {
-        c.setFill(color);
+        c.setFill(Color.color(color.getRed(), color.getGreen(), color.getBlue()));
         painterHelper.fillRect(c, 0, 0, mapVariables.getViewWidth(), mapVariables.getViewHeight());
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

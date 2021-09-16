@@ -15,6 +15,7 @@
 ### Fixed
 
 - Map now updates automatically when updating filter settings
+- Background can't be disabled anymore and is now always painted at maximum opacity (#48)
 
 ## [0.1.0](https://github.com/marvk/vatprism/releases/tag/v0.1.0) - 2021-09-13
 
