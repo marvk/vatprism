@@ -49,7 +49,7 @@ public class ProxyDataSource implements VatsimApiDataSource {
 
     @Override
     public String events() throws VatsimApiException {
-        throw new UnsupportedOperationException();
+        return dataSource.events();
     }
 
     private String tryLoadProxy(final String fileName, final Callable<String> fallbackSupplier) throws VatsimApiException {

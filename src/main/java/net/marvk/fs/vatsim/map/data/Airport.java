@@ -151,6 +151,45 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         return getAlternativesWritable().getReadOnlyProperty();
     }
 
+    private ReadOnlyListWrapper<EventRoute> arrivalInEventRoutes;
+
+    ReadOnlyListWrapper<EventRoute> getArrivalInEventRoutesWritable() {
+        if (arrivalInEventRoutes == null) {
+            arrivalInEventRoutes = RelationshipReadOnlyListWrapper.withOtherProperty(this, EventRoute::getArrivalWritable);
+        }
+        return arrivalInEventRoutes;
+    }
+
+    public ReadOnlyListProperty<FlightPlan> arrivalInEventRoutesProperty() {
+        return getAlternativesWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<EventRoute> departureInEventRoutes;
+
+    ReadOnlyListWrapper<EventRoute> getDepartureInEventRoutesWritable() {
+        if (departureInEventRoutes == null) {
+            departureInEventRoutes = RelationshipReadOnlyListWrapper.withOtherProperty(this, EventRoute::getDepartureWritable);
+        }
+        return departureInEventRoutes;
+    }
+
+    public ReadOnlyListProperty<FlightPlan> departureInEventRoutesProperty() {
+        return getAlternativesWritable().getReadOnlyProperty();
+    }
+
+    private ReadOnlyListWrapper<Event> events;
+
+    ReadOnlyListWrapper<Event> getEventsWritable() {
+        if (events == null) {
+            events = RelationshipReadOnlyListWrapper.withOtherList(this, Event::getAirportsWritable);
+        }
+        return events;
+    }
+
+    public ReadOnlyListProperty<Event> getEvents() {
+        return getEventsWritable().getReadOnlyProperty();
+    }
+
     @Override
     public void setFromModel(final AirportRepository.VatsimAirportWrapper model) {
         Objects.requireNonNull(model);
