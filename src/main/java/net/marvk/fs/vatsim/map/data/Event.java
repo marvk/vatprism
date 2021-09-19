@@ -1,13 +1,15 @@
 package net.marvk.fs.vatsim.map.data;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import net.marvk.fs.vatsim.api.data.VatsimEvent;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 
-public class Event implements Settable<VatsimEvent> {
+public class Event implements Settable<VatsimEvent>, Data {
     private final ReadOnlyIntegerWrapper id = new ReadOnlyIntegerWrapper();
 
     public int getId() {
@@ -131,6 +133,31 @@ public class Event implements Settable<VatsimEvent> {
         return routes.getReadOnlyProperty();
     }
 
+    private final ReadOnlyObjectWrapper<Duration> duration = new ReadOnlyObjectWrapper<>();
+
+    public Duration getDuration() {
+        return duration.get();
+    }
+
+    public ReadOnlyObjectProperty<Duration> durationProperty() {
+        return duration.getReadOnlyProperty();
+    }
+
+    public Event() {
+        duration.bind(Bindings.createObjectBinding(this::calculateDuration, startTime, endTime));
+    }
+
+    private Duration calculateDuration() {
+        final ZonedDateTime start = startTime.get();
+        final ZonedDateTime end = endTime.get();
+
+        if (start == null || end == null) {
+            return null;
+        }
+
+        return Duration.between(start, end);
+    }
+
     @Override
     public void setFromModel(final VatsimEvent model) {
         id.set(model.getId());
@@ -143,5 +170,10 @@ public class Event implements Settable<VatsimEvent> {
         startTime.set(model.getStartTime());
         endTime.set(model.getEndTime());
         organizers.setAll(model.getOrganizers().stream().map(EventOrganizer::new).collect(Collectors.toList()));
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

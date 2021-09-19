@@ -44,4 +44,8 @@ public interface DataVisitor<E> {
     default E visit(final Client client) {
         throw new UnsupportedOperationException("Not implemented");
     }
+
+    default E visit(final Event event) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

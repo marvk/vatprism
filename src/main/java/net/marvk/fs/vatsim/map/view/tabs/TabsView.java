@@ -22,6 +22,7 @@ import net.marvk.fs.vatsim.map.view.datatable.flightinformationregionboundariest
 import net.marvk.fs.vatsim.map.view.datatable.pilotstable.PilotsTableView;
 import net.marvk.fs.vatsim.map.view.datatable.streamerstable.StreamersTableView;
 import net.marvk.fs.vatsim.map.view.datatable.upperinformationregionstable.UpperInformationRegionsTableView;
+import net.marvk.fs.vatsim.map.view.events.EventsView;
 import net.marvk.fs.vatsim.map.view.filter.filteredclients.FilteredClientsView;
 import net.marvk.fs.vatsim.map.view.filter.filteroutline.FilterOutlineView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
@@ -64,6 +65,7 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPane.getTabs().add(createJavaViewTab("UIRs", UpperInformationRegionsTableView.class));
         tabPane.getTabs().add(createFxmlViewTab("Filtered Clients", FilteredClientsView.class));
         tabPane.getTabs().add(createFxmlViewTab("Filters", FilterOutlineView.class));
+        tabPane.getTabs().add(createFxmlViewTab("Events", EventsView.class));
         tabPane.getTabs().add(createJavaViewTab("Streamers", StreamersTableView.class));
 
         searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
