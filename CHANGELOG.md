@@ -2,6 +2,10 @@
 
 ## [0.3.0](https://github.com/marvk/vatprism/compare/v0.2.0...v0.3.0) - Unreleased
 
+### Added
+
+- Ability to turn off Labels on uncontrolled Airports and uncontrolled Airports with arrivals and/or departures
+
 ### Fixed
 
 - VAT-Spy color scheme delivery and ground colors swapped ([#57](https://github.com/marvk/vatprism/issues/57))

@@ -20,8 +20,14 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Uncontrolled Airports")
     private boolean paintAll = false;
 
+    @Parameter("Paint Labels of Uncontrolled Airports")
+    private boolean paintAllLabels = true;
+
     @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
+
+    @Parameter("Paint Labels of Uncontrolled Airports with Destinations or Arrivals")
+    private boolean paintUncontrolledButDestinationsOrArrivalLabels = true;
 
     @Parameter("Airport Color")
     private Color airportColor = Color.WHITE;
@@ -181,17 +187,20 @@ public class AirportPainter extends MapPainter<Airport> {
         }
 
         if (text) {
-            painterHelper.fillTextWithBackground(
-                    c,
-                    x,
-                    labelY(y),
-                    icao,
-                    paintBackground,
-                    TextAlignment.CENTER,
-                    VPos.BOTTOM,
-                    textColor,
-                    backgroundColor
-            );
+            final boolean uncontrolledButDestinationOriginEnabled = (airport.hasDepartures() || airport.hasArrivals()) && paintUncontrolledButDestinationsOrArrivalLabels;
+            if (paintAllLabels || airport.hasControllers() || uncontrolledButDestinationOriginEnabled) {
+                painterHelper.fillTextWithBackground(
+                        c,
+                        x,
+                        labelY(y),
+                        icao,
+                        paintBackground,
+                        TextAlignment.CENTER,
+                        VPos.BOTTOM,
+                        textColor,
+                        backgroundColor
+                );
+            }
         }
     }
 
