@@ -1,13 +1,12 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
+import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import net.marvk.fs.vatsim.map.data.Airport;
-import net.marvk.fs.vatsim.map.data.Controller;
-import net.marvk.fs.vatsim.map.data.ControllerType;
+import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.util.ArrayList;
@@ -112,6 +111,8 @@ public class AirportPainter extends MapPainter<Airport> {
         c.setLineWidth(1);
 
         final String icao = airport.getIcao();
+        final int departuresOnGround = airport.getDeparturesOnGround();
+        final int arrivalsOnGround = airport.getArrivalsOnGround();
 
         final double textScale = c.getFont().getSize() / 12.0;
         final boolean paintApproachCircle = mapVariables.getScale() > (40 / approachRadius) * textScale;
@@ -178,6 +179,23 @@ public class AirportPainter extends MapPainter<Airport> {
 
                 painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (typesWidth + 1) + 2, typesWidth + 3);
             }
+        }
+
+        final int typesWidth = (int) Math.ceil(textScale * TYPES_WIDTH);
+        if (departuresOnGround > 0) {
+            c.setFill(Color.GREEN);
+            c.setTextBaseline(VPos.TOP);
+            final double xCur = typeLabelX(x, 3, 0, typesWidth);
+            final double yCur = y - 30;
+            painterHelper.fillText(c, "⬈" + departuresOnGround, xCur, yCur);
+        }
+
+        if (arrivalsOnGround > 0) {
+            c.setFill(Color.RED);
+            c.setTextBaseline(VPos.TOP);
+            final double xCur = typeLabelX(x, 3, 3, typesWidth);
+            final double yCur = y - 30;
+            painterHelper.fillText(c, "⬊" + arrivalsOnGround, xCur, yCur);
         }
 
         if (text) {
