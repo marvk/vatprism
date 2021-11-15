@@ -185,16 +185,16 @@ public class AirportPainter extends MapPainter<Airport> {
         if (departuresOnGround > 0) {
             c.setFill(Color.GREEN);
             c.setTextBaseline(VPos.TOP);
-            final double xCur = typeLabelX(x, 3, 0, typesWidth);
-            final double yCur = y - 30;
+            final double xCur = typeLabelX(x, 6, 6, typesWidth);
+            final double yCur = y - 25;
             painterHelper.fillText(c, "⬈" + departuresOnGround, xCur, yCur);
         }
 
         if (arrivalsOnGround > 0) {
             c.setFill(Color.RED);
             c.setTextBaseline(VPos.TOP);
-            final double xCur = typeLabelX(x, 3, 3, typesWidth);
-            final double yCur = y - 30;
+            final double xCur = typeLabelX(x, 6, 6, typesWidth);
+            final double yCur = y - 15;
             painterHelper.fillText(c, "⬊" + arrivalsOnGround, xCur, yCur);
         }
 
