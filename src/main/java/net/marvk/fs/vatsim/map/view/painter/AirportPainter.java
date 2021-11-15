@@ -1,12 +1,13 @@
 package net.marvk.fs.vatsim.map.view.painter;
 
-import javafx.beans.property.ReadOnlyListProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
-import net.marvk.fs.vatsim.map.data.*;
+import net.marvk.fs.vatsim.map.data.Airport;
+import net.marvk.fs.vatsim.map.data.Controller;
+import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 import java.util.ArrayList;
