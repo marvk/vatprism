@@ -47,6 +47,11 @@ public class ProxyDataSource implements VatsimApiDataSource {
         return dataSource.mapData();
     }
 
+    @Override
+    public String events() throws VatsimApiException {
+        return null;
+    }
+
     private String tryLoadProxy(final String fileName, final Callable<String> fallbackSupplier) throws VatsimApiException {
         final Path path = configPath.resolve(fileName);
         log.info("Trying to load proxy file for %s".formatted(fileName));
