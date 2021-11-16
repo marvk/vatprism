@@ -93,26 +93,26 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Eta>newColumnBuilder()
-                .title("ETA")
-                .objectObservableValueFactory(Pilot::etaProperty)
-                .toStringMapper(ETA_MAPPER::map)
-                .sortable(Comparator.comparing(Eta::getDuration))
-                .mono(true)
-                .widthFactor(0.8)
-                .build();
+            .title("ETA")
+            .objectObservableValueFactory(Pilot::etaProperty)
+            .toStringMapper(ETA_MAPPER::map)
+            .sortable(Comparator.comparing(Eta::getDuration))
+            .mono(true)
+            .widthFactor(0.8)
+            .build();
     }
 
-    private static int compareDistance(final Number o1, final Number o2) {
-        final boolean firstIsDouble = Double.isNaN(o1.doubleValue());
-        final boolean secondIsDouble = Double.isNaN(o2.doubleValue());
-        if (firstIsDouble && secondIsDouble) {
+    private static int compareDistance(final Number n1, final Number n2) {
+        final boolean firstIsNaN = Double.isNaN(n1.doubleValue());
+        final boolean secondIsNaN = Double.isNaN(n2.doubleValue());
+        if (firstIsNaN && secondIsNaN) {
             return 0;
-        } else if (firstIsDouble) {
+        } else if (firstIsNaN) {
             return -1;
-        } else if (secondIsDouble) {
+        } else if (secondIsNaN) {
             return 1;
         } else {
-            return Double.compare(o1.doubleValue(), o2.doubleValue());
+            return Double.compare(n1.doubleValue(), n2.doubleValue());
         }
     }
 }
