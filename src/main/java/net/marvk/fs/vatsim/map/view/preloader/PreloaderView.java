@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import net.marvk.fs.vatsim.map.api.VersionResponse;
@@ -19,7 +20,7 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
     private Label header;
 
     @FXML
-    private VBox container;
+    private StackPane container;
 
     @FXML
     private Label versionAndName;
@@ -32,6 +33,9 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
 
     @FXML
     private HBox errorHolder;
+
+    @FXML
+    private Label close;
 
     @FXML
     private Label task;
@@ -50,7 +54,10 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         taskHolder.getChildren().setAll(task);
 
         viewModel.errorProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            final boolean errorOccurred = newValue != null;
+            close.setVisible(errorOccurred);
+
+            if (errorOccurred) {
                 taskHolder.getChildren().setAll(errorHolder);
             } else {
                 taskHolder.getChildren().setAll(task);
@@ -102,6 +109,11 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         if (event.getButton() == MouseButton.PRIMARY) {
             viewModel.goToIssuePage();
         }
+    }
+
+    @FXML
+    public void exit() {
+        viewModel.exit();
     }
 
     private void checkSpecial() {
