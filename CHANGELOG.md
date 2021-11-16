@@ -5,6 +5,7 @@
 ### Added
 
 - Ability to turn off Labels on uncontrolled Airports and uncontrolled Airports with arrivals and/or departures
+- Added button to close the preloader after an issue occurred ([#66](https://github.com/marvk/vatprism/issues/66))
 
 ### Fixed
 

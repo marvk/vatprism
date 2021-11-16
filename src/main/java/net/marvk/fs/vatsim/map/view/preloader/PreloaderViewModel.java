@@ -161,7 +161,7 @@ public class PreloaderViewModel implements ViewModel {
 
     public void goToIssuePage() {
         final String escapedError = error.get().replaceAll(" ", "+");
-        hostServices.showDocument("https://github.com/marvk/vatprism/issues/new?assignees=&labels=bug&template=bug_report.md&title=Error+during+startup%3A+" + escapedError);
+        hostServices.showDocument("https://github.com/marvk/vatprism/issues/new?assignees=&labels=bug&template=preloader_issue.md&title=Error+during+startup%3A+" + escapedError);
     }
 
     public String getVersionAndName() {
@@ -178,6 +178,10 @@ public class PreloaderViewModel implements ViewModel {
     public void downloadNewVersion() {
         hostServices.showDocument(versionResponse.get().getUrl());
 
+        exit();
+    }
+
+    public void exit() {
         Platform.exit();
         System.exit(0);
     }

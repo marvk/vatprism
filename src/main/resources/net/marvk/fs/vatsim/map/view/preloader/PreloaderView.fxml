@@ -1,68 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox fx:id="container" prefWidth="600.0" styleClass="container" stylesheets="@preloader.css"
-      xmlns="http://javafx.com/javafx/11.0.1"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
+<StackPane fx:id="container" prefHeight="306.0" prefWidth="600.0" styleClass="container" stylesheets="@preloader.css"
+           xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="net.marvk.fs.vatsim.map.view.preloader.PreloaderView">
     <children>
-        <VBox>
+        <VBox prefWidth="600.0">
             <children>
-                <HBox alignment="BOTTOM_CENTER">
+                <VBox>
                     <children>
-                        <ImageView fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../../icon-256.png"/>
-                            </image>
-                        </ImageView>
-                        <StackPane alignment="BOTTOM_RIGHT">
+                        <HBox alignment="BOTTOM_CENTER">
                             <children>
-                                <Label fx:id="header" styleClass="header" text="VATprism">
-                                    <font>
-                                        <Font size="72.0"/>
-                                    </font>
-                                    <padding>
-                                        <Insets left="-70.0"/>
-                                    </padding>
-                                </Label>
-                                <Label styleClass="small" fx:id="versionAndName" textAlignment="RIGHT">
-                                    <padding>
-                                        <Insets bottom="-12.0" right="4.0"/>
-                                    </padding>
-                                </Label>
+                                <ImageView fitHeight="256.0" fitWidth="256.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../icon-256.png"/>
+                                    </image>
+                                </ImageView>
+                                <StackPane alignment="BOTTOM_RIGHT">
+                                    <children>
+                                        <Label fx:id="header" styleClass="header" text="VATprism">
+                                            <font>
+                                                <Font size="72.0"/>
+                                            </font>
+                                            <padding>
+                                                <Insets left="-70.0"/>
+                                            </padding>
+                                        </Label>
+                                        <Label fx:id="versionAndName" styleClass="small" textAlignment="RIGHT">
+                                            <padding>
+                                                <Insets bottom="-12.0" right="4.0"/>
+                                            </padding>
+                                        </Label>
+                                    </children>
+                                </StackPane>
                             </children>
-                        </StackPane>
+                        </HBox>
+                        <HBox>
+                            <VBox.margin>
+                                <Insets bottom="2.0"/>
+                            </VBox.margin>
+                            <children>
+                                <VBox fx:id="taskHolder" alignment="BOTTOM_LEFT" minHeight="20.0">
+                                    <children>
+                                        <Label fx:id="task" text="Initializing"/>
+                                        <HBox fx:id="errorHolder" spacing="5">
+                                            <Label fx:id="error" styleClass="error" text="Error"/>
+                                            <Label onMouseClicked="#goToIssuePage" styleClass="error, error-link"
+                                                   text="Please submit an issue report by clicking on this link"/>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Region prefWidth="33.0"/>
+                            </children>
+                        </HBox>
                     </children>
-                </HBox>
-                <HBox>
                     <VBox.margin>
-                        <Insets bottom="2.0"/>
+                        <Insets left="10.0" right="10.0" top="10.0"/>
                     </VBox.margin>
-                    <children>
-                        <VBox fx:id="taskHolder" alignment="BOTTOM_LEFT" minHeight="20.0">
-                            <children>
-                                <Label fx:id="task" text="Initializing"/>
-                                <HBox fx:id="errorHolder" spacing="5">
-                                    <Label fx:id="error" styleClass="error" text="Error"/>
-                                    <Label onMouseClicked="#goToIssuePage" styleClass="error, error-link"
-                                           text="Please submit an issue report by clicking on this link"/>
-                                </HBox>
-                            </children>
-                        </VBox>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <Region prefWidth="33.0"/>
-                    </children>
-                </HBox>
+                </VBox>
+                <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                             progress="0.0"/>
             </children>
-            <VBox.margin>
-                <Insets left="10.0" right="10.0" top="10.0"/>
-            </VBox.margin>
         </VBox>
-        <ProgressBar fx:id="progressBar" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                     progress="0.0"/>
+        <Label fx:id="close" onMouseClicked="#exit" styleClass="error, error-link" text="Close" visible="false"
+               StackPane.alignment="TOP_RIGHT">
+            <StackPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </StackPane.margin>
+        </Label>
     </children>
-</VBox>
+</StackPane>
