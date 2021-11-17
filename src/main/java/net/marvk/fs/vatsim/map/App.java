@@ -162,7 +162,6 @@ public class App extends MvvmfxGuiceApplication {
     @Override
     public void initGuiceModules(final List<Module> modules) {
         modules.add(new AppModule());
-        modules.add(new AopModule());
         modules.add(new JfxModule());
         modules.add(new PathsModule());
         modules.add(new MetarModule());
