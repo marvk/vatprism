@@ -83,6 +83,13 @@ public class AppModule extends AbstractModule {
         return new PolygonRepository(shapefileUrls, shpUrls(shapefileUrls));
     }
 
+    @Provides
+    @Singleton
+    @Named("vatsimApiRefreshRate")
+    public Duration vatsimApiRefreshRate() {
+        return Duration.ofSeconds(15);
+    }
+
     private static List<URL> shpUrls(final List<String> shapefileUrls) {
         return shapefileUrls.stream().map(AppModule::shpUrl).collect(Collectors.toList());
     }

@@ -7,6 +7,10 @@
 - Ability to turn off Labels on uncontrolled Airports and uncontrolled Airports with arrivals and/or departures
 - Added button to close the preloader after an issue occurred ([#66](https://github.com/marvk/vatprism/issues/66))
 
+### Changed
+
+- Reduced automatic refresh rate to 15 seconds from 30 seconds to match VATSIM api refresh rate
+
 ### Fixed
 
 - VAT-Spy color scheme delivery and ground colors swapped ([#57](https://github.com/marvk/vatprism/issues/57))
