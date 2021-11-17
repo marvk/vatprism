@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.main;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ScopeProvider;
 import de.saxsys.mvvmfx.ViewModel;
@@ -14,7 +15,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.ScheduledService;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.Notifications;
@@ -23,6 +23,7 @@ import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.ToolbarScope;
 import net.marvk.fs.vatsim.map.view.filter.FilterScope;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,7 +39,6 @@ public class MainViewModel implements ViewModel {
 
     private final Preferences preferences;
 
-    private static final Duration RELOAD_PERIOD = Duration.seconds(30);
     private final ReloadService clientReloadService;
 
     private final ReadOnlyBooleanWrapper onboarding = new ReadOnlyBooleanWrapper();
@@ -50,16 +50,17 @@ public class MainViewModel implements ViewModel {
     public MainViewModel(
             final ClientRepository clientRepository,
             final Preferences preferences,
-            final VersionProvider versionProvider
+            final VersionProvider versionProvider,
+            @Named("vatsimApiRefreshRate") final Duration refreshRate
     ) {
         this.preferences = preferences;
 
         Notifications.RELOAD_CLIENTS.subscribe(this::reloadClients);
 
-        this.loadClientsAsync = new ReloadRepositoryCommand(clientRepository, this::clientReloadCompleted);
+        loadClientsAsync = new ReloadRepositoryCommand(clientRepository, this::clientReloadCompleted);
         clientReloadService = new ReloadService(loadClientsAsync);
-        clientReloadService.setPeriod(RELOAD_PERIOD);
-        clientReloadService.setDelay(RELOAD_PERIOD);
+        clientReloadService.setPeriod(javafx.util.Duration.seconds(refreshRate.getSeconds()));
+        clientReloadService.setDelay(javafx.util.Duration.seconds(refreshRate.getSeconds()));
 
         final StringProperty version = preferences.stringProperty("meta.version");
         if (version.get() == null || "0.0.0".equals(version.get())) {
