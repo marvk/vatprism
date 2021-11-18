@@ -21,27 +21,40 @@ import net.marvk.fs.vatsim.api.data.VatsimPilot;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Log4j2
 public class ClientRepository extends SimpleDataRepository<Client, VatsimClient> {
+    private static final Pattern FLIGHT_NUMBER_PARSER = Pattern.compile("^(?<icao>[A-Z]{3})(?<number>[0-9][A-Z0-9]*)$");
+
     private final ReadOnlyListWrapper<Pilot> pilots;
     private final ReadOnlyListWrapper<Controller> controllers;
     private final AirportRepository airportRepository;
     private final CallsignParser callsignParser;
     private final ClientTypeMapper clientTypeMapper;
     private final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository;
+    private final AirlineRepository airlineRepository;
     private RTree<Pilot, Point> rTree = RTree.create();
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Inject
-    public ClientRepository(final VatsimApi vatsimApi, final AirportRepository airportRepository, final CallsignParser callsignParser, final ClientTypeMapper clientTypeMapper, final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository) {
+    public ClientRepository(
+            final VatsimApi vatsimApi,
+            final AirportRepository airportRepository,
+            final CallsignParser callsignParser,
+            final ClientTypeMapper clientTypeMapper,
+            final FlightInformationRegionBoundaryRepository flightInformationRegionBoundaryRepository,
+            final AirlineRepository airlineRepository
+    ) {
         super(vatsimApi);
         this.airportRepository = airportRepository;
         this.callsignParser = callsignParser;
         this.clientTypeMapper = clientTypeMapper;
         this.flightInformationRegionBoundaryRepository = flightInformationRegionBoundaryRepository;
+        this.airlineRepository = airlineRepository;
 
         // yikes, but it works, sooo...
         pilots = new ReadOnlyListWrapper<Pilot>(new FilteredList(list(), e -> e instanceof Pilot));
@@ -91,8 +104,25 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
                 }
                 final List<FlightInformationRegionBoundary> firbs =
                         flightInformationRegionBoundaryRepository.getByPosition(((Pilot) toAdd).getPosition());
-                ((Pilot) toAdd).flightInformationRegionBoundariesWritable().setAll(firbs);
+                pilot.flightInformationRegionBoundariesWritable().setAll(firbs);
+
+                parseAndSetAirlineAndFlightNumber(pilot);
             }
+        }
+    }
+
+    private void parseAndSetAirlineAndFlightNumber(final Pilot pilot) {
+        final Matcher matcher = FLIGHT_NUMBER_PARSER.matcher(pilot.getCallsign());
+
+        if (matcher.matches()) {
+            final String icao = matcher.group("icao");
+            final String number = matcher.group("number");
+
+            pilot.setAirline(airlineRepository.getByKey(icao));
+            pilot.setFlightNumber(number);
+        } else {
+            pilot.setAirline(null);
+            pilot.setFlightNumber(null);
         }
     }
 

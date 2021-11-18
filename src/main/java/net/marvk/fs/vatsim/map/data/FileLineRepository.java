@@ -28,7 +28,6 @@ public abstract class FileLineRepository<ViewModel> implements ReadOnlyRepositor
     }
 
     protected ReadOnlyListProperty<ViewModel> load() {
-
         return preSave(
                 Stream.concat(loadViewModelsFromFile(), additionalViewModels())
         ).collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableListProperty::new));
