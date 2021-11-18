@@ -9,7 +9,8 @@
 
 ### Changed
 
-- Reduced automatic refresh rate to 15 seconds from 30 seconds to match VATSIM api refresh rate
+- Reduced automatic refresh rate to 15 seconds from 30 seconds to match VATSIM api refresh
+  rate ([#68](https://github.com/marvk/vatprism/issues/68))
 
 ### Fixed
 
