@@ -40,33 +40,33 @@
 
 ##### Root Configuration Directory
 
-    %LOCALAPPDATA%\VATPrism
+    %LOCALAPPDATA%\VATprism
 
 ##### General Configuration
 
-    %LOCALAPPDATA%\VATPrism\Config.json
+    %LOCALAPPDATA%\VATprism\Config.json
 
 ##### Color Schemes
 
-    %LOCALAPPDATA%\VATPrism\ColorSchemes
+    %LOCALAPPDATA%\VATprism\ColorSchemes
 
 ##### Filters
 
-    %LOCALAPPDATA%\VATPrism\Filters
+    %LOCALAPPDATA%\VATprism\Filters
 
 ##### Logs
 
-    %LOCALAPPDATA%\VATPrism\Logs
+    %LOCALAPPDATA%\VATprism\Logs
 
 ##### Data Files
 
 If you want to test changes to the data files locally, you can place the files in the following locations. Either or
 both work and will replace the version fetched when VATprism is starting up.
 
-    %LOCALAPPDATA%\VATPrism\VATSpy.dat
+    %LOCALAPPDATA%\VATprism\VATSpy.dat
 
 <!-- -->
 
-    %LOCALAPPDATA%\VATPrism\FIRBoundaries.dat
+    %LOCALAPPDATA%\VATprism\FIRBoundaries.dat
 
 ### [← back](/)
