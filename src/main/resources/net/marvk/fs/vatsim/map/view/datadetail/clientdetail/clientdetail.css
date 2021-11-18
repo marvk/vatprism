@@ -39,3 +39,19 @@
     -fx-icon-color: white;
     visibility: visible;
 }
+
+.header-pane .question-mark-icon {
+    -fx-icon-color: -vatsim-text-color;
+}
+
+.header-label-container:hover .header-label-active {
+    -fx-text-fill: -vatsim-text-color-light;
+}
+
+.header-label-container:hover .question-mark-icon-active {
+    -fx-icon-color: -vatsim-text-color-light;
+}
+
+.twitch-container .question-mark-icon {
+    -fx-icon-color: white;
+}

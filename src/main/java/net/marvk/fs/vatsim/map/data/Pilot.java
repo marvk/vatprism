@@ -11,12 +11,9 @@ import net.marvk.fs.vatsim.map.GeomUtil;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Pilot extends Client implements Data {
     private static final ReadOnlyObjectProperty<ClientType> CLIENT_TYPE = new ImmutableObjectProperty<>(ClientType.PILOT);
-    private static final Pattern FLIGHT_NUMBER_PARSER = Pattern.compile("^(?<icao>[A-Z]{3})(?<number>[0-9][A-Z0-9]*)$");
     private final FlightPlan flightPlan = new FlightPlan(this);
 
     private final StringProperty transponder = new SimpleStringProperty();
@@ -65,7 +62,6 @@ public class Pilot extends Client implements Data {
         position.set(GeomUtil.parsePoint(pilot.getLongitude(), pilot.getLatitude()));
         history.add(position.get());
 
-        parseAirlineAndFlightNumber(client.getCallsign());
         if (!Objects.equals(previousUpdatedTime, getLastUpdatedTime())) {
             if (previousUpdatedTime != null && getLastUpdatedTime() != null) {
                 final double ftDiff = getAltitude() - previousAltitude;
@@ -80,21 +76,6 @@ public class Pilot extends Client implements Data {
 
         eta.set(Eta.of(getPosition(), getGroundSpeed(), flightPlan.getDepartureAirport(), flightPlan.getArrivalAirport()));
         getUrls().setUrlsFromString(flightPlan.getRemarks());
-    }
-
-    private void parseAirlineAndFlightNumber(final String callsign) {
-        final Matcher matcher = FLIGHT_NUMBER_PARSER.matcher(callsign);
-
-        if (matcher.matches()) {
-            final String icao = matcher.group("icao");
-            final String number = matcher.group("number");
-
-            airline.set(new Airline(icao));
-            flightNumber.set(number);
-        } else {
-            airline.set(null);
-            flightNumber.set(null);
-        }
     }
 
     @Override
@@ -166,12 +147,20 @@ public class Pilot extends Client implements Data {
         return airline.get();
     }
 
+    void setAirline(final Airline airline) {
+        this.airline.set(airline);
+    }
+
     public ReadOnlyObjectProperty<Airline> airlineProperty() {
         return airline;
     }
 
     public String getFlightNumber() {
         return flightNumber.get();
+    }
+
+    void setFlightNumber(final String flightNumber) {
+        this.flightNumber.set(flightNumber);
     }
 
     public ReadOnlyStringProperty flightNumberProperty() {

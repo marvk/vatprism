@@ -63,12 +63,12 @@ public class DependencyRepository extends FileLineRepository<Dependency> {
                         "https://code2art.jetbrains.com/"
                 ),
                 new Dependency(
-                        "Creative Commons Attribution-NonCommercial 3.0 Unported",
+                        "Open Data Commons Open Database License (ODbL) v1.0",
                         "OpenFlights Airport Data",
                         null,
                         null,
                         null,
-                        "https://code2art.jetbrains.com/"
+                        "https://openflights.org/data.html"
                 )
         );
     }

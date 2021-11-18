@@ -48,7 +48,13 @@ public class PreloaderViewModel implements ViewModel {
     private final ObjectProperty<Throwable> exception = new SimpleObjectProperty<>();
 
     @Inject
-    public PreloaderViewModel(final Preferences preferences, final VatprismApi vatprismApi, final HostServices hostServices, final RepositoryLoader repositoryLoader, final VersionProvider versionProvider) {
+    public PreloaderViewModel(
+            final Preferences preferences,
+            final VatprismApi vatprismApi,
+            final HostServices hostServices,
+            final RepositoryLoader repositoryLoader,
+            final VersionProvider versionProvider
+    ) {
         this.preferences = preferences;
         this.vatprismApi = vatprismApi;
         this.hostServices = hostServices;
@@ -269,6 +275,7 @@ public class PreloaderViewModel implements ViewModel {
                 final UpperInformationRegionRepository upperInformationRegionRepository,
                 final InternationalDateLineRepository internationalDateLineRepository,
                 final CountryRepository countryRepository,
+                final AirlineRepository airlineRepository,
                 final VatsimApi vatsimApi,
                 final Preferences preferences,
                 @Named("userLogDir") final Path logDir
@@ -318,6 +325,11 @@ public class PreloaderViewModel implements ViewModel {
                     "Loaded Countries",
                     countryRepository
             );
+            final var loadAirlines = new CallableTask(
+                    "Loading Airlines",
+                    "Loaded Airlines",
+                    airlineRepository::list
+            );
             final var loadClients = new RepositoryTask(
                     "Loading Clients",
                     "Loaded Clients",
@@ -351,6 +363,7 @@ public class PreloaderViewModel implements ViewModel {
                     loadUirs,
                     loadAirports,
                     loadRatings,
+                    loadAirlines,
                     loadClients,
                     clearCaches,
                     deletingOldLogs

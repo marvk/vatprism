@@ -32,6 +32,7 @@ public class AppModule extends AbstractModule {
         bind(InternationalDateLineRepository.class).in(Singleton.class);
         bind(CountryRepository.class).in(Singleton.class);
         bind(DependencyRepository.class).in(Singleton.class);
+        bind(AirlineRepository.class).in(Singleton.class);
         bind(FilterRepository.class).in(Singleton.class);
         bind(CustomColorSchemeRepository.class).in(Singleton.class);
         bind(PackagedColorSchemeRepository.class).in(Singleton.class);
@@ -44,6 +45,12 @@ public class AppModule extends AbstractModule {
     @Named("licenseFileName")
     public String licenseFileName() {
         return "/THIRD-PARTY.txt";
+    }
+
+    @Provides
+    @Named("airlineFileName")
+    public String airlineFileName() {
+        return "airlines.csv";
     }
 
     @Provides

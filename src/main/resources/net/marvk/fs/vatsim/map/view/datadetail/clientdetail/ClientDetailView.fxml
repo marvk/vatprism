@@ -27,7 +27,10 @@
                 </Label>
                 <FontIcon styleClass="live-twitch-logo" iconLiteral="ion4-logo-twitch"/>
             </HBox>
-            <Label styleClass="header-label" fx:id="headerLabel"/>
+            <HBox styleClass="header-label-container" alignment="CENTER" spacing="5" fx:id="headerLabelContainer">
+                <Label styleClass="header-label" fx:id="headerLabel"/>
+                <FontIcon styleClass="question-mark-icon" iconLiteral="oct-question-16" fx:id="questionMarkIcon"/>
+            </HBox>
         </StackPane>
     </headerNode>
     <contentNode>
