@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,7 +49,7 @@ public abstract class FileLineRepository<ViewModel> implements ReadOnlyRepositor
     protected Stream<ViewModel> loadViewModelsFromFile() {
         final InputStream resource = getClass().getResourceAsStream(fileName);
 
-        return new BufferedReader(new InputStreamReader(resource))
+        return new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8))
                 .lines()
                 .map(this::parseLine)
                 .filter(Optional::isPresent)
