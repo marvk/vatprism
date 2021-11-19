@@ -37,20 +37,6 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void startMvvmfx(final Stage primaryStage) {
-        final Parameters parameters = getParameters();
-        log.info("Received parameters %s".formatted(parameters.getRaw()));
-        final String logLevelString = parameters.getNamed().get("loglevel");
-        if (logLevelString != null) {
-            final Level level = Level.toLevel(logLevelString, null);
-
-            if (level != null) {
-                log.info("Setting log level to %s from parameters".formatted(level));
-                Configurator.setRootLevel(level);
-            } else {
-                log.warn("Failed to set log level to \"%s\"".formatted(logLevelString));
-            }
-        }
-
         loadFonts();
         startPreloader(primaryStage);
     }
@@ -161,10 +147,29 @@ public class App extends MvvmfxGuiceApplication {
 
     @Override
     public void initGuiceModules(final List<Module> modules) {
+        // Call this here because initMvvmfx is called after initGuiceModules and we might miss some log messages
+        setLogLevel();
+
         modules.add(new AppModule());
         modules.add(new JfxModule());
         modules.add(new PathsModule());
         modules.add(new MetarModule());
         modules.add(new ApiModule());
+    }
+
+    private void setLogLevel() {
+        final Parameters parameters = getParameters();
+        log.info("Received parameters %s".formatted(parameters.getRaw()));
+        final String logLevelString = parameters.getNamed().get("loglevel");
+        if (logLevelString != null) {
+            final Level level = Level.toLevel(logLevelString, null);
+
+            if (level != null) {
+                log.info("Setting log level to %s from parameters".formatted(level));
+                Configurator.setRootLevel(level);
+            } else {
+                log.warn("Failed to set log level to \"%s\"".formatted(logLevelString));
+            }
+        }
     }
 }

@@ -15,7 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -34,6 +36,8 @@ public class ConfigFilePreferences implements Preferences {
         this.adapter = adapter;
         tryCreateFilterDirectory(path);
         tryLoadConfig();
+
+        migrateOldProperties();
 
         booleanProperty("general.debug", false);
         booleanProperty("general.social", true);
@@ -57,6 +61,73 @@ public class ConfigFilePreferences implements Preferences {
         booleanProperty("context_menu.show_all_uirs", false);
         booleanProperty("context_menu.show_all_airports", false);
         booleanProperty("context_menu.show_all_pilots", false);
+    }
+
+    private void migrateOldProperties() {
+        List.of("airports", "search_items.airport", "selected_item.airport").forEach(prefix -> {
+            this.<Boolean>migrateProperty(
+                    "%s.paint_labels_of_uncontrolled_airports_with_destinations_or_arrivals".formatted(prefix),
+                    "%s.paint_labels_of_uncontrolled_airports_with_arrivals_or_departures".formatted(prefix),
+                    this::booleanProperty
+            );
+            this.<Boolean>migrateProperty(
+                    "%s.paint_uncontrolled_airports_with_destinations_or_arrivals".formatted(prefix),
+                    "%s.paint_uncontrolled_airports_with_arrivals_or_departures".formatted(prefix),
+                    this::booleanProperty
+            );
+        });
+
+        deletePropertiesWithPrefix("search_items.airports");
+        deletePropertiesWithPrefix("selected_item.airports");
+        writeConfig();
+    }
+
+    private void deleteProperties(final String... keys) {
+        for (final String key : keys) {
+            deleteProperty(key);
+        }
+    }
+
+    private void deletePropertiesWithPrefix(final String prefix) {
+        final List<String> keysToDelete = observables
+                .keySet()
+                .stream()
+                .filter(e -> e.startsWith(prefix))
+                // Collect to avoid ConcurrentModificationException
+                .collect(Collectors.toList());
+
+        if (keysToDelete.isEmpty()) {
+            log.debug("Skipped deletion of keys with prefix %s because no keys with this prefix exist".formatted(prefix));
+        } else {
+            keysToDelete.forEach(this::deleteProperty);
+            log.info("Deleted %d keys with prefix %s".formatted(keysToDelete.size(), prefix));
+        }
+    }
+
+    private void deleteProperty(final String key) {
+        final ObservableValue<?> oldProperty = observables.get(key);
+        if (oldProperty != null) {
+            log.info("Deleted old property %s".formatted(key));
+            observables.remove(key);
+        } else {
+            log.debug("Skipped deletion of old property %s because it already didn't exist");
+        }
+    }
+
+    private <T> void migrateProperty(final String oldKey, final String newKey, final BiFunction<String, T, ObservableValue<T>> newObservableValueSupplier) {
+        final ObservableValue<T> oldProperty = (ObservableValue<T>) observables.get(oldKey);
+        if (oldProperty != null) {
+            observables.remove(oldKey);
+            if (observables.containsKey(newKey)) {
+                log.info("Deleted old property %s during migration, new property %s already existed".formatted(oldKey, newKey));
+            } else {
+                final T oldValue = (T) oldProperty.getValue();
+                newObservableValueSupplier.apply(newKey, oldValue);
+                log.info("Migrated old property %s to new property %s".formatted(oldKey, newKey));
+            }
+        } else {
+            log.debug("Skipped migration of old property %s to new property %s because old property did not exist".formatted(oldKey, newKey));
+        }
     }
 
     private void tryLoadConfig() {
