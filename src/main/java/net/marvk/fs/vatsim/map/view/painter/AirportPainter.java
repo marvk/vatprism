@@ -23,10 +23,10 @@ public class AirportPainter extends MapPainter<Airport> {
     @Parameter("Paint Labels of Uncontrolled Airports")
     private boolean paintAllLabels = true;
 
-    @Parameter("Paint Uncontrolled Airports with Destinations or Arrivals")
+    @Parameter("Paint Uncontrolled Airports with Arrivals or Departures")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-    @Parameter("Paint Labels of Uncontrolled Airports with Destinations or Arrivals")
+    @Parameter("Paint Labels of Uncontrolled Airports with Arrivals or Departures")
     private boolean paintUncontrolledButDestinationsOrArrivalLabels = true;
 
     @Parameter("Airport Color")

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Log4j2
@@ -103,7 +104,7 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
                     setAirports(pilot, flightPlan);
                 }
                 final List<FlightInformationRegionBoundary> firbs =
-                        flightInformationRegionBoundaryRepository.getByPosition(((Pilot) toAdd).getPosition());
+                        flightInformationRegionBoundaryRepository.listAllByPosition(((Pilot) toAdd).getPosition());
                 pilot.flightInformationRegionBoundariesWritable().setAll(firbs);
 
                 parseAndSetAirlineAndFlightNumber(pilot);
@@ -179,7 +180,12 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
         rTree = RTree.star().create(list);
     }
 
-    public List<Pilot> searchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
+    public List<Pilot> listSearchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
+        return streamSearchByPosition(p, maxDistance, maxCount)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public Stream<Pilot> streamSearchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
         final double offsetX;
 
         if (p.getX() > 180) {
@@ -190,11 +196,13 @@ public class ClientRepository extends SimpleDataRepository<Client, VatsimClient>
             offsetX = 0;
         }
 
-        final var spliterator = rTree.nearest(Geometries.point(p.getX() + offsetX, p.getY()), maxDistance, maxCount)
-                                     .spliterator();
-        return StreamSupport.stream(spliterator, false)
-                            .map(Entry::value)
-                            .collect(Collectors.toCollection(ArrayList::new));
+        final var spliterator = rTree
+                .nearest(Geometries.point(p.getX() + offsetX, p.getY()), maxDistance, maxCount)
+                .spliterator();
+
+        return StreamSupport
+                .stream(spliterator, false)
+                .map(Entry::value);
     }
 
     private static EntryDefault<Pilot, Point> entry(final Pilot e) {

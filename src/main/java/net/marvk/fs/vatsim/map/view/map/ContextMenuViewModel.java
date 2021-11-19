@@ -52,11 +52,9 @@ public class ContextMenuViewModel {
     }
 
     public Optional<? extends Data> closest(final Point2D worldPosition) {
-        // TODO move filter to settings
         final Optional<Airport> airport = airports
                 .getItems()
                 .stream()
-                .filter(Airport::hasControllers)
                 .findFirst();
 
         if (airport.isPresent()) {
@@ -124,70 +122,5 @@ public class ContextMenuViewModel {
 
     public List<ContextMenuItems<? extends Data>> getContextMenuItems() {
         return contextMenuItems;
-    }
-
-    public Data getItem(final int i) {
-        int remaining = i;
-
-        if (remaining == 0) {
-            return null;
-        }
-
-        remaining -= 1;
-
-        if (remaining < pilots.getItems().size()) {
-            return pilots.getItems().get(remaining);
-        }
-
-        remaining -= pilots.getItems().size();
-
-        if (remaining == 0) {
-            return null;
-        }
-
-        remaining -= 1;
-
-        if (remaining < airports.getItems().size()) {
-            return airports.getItems().get(remaining);
-        }
-
-        remaining -= airports.getItems().size();
-
-        if (remaining == 0) {
-            return null;
-        }
-
-        remaining -= 1;
-
-        if (remaining < firbs.getItems().size()) {
-            return firbs.getItems().get(remaining);
-        }
-
-        remaining -= firbs.getItems().size();
-
-        if (remaining == 0) {
-            return null;
-        }
-
-        remaining -= 1;
-
-        if (remaining < uirs.getItems().size()) {
-            return uirs.getItems().get(remaining);
-        }
-
-        remaining -= uirs.getItems().size();
-
-        return null;
-    }
-
-    private int numberOfItems() {
-        final var nItems = contextMenuItems
-                .stream()
-                .map(ContextMenuItems::getItems)
-                .mapToInt(List::size)
-                .sum();
-        final int nContextMenus = contextMenuItems.size();
-
-        return nItems + nContextMenus;
     }
 }

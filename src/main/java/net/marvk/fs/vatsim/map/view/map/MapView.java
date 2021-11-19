@@ -45,6 +45,8 @@ public class MapView implements FxmlView<MapViewModel> {
     private static final double D_KEY_ZOOM = 0.1;
     private static final double D_KEY_PAN = 10;
 
+    private static final int MAX_ITEMS_IN_CONTEXT_MENU_CATEGORY = 10;
+
     @FXML
     private StackPane stackPane;
 
@@ -368,28 +370,35 @@ public class MapView implements FxmlView<MapViewModel> {
             super.hide();
         }
 
-        private void setupItems(final ContextMenuViewModel items) {
+        private void setupItems(final ContextMenuViewModel contextMenuViewModel) {
             getItems().clear();
 
-            contextMenuViewModel = new ContextMenuViewModel(items);
+            this.contextMenuViewModel = new ContextMenuViewModel(contextMenuViewModel);
 
             boolean addSeparator = false;
 
-            for (int i = 0; i < contextMenuViewModel.getContextMenuItems().size(); i++) {
-                final var contextMenuItem = contextMenuViewModel.getContextMenuItems().get(i);
-                final var empty = contextMenuItem.getItems().isEmpty();
-                if (addSeparator) {
+            final int contextMenuItemCount = this.contextMenuViewModel.getContextMenuItems().size();
+            for (int i = 0; i < contextMenuItemCount; i++) {
+                final ContextMenuItems<? extends Data> contextMenuItems =
+                        this.contextMenuViewModel.getContextMenuItems().get(i);
+                final ObservableList<? extends Data> items = contextMenuItems.getItems();
+
+                final boolean notEmpty = !items.isEmpty();
+
+                if (addSeparator && notEmpty) {
                     getItems().add(new SeparatorMenuItem());
+                    addSeparator = false;
                 }
-                final MenuItem header = header(contextMenuItem.getLabel());
-                getItems().add(header);
-                if (empty) {
-                    header.setVisible(false);
-                } else {
+
+                if (notEmpty) {
+                    final MenuItem header = header(contextMenuItems.getLabel());
+                    getItems().add(header);
                     addSeparator = true;
                 }
-                for (final Data item : contextMenuItem.getItems()) {
-                    final MenuItem data = item(labelVisitor.visit(item));
+
+                for (int j = 0; j < Math.min(items.size(), MAX_ITEMS_IN_CONTEXT_MENU_CATEGORY); j++) {
+                    final Data item = items.get(j);
+                    final MenuItem data = item(item);
                     getItems().add(data);
                     data.setOnAction(e -> {
                         hide();
@@ -398,40 +407,47 @@ public class MapView implements FxmlView<MapViewModel> {
                         }
                     });
                 }
+
+                if (items.size() > MAX_ITEMS_IN_CONTEXT_MENU_CATEGORY) {
+                    getItems().add(header(" ...%d more".formatted(items.size() - MAX_ITEMS_IN_CONTEXT_MENU_CATEGORY)));
+                }
             }
 
-            if (getItems().size() <= contextMenuViewModel.getContextMenuItems().size()) {
+            if (getItems().isEmpty()) {
                 getItems().add(header("Nothing here..."));
             }
 
             final ContextMenuContent cmc = (ContextMenuContent) getSkin().getNode();
 
             final ObservableList<Node> cmcChildren = cmc.getItemsContainer().getChildren();
-            int id = 0;
+
             for (final Node child : cmcChildren) {
                 if (!(child instanceof ContextMenuContent.MenuItemContainer)) {
                     continue;
                 }
 
-                final int finalId = id;
+                final MenuItem menuItem = ((ContextMenuContent.MenuItemContainer) child).getItem();
+
+                if (!(menuItem instanceof DataMenuItem)) {
+                    continue;
+                }
+
                 child.focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
-                        final var item = contextMenuViewModel.getItem(finalId);
+                        final Data item = ((DataMenuItem) menuItem).getData();
 
                         if (item != null) {
                             viewModel.setSelectedItem(item);
                         }
                     }
                 });
-
-                id++;
             }
         }
 
-        private MenuItem item(final String label) {
-            final MenuItem data = new MenuItem(" " + label);
-            data.getStyleClass().add("menu-item-data");
-            return data;
+        private MenuItem item(final Data data) {
+            final MenuItem menuItem = new DataMenuItem(" " + labelVisitor.visit(data), data);
+            menuItem.getStyleClass().add("menu-item-data");
+            return menuItem;
         }
 
         private MenuItem header(final String label) {
@@ -472,6 +488,20 @@ public class MapView implements FxmlView<MapViewModel> {
             public String visit(final UpperInformationRegion upperInformationRegion) {
                 return upperInformationRegion.getIcao();
             }
+        }
+
+    }
+
+    private static class DataMenuItem extends MenuItem {
+        private final Data data;
+
+        public DataMenuItem(final String text, final Data data) {
+            super(text);
+            this.data = data;
+        }
+
+        public Data getData() {
+            return data;
         }
     }
 
