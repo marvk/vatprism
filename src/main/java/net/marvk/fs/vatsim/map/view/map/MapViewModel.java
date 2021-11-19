@@ -213,7 +213,7 @@ public class MapViewModel implements ViewModel {
 
         final List<Airport> airports = airportRepository
                 .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
-                .filter(Airport::hasControllers)
+                // .filter(Airport::hasControllers)
                 .limit(10)
                 .collect(Collectors.toList());
         contextMenu.getAirports()

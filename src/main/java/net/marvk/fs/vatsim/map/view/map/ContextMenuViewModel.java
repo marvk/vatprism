@@ -56,7 +56,7 @@ public class ContextMenuViewModel {
         final Optional<Airport> airport = airports
                 .getItems()
                 .stream()
-                .filter(Airport::hasControllers)
+                // .filter(Airport::hasControllers)
                 .findFirst();
 
         if (airport.isPresent()) {
