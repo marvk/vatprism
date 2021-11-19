@@ -78,8 +78,23 @@ public class PreferencesView {
                 general(),
                 colorSchemes(),
                 ui(),
+                contextMenu(),
                 painters()
         ).saveSettings(false);
+    }
+
+    private Category contextMenu() {
+        final BooleanProperty allFirs = preferences.booleanProperty("context_menu.show_all_firs", false);
+        final BooleanProperty allUirs = preferences.booleanProperty("context_menu.show_all_uirs", false);
+        final BooleanProperty allAirports = preferences.booleanProperty("context_menu.show_all_airports", false);
+        final BooleanProperty allPilots = preferences.booleanProperty("context_menu.show_all_pilots", false);
+
+        return Category.of("Context Menu and Selection",
+                Setting.of("Show hidden FIRs in Context Menu and Selection", allFirs),
+                Setting.of("Show hidden UIRs in Context Menu and Selection", allUirs),
+                Setting.of("Show hidden Airports in Context Menu and Selection", allAirports),
+                Setting.of("Show hidden Pilots in Context Menu and Selection", allPilots)
+        );
     }
 
     private Category ui() {

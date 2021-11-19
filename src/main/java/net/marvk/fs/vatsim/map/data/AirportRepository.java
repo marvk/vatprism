@@ -115,14 +115,16 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
         rTree = RTree.star().create(list);
     }
 
-    public List<Airport> searchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
+    public List<Airport> listSearchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
         return streamSearchByPosition(p, maxDistance, maxCount)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public Stream<Airport> streamSearchByPosition(final Point2D p, final double maxDistance, final int maxCount) {
-        final var spliterator = rTree.nearest(Geometries.point(p.getX(), p.getY()), maxDistance, maxCount)
-                                     .spliterator();
+        final var spliterator = rTree
+                .nearest(Geometries.point(p.getX(), p.getY()), maxDistance, maxCount)
+                .spliterator();
+
         return StreamSupport.stream(spliterator, false)
                             .map(Entry::value);
     }

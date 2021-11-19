@@ -34,6 +34,7 @@ public class ConfigFilePreferences implements Preferences {
         this.adapter = adapter;
         tryCreateFilterDirectory(path);
         tryLoadConfig();
+
         booleanProperty("general.debug", false);
         booleanProperty("general.social", true);
         booleanProperty("general.auto_reload", false);
@@ -51,6 +52,11 @@ public class ConfigFilePreferences implements Preferences {
         booleanProperty("ui.reverse_background_shading", false);
         colorProperty("ui.text_base_color", Color.valueOf("1a130a"));
         booleanProperty("ui.invert_text_shading", false);
+
+        booleanProperty("context_menu.show_all_firs", false);
+        booleanProperty("context_menu.show_all_uirs", false);
+        booleanProperty("context_menu.show_all_airports", false);
+        booleanProperty("context_menu.show_all_pilots", false);
     }
 
     private void tryLoadConfig() {

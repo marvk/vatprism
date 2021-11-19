@@ -4,9 +4,12 @@
 
 ### Added
 
-- Ability to turn off Labels on uncontrolled Airports and uncontrolled Airports with arrivals and/or departures
+- Ability to turn off labels on uncontrolled airports and uncontrolled airports with arrivals and/or departures
 - Added button to close the preloader after an issue occurred ([#66](https://github.com/marvk/vatprism/issues/66))
 - Added tooltip for airline information like name, ICAO, callsign and country when hovering over a callsign
+- Context menus now correctly reflect what is painted on the map ([#53](https://github.com/marvk/vatprism/issues/53))
+- Context menus now communicate how many items of a certain type aren't displayed if there are too many items inside the selection circle ([#53](https://github.com/marvk/vatprism/issues/53))
+- Added context menu preferences that allow a user to enable certain categories of items to be always shown in context menu regardless of whether they are painted on the map 
 
 ### Changed
 
@@ -16,6 +19,8 @@
 ### Fixed
 
 - VAT-Spy color scheme delivery and ground colors swapped ([#57](https://github.com/marvk/vatprism/issues/57))
+- Fixed various issues with context menus not being displayed correctly
+- Fixed incorrect label in airport painter preference dialog
 
 ## [0.2.1](https://github.com/marvk/vatprism/compare/v0.2.0...v0.2.1) - 2021-12-18
 
@@ -33,7 +38,7 @@
 
 ### Removed
 
-- Outlines (Strokes) on the World and Lakes have been disabled due to performance issues and artifacts on the map
+- Outlines (strokes) on the world and lakes have been disabled due to performance issues and artifacts on the map
 
 ### Fixed
 
