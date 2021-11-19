@@ -151,6 +151,16 @@ public class Airport implements Settable<AirportRepository.VatsimAirportWrapper>
         return getAlternativesWritable().getReadOnlyProperty();
     }
 
+    public int getDeparturesOnGround() {
+        return this.getDeparting()
+                .filtered(d -> d.getPilot().getEta().is(Eta.Status.DEPARTING)).size();
+    }
+
+    public int getArrivalsOnGround() {
+        return this.getArriving()
+                .filtered(d -> d.getPilot().getEta().is(Eta.Status.ARRIVING)).size();
+    }
+
     @Override
     public void setFromModel(final AirportRepository.VatsimAirportWrapper model) {
         Objects.requireNonNull(model);
