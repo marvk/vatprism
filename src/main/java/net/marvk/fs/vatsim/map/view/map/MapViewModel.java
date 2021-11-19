@@ -283,7 +283,7 @@ public class MapViewModel implements ViewModel {
 
             if (paintAirports) {
                 final boolean paintUncontrolledAirports = isProperty("airports.paint_uncontrolled_airports");
-                final boolean paintUncontrolledAirportsWithArrivalsOrDepartures = isProperty("airports.paint_uncontrolled_airports_with_destinations_or_arrivals");
+                final boolean paintUncontrolledAirportsWithArrivalsOrDepartures = isProperty("airports.paint_uncontrolled_airports_with_arrivals_or_departures");
 
                 if (paintUncontrolledAirports) {
                     //noinspection unchecked
