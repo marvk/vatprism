@@ -118,6 +118,8 @@ public class AirportPainter extends MapPainter<Airport> {
         c.setLineWidth(1);
 
         final String icao = airport.getIcao();
+        final int departuresOnGround = airport.getDeparturesOnGround();
+        final int arrivalsOnGround = airport.getArrivalsOnGround();
 
         final double textScale = c.getFont().getSize() / 12.0;
         final boolean paintApproachCircle = mapVariables.getScale() > (40 / approachRadius) * textScale;
@@ -184,6 +186,23 @@ public class AirportPainter extends MapPainter<Airport> {
 
                 painterHelper.strokeRect(c, xCur - 1.5, yCur - 1.5, n * (typesWidth + 1) + 2, typesWidth + 3);
             }
+        }
+
+        final int typesWidth = (int) Math.ceil(textScale * TYPES_WIDTH);
+        if (departuresOnGround > 0) {
+            c.setFill(Color.GREEN);
+            c.setTextBaseline(VPos.TOP);
+            final double xCur = typeLabelX(x, 6, 6, typesWidth);
+            final double yCur = y - 25;
+            painterHelper.fillText(c, "⬈" + departuresOnGround, xCur, yCur);
+        }
+
+        if (arrivalsOnGround > 0) {
+            c.setFill(Color.RED);
+            c.setTextBaseline(VPos.TOP);
+            final double xCur = typeLabelX(x, 6, 6, typesWidth);
+            final double yCur = y - 15;
+            painterHelper.fillText(c, "⬊" + arrivalsOnGround, xCur, yCur);
         }
 
         if (text) {
