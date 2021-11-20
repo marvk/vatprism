@@ -42,4 +42,16 @@ every update.
 
 Hopefully, I will be able to resolve this in the future so that workaround becomes unnecessary.
 
+### Question:
+
+#### [VATprism scaling behaviour is broken on high DPI screens](https://github.com/marvk/vatprism/issues/47)
+
+### Answer:
+
+1. Locate `VATprism.exe` in `C:\Program Files\VATprism`
+2. Right click -> Properties
+3. Go to Compatibility tab
+4. Check `Override high DPI scaling behavior`
+5. Choose `System` for `Scaling performed by`
+
 ### [← back](/)
