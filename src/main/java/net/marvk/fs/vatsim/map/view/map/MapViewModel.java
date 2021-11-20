@@ -291,7 +291,7 @@ public class MapViewModel implements ViewModel {
                 }
 
                 if (paintUncontrolledAirportsWithArrivalsOrDepartures) {
-                    return airport -> airport.hasArrivals() || airport.hasDepartures() || airport.hasControllers();
+                    return airport -> airport.hasControllers() || airport.hasArrivals() || airport.hasDepartures();
                 }
 
                 return Airport::hasControllers;
