@@ -39,6 +39,15 @@ public class ConfigFilePreferences implements Preferences {
 
         migrateOldProperties();
 
+        booleanProperty("window.rememberLastPosition", false);
+        booleanProperty("window.nextStartupIsValid", false);
+        booleanProperty("window.fullscreen");
+        booleanProperty("window.maximized");
+        doubleProperty("window.x");
+        doubleProperty("window.y");
+        doubleProperty("window.width");
+        doubleProperty("window.height");
+
         booleanProperty("general.debug", false);
         booleanProperty("general.social", true);
         booleanProperty("general.auto_reload", false);
@@ -164,18 +173,8 @@ public class ConfigFilePreferences implements Preferences {
     }
 
     @Override
-    public BooleanProperty booleanProperty(final String key) {
-        return booleanProperty(key, false);
-    }
-
-    @Override
     public BooleanProperty booleanProperty(final String key, final boolean defaultValue) {
         return property(key, () -> new SimpleBooleanProperty(null, key), e -> e.set(defaultValue));
-    }
-
-    @Override
-    public StringProperty stringProperty(final String key) {
-        return stringProperty(key, null);
     }
 
     @Override
@@ -184,28 +183,13 @@ public class ConfigFilePreferences implements Preferences {
     }
 
     @Override
-    public ObjectProperty<Color> colorProperty(final String key) {
-        return colorProperty(key, null);
-    }
-
-    @Override
     public ObjectProperty<Color> colorProperty(final String key, final Color defaultValue) {
         return property(key, () -> new SimpleObjectProperty<>(null, key), e -> e.set(defaultValue));
     }
 
     @Override
-    public IntegerProperty integerProperty(final String key) {
-        return integerProperty(key, 0);
-    }
-
-    @Override
     public IntegerProperty integerProperty(final String key, final int defaultValue) {
         return property(key, () -> new SimpleIntegerProperty(null, key), e -> e.set(defaultValue));
-    }
-
-    @Override
-    public DoubleProperty doubleProperty(final String key) {
-        return doubleProperty(key, 0.0);
     }
 
     @Override

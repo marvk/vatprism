@@ -10,6 +10,7 @@
 - Context menus now correctly reflect what is painted on the map ([#53](https://github.com/marvk/vatprism/issues/53))
 - Context menus now communicate how many items of a certain type aren't displayed if there are too many items inside the selection circle ([#53](https://github.com/marvk/vatprism/issues/53))
 - Added context menu preferences that allow a user to enable certain categories of items to be always shown in context menu regardless of whether they are painted on the map 
+- Added preference for the application to remember its last position on startup ([#53](https://github.com/marvk/vatprism/issues/55))
 
 ### Changed
 

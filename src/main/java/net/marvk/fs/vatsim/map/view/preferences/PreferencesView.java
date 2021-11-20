@@ -156,6 +156,7 @@ public class PreferencesView {
         return Category.of(
                 "General",
                 Group.of(
+                        Setting.of("Remember last position on startup", preferences.booleanProperty("window.rememberLastPosition")),
                         Setting.of("UI Font Size", uiFontSize, 4, 72),
                         Setting.of("Map Font Size", property, 4, 72),
                         Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2),

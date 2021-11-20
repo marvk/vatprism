@@ -4,7 +4,9 @@ import com.google.inject.Module;
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
+import de.saxsys.mvvmfx.internal.viewloader.DependencyInjector;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -12,9 +14,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.*;
+import net.marvk.fs.vatsim.map.data.Preferences;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
@@ -90,20 +96,55 @@ public class App extends MvvmfxGuiceApplication {
         secondaryStage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             if (KeyCode.F11 == event.getCode()) {
                 final boolean value = !secondaryStage.isFullScreen();
-                secondaryStage.setFullScreen(value);
-                secondaryStage.setAlwaysOnTop(value);
+                setFullscreen(secondaryStage, value);
             }
         });
+        final Preferences preferences = DependencyInjector.getInstance().getInstanceOf(Preferences.class);
+
         secondaryStage.setOnCloseRequest(e -> {
+            setWindowSizeAndPosition(secondaryStage, preferences);
             Platform.exit();
             System.exit(0);
         });
+
         secondaryStage.getIcons().addAll(loadIcon("icon-16.png"), loadIcon("icon-24.png"), loadIcon("icon-32.png"));
         secondaryStage.setTitle("VATprism");
         log.info("Creating scene");
         secondaryStage.setScene(new Scene(viewTuple.getView(), 1366, 768));
         log.info("Showing stage");
+
         secondaryStage.show();
+        setStageSizeAndPositionFromPreferences(secondaryStage, preferences);
+    }
+
+    private static void setFullscreen(final Stage secondaryStage, final boolean value) {
+        secondaryStage.setFullScreen(value);
+        secondaryStage.setAlwaysOnTop(value);
+    }
+
+    private static void setStageSizeAndPositionFromPreferences(final Stage stage, final Preferences preferences) {
+        final BooleanProperty nextStartupIsValidProperty = preferences.booleanProperty("window.nextStartupIsValid", false);
+        final boolean rememberLastPosition = preferences.booleanProperty("window.rememberLastPosition", false).get();
+        final boolean preferencesAreValid = nextStartupIsValidProperty.get();
+
+        final WindowParameters windowParameters = WindowParameters.readFromPreferences(preferences);
+
+        if (rememberLastPosition && preferencesAreValid) {
+            windowParameters.setToStage(stage);
+            log.info("Set screen parameters to " + windowParameters.logString());
+        } else if (!preferencesAreValid) {
+            log.info("Read invalid last parameters " + windowParameters.logString());
+        } else {
+            log.debug("User did not enable remembering last position, skipping setting window to parameters " + windowParameters.logString());
+        }
+        nextStartupIsValidProperty.set(false);
+    }
+
+    private static void setWindowSizeAndPosition(final Stage stage, final Preferences preferences) {
+        final WindowParameters windowParameters = WindowParameters.readFromStage(stage);
+        windowParameters.writeToPreferences(preferences);
+        log.info("Wrote to preferences the window parameters " + windowParameters.logString());
+        preferences.booleanProperty("window.nextStartupIsValid").set(true);
     }
 
     private void showOnboardingView(final Runnable showMainView) {
@@ -170,6 +211,61 @@ public class App extends MvvmfxGuiceApplication {
             } else {
                 log.warn("Failed to set log level to \"%s\"".formatted(logLevelString));
             }
+        }
+    }
+
+    @Value
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    private static class WindowParameters {
+        double x;
+        double y;
+        double width;
+        double height;
+        boolean fullscreen;
+        boolean maximized;
+
+        public String logString() {
+            return "x = %f, y = %f, width = %f, height = %f, fullscreen = %b, maximized = %b".formatted(x, y, width, height, fullscreen, maximized);
+        }
+
+        public void setToStage(final Stage stage) {
+            stage.setX(x);
+            stage.setY(y);
+            stage.setWidth(width);
+            stage.setHeight(height);
+            if (fullscreen) {
+                // Delay setting fullscreen, because otherwise the Platform will move the fullscreen window to the primary screen
+                Platform.runLater(() -> {
+                    setFullscreen(stage, true);
+                });
+            }
+            if (maximized) {
+                stage.setMaximized(true);
+            }
+        }
+
+        public void writeToPreferences(final Preferences preferences) {
+            preferences.doubleProperty("window.x").set(x);
+            preferences.doubleProperty("window.y").set(y);
+            preferences.doubleProperty("window.width").set(width);
+            preferences.doubleProperty("window.height").set(height);
+            preferences.booleanProperty("window.fullscreen").set(fullscreen);
+            preferences.booleanProperty("window.maximized").set(maximized);
+        }
+
+        public static WindowParameters readFromPreferences(final Preferences preferences) {
+            return new WindowParameters(
+                    preferences.doubleProperty("window.x").get(),
+                    preferences.doubleProperty("window.y").get(),
+                    preferences.doubleProperty("window.width").get(),
+                    preferences.doubleProperty("window.height").get(),
+                    preferences.booleanProperty("window.fullscreen").get(),
+                    preferences.booleanProperty("window.maximized").get()
+            );
+        }
+
+        public static WindowParameters readFromStage(final Stage stage) {
+            return new WindowParameters(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight(), stage.isFullScreen(), stage.isMaximized());
         }
     }
 }
