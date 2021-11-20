@@ -8,11 +8,13 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.paint.Color;
 import lombok.extern.log4j.Log4j2;
+import net.marvk.fs.vatsim.map.Debouncer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +27,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Log4j2
-public class ConfigFilePreferences implements Preferences {
+public class ConfigFilePreferences implements Preferences, Writable {
     private final Map<String, ObservableValue<?>> observables = new HashMap<>();
     private final Path path;
     private final Adapter<Map<String, ObservableValue<?>>> adapter;
+
+    private final Debouncer writeDebouncer = new Debouncer(this::write, Duration.ofSeconds(1));
 
     @Inject
     public ConfigFilePreferences(@Named("userConfigDir") final Path path, @Named("configSerializer") final Adapter<Map<String, ObservableValue<?>>> adapter) {
@@ -88,7 +92,7 @@ public class ConfigFilePreferences implements Preferences {
 
         deletePropertiesWithPrefix("search_items.airports");
         deletePropertiesWithPrefix("selected_item.airports");
-        writeConfig();
+        writeDebounced();
     }
 
     private void deleteProperties(final String... keys) {
@@ -222,8 +226,8 @@ public class ConfigFilePreferences implements Preferences {
 
     private <T extends ObservableValue<E>, E> void registerListener(final String key, final T observableValue) {
         observableValue.addListener((observable, oldValue, newValue) -> {
-            log.debug(() -> "Changing value of property %s from %s to %s".formatted(key, oldValue, newValue));
-            writeConfig();
+            log.info(() -> "Changing value of property %s from %s to %s".formatted(key, oldValue, newValue));
+            writeDebounced();
         });
     }
 
@@ -232,13 +236,9 @@ public class ConfigFilePreferences implements Preferences {
         return Collections.unmodifiableMap(observables);
     }
 
-    private void writeConfig() {
-        try {
-            log.info("Writing config to %s".formatted(path));
-            Files.writeString(path, adapter.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (final IOException e) {
-            log.error("Failed to write config", e);
-        }
+    private void writeDebounced() {
+        log.debug("Debounce write config");
+        writeDebouncer.callDebounced();
     }
 
     public ColorScheme exportColorScheme(final String name) {
@@ -274,6 +274,16 @@ public class ConfigFilePreferences implements Preferences {
 
         for (final Map.Entry<String, Boolean> e : colorScheme.getToggleMap().entrySet()) {
             booleanProperty(e.getKey()).set(e.getValue());
+        }
+    }
+
+    @Override
+    public void write() {
+        try {
+            log.info("Writing config to %s".formatted(path));
+            Files.writeString(path, adapter.serialize(observables), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (final IOException e) {
+            log.error("Failed to write config", e);
         }
     }
 }
