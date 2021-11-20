@@ -200,175 +200,6 @@ public class MapViewModel implements ViewModel {
         new ContextMenuSetter().set();
     }
 
-    private class ContextMenuSetter {
-        private final Predicate tautology = e -> true;
-        private final Predicate contradiction = e -> false;
-
-        public void set() {
-            setFirbs();
-            setUirs();
-            setAirports();
-            setPilots();
-        }
-
-        private boolean isProperty(final String s) {
-            return preferences.booleanProperty(s).get();
-        }
-
-        private Predicate<FlightInformationRegionBoundary> firbPredicate() {
-            final boolean showAll = isProperty("context_menu.show_all_firs");
-
-            if (showAll) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            final boolean paintActiveFirs = isProperty("active_firs.enabled");
-            final boolean paintInactiveFirs = isProperty("inactive_firs.enabled");
-
-            if (paintActiveFirs && paintInactiveFirs) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            if (paintActiveFirs) {
-                return FlightInformationRegionBoundary::hasFirControllers;
-            }
-
-            if (paintInactiveFirs) {
-                return e -> !e.hasFirControllers();
-            }
-
-            //noinspection unchecked
-            return contradiction;
-        }
-
-        private Predicate<UpperInformationRegion> uirPredicate() {
-            final boolean showAll = isProperty("context_menu.show_all_uirs");
-
-            if (showAll) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            final boolean paintActiveUirs = isProperty("active_uirs.enabled");
-            final boolean paintInactiveUirs = isProperty("inactive_uirs.enabled");
-
-            if (paintActiveUirs && paintInactiveUirs) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            if (paintActiveUirs) {
-                return uir -> !uir.getControllers().isEmpty();
-            }
-
-            if (paintInactiveUirs) {
-                return uir -> uir.getControllers().isEmpty();
-            }
-
-            //noinspection unchecked
-            return contradiction;
-        }
-
-        private Predicate<Airport> airportPredicate() {
-            final boolean showAll = isProperty("context_menu.show_all_airports");
-
-            if (showAll) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            final boolean paintAirports = isProperty("airports.enabled");
-
-            if (paintAirports) {
-                final boolean paintUncontrolledAirports = isProperty("airports.paint_uncontrolled_airports");
-                final boolean paintUncontrolledAirportsWithArrivalsOrDepartures = isProperty("airports.paint_uncontrolled_airports_with_arrivals_or_departures");
-
-                if (paintUncontrolledAirports) {
-                    //noinspection unchecked
-                    return tautology;
-                }
-
-                if (paintUncontrolledAirportsWithArrivalsOrDepartures) {
-                    return airport -> airport.hasControllers() || airport.hasArrivals() || airport.hasDepartures();
-                }
-
-                return Airport::hasControllers;
-            }
-
-            //noinspection unchecked
-            return contradiction;
-        }
-
-        private Predicate<Pilot> pilotPredicate() {
-            final boolean showAll = isProperty("context_menu.show_all_pilots");
-
-            if (showAll) {
-                //noinspection unchecked
-                return tautology;
-            }
-
-            final boolean paintPilots = isProperty("pilots.enabled");
-
-            if (paintPilots) {
-                final boolean paintPilotsOnGround = isProperty("pilots.pilots_on_ground");
-
-                if (paintPilotsOnGround) {
-                    //noinspection unchecked
-                    return tautology;
-                }
-
-                return pilot -> !pilot.getEta().is(Eta.Status.GROUND);
-            }
-
-            //noinspection unchecked
-            return contradiction;
-        }
-
-        private void setFirbs() {
-            final var firbs = firbStream()
-                    .filter(firbPredicate())
-                    .collect(Collectors.toList());
-
-            contextMenu.getFirbs().getItems().setAll(firbs);
-        }
-
-        private Stream<FlightInformationRegionBoundary> firbStream() {
-            return flightInformationRegionBoundaryRepository
-                    .streamAllByPosition(mouseWorldPosition.get(), selectionDistance());
-        }
-
-        private void setUirs() {
-            final var uirs = firbStream()
-                    .map(FlightInformationRegionBoundary::getUpperInformationRegions)
-                    .flatMap(Collection::stream)
-                    .distinct()
-                    .filter(uirPredicate())
-                    .collect(Collectors.toList());
-
-            contextMenu.getUirs().getItems().setAll(uirs);
-        }
-
-        private void setAirports() {
-            final var airports = airportRepository
-                    .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
-                    .filter(airportPredicate())
-                    .collect(Collectors.toList());
-
-            contextMenu.getAirports().getItems().setAll(airports);
-        }
-
-        private void setPilots() {
-            final var pilots = clientRepository
-                    .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
-                    .filter(pilotPredicate())
-                    .collect(Collectors.toList());
-
-            contextMenu.getPilots().getItems().setAll(pilots);
-        }
-    }
-
     private double selectionDistance() {
         return SELECTION_DISTANCE / scale.get();
     }
@@ -542,6 +373,175 @@ public class MapViewModel implements ViewModel {
         return PainterMetric.ofMetrics(painterMetrics);
     }
 
+    private class ContextMenuSetter {
+        private final Predicate tautology = e -> true;
+        private final Predicate contradiction = e -> false;
+
+        public void set() {
+            setFirbs();
+            setUirs();
+            setAirports();
+            setPilots();
+        }
+
+        private boolean isProperty(final String s) {
+            return preferences.booleanProperty(s).get();
+        }
+
+        private Predicate<FlightInformationRegionBoundary> firbPredicate() {
+            final boolean showAll = isProperty("context_menu.show_all_firs");
+
+            if (showAll) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            final boolean paintActiveFirs = isProperty("active_firs.enabled");
+            final boolean paintInactiveFirs = isProperty("inactive_firs.enabled");
+
+            if (paintActiveFirs && paintInactiveFirs) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            if (paintActiveFirs) {
+                return FlightInformationRegionBoundary::hasFirControllers;
+            }
+
+            if (paintInactiveFirs) {
+                return e -> !e.hasFirControllers();
+            }
+
+            //noinspection unchecked
+            return contradiction;
+        }
+
+        private Predicate<UpperInformationRegion> uirPredicate() {
+            final boolean showAll = isProperty("context_menu.show_all_uirs");
+
+            if (showAll) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            final boolean paintActiveUirs = isProperty("active_uirs.enabled");
+            final boolean paintInactiveUirs = isProperty("inactive_uirs.enabled");
+
+            if (paintActiveUirs && paintInactiveUirs) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            if (paintActiveUirs) {
+                return uir -> !uir.getControllers().isEmpty();
+            }
+
+            if (paintInactiveUirs) {
+                return uir -> uir.getControllers().isEmpty();
+            }
+
+            //noinspection unchecked
+            return contradiction;
+        }
+
+        private Predicate<Airport> airportPredicate() {
+            final boolean showAll = isProperty("context_menu.show_all_airports");
+
+            if (showAll) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            final boolean paintAirports = isProperty("airports.enabled");
+
+            if (paintAirports) {
+                final boolean paintUncontrolledAirports = isProperty("airports.paint_uncontrolled_airports");
+                final boolean paintUncontrolledAirportsWithArrivalsOrDepartures = isProperty("airports.paint_uncontrolled_airports_with_arrivals_or_departures");
+
+                if (paintUncontrolledAirports) {
+                    //noinspection unchecked
+                    return tautology;
+                }
+
+                if (paintUncontrolledAirportsWithArrivalsOrDepartures) {
+                    return airport -> airport.hasControllers() || airport.hasArrivals() || airport.hasDepartures();
+                }
+
+                return Airport::hasControllers;
+            }
+
+            //noinspection unchecked
+            return contradiction;
+        }
+
+        private Predicate<Pilot> pilotPredicate() {
+            final boolean showAll = isProperty("context_menu.show_all_pilots");
+
+            if (showAll) {
+                //noinspection unchecked
+                return tautology;
+            }
+
+            final boolean paintPilots = isProperty("pilots.enabled");
+
+            if (paintPilots) {
+                final boolean paintPilotsOnGround = isProperty("pilots.pilots_on_ground");
+
+                if (paintPilotsOnGround) {
+                    //noinspection unchecked
+                    return tautology;
+                }
+
+                return pilot -> !pilot.getEta().is(Eta.Status.GROUND);
+            }
+
+            //noinspection unchecked
+            return contradiction;
+        }
+
+        private void setFirbs() {
+            final var firbs = firbStream()
+                    .filter(firbPredicate())
+                    .collect(Collectors.toList());
+
+            contextMenu.getFirbs().getItems().setAll(firbs);
+        }
+
+        private Stream<FlightInformationRegionBoundary> firbStream() {
+            return flightInformationRegionBoundaryRepository
+                    .streamAllByPosition(mouseWorldPosition.get(), selectionDistance());
+        }
+
+        private void setUirs() {
+            final var uirs = firbStream()
+                    .map(FlightInformationRegionBoundary::getUpperInformationRegions)
+                    .flatMap(Collection::stream)
+                    .distinct()
+                    .filter(uirPredicate())
+                    .collect(Collectors.toList());
+
+            contextMenu.getUirs().getItems().setAll(uirs);
+        }
+
+        private void setAirports() {
+            final var airports = airportRepository
+                    .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
+                    .filter(airportPredicate())
+                    .collect(Collectors.toList());
+
+            contextMenu.getAirports().getItems().setAll(airports);
+        }
+
+        private void setPilots() {
+            final var pilots = clientRepository
+                    .streamSearchByPosition(mouseWorldPosition.get(), selectionDistance(), Integer.MAX_VALUE)
+                    .filter(pilotPredicate())
+                    .collect(Collectors.toList());
+
+            contextMenu.getPilots().getItems().setAll(pilots);
+        }
+    }
+
     private class TransitionDataVisitor implements OptionalDataVisitor<Viewport> {
         private Optional<Viewport> defaultTarget(final Point2D position) {
             if (position == null) {
@@ -568,6 +568,16 @@ public class MapViewModel implements ViewModel {
             return fromRect(boundary);
         }
 
+        @Override
+        public Optional<Viewport> visit(final Pilot pilot) {
+            return defaultTarget(pilot.getPosition());
+        }
+
+        @Override
+        public Optional<Viewport> visit(final UpperInformationRegion upperInformationRegion) {
+            return fromRect(upperInformationRegion.getBounds());
+        }
+
         private Optional<Viewport> fromRect(final Rectangle2D boundary) {
             final double targetScale = mapVariables.scaleForRectFit(boundary.getWidth() * 1.1, boundary.getHeight() * 1.1);
 
@@ -577,16 +587,6 @@ public class MapViewModel implements ViewModel {
             final Point2D targetWorldCenter = new Point2D(x, y);
 
             return Optional.of(new Viewport(targetWorldCenter, targetScale));
-        }
-
-        @Override
-        public Optional<Viewport> visit(final Pilot pilot) {
-            return defaultTarget(pilot.getPosition());
-        }
-
-        @Override
-        public Optional<Viewport> visit(final UpperInformationRegion upperInformationRegion) {
-            return fromRect(upperInformationRegion.getBounds());
         }
     }
 

@@ -137,7 +137,7 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
     }
 
     public List<Entry<FlightInformationRegionBoundary, PolygonGeometry>> listByPositionAsEntries(final Point2D position) {
-        return streamAllByPosition0(position)
+        return streamAllEntriesByPosition(position)
                 .distinct().
                 collect(Collectors.toCollection(ArrayList::new));
     }
@@ -147,46 +147,46 @@ public class FlightInformationRegionBoundaryRepository extends ProviderRepositor
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<FlightInformationRegionBoundary> listAllByPosition(final Point2D position, final double distance) {
-        return streamAllByPosition(position, distance)
+    public List<FlightInformationRegionBoundary> listAllByPosition(final Point2D position, final double maxDistance) {
+        return streamAllByPosition(position, maxDistance)
                 .collect(Collectors.toList());
     }
 
     public Stream<FlightInformationRegionBoundary> streamAllByPosition(final Point2D position) {
-        return streamAllByPosition0(position)
+        return streamAllEntriesByPosition(position)
                 .map(Entry::value)
                 .distinct();
     }
 
-    public Stream<FlightInformationRegionBoundary> streamAllByPosition(final Point2D position, final double distance) {
-        return streamAllByPosition0(position, distance)
+    public Stream<FlightInformationRegionBoundary> streamAllByPosition(final Point2D position, final double maxDistance) {
+        return streamAllEntriesByPosition(position, maxDistance)
                 .map(Entry::value)
                 .distinct();
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamAllByPosition0(final Point2D position) {
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamAllEntriesByPosition(final Point2D position) {
         return Stream.of(
-                streamByPosition0(position),
-                streamByPosition0(position.add(360, 0)),
-                streamByPosition0(position.subtract(360, 0))
+                streamEntriesByPosition0(position),
+                streamEntriesByPosition0(position.add(360, 0)),
+                streamEntriesByPosition0(position.subtract(360, 0))
         ).flatMap(Function.identity());
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamAllByPosition0(final Point2D position, final double distance) {
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamAllEntriesByPosition(final Point2D position, final double maxDistance) {
         return Stream.of(
-                streamByPosition0(position, distance),
-                streamByPosition0(position.add(360, 0), distance),
-                streamByPosition0(position.subtract(360, 0), distance)
+                streamEntriesByPosition0(position, maxDistance),
+                streamEntriesByPosition0(position.add(360, 0), maxDistance),
+                streamEntriesByPosition0(position.subtract(360, 0), maxDistance)
         ).flatMap(Function.identity());
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamByPosition0(final Point2D position) {
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamEntriesByPosition0(final Point2D position) {
         final var spliterator = rTree.search(Geometries.point(position.getX(), position.getY())).spliterator();
         return StreamSupport.stream(spliterator, false);
     }
 
-    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamByPosition0(final Point2D position, final double distance) {
-        final var spliterator = rTree.search(Geometries.point(position.getX(), position.getY()), distance)
+    private Stream<Entry<FlightInformationRegionBoundary, PolygonGeometry>> streamEntriesByPosition0(final Point2D position, final double maxDistance) {
+        final var spliterator = rTree.search(Geometries.point(position.getX(), position.getY()), maxDistance)
                                      .spliterator();
         return StreamSupport.stream(spliterator, false);
     }
