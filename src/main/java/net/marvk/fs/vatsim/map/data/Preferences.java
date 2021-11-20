@@ -7,23 +7,33 @@ import javafx.scene.paint.Color;
 import java.util.Map;
 
 public interface Preferences {
-    BooleanProperty booleanProperty(final String key);
+    default BooleanProperty booleanProperty(final String key) {
+        return booleanProperty(key, false);
+    }
 
     BooleanProperty booleanProperty(final String key, final boolean initialValue);
 
-    StringProperty stringProperty(final String key);
+    default StringProperty stringProperty(final String key) {
+        return stringProperty(key, null);
+    }
 
     StringProperty stringProperty(final String key, final String defaultValue);
 
-    ObjectProperty<Color> colorProperty(final String key);
+    default ObjectProperty<Color> colorProperty(final String key) {
+        return colorProperty(key, null);
+    }
 
     ObjectProperty<Color> colorProperty(final String key, final Color initialValue);
 
-    IntegerProperty integerProperty(final String key);
+    default IntegerProperty integerProperty(final String key) {
+        return integerProperty(key, 0);
+    }
 
     IntegerProperty integerProperty(final String key, final int defaultValue);
 
-    DoubleProperty doubleProperty(final String key);
+    default DoubleProperty doubleProperty(final String key) {
+        return doubleProperty(key, 0.0);
+    }
 
     DoubleProperty doubleProperty(final String key, final double initialValue);
 
