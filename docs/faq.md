@@ -4,7 +4,7 @@
 
 ### Question:
 
-Where does VATprism get its data from?
+#### Where does VATprism get its data from?
 
 ### Answer:
 
@@ -16,7 +16,7 @@ the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy
 
 ### Question:
 
-Why does the text in VATprism look all scrambled?
+#### Why does the text in VATprism look all scrambled?
 
 [![](assets/images/faq/scrambled_text.png)](assets/images/faq/scrambled_text.png)
 
@@ -24,5 +24,22 @@ Why does the text in VATprism look all scrambled?
 
 [This is most likely an issue with your Windows Fonts,](https://stackoverflow.com/a/66845136/3000387) more specifically
 with a corrupted or missing Segoe UI font. To fix this issue, reinstall Segoe UI.
+
+---
+
+### Question:
+
+#### Why is macOS telling me that VATprism is damaged and cannot be opened?
+
+### Answer:
+
+This is an issue with codesign and currently, there only exists a workaround that probably has to be executed after
+every update.
+
+1. Open Terminal
+2. Navigate to the Applications folder with the command `cd /Applicationns/`
+3. Run codesign with the command `codesign --remove-signature VATprism.app`
+
+Hopefully, I will be able to resolve this in the future so that workaround becomes unnecessary.
 
 ### [← back](/)
