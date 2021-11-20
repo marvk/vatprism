@@ -70,10 +70,19 @@ public class ContextMenuViewModel {
             return pilot;
         }
 
-        return firbs
+        final Optional<FlightInformationRegionBoundary> firb = firbs
                 .getItems()
                 .stream()
                 .min(firbComparator(worldPosition));
+
+        if (firb.isPresent()) {
+            return firb;
+        }
+
+        return uirs
+                .getItems()
+                .stream()
+                .min(uirComparator(worldPosition));
     }
 
     private static Comparator<FlightInformationRegionBoundary> firbComparator(final Point2D worldPosition) {
@@ -82,6 +91,15 @@ public class ContextMenuViewModel {
                 .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasFirControllers).reversed())
                 .thenComparing(Comparator.comparing(FlightInformationRegionBoundary::hasUirControllers).reversed())
                 .thenComparingDouble(e -> distanceToLabel(e, worldPosition));
+    }
+
+    private static Comparator<UpperInformationRegion> uirComparator(final Point2D worldPosition) {
+        final Comparator<FlightInformationRegionBoundary> firbComparator = firbComparator(worldPosition);
+        return Comparator.comparing(e -> closestFirbOrNull(e, firbComparator), firbComparator);
+    }
+
+    private static FlightInformationRegionBoundary closestFirbOrNull(final UpperInformationRegion e, final Comparator<FlightInformationRegionBoundary> firbComparator) {
+        return e.getFlightInformationRegionBoundaries().stream().min(firbComparator).orElse(null);
     }
 
     private static double distanceToLabel(final FlightInformationRegionBoundary flightInformationRegionBoundary, final Point2D point) {
