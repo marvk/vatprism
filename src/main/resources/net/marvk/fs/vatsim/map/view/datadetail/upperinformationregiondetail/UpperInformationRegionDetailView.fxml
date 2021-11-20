@@ -46,6 +46,8 @@
                 <GridPane fx:id="firsGrid" hgap="10">
                     <columnConstraints>
                         <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="NEVER"/>
+                        <ColumnConstraints hgrow="NEVER"/>
                         <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
                 </GridPane>

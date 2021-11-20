@@ -18,6 +18,7 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewMo
 import net.marvk.fs.vatsim.map.view.datadetail.flightinformationregionboundarydetail.FlightInformationRegionBoundaryDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.pilotdetail.PilotDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail.UpperInformationRegionDetailView;
+import net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail.UpperInformationRegionDetailViewModel;
 
 import java.util.Optional;
 
@@ -116,7 +117,7 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
 
         private final ViewTuple<FlightInformationRegionBoundaryDetailView, DataDetailSubViewModel<FlightInformationRegionBoundary>> firbDetailView;
 
-        private final ViewTuple<UpperInformationRegionDetailView, DataDetailSubViewModel<UpperInformationRegion>> uirDetailView;
+        private final ViewTuple<UpperInformationRegionDetailView, UpperInformationRegionDetailViewModel> uirDetailView;
 
         private final ViewTuple<ControllerDetailView, ControllerDetailViewModel> controllerView;
 

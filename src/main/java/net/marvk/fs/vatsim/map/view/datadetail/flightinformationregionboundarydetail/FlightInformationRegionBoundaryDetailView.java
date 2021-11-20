@@ -5,7 +5,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegion;
@@ -59,15 +58,7 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
 
         for (int i = 0; i < uirs.size(); i++) {
             final UpperInformationRegion uir = uirs.get(i);
-            final Label icaoLabel = new Label(uir.getIcao());
-            icaoLabel.getStyleClass().add("mono");
-            icaoLabel.getStyleClass().add("hyperlink-label");
-            icaoLabel.setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.PRIMARY) {
-                    viewModel.setDataDetail(uir);
-                    e.consume();
-                }
-            });
+            final Label icaoLabel = icaoLabel(uir);
             uirsGrid.add(icaoLabel, 0, i);
             final Label nameLabel = new Label(uir.getName());
             uirsGrid.add(nameLabel, 1, i);

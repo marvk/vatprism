@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -81,13 +80,11 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
         for (int i = 0; i < controllers.size(); i++) {
             final Controller controller = controllers.get(i);
 
-            final String typeLabel = controller.getControllerType().toString();
-            final Label type = new Label(" ".repeat(4 - typeLabel.length()) + typeLabel);
-            type.setPadding(new Insets(0, 2, 0, 2));
-            type.setStyle("-fx-text-fill: #" + webColor(color("airports.controller_label_color")));
-            type.getStyleClass().add("mono");
-            final Pane typeHolder = new Pane(type);
-            typeHolder.setStyle("-fx-background-color: #" + webColor(color(colorKey(controller))));
+            final Pane typeHolder = controllerTypePane(
+                    typeLabelString(controller.getControllerType().name()),
+                    color("airports.controller_label_color"),
+                    color(colorKey(controller))
+            );
             controllersGrid.add(typeHolder, 0, i);
 
             final Label frequency = new Label(controller.getFrequency());
@@ -116,6 +113,10 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
             onlineFor.getStyleClass().add("mono");
             controllersGrid.add(onlineFor, 4, i);
         }
+    }
+
+    private static String typeLabelString(final String typeName) {
+        return " ".repeat(4 - typeName.length()) + typeName;
     }
 
     private String headerText() {
