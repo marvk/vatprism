@@ -21,6 +21,7 @@ import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.configuration.*;
 import net.marvk.fs.vatsim.map.data.Preferences;
+import net.marvk.fs.vatsim.map.data.Writable;
 import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.main.MainView;
 import net.marvk.fs.vatsim.map.view.main.MainViewModel;
@@ -103,6 +104,9 @@ public class App extends MvvmfxGuiceApplication {
 
         secondaryStage.setOnCloseRequest(e -> {
             setWindowSizeAndPosition(secondaryStage, preferences);
+            if (preferences instanceof Writable) {
+                ((Writable) preferences).write();
+            }
             Platform.exit();
             System.exit(0);
         });

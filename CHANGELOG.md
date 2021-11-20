@@ -16,6 +16,7 @@
 
 - Reduced automatic refresh rate to 15 seconds from 30 seconds to match VATSIM api refresh
   rate ([#68](https://github.com/marvk/vatprism/issues/68))
+- Debounced preferences file writing: Previously, the file would be written on every preference change, now, when multiple changes are made in quick succession, writing will take place only if no changes are detected for one second or when the application shuts down gracefully
 
 ### Fixed
 
