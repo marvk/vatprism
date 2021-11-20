@@ -6,21 +6,21 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import net.marvk.fs.vatsim.map.GeomUtil;
+import net.marvk.fs.vatsim.map.data.ControllerType;
 import net.marvk.fs.vatsim.map.data.FlightInformationRegionBoundary;
 import net.marvk.fs.vatsim.map.data.ImmutableStringProperty;
 import net.marvk.fs.vatsim.map.data.UpperInformationRegion;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubView;
-import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewModel;
 
 import java.util.List;
 
-public class UpperInformationRegionDetailView extends DataDetailSubView<DataDetailSubViewModel<UpperInformationRegion>, UpperInformationRegion> {
+public class UpperInformationRegionDetailView extends DataDetailSubView<UpperInformationRegionDetailViewModel, UpperInformationRegion> {
     private static final ReadOnlyStringProperty EMPTY = new ImmutableStringProperty(null);
 
     @FXML
@@ -69,19 +69,20 @@ public class UpperInformationRegionDetailView extends DataDetailSubView<DataDeta
 
         firsGrid.getChildren().clear();
 
+        final int columnAfterCtrOffset = firs.stream().anyMatch(FlightInformationRegionBoundary::hasFirControllers)
+                ? 0
+                : -1;
+
         for (int i = 0; i < firs.size(); i++) {
             final FlightInformationRegionBoundary fir = firs.get(i);
-            final Label icaoLabel = new Label(fir.getIcao());
-            icaoLabel.getStyleClass().add("mono");
-            icaoLabel.getStyleClass().add("hyperlink-label");
-            icaoLabel.setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.PRIMARY) {
-                    viewModel.setDataDetail(fir);
-                    e.consume();
-                }
-            });
+            final Label icaoLabel = icaoLabel(fir);
             firsGrid.add(icaoLabel, 0, i);
-            firsGrid.add(new Label(nameProperty(fir).get()), 1, i);
+            if (fir.hasFirControllers()) {
+                final Pane pane = controllerTypePane(ControllerType.CTR.name(), viewModel.getLabelColor(), viewModel.getFirColor());
+                firsGrid.add(pane, 1, i);
+            }
+            firsGrid.add(new Label(nameProperty(fir).get()), 2 + columnAfterCtrOffset, i);
+            firsGrid.add(new Label(fir.getCountry().getName()), 3 + columnAfterCtrOffset, i);
         }
     }
 
