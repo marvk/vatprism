@@ -58,10 +58,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <java.version>15</java.version>
-        <lombok.version>1.18.20</lombok.version>
-        <javafx.version>16</javafx.version>
-        <slf4j.version>1.7.31</slf4j.version>
+        <java.version>17</java.version>
+        <lombok.version>1.18.22</lombok.version>
+        <javafx.version>17.0.0.1</javafx.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.1</guice.version>
         <ikonli.version>12.2.0</ikonli.version>
@@ -258,24 +258,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.7.0</version>
+            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.dlsc.preferencesfx</groupId>
             <artifactId>preferencesfx-core</artifactId>
-            <version>11.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.jensd</groupId>
-            <artifactId>fontawesomefx-fontawesome</artifactId>
-            <version>4.7.0-9.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>de.jensd</groupId>
-            <artifactId>fontawesomefx-commons</artifactId>
-            <version>9.1.2</version>
-            <scope>runtime</scope>
+            <version>11.8.0</version>
         </dependency>
 
         <dependency>
@@ -306,7 +295,7 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
+            <version>0.10.2</version>
         </dependency>
     </dependencies>
 
