@@ -197,10 +197,30 @@ public class PreloaderViewModel implements ViewModel {
         private final String taskCompleted;
         private final VoidCallable callable;
 
+        public CallableTask(final String noun, final VoidCallable voidCallable) {
+            this("Loading", "Loaded", noun, voidCallable);
+        }
+
+        public CallableTask(final String verbStarting, final String verbCompleted, final String noun, final VoidCallable voidCallable) {
+            this(verbStarting + " " + noun, verbCompleted + " " + noun, voidCallable);
+        }
+
         public CallableTask(final String taskStarted, final String taskCompleted, final VoidCallable callable) {
             this.taskStarted = taskStarted;
             this.taskCompleted = taskCompleted;
             this.callable = callable;
+        }
+
+        public CallableTask(final String noun, final ReloadableRepository<?> repository) {
+            this(noun, repository::reload);
+        }
+
+        public CallableTask(final String verbStarting, final String verbCompleted, final String noun, final ReloadableRepository<?> repository) {
+            this(verbStarting, verbCompleted, noun, repository::reload);
+        }
+
+        public CallableTask(final String taskStarted, final String taskCompleted, final ReloadableRepository<?> repository) {
+            this(taskStarted, taskCompleted, repository::reload);
         }
 
         @Override
@@ -250,12 +270,6 @@ public class PreloaderViewModel implements ViewModel {
         }
     }
 
-    private static class RepositoryTask extends CallableTask {
-        public RepositoryTask(final String taskStarted, final String taskCompleted, final ReloadableRepository<?> repository) {
-            super(taskStarted, taskCompleted, repository::reload);
-        }
-    }
-
     private static class RepositoryLoader extends Service<Void> {
         private final ReadOnlyStringWrapper currentTaskDescription = new ReadOnlyStringWrapper();
         private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper();
@@ -281,71 +295,62 @@ public class PreloaderViewModel implements ViewModel {
                 @Named("userLogDir") final Path logDir
         ) {
             final var loadWorld = new CallableTask(
-                    "Loading World",
-                    "Loaded World",
-                    worldRepository::reload
+                    "World",
+                    worldRepository
             );
             final var loadLakes = new CallableTask(
-                    "Loading Lakes",
-                    "Loaded Lakes",
-                    lakesRepository::reload
+                    "Lakes",
+                    lakesRepository
             );
             final var loadRatings = new CallableTask(
-                    "Loading Ratings",
-                    "Loaded Ratings",
+                    "Ratings",
                     ratingsLoader::loadRatings
             );
-            final var loadAirports = new RepositoryTask(
-                    "Loading Airports",
-                    "Loaded Airports",
+            final var loadAirports = new CallableTask(
+                    "Airports",
                     airportRepository
             );
-            final var loadInternationalDateLine = new RepositoryTask(
-                    "Loading International Date Line",
-                    "Loaded International Date Line",
+            final var loadInternationalDateLine = new CallableTask(
+                    "International Date Line",
                     internationalDateLineRepository
             );
-            final var loadFirs = new RepositoryTask(
-                    "Loading Flight Information Regions",
-                    "Loaded Flight Information Regions",
+            final var loadFirs = new CallableTask(
+                    "Flight Information Regions",
                     flightInformationRegionRepository
             );
-            final var loadFirbs = new RepositoryTask(
-                    "Loading Flight Information Region Boundaries",
-                    "Loaded Flight Information Region Boundaries",
+            final var loadFirbs = new CallableTask(
+                    "Flight Information Region Boundaries",
                     flightInformationRegionBoundaryRepository
             );
-            final var loadUirs = new RepositoryTask(
-                    "Loading Upper Information Regions",
-                    "Loaded Upper Information Regions",
+            final var loadUirs = new CallableTask(
+                    "Upper Information Regions",
                     upperInformationRegionRepository
             );
-            final var loadCountries = new RepositoryTask(
-                    "Loading Countries",
-                    "Loaded Countries",
+            final var loadCountries = new CallableTask(
+                    "Countries",
                     countryRepository
             );
             final var loadAirlines = new CallableTask(
-                    "Loading Airlines",
-                    "Loaded Airlines",
+                    "Airlines",
                     airlineRepository::list
             );
-            final var loadClients = new RepositoryTask(
-                    "Loading Clients",
-                    "Loaded Clients",
+            final var loadClients = new CallableTask(
+                    "Clients",
                     clientRepository
             );
             final var clearCaches = new CallableTask(
-                    "Cleaning Caches",
-                    "Cleaned Caches",
+                    "Clearing",
+                    "Cleared",
+                    "Caches",
                     () -> {
                         if (vatsimApi instanceof CachedVatsimApi) {
                             ((CachedVatsimApi) vatsimApi).clear();
                         }
                     });
             final var deletingOldLogs = new CallableTask(
-                    "Deleting Old Logs",
-                    "Old Logs Deleted",
+                    "Deleting",
+                    "Deleted",
+                    "Old Logs",
                     () -> {
                         if (preferences.booleanProperty("general.delete_old_logs").get()) {
                             deleteOldLogs(logDir);

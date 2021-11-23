@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import lombok.extern.log4j.Log4j2;
+import net.marvk.fs.vatsim.map.commons.motd.MessageOfTheDay;
 import net.marvk.fs.vatsim.map.data.VersionProvider;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 @Log4j2
@@ -69,6 +71,11 @@ public class HttpVatprismApi implements VatprismApi {
     @Override
     public void submitThemeChoice(final String themeName) throws VatprismApiException {
         tryPostTheme(themeName);
+    }
+
+    @Override
+    public List<MessageOfTheDay> messagesOfTheDay(final Version version, final Double focusedHours, final Double totalHours, final boolean unfiltered) {
+        throw new UnsupportedOperationException();
     }
 
     private boolean isOutdated(final String latestVersionName) {

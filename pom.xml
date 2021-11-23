@@ -303,6 +303,18 @@
         </dependency>
 
         <dependency>
+            <groupId>com.sandec</groupId>
+            <artifactId>mdfx</artifactId>
+            <version>0.2.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.marvk.fs</groupId>
+            <artifactId>vatprism-commons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
@@ -449,12 +461,10 @@
         <repository>
             <id>Sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
+        </repository>
+        <repository>
+            <id>JFrog</id>
+            <url>https://sandec.jfrog.io/artifactory/repo</url>
         </repository>
     </repositories>
 </project>
