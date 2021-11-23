@@ -31,6 +31,11 @@
 - Fixed various issues with context menus not being displayed correctly
 - Fixed incorrect label in airport painter preference dialog
 
+### Security
+
+- Upgraded Java Runtime from Version 15 to Version 17
+- Upgraded various dependencies
+
 ## [0.2.1](https://github.com/marvk/vatprism/compare/v0.2.0...v0.2.1) - 2021-12-18
 
 ### Security

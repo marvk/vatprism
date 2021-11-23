@@ -5,7 +5,7 @@ import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
 
 import javax.inject.Inject;
 import java.io.InputStream;
@@ -40,8 +40,8 @@ public class PackagedColorSchemeRepository implements ReadOnlyRepository<ColorSc
     @SneakyThrows
     public static Stream<String> fileNamesStream() {
         log.info("Scanning for packaged color schemes in %s".formatted(PREFIX));
-        return new Reflections(PREFIX, new ResourcesScanner())
-                .getResources(x -> true)
+        return new Reflections(PREFIX, Scanners.Resources)
+                .getResources(".*")
                 .stream()
                 .map(e -> "/" + e);
     }
