@@ -32,6 +32,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class App extends MvvmfxGuiceApplication {
@@ -199,7 +200,15 @@ public class App extends MvvmfxGuiceApplication {
         modules.add(new JfxModule());
         modules.add(new PathsModule());
         modules.add(new MetarModule());
-        modules.add(new ApiModule());
+
+        profile().filter("local"::equalsIgnoreCase).ifPresentOrElse(
+                unused -> modules.add(new LocalApiModule()),
+                () -> modules.add(new ApiModule())
+        );
+    }
+
+    private Optional<String> profile() {
+        return Optional.ofNullable(getParameters().getNamed().get("profile"));
     }
 
     private void setLogLevel() {

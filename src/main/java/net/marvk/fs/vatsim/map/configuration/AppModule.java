@@ -6,6 +6,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import net.marvk.fs.vatsim.api.*;
+import net.marvk.fs.vatsim.map.api.HttpVatprismApi;
+import net.marvk.fs.vatsim.map.api.VatprismApi;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
+        bind(VatprismApi.class).to(HttpVatprismApi.class).in(Singleton.class);
         bind(VatsimApiUrlProvider.class).to(UrlProviderV3.class).in(Singleton.class);
         bind(VatsimApiDataSource.class).annotatedWith(Names.named("httpDataSource"))
                                        .to(HttpDataSource.class)

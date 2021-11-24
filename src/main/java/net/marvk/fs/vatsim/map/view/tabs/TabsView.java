@@ -25,6 +25,7 @@ import net.marvk.fs.vatsim.map.view.datatable.upperinformationregionstable.Upper
 import net.marvk.fs.vatsim.map.view.filter.filteredclients.FilteredClientsView;
 import net.marvk.fs.vatsim.map.view.filter.filteroutline.FilterOutlineView;
 import net.marvk.fs.vatsim.map.view.map.MapView;
+import net.marvk.fs.vatsim.map.view.motds.MotdsView;
 import net.marvk.fs.vatsim.map.view.search.SearchView;
 
 import java.lang.reflect.Field;
@@ -65,6 +66,7 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPane.getTabs().add(createFxmlViewTab("Filtered Clients", FilteredClientsView.class));
         tabPane.getTabs().add(createFxmlViewTab("Filters", FilterOutlineView.class));
         tabPane.getTabs().add(createJavaViewTab("Streamers", StreamersTableView.class));
+        tabPane.getTabs().add(createFxmlViewTab("MOTD", MotdsView.class));
 
         searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
                 () -> tabPane.getSelectionModel().getSelectedIndex() == 0,

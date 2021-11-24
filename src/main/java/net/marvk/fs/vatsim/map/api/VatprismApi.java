@@ -10,5 +10,5 @@ public interface VatprismApi {
 
     void submitThemeChoice(final String themeName) throws VatprismApiException;
 
-    List<MessageOfTheDay> messagesOfTheDay(final Version version, final Double focusedHours, final Double totalHours, final boolean unfiltered);
+    List<MessageOfTheDay> messagesOfTheDay(final Version version, final Double focusedHours, final Double totalHours, final boolean unfiltered) throws VatprismApiException;
 }
