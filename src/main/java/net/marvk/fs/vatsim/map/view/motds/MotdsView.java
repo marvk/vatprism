@@ -3,11 +3,11 @@ package net.marvk.fs.vatsim.map.view.motds;
 import com.sandec.mdfx.MarkdownView;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.ScrollPane;
-import javafx.util.Callback;
 import net.marvk.fs.vatsim.map.commons.motd.MessageOfTheDay;
 
 public class MotdsView implements FxmlView<MotdsViewModel> {
@@ -21,26 +21,15 @@ public class MotdsView implements FxmlView<MotdsViewModel> {
     private final ScrollPane scrollPane = new ScrollPane(markdownView);
 
     public void initialize() {
-        pagination.setPrefWidth(1500);
-        markdownView.setPrefWidth(1500);
+        scrollPane.setFitToWidth(true);
+        markdownView.mdStringProperty().bind(Bindings.createStringBinding(() -> {
+            final MessageOfTheDay motd = viewModel.getSelectedMessageOfTheDay();
+            return motd == null ? "Empty" : motd.getContent();
+        }, viewModel.selectedMessageOfTheDayProperty()));
+        markdownView.setPadding(new Insets(0, 50, 0, 50));
         pagination.pageCountProperty().bind(viewModel.sizeProperty());
         pagination.currentPageIndexProperty().bindBidirectional(viewModel.selectedIndexProperty());
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-            @Override
-            public Node call(final Integer index) {
-                final MessageOfTheDay messageOfTheDay = viewModel.getSelectedMessageOfTheDay();
-
-                if (messageOfTheDay != null) {
-                    markdownView.setMdString(messageOfTheDay.getContent());
-                } else {
-                    markdownView.setMdString("Empty");
-                }
-
-                return scrollPane;
-            }
-        });
-
-
+        pagination.setPageFactory(index -> scrollPane);
 
     }
 }
