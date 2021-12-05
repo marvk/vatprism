@@ -1,5 +1,7 @@
 package net.marvk.fs.vatsim.map.data;
 
+import com.calendarfx.model.Entry;
+import com.calendarfx.model.Interval;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -9,15 +11,32 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.stream.Collectors;
 
-public class Event implements Settable<VatsimEvent>, Data {
-    private final ReadOnlyIntegerWrapper id = new ReadOnlyIntegerWrapper();
+public class Event extends Entry<Event> implements Settable<VatsimEvent>, Data {
+    public Event() {
+        duration0.bind(Bindings.createObjectBinding(this::calculateDuration, startTime0, endTime0));
 
-    public int getId() {
-        return id.get();
+        intervalProperty().bind(Bindings.createObjectBinding(() -> {
+            if (getStartTime0() != null && getEndTime0() != null) {
+                return new Interval(getStartTime0(), getEndTime0());
+            }
+
+            return new Interval();
+        }, startTime0Property(), endTime0Property()));
+        titleProperty().bind(nameProperty());
+        locationProperty().bind(Bindings.createStringBinding(
+                () -> airports.stream().map(Airport::getIcao).collect(Collectors.joining(", ")),
+                getAirports()
+        ));
     }
 
-    public ReadOnlyIntegerProperty idProperty() {
-        return id.getReadOnlyProperty();
+    private final ReadOnlyIntegerWrapper vatsimId = new ReadOnlyIntegerWrapper();
+
+    public int getVatsimId() {
+        return vatsimId.get();
+    }
+
+    public ReadOnlyIntegerProperty vatsimIdProperty() {
+        return vatsimId.getReadOnlyProperty();
     }
 
     private final ReadOnlyStringWrapper type = new ReadOnlyStringWrapper();
@@ -80,24 +99,24 @@ public class Event implements Settable<VatsimEvent>, Data {
         return bannerUrl.getReadOnlyProperty();
     }
 
-    private final ReadOnlyObjectWrapper<ZonedDateTime> startTime = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<ZonedDateTime> startTime0 = new ReadOnlyObjectWrapper<>();
 
-    public ZonedDateTime getStartTime() {
-        return startTime.get();
+    public ZonedDateTime getStartTime0() {
+        return startTime0.get();
     }
 
-    public ReadOnlyObjectProperty<ZonedDateTime> startTimeProperty() {
-        return startTime.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<ZonedDateTime> startTime0Property() {
+        return startTime0.getReadOnlyProperty();
     }
 
-    private final ReadOnlyObjectWrapper<ZonedDateTime> endTime = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<ZonedDateTime> endTime0 = new ReadOnlyObjectWrapper<>();
 
-    public ZonedDateTime getEndTime() {
-        return endTime.get();
+    public ZonedDateTime getEndTime0() {
+        return endTime0.get();
     }
 
-    public ReadOnlyObjectProperty<ZonedDateTime> endTimeProperty() {
-        return endTime.getReadOnlyProperty();
+    public ReadOnlyObjectProperty<ZonedDateTime> endTime0Property() {
+        return endTime0.getReadOnlyProperty();
     }
 
     private ReadOnlyListWrapper<Airport> airports;
@@ -133,23 +152,23 @@ public class Event implements Settable<VatsimEvent>, Data {
         return routes.getReadOnlyProperty();
     }
 
-    private final ReadOnlyObjectWrapper<Duration> duration = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyObjectWrapper<Duration> duration0 = new ReadOnlyObjectWrapper<>();
 
-    public Duration getDuration() {
-        return duration.get();
+    private Duration getDuration0() {
+        return duration0.get();
+    }
+
+    private ReadOnlyObjectProperty<Duration> duration0Property() {
+        return duration0.getReadOnlyProperty();
     }
 
     public ReadOnlyObjectProperty<Duration> durationProperty() {
-        return duration.getReadOnlyProperty();
-    }
-
-    public Event() {
-        duration.bind(Bindings.createObjectBinding(this::calculateDuration, startTime, endTime));
+        return duration0.getReadOnlyProperty();
     }
 
     private Duration calculateDuration() {
-        final ZonedDateTime start = startTime.get();
-        final ZonedDateTime end = endTime.get();
+        final ZonedDateTime start = startTime0.get();
+        final ZonedDateTime end = endTime0.get();
 
         if (start == null || end == null) {
             return null;
@@ -160,15 +179,15 @@ public class Event implements Settable<VatsimEvent>, Data {
 
     @Override
     public void setFromModel(final VatsimEvent model) {
-        id.set(model.getId());
+        vatsimId.set(model.getId());
         type.set(model.getType());
         vso.set(model.getVsoName());
         name.set(model.getName());
         shortDescription.set(model.getShortDescription());
         description.set(model.getDescription());
         bannerUrl.set(model.getBanner());
-        startTime.set(model.getStartTime());
-        endTime.set(model.getEndTime());
+        startTime0.set(model.getStartTime());
+        endTime0.set(model.getEndTime());
         organizers.setAll(model.getOrganizers().stream().map(EventOrganizer::new).collect(Collectors.toList()));
     }
 

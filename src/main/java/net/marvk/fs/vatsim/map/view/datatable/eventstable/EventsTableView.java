@@ -29,7 +29,7 @@ public class EventsTableView extends AbstractTableView<EventsTableViewModel, Eve
 
         this.<ZonedDateTime>newColumnBuilder()
             .title("Date")
-            .objectObservableValueFactory(Event::startTimeProperty)
+            .objectObservableValueFactory(Event::startTime0Property)
             .toStringMapper(ZonedDateTime::toString)
             .sortable()
             .mono(true)
@@ -38,7 +38,7 @@ public class EventsTableView extends AbstractTableView<EventsTableViewModel, Eve
 
         this.<ZonedDateTime>newColumnBuilder()
             .title("Local Time")
-            .objectObservableValueFactory(Event::startTimeProperty)
+            .objectObservableValueFactory(Event::startTime0Property)
             .toStringMapper(this::toLocalDateTimeString)
             .sortable()
             .mono(true)

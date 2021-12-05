@@ -91,7 +91,7 @@ public class EventRepository extends ProviderRepository<Event, VatsimEvent> {
 
     @Override
     protected String keyFromViewModel(final Event event) {
-        return Integer.toString(event.getId());
+        return event.getId();
     }
 
     @Override
