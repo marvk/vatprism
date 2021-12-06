@@ -29,6 +29,7 @@ import net.marvk.fs.vatsim.map.view.search.SearchView;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 public class TabsView implements FxmlView<TabsViewModel> {
     @FXML
@@ -42,6 +43,10 @@ public class TabsView implements FxmlView<TabsViewModel> {
 
     @InjectContext
     private Context context;
+
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
     private TextField searchBox;
 
     public void initialize() {
@@ -55,16 +60,16 @@ public class TabsView implements FxmlView<TabsViewModel> {
         tabPaneHolder.getChildren().add(0, tabPane);
         StackPane.setAlignment(searchBoxContainer, Pos.TOP_LEFT);
         tabPane.getTabs().clear();
-        tabPane.getTabs().add(createFxmlViewTab("Map", MapView.class));
-        tabPane.getTabs().add(createJavaViewTab("Clients", ClientsTableView.class));
-        tabPane.getTabs().add(createJavaViewTab("Pilots", PilotsTableView.class));
-        tabPane.getTabs().add(createJavaViewTab("Controllers", ControllersTableView.class));
-        tabPane.getTabs().add(createJavaViewTab("Airports", AirportsTableView.class));
-        tabPane.getTabs().add(createJavaViewTab("FIRs", FlightInformationRegionBoundariesTableView.class));
-        tabPane.getTabs().add(createJavaViewTab("UIRs", UpperInformationRegionsTableView.class));
-        tabPane.getTabs().add(createFxmlViewTab("Filtered Clients", FilteredClientsView.class));
-        tabPane.getTabs().add(createFxmlViewTab("Filters", FilterOutlineView.class));
-        tabPane.getTabs().add(createJavaViewTab("Streamers", StreamersTableView.class));
+        tabPane.getTabs().add(createFxmlViewTab("tabs.map", MapView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.clients", ClientsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.pilots", PilotsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.controllers", ControllersTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.airports", AirportsTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.firs", FlightInformationRegionBoundariesTableView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.uirs", UpperInformationRegionsTableView.class));
+        tabPane.getTabs().add(createFxmlViewTab("tabs.filtered_clients", FilteredClientsView.class));
+        tabPane.getTabs().add(createFxmlViewTab("tabs.filters", FilterOutlineView.class));
+        tabPane.getTabs().add(createJavaViewTab("tabs.streamers", StreamersTableView.class));
 
         searchController.resultsVisibleProperty().bind(Bindings.createBooleanBinding(
                 () -> tabPane.getSelectionModel().getSelectedIndex() == 0,
@@ -74,12 +79,12 @@ public class TabsView implements FxmlView<TabsViewModel> {
         Notifications.SWITCH_TO_TAB.subscribe(i -> tabPane.getSelectionModel().select(i));
     }
 
-    private Tab createFxmlViewTab(final String map, final Class<? extends FxmlView<?>> clazz) {
-        return new Tab(map, loadFxmlView(clazz));
+    private Tab createFxmlViewTab(final String key, final Class<? extends FxmlView<?>> clazz) {
+        return new Tab(resourceBundle.getString(key), loadFxmlView(clazz));
     }
 
-    private Tab createJavaViewTab(final String map, final Class<? extends JavaView<?>> clazz) {
-        return new Tab(map, loadJavaView(clazz));
+    private Tab createJavaViewTab(final String key, final Class<? extends JavaView<?>> clazz) {
+        return new Tab(resourceBundle.getString(key), loadJavaView(clazz));
     }
 
     private Parent loadFxmlView(final Class<? extends FxmlView<?>> clazz) {

@@ -14,13 +14,13 @@
         <Double fx:id="contentColumn" fx:value="80"/>
     </fx:define>
     <children>
-        <DataDetailPane headerText="Flight Plan">
+        <DataDetailPane headerText="%detail.flight_plan.flight_plan">
             <contentNode>
                 <VBox fx:id="container" styleClass="container">
                     <children>
                         <HBox fx:id="noFlightPlan" alignment="CENTER" minHeight="0.0" minWidth="0.0">
                             <children>
-                                <Label styleClass="mono" text="No Flight Plan"/>
+                                <Label styleClass="mono" text="%detail.flight_plan.no_flight_plan"/>
                             </children>
                         </HBox>
                         <GridPane fx:id="content" hgap="2.0" vgap="2.0">
@@ -46,13 +46,17 @@
                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                             </rowConstraints>
-                            <Label styleClass="description" text="Departure"/>
-                            <Label styleClass="description" text="Arrival" GridPane.rowIndex="1"/>
-                            <Label styleClass="description" text="Flight Rules" GridPane.rowIndex="4"/>
-                            <Label styleClass="description" text="Aircraft Type" GridPane.rowIndex="5"/>
-                            <Label styleClass="description" text="True Airspeed" GridPane.columnIndex="3"
+                            <Label styleClass="description" text="%detail.flight_plan.departure"/>
+                            <Label styleClass="description" text="%detail.flight_plan.arrival" GridPane.rowIndex="1"/>
+                            <Label styleClass="description" text="%detail.flight_plan.flight_rules"
+                                   GridPane.rowIndex="4"/>
+                            <Label styleClass="description" text="%detail.flight_plan.aircraft_type"
+                                   GridPane.rowIndex="5"/>
+                            <Label styleClass="description" text="%detail.flight_plan.true_airspeed"
+                                   GridPane.columnIndex="3"
                                    GridPane.rowIndex="3"/>
-                            <Label styleClass="description" text="Cruise Alt." GridPane.rowIndex="3"/>
+                            <Label styleClass="description" text="%detail.flight_plan.cruise_altitude"
+                                   GridPane.rowIndex="3"/>
                             <Label fx:id="flightRules" styleClass="mono" text="Label" GridPane.columnIndex="1"
                                    GridPane.rowIndex="4"/>
                             <Label fx:id="aircraftType" styleClass="mono" text="Label" GridPane.columnIndex="1"
@@ -85,7 +89,7 @@
                                     <Label minWidth="0" fx:id="arrivalName" text="Label"/>
                                 </children>
                             </HBox>
-                            <Label styleClass="description" text="Alternate" GridPane.rowIndex="2"/>
+                            <Label styleClass="description" text="%detail.flight_plan.alternate" GridPane.rowIndex="2"/>
                             <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647"
                                   GridPane.rowIndex="2">
                                 <children>
@@ -104,7 +108,7 @@
                 </VBox>
             </contentNode>
         </DataDetailPane>
-        <DataDetailPane headerText="Route">
+        <DataDetailPane headerText="%detail.flight_plan.route">
             <contentNode>
                 <TextArea fx:id="path" editable="false" prefHeight="100.0" prefWidth="0.0" styleClass="mono"
                           wrapText="true">
@@ -114,7 +118,7 @@
                 </TextArea>
             </contentNode>
         </DataDetailPane>
-        <DataDetailPane headerText="Remarks">
+        <DataDetailPane headerText="%detail.flight_plan.remarks">
             <contentNode>
                 <TextArea fx:id="remarks" editable="false" prefHeight="100.0" prefWidth="0.0" styleClass="mono"
                           wrapText="true">

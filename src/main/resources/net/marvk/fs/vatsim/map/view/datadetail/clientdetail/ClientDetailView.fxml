@@ -46,8 +46,8 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <Label styleClass="description" text="Online Since" GridPane.rowIndex="2"/>
-            <Label styleClass="description" text="Server" GridPane.rowIndex="3"/>
+            <Label styleClass="description" text="%detail.client.online_since" GridPane.rowIndex="2"/>
+            <Label styleClass="description" text="%detail.client.server" GridPane.rowIndex="3"/>
             <Label fx:id="onlineSince" text="Label" GridPane.columnIndex="1"
                    GridPane.rowIndex="2"/>
             <Label fx:id="server" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
@@ -57,8 +57,8 @@
                     <String fx:value="hyperlink-label"/>
                 </styleClass>
             </Label>
-            <Label styleClass="description" text="CID"/>
-            <Label styleClass="description" text="Name" GridPane.rowIndex="1"/>
+            <Label styleClass="description" text="%detail.client.cid"/>
+            <Label styleClass="description" text="%detail.client.name" GridPane.rowIndex="1"/>
             <Label fx:id="realName" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         </GridPane>
     </contentNode>

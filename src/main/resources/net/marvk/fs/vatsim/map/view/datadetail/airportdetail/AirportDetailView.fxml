@@ -26,9 +26,9 @@
                         <RowConstraints/>
                     </rowConstraints>
                     <children>
-                        <Label styleClass="description" text="Name"/>
+                        <Label styleClass="description" text="%detail.airport.name"/>
                         <Label fx:id="name" text="Label" GridPane.columnIndex="1"/>
-                        <Label text="Position" GridPane.rowIndex="1"/>
+                        <Label text="%detail.airport.position" GridPane.rowIndex="1"/>
                         <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="1">
                             <styleClass>
@@ -36,7 +36,7 @@
                                 <String fx:value="hyperlink-label"/>
                             </styleClass>
                         </Label>
-                        <Label styleClass="description" text="FIR" GridPane.rowIndex="2"/>
+                        <Label styleClass="description" text="%detail.airport.fir" GridPane.rowIndex="2"/>
                         <Label fx:id="fir" onMouseClicked="#setToFir" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="2">
                             <styleClass>
@@ -44,7 +44,7 @@
                                 <String fx:value="hyperlink-label"/>
                             </styleClass>
                         </Label>
-                        <Label styleClass="description" text="Country" GridPane.rowIndex="3"/>
+                        <Label styleClass="description" text="%detail.airport.country" GridPane.rowIndex="3"/>
                         <Label fx:id="country" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="3"/>
                     </children>

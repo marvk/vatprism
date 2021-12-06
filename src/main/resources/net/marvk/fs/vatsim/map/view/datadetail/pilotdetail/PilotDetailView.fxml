@@ -13,7 +13,7 @@
         <Double fx:id="contentColumn" fx:value="80"/>
     </fx:define>
     <fx:include fx:id="client" source="../clientdetail/ClientDetailView.fxml"/>
-    <DataDetailPane headerText="Status">
+    <DataDetailPane headerText="%detail.pilot.status">
         <contentNode>
             <GridPane hgap="2.0" vgap="2.0">
                 <columnConstraints>
@@ -36,13 +36,16 @@
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <Label styleClass="description" text="ETA" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
-                <Label styleClass="description" text="QNH" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                <Label styleClass="description" text="V/S" GridPane.rowIndex="4"/>
-                <Label styleClass="description" text="Squawk" GridPane.rowIndex="5"/>
-                <Label styleClass="description" text="Heading" GridPane.rowIndex="2"/>
-                <Label styleClass="description" text="Gnd. Speed" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-                <Label styleClass="description" text="Inside FIR" GridPane.rowIndex="1"/>
+                <Label styleClass="description" text="%detail.pilot.eta" GridPane.columnIndex="3"
+                       GridPane.rowIndex="3"/>
+                <Label styleClass="description" text="%detail.pilot.qnh" GridPane.columnIndex="3"
+                       GridPane.rowIndex="4"/>
+                <Label styleClass="description" text="%detail.pilot.vertical_speed" GridPane.rowIndex="4"/>
+                <Label styleClass="description" text="%detail.pilot.squawk" GridPane.rowIndex="5"/>
+                <Label styleClass="description" text="%detail.pilot.heading" GridPane.rowIndex="2"/>
+                <Label styleClass="description" text="%detail.pilot.ground_speed" GridPane.columnIndex="3"
+                       GridPane.rowIndex="2"/>
+                <Label styleClass="description" text="%detail.pilot.inside_fir" GridPane.rowIndex="1"/>
                 <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                        GridPane.columnSpan="2147483647">
                     <styleClass>
@@ -70,11 +73,11 @@
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="4"/>
                 <Label fx:id="qnhInchesMercury" styleClass="mono" text="Label" GridPane.columnIndex="4"
                        GridPane.columnSpan="2147483647" GridPane.rowIndex="5"/>
-                <Label styleClass="description" text="Position"/>
+                <Label styleClass="description" text="%detail.pilot.position"/>
                 <Label fx:id="verticalSpeed" styleClass="mono" text="Label" GridPane.columnIndex="1"
                        GridPane.rowIndex="4"/>
                 <Label fx:id="squawk" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-                <Label styleClass="description" text="Altitude" GridPane.rowIndex="3"/>
+                <Label styleClass="description" text="%detail.pilot.altitude" GridPane.rowIndex="3"/>
                 <Label fx:id="altitude" styleClass="mono" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
             </GridPane>
         </contentNode>

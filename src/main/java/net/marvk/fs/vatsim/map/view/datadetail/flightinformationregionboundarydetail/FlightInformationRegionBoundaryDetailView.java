@@ -90,7 +90,7 @@ public class FlightInformationRegionBoundaryDetailView extends DataDetailSubView
         controllersController.getViewModel().setData(firb.getControllers());
 
         if (firb.getCountry() == null) {
-            country.setText("UNKNOWN");
+            country.setText(resourceBundle.getString("detail.firb.unknown_country_placeholder"));
         } else {
             country.setText(firb.getCountry().getName());
         }

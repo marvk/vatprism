@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<DataDetailPane headerText="METAR" fx:id="container" xmlns="http://javafx.com/javafx"
+<DataDetailPane headerText="%common.metar" fx:id="container" xmlns="http://javafx.com/javafx"
                 xmlns:fx="http://javafx.com/fxml"
                 fx:controller="net.marvk.fs.vatsim.map.view.datadetail.metardetail.MetarDetailView">
     <contentNode>

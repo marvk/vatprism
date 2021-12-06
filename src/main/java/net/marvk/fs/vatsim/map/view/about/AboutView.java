@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.about;
 
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -16,8 +17,15 @@ import net.marvk.fs.vatsim.map.data.Dependency;
 import net.marvk.fs.vatsim.map.view.ListNoneSelectionModel;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class AboutView implements FxmlView<AboutViewModel> {
+    @FXML
+    private HBox licenseInformationHolder;
+
     @FXML
     private Label licenseQuestionMark;
 
@@ -33,7 +41,12 @@ public class AboutView implements FxmlView<AboutViewModel> {
     @InjectViewModel
     private AboutViewModel viewModel;
 
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
     public void initialize() {
+        appendLicenseInformationLabels();
+
         setVersion();
 
         dependenciesList.setItems(viewModel.dependencies());
@@ -51,6 +64,31 @@ public class AboutView implements FxmlView<AboutViewModel> {
         tooltip.setAutoHide(false);
         tooltip.setShowDuration(Duration.INDEFINITE);
         licenseQuestionMark.setTooltip(tooltip);
+    }
+
+    private void appendLicenseInformationLabels() {
+        final String licensePlaceholder = "{license}";
+        final String[] tokens = resourceBundle
+                .getString("about.licensed_under")
+                .split("(?<=\\%s)|(?=\\%s)".formatted(licensePlaceholder, licensePlaceholder));
+
+        final List<Label> labels = Arrays
+                .stream(tokens)
+                .map(e -> {
+                    final Label result;
+                    if (e.equals(licensePlaceholder)) {
+                        result = new Label("GNU AGPLv3");
+                        result.setOnMouseClicked(event -> openLicensePage());
+                        result.getStyleClass().add("hl-white");
+                    } else {
+                        result = new Label(e);
+                        result.getStyleClass().add("white");
+                    }
+                    return result;
+                })
+                .collect(Collectors.toList());
+
+        licenseInformationHolder.getChildren().addAll(0, labels);
     }
 
     private static String licenseQuestionMarkString() {

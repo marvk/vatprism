@@ -8,7 +8,7 @@
         <VBox fx:id="contentContainer">
             <HBox fx:id="noControllers" alignment="CENTER" minWidth="0.0">
                 <children>
-                    <Label styleClass="mono" text="No Controllers"/>
+                    <Label styleClass="mono" text="%detail.controllers.no_controllers"/>
                 </children>
             </HBox>
             <GridPane fx:id="controllersGrid" hgap="10">

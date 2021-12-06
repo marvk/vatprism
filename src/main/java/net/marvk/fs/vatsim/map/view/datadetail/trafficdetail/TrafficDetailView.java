@@ -79,7 +79,16 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
         );
 
         trafficHolder.placeholderTextProperty().bind(Bindings.createStringBinding(
-                () -> "No %s traffic".formatted(viewModel.getType() == Type.ARRIVAL ? "incoming" : "outgoing"),
+                () -> {
+                    if (viewModel.getType() == null) {
+                        return "";
+                    }
+
+                    return switch (viewModel.getType()) {
+                        case ARRIVAL -> resourceBundle.getString("detail.traffic_detail.no_incoming");
+                        case DEPARTURE -> resourceBundle.getString("detail.traffic_detail.no_outgoing");
+                    };
+                },
                 viewModel.typeProperty()
         ));
     }
@@ -229,7 +238,10 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
     private String getTitle() {
         if (viewModel.getTitle() == null || viewModel.getTitle().isEmpty()) {
             if (viewModel.getType() != null) {
-                return viewModel.getType().label;
+                return switch (viewModel.getType()) {
+                    case ARRIVAL -> resourceBundle.getString("detail.traffic_detail.arrivals");
+                    case DEPARTURE -> resourceBundle.getString("detail.traffic_detail.departures");
+                };
             } else {
                 return "";
             }
@@ -239,13 +251,7 @@ public class TrafficDetailView extends DetailSubView<TrafficDetailViewModel, Lis
     }
 
     public enum Type {
-        ARRIVAL("Arrivals"), DEPARTURE("Departures");
-
-        private final String label;
-
-        Type(final String label) {
-            this.label = label;
-        }
+        ARRIVAL, DEPARTURE
     }
 }
 

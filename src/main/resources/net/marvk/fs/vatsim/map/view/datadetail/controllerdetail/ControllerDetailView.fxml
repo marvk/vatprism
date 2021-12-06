@@ -52,8 +52,9 @@
                             <RowConstraints vgrow="SOMETIMES"/>
                         </rowConstraints>
                         <children>
-                            <Label fx:id="controllingDescription" styleClass="description" text="Controlling"/>
-                            <Label styleClass="description" text="Frequency" GridPane.columnIndex="3"/>
+                            <Label fx:id="controllingDescription" styleClass="description" text="Label"/>
+                            <Label styleClass="description" text="%detail.controller.frequency"
+                                   GridPane.columnIndex="3"/>
                             <Label fx:id="controlling" text="Label" GridPane.columnIndex="1">
                                 <styleClass>
                                     <String fx:value="mono"/>
@@ -61,7 +62,7 @@
                                 </styleClass>
                             </Label>
                             <Label fx:id="frequency" styleClass="mono" text="Label" GridPane.columnIndex="4"/>
-                            <Label styleClass="description" text="Rating" GridPane.rowIndex="1"/>
+                            <Label styleClass="description" text="%detail.controller.rating" GridPane.rowIndex="1"/>
                             <Label fx:id="rating" styleClass="mono" text="Label" GridPane.columnIndex="1"
                                    GridPane.columnSpan="2147483647" GridPane.rowIndex="1"/>
                         </children>
@@ -70,7 +71,7 @@
             </VBox>
         </contentNode>
     </DataDetailPane>
-    <DataDetailPane fx:id="atisPane" headerMonospace="true" headerText="ATIS">
+    <DataDetailPane fx:id="atisPane" headerMonospace="true" headerText="%detail.controller.atis">
         <contentNode>
             <TextArea fx:id="atis" editable="false" prefHeight="200.0" prefWidth="0.0" styleClass="mono"
                       wrapText="true">

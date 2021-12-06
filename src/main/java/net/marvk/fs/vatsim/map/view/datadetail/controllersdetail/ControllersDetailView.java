@@ -121,10 +121,11 @@ public class ControllersDetailView extends DetailSubView<ControllersDetailViewMo
 
     private String headerText() {
         final ObservableList<Controller> data = getViewModel().getData();
+        final String controllersString = resourceBundle.getString("detail.controllers.controllers");
         if (data.isEmpty()) {
-            return "Controllers";
+            return controllersString;
         } else {
-            return "Controllers (%s)".formatted(data.size());
+            return "%s (%s)".formatted(controllersString, data.size());
         }
     }
 }

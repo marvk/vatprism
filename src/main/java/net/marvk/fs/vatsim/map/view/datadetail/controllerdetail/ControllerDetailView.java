@@ -81,14 +81,14 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
         rating.textProperty().bind(Bindings.createStringBinding(() -> {
             final ControllerRating r = controller.ratingProperty().get();
             if (r == null) {
-                return "Unknown";
+                return resourceBundle.getString("detail.controller.unknown");
             }
             return "%s (%s)".formatted(r.getLongName(), r.getShortName());
         }, controller.ratingProperty()));
         atis.textProperty().bind(Bindings.createStringBinding(() -> {
                     final String msg = controller.getAtisMessage();
                     if (msg == null || msg.isEmpty()) {
-                        return "No ATIS available";
+                        return resourceBundle.getString("detail.controller.no_atis");
                     }
 
                     return msg;
@@ -113,21 +113,23 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     private void setAtisHeaderBindings(final Controller controller) {
         final StringProperty atisHeaderProperty = atisPane.headerTextProperty();
 
+        final String atisString = resourceBundle.getString("detail.controller.atis");
+
         if (controller instanceof Atis) {
             final ReadOnlyStringProperty atisProperty = ((Atis) controller).atisCodeProperty();
             atisHeaderProperty.bind(Bindings.createStringBinding(
                     () -> {
                         if (atisProperty.get() != null) {
-                            return "ATIS (%s)".formatted(atisProperty.get());
+                            return "%s (%s)".formatted(atisString, atisProperty.get());
                         }
 
-                        return "ATIS";
+                        return atisString;
                     },
                     atisProperty
             ));
         } else {
             atisHeaderProperty.unbind();
-            atisHeaderProperty.set("ATIS");
+            atisHeaderProperty.set(atisString);
         }
     }
 

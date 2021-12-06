@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.datadetail.detailsubview;
 
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -29,6 +30,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,6 +38,9 @@ import java.util.stream.Stream;
 public abstract class DetailSubView<DetailViewModel extends DetailSubViewModel<ViewModel>, ViewModel> implements FxmlView<DetailViewModel> {
     @InjectViewModel
     protected DetailViewModel viewModel;
+
+    @InjectResourceBundle
+    protected ResourceBundle resourceBundle;
 
     private List<StringProperty> stringProperties;
 

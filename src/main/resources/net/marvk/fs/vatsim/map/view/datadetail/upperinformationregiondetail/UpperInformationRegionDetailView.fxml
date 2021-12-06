@@ -26,9 +26,9 @@
                         <RowConstraints/>
                     </rowConstraints>
                     <children>
-                        <Label styleClass="description" text="Name"/>
+                        <Label styleClass="description" text="%detail.uir.name"/>
                         <Label fx:id="name" styleClass="mono" text="Label" GridPane.columnIndex="1"/>
-                        <Label styleClass="description" text="Position" GridPane.rowIndex="1"/>
+                        <Label styleClass="description" text="%detail.uir.position" GridPane.rowIndex="1"/>
                         <Label fx:id="position" onMouseClicked="#goTo" text="Label" GridPane.columnIndex="1"
                                GridPane.rowIndex="1">
                             <styleClass>
@@ -41,7 +41,7 @@
             </contentNode>
         </DataDetailPane>
         <fx:include fx:id="controllers" source="../controllersdetail/ControllersDetailView.fxml"/>
-        <DataDetailPane fx:id="firsContainer" headerText="FIRs">
+        <DataDetailPane fx:id="firsContainer" headerText="%detail.uir.firs">
             <contentNode>
                 <GridPane fx:id="firsGrid" hgap="10">
                     <columnConstraints>

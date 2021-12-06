@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map;
 
 import com.google.inject.Module;
 import de.saxsys.mvvmfx.FluentViewLoader;
+import de.saxsys.mvvmfx.MvvmFX;
 import de.saxsys.mvvmfx.ViewTuple;
 import de.saxsys.mvvmfx.guice.MvvmfxGuiceApplication;
 import de.saxsys.mvvmfx.internal.viewloader.DependencyInjector;
@@ -32,6 +33,8 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.io.IoBuilder;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 @Log4j2
 public class App extends MvvmfxGuiceApplication {
@@ -45,6 +48,7 @@ public class App extends MvvmfxGuiceApplication {
     @Override
     public void startMvvmfx(final Stage primaryStage) {
         loadFonts();
+        MvvmFX.setGlobalResourceBundle(ResourceBundle.getBundle("vatprism", new Locale("en", "us")));
         startPreloader(primaryStage);
     }
 

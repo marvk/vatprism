@@ -126,14 +126,14 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         }
     }
 
-    private static String fpmString(final Pilot pilot) {
+    private String fpmString(final Pilot pilot) {
         final double vs = pilot.getVerticalSpeed();
         if (Double.compare(vs, Double.NaN) == 0) {
-            return "Unknown";
+            return resourceBundle.getString("detail.pilot.unknown");
         }
 
         final String prefix = Math.signum(vs) >= 1 ? "+" : "";
-        return prefix + Math.round(vs) + "fpm";
+        return "%s%dfpm".formatted(prefix, Math.round(vs));
     }
 
     @Override
