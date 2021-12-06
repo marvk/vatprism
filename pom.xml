@@ -76,6 +76,7 @@
             --description "VATprism"
             --vendor "${developerName}"
             --app-version "${buildNumber}.0.0"
+            --java-options "--illegal-access=permit"
         </jpackage.args.crossPlatform>
     </properties>
 
