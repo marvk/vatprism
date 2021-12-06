@@ -21,7 +21,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 15
       - name: Master Version
         if: github.ref == 'refs/heads/master'
         run: |
@@ -98,7 +98,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 17
+          java-version: 15
       - name: Maven Build
         run: mvn --batch-mode --update-snapshots verify "-DversionName=${{env.PROJECT_VERSION}}+${{steps.short-sha.outputs.sha}}.macos" "-DbuildNumber=${{github.run_number}}"
       - name: Rename artifacts
