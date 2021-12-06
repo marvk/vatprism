@@ -98,7 +98,7 @@
             </graphic>
         </ToggleButton>
         <ToggleButton fx:id="airportsInactive"
-                      userData="airports.paint_uncontrolled_airports_with_destinations_or_arrivals"
+                      userData="airports.paint_uncontrolled_airports_with_arrivals_or_departures"
                       styleClass="icon-button" mnemonicParsing="false">
             <tooltip>
                 <Tooltip text="Airports with Flights but no Controllers"/>
