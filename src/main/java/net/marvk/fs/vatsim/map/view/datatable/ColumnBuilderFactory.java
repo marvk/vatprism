@@ -11,21 +11,25 @@ import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 
 import java.util.Comparator;
+import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ColumnBuilderFactory<Model extends Data> {
     private final SimpleTableViewModel<Model> viewModel;
+    private final ResourceBundle resourceBundle;
     private final TextFlowHighlighter textFlowHighlighter;
     private final Consumer<TableColumn<Model, ?>> columnConsumer;
 
     public ColumnBuilderFactory(
             final SimpleTableViewModel<Model> viewModel,
+            final ResourceBundle resourceBundle,
             final TextFlowHighlighter textFlowHighlighter,
             final Consumer<TableColumn<Model, ?>> columnConsumer
     ) {
         this.viewModel = viewModel;
+        this.resourceBundle = resourceBundle;
         this.textFlowHighlighter = textFlowHighlighter;
         this.columnConsumer = columnConsumer;
     }
@@ -57,6 +61,11 @@ public class ColumnBuilderFactory<Model extends Data> {
         public ValueStep<Model, CellValue> title(final String title) {
             this.result.setText(title);
             return this;
+        }
+
+        @Override
+        public ValueStep<Model, CellValue> titleKey(final String key) {
+            return title(resourceBundle.getString(key));
         }
 
         @Override
@@ -141,6 +150,8 @@ public class ColumnBuilderFactory<Model extends Data> {
 
     public interface TitleStep<Model extends Data, CellValue> {
         ValueStep<Model, CellValue> title(final String s);
+
+        ValueStep<Model, CellValue> titleKey(final String key);
     }
 
     public interface ValueStep<Model extends Data, CellValue> {

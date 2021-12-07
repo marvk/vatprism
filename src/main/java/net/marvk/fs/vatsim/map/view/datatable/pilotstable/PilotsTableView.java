@@ -13,7 +13,6 @@ import net.marvk.fs.vatsim.map.view.datatable.clientstable.AbstractClientsTableV
 import java.util.Comparator;
 
 public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewModel, Pilot> {
-    private static final EtaToStringMapper ETA_MAPPER = new EtaToStringMapper();
 
     @Inject
     public PilotsTableView(final TextFlowHighlighter textFlowHighlighter) {
@@ -24,8 +23,10 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
     protected void initializeColumns() {
         super.initializeColumns();
 
+        final EtaToStringMapper etaToStringMapper = new EtaToStringMapper(resourceBundle);
+
         this.<Airport>newColumnBuilder()
-                .title("Departure")
+                .titleKey("common.departure")
                 .objectObservableValueFactory(e -> e.getFlightPlan().departureAirportProperty())
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
@@ -34,7 +35,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Airport>newColumnBuilder()
-                .title("Arrival")
+                .titleKey("common.arrival")
                 .objectObservableValueFactory(e -> e.getFlightPlan().arrivalAirportProperty())
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
@@ -43,7 +44,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Airport>newColumnBuilder()
-                .title("Alternate")
+                .titleKey("common.alternate")
                 .objectObservableValueFactory(e -> e.getFlightPlan().alternativeAirportProperty())
                 .toStringMapper(Airport::getIcao)
                 .sortable(Comparator.nullsFirst(Comparator.comparing(Airport::getIcao)))
@@ -52,7 +53,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Number>newColumnBuilder()
-                .title("Distance")
+                .titleKey("common.distance")
                 .objectObservableValueFactory(e -> e.getFlightPlan().totalDistanceProperty())
                 .toStringMapper(e -> Double.isNaN(e.doubleValue()) ? null : Math.round(GeomUtil.metersToNauticalMiles(e.doubleValue())) + "NM")
                 .sortable(PilotsTableView::compareDistance)
@@ -61,13 +62,13 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<String>newColumnBuilder()
-                .title("Aircraft Type")
+                .titleKey("common.aircraft_type")
                 .stringObservableValueFactory(e -> e.getFlightPlan().aircraftProperty())
                 .sortable()
                 .build();
 
         this.<FlightRule>newColumnBuilder()
-                .title("Flight Rules")
+                .titleKey("common.flight_rules")
                 .objectObservableValueFactory(e -> e.getFlightPlan().flightRuleProperty())
                 .toStringMapper(Enum::toString)
                 .sortable()
@@ -75,7 +76,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Number>newColumnBuilder()
-                .title("Gnd. Speed")
+                .titleKey("common.ground_speed")
                 .objectObservableValueFactory(Pilot::groundSpeedProperty)
                 .toStringMapper(e -> "%dkts".formatted(e.intValue()))
                 .sortable()
@@ -84,7 +85,7 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Number>newColumnBuilder()
-                .title("Altitude")
+                .titleKey("common.altitude")
                 .objectObservableValueFactory(Pilot::altitudeProperty)
                 .toStringMapper(e -> "%dft".formatted(e.intValue()))
                 .sortable()
@@ -93,9 +94,9 @@ public class PilotsTableView extends AbstractClientsTableView<PilotsTableViewMod
                 .build();
 
         this.<Eta>newColumnBuilder()
-            .title("ETA")
+            .titleKey("common.eta")
             .objectObservableValueFactory(Pilot::etaProperty)
-            .toStringMapper(ETA_MAPPER::map)
+            .toStringMapper(etaToStringMapper::map)
             .sortable(Comparator.comparing(Eta::getDuration))
             .mono(true)
             .widthFactor(0.8)

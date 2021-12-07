@@ -70,7 +70,7 @@ public class AirportDetailView extends DataDetailSubView<AirportDetailViewModel,
         }
 
         if (airport.getCountry() == null) {
-            country.setText("UNKNOWN");
+            country.setText(resourceBundle.getString("detail.airport.unknown_country_placeholder"));
         } else {
             country.setText(airport.getCountry().getName());
         }

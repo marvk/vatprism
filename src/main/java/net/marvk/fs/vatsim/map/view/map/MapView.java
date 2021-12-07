@@ -35,6 +35,7 @@ import net.marvk.fs.vatsim.map.view.datadetail.DataDetailView;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailViewModel;
 import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 
+import java.util.ResourceBundle;
 import java.util.concurrent.*;
 
 @Log4j2
@@ -59,6 +60,9 @@ public class MapView implements FxmlView<MapViewModel> {
 
     @InjectContext
     private Context context;
+
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
 
     private final Renderer renderer = new Renderer();
 
@@ -414,7 +418,7 @@ public class MapView implements FxmlView<MapViewModel> {
             }
 
             if (getItems().isEmpty()) {
-                getItems().add(header("Nothing here..."));
+                getItems().add(header(resourceBundle.getString("map.nothing_here")));
             }
 
             final ContextMenuContent cmc = (ContextMenuContent) getSkin().getNode();

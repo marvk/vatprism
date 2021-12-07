@@ -48,7 +48,7 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mmVV");
 
-    private final AirlineInformationTooltip airlineInformationTooltip = new AirlineInformationTooltip();
+    private AirlineInformationTooltip airlineInformationTooltip;
 
     @Override
     protected List<StringProperty> stringProperties() {
@@ -68,6 +68,7 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     @Override
     public void initialize() {
         super.initialize();
+        airlineInformationTooltip = new AirlineInformationTooltip();
         viewModel.twitchStreamProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 headerPane.getStyleClass().add("twitch-container");
@@ -144,12 +145,12 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
         viewModel.openStream();
     }
 
-    private static class AirlineInformationTooltip extends Tooltip {
+    private class AirlineInformationTooltip extends Tooltip {
         private final GridPane grid = new GridPane();
-        private final Row name = createRow("Airline", variableWidthLabel(null));
-        private final Row icao = createRow("ICAO", monoLabel(null));
-        private final Row callsign = createRow("Callsign", monoLabel(null));
-        private final Row country = createRow("Country", variableWidthLabel(null));
+        private final Row name = createRow(resourceBundle.getString("detail.client.airline"), variableWidthLabel(null));
+        private final Row icao = createRow(resourceBundle.getString("common.icao"), monoLabel(null));
+        private final Row callsign = createRow(resourceBundle.getString("detail.client.callsign"), monoLabel(null));
+        private final Row country = createRow(resourceBundle.getString("detail.client.country"), variableWidthLabel(null));
 
         public AirlineInformationTooltip() {
             grid.setHgap(10);
@@ -175,47 +176,47 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
             return row;
         }
 
-        private static Label variableWidthLabel(final String s) {
-            final Label result = new Label(s);
-            result.getStyleClass().add("variable-width");
-            return result;
-        }
-
-        private static Label monoLabel(final String text) {
-            final Label result = new Label(text);
-            result.getStyleClass().add("mono");
-            return result;
-        }
-
         public void setFromAirline(final Airline airline) {
             this.name.setValueText(airline.getName() + aliasAppendage(airline.getAlias()));
             this.icao.setValueText(airline.getIcao());
             this.callsign.setValueText(airline.getCallsign());
             this.country.setValueText(airline.getCountry());
         }
+    }
 
-        private static String aliasAppendage(final String alias) {
-            return (alias != null && !alias.isEmpty()) ? " (%s)".formatted(alias) : "";
-        }
+    private static Label variableWidthLabel(final String s) {
+        final Label result = new Label(s);
+        result.getStyleClass().add("variable-width");
+        return result;
+    }
 
-        @Data
-        private static class Row {
-            private final int index;
-            private final RowConstraints rowConstraints;
-            private final Label key;
-            private final Label value;
+    private static Label monoLabel(final String text) {
+        final Label result = new Label(text);
+        result.getStyleClass().add("mono");
+        return result;
+    }
 
-            public void setValueText(final String s) {
-                if (s == null) {
-                    rowConstraints.setMaxHeight(0);
-                    key.setVisible(false);
-                    value.setVisible(false);
-                } else {
-                    rowConstraints.setMaxHeight(USE_COMPUTED_SIZE);
-                    key.setVisible(true);
-                    value.setVisible(true);
-                    value.setText(s);
-                }
+    private static String aliasAppendage(final String alias) {
+        return (alias != null && !alias.isEmpty()) ? " (%s)".formatted(alias) : "";
+    }
+
+    @Data
+    private static class Row {
+        private final int index;
+        private final RowConstraints rowConstraints;
+        private final Label key;
+        private final Label value;
+
+        public void setValueText(final String s) {
+            if (s == null) {
+                rowConstraints.setMaxHeight(0);
+                key.setVisible(false);
+                value.setVisible(false);
+            } else {
+                rowConstraints.setMaxHeight(Tooltip.USE_COMPUTED_SIZE);
+                key.setVisible(true);
+                value.setVisible(true);
+                value.setText(s);
             }
         }
     }

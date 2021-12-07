@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.filter.filteroutline;
 
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -16,6 +17,8 @@ import net.marvk.fs.vatsim.map.view.filter.FilterListViewModel;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
+import java.util.ResourceBundle;
+
 public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
     @FXML
     private TableView<FilterListViewModel> table;
@@ -23,10 +26,13 @@ public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
     @InjectViewModel
     private FilterOutlineViewModel viewModel;
 
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
     public void initialize() {
         table.setItems(viewModel.getFilters());
 
-        final TableColumn<FilterListViewModel, FilterListViewModel> nameColumn = new TableColumn<>("Name");
+        final TableColumn<FilterListViewModel, FilterListViewModel> nameColumn = new TableColumn<>(resourceBundle.getString("common.name"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
         nameColumn.setCellFactory(param -> new NameCell());
         nameColumn.setPrefWidth(200);

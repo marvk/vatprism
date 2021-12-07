@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.filter.filtereditor;
 
 import de.saxsys.mvvmfx.FxmlView;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -30,6 +31,7 @@ import org.kordamp.ikonli.fileicons.FileIcons;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
+import java.util.ResourceBundle;
 import java.util.function.Function;
 
 @Log4j2
@@ -118,6 +120,9 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
     @InjectViewModel
     private FilterEditorViewModel viewModel;
 
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
     public void initialize() {
         container.disableProperty().bind(viewModel.enabledProperty().not());
 
@@ -126,28 +131,32 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                 callsignRegex,
                 callsignInput,
                 callsignSubmit,
-                viewModel.getCallsigns()
+                viewModel.getCallsigns(),
+                resourceBundle
         );
         new StringFilterList(
                 cidList,
                 cidRegex,
                 cidInput,
                 cidSubmit,
-                viewModel.getCids()
+                viewModel.getCids(),
+                resourceBundle
         );
         new StringFilterList(
                 departuresList,
                 departuresRegex,
                 departuresInput,
                 departuresSubmit,
-                viewModel.getDepartures()
+                viewModel.getDepartures(),
+                resourceBundle
         );
         new StringFilterList(
                 arrivalsList,
                 arrivalsRegex,
                 arrivalsInput,
                 arrivalsSubmit,
-                viewModel.getArrivals()
+                viewModel.getArrivals(),
+                resourceBundle
         );
 
         new MultipleSelection<>(
@@ -202,7 +211,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         ));
         final Tooltip tooltip = new Tooltip();
         tooltip.textProperty().bind(Bindings.createStringBinding(
-                () -> enabled.isSelected() ? "Enable" : "Disable",
+                () -> enabled.isSelected() ? resourceBundle.getString("common.enable") : resourceBundle.getString("common.disable"),
                 enabled.selectedProperty()
         ));
         enabled.setTooltip(tooltip);
@@ -309,13 +318,22 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         private final TextField input;
         private final Button submit;
         private final ObservableList<FilterStringListViewModel> items;
+        private final ResourceBundle resourceBundle;
 
-        public StringFilterList(final ListView<FilterStringListViewModel> list, final ToggleButton regex, final TextField input, final Button submit, final ObservableList<FilterStringListViewModel> items) {
+        public StringFilterList(
+                final ListView<FilterStringListViewModel> list,
+                final ToggleButton regex,
+                final TextField input,
+                final Button submit,
+                final ObservableList<FilterStringListViewModel> items,
+                final ResourceBundle resourceBundle
+        ) {
             this.list = list;
             this.regex = regex;
             this.input = input;
             this.submit = submit;
             this.items = items;
+            this.resourceBundle = resourceBundle;
 
             list.setItems(items);
             final ChangeListener<Boolean> focusChange = (observable, oldValue, newValue) -> {
@@ -331,7 +349,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             selected.bind(list.getSelectionModel().selectedItemProperty());
             inputDisabled.bind(input.textProperty().isEmpty().or(input.textProperty().isNull()));
 
-            list.setCellFactory(param -> new FilterStringListViewModelListCell());
+            list.setCellFactory(param -> new FilterStringListViewModelListCell(resourceBundle));
             input.setOnAction(e -> addToList());
             submit.setOnAction(e -> addToList());
 
@@ -370,7 +388,12 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             });
             final Tooltip regexTooltip = new Tooltip();
             regexTooltip.textProperty().bind(Bindings.createStringBinding(
-                    () -> "Set to %s matching".formatted(regex.isSelected() ? "regex" : "wildcard"),
+                    () -> {
+                        final String matchingTypeKey = regex.isSelected() ? "filter_editor.regex" : "filter_editor.wildcard";
+                        return resourceBundle
+                                .getString("filter_editor.tooltip.matching_type")
+                                .replace("{matching_type}", resourceBundle.getString(matchingTypeKey));
+                    },
                     regex.selectedProperty()
             ));
             regex.setTooltip(regexTooltip);
@@ -407,6 +430,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
         private static class FilterStringListViewModelListCell extends ListCell<FilterStringListViewModel> {
 
             private final ReadOnlyObjectWrapper<FilterStringListViewModel> value = new ReadOnlyObjectWrapper<>();
+            private final ResourceBundle resourceBundle;
             private HBox content;
 
             private Label label;
@@ -415,6 +439,10 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
             private FontIcon errorIcon;
             private Tooltip errorTooltip;
             private VBox errorIconHolder;
+
+            public FilterStringListViewModelListCell(final ResourceBundle resourceBundle) {
+                this.resourceBundle = resourceBundle;
+            }
 
             private Parent content(final FilterStringListViewModel item) {
                 if (content == null) {
@@ -440,7 +468,7 @@ public class FilterEditorView implements FxmlView<FilterEditorViewModel> {
                     errorIconHolder = new VBox(errorIcon);
                     errorIconHolder.setAlignment(Pos.CENTER);
                     errorIconHolder.setPadding(new Insets(0, 5, 0, 5));
-                    errorTooltip = new Tooltip("Invalid regex");
+                    errorTooltip = new Tooltip(resourceBundle.getString("filter_editor.invalid_regex"));
                     errorTooltip.setShowDelay(Duration.ZERO);
 
                     content = new HBox(fontIconHolder, label, errorIconHolder, region, button);

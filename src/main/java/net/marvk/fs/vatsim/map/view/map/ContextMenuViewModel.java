@@ -6,6 +6,7 @@ import net.marvk.fs.vatsim.map.data.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class ContextMenuViewModel {
     private final ContextMenuItems<Pilot> pilots;
@@ -15,12 +16,12 @@ public class ContextMenuViewModel {
 
     private final List<ContextMenuItems<? extends Data>> contextMenuItems;
 
-    public ContextMenuViewModel() {
+    public ContextMenuViewModel(final ResourceBundle resourceBundle) {
         this(
-                new ContextMenuItems<>("Pilots"),
-                new ContextMenuItems<>("Airports"),
-                new ContextMenuItems<>("FIRs"),
-                new ContextMenuItems<>("UIRs")
+                new ContextMenuItems<>(resourceBundle.getString("common.pilots")),
+                new ContextMenuItems<>(resourceBundle.getString("common.airports")),
+                new ContextMenuItems<>(resourceBundle.getString("common.firs")),
+                new ContextMenuItems<>(resourceBundle.getString("common.uirs"))
         );
     }
 

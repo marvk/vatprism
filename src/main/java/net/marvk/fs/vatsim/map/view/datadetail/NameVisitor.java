@@ -2,38 +2,44 @@ package net.marvk.fs.vatsim.map.view.datadetail;
 
 import net.marvk.fs.vatsim.map.data.*;
 
+import java.util.Objects;
+import java.util.ResourceBundle;
+
 public class NameVisitor extends DefaultingDataVisitor<String> {
-    public NameVisitor() {
-        super("Unknown");
+    private final ResourceBundle resourceBundle;
+
+    public NameVisitor(final ResourceBundle resourceBundle) {
+        super(resourceBundle.getString("detail.name.unknown_data_placeholder"));
+        this.resourceBundle = Objects.requireNonNull(resourceBundle);
     }
 
     @Override
     public String visit(final Controller controller) {
-        return "Controller";
+        return resourceBundle.getString("detail.name.controller");
     }
 
     @Override
     public String visit(final UpperInformationRegion upperInformationRegion) {
-        return "UIR";
+        return resourceBundle.getString("detail.name.uir");
     }
 
     @Override
     public String visit(final Airport airport) {
-        return "Airport";
+        return resourceBundle.getString("detail.name.airport");
     }
 
     @Override
     public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-        return "FIR";
+        return resourceBundle.getString("detail.name.fir");
     }
 
     @Override
     public String visit(final FlightInformationRegion flightInformationRegion) {
-        return "FIR";
+        return resourceBundle.getString("detail.name.fir");
     }
 
     @Override
     public String visit(final Pilot pilot) {
-        return "Flight";
+        return resourceBundle.getString("detail.name.flight");
     }
 }

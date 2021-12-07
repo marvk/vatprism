@@ -1,6 +1,7 @@
 package net.marvk.fs.vatsim.map.view.datatable;
 
 import com.google.inject.Inject;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.JavaView;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -14,16 +15,22 @@ import net.marvk.fs.vatsim.map.data.Data;
 import net.marvk.fs.vatsim.map.data.ImmutableStringProperty;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 
+import java.util.ResourceBundle;
+
 public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<Model>, Model extends Data> extends TableView<Model> implements JavaView<ViewModel> {
     protected static final ReadOnlyStringProperty EMPTY = new ImmutableStringProperty("");
 
-    private final TextFlowHighlighter textFlowHighlighter;
-    private ColumnBuilderFactory<Model> columnBuilder;
     @FXML
     protected TableView<Model> table;
 
     @InjectViewModel
     protected ViewModel viewModel;
+
+    @InjectResourceBundle
+    protected ResourceBundle resourceBundle;
+
+    private final TextFlowHighlighter textFlowHighlighter;
+    private ColumnBuilderFactory<Model> columnBuilder;
 
     @Inject
     public AbstractTableView(final TextFlowHighlighter textFlowHighlighter) {
@@ -36,7 +43,12 @@ public abstract class AbstractTableView<ViewModel extends SimpleTableViewModel<M
     }
 
     public void initialize() {
-        columnBuilder = new ColumnBuilderFactory<>(viewModel, textFlowHighlighter, c -> table.getColumns().add(c));
+        columnBuilder = new ColumnBuilderFactory<>(
+                viewModel,
+                resourceBundle,
+                textFlowHighlighter,
+                c -> table.getColumns().add(c)
+        );
 //        table.setFixedCellSize(18);
 
         getStyleClass().add("clickable-rows");

@@ -17,46 +17,48 @@ public class FlightInformationRegionBoundariesTableView extends AbstractTableVie
     @Override
     protected void initializeColumns() {
         this.<String>newColumnBuilder()
-                .title("ICAO")
-                .stringObservableValueFactory(FlightInformationRegionBoundary::icaoProperty)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.6)
-                .build();
+            .titleKey("common.icao")
+            .stringObservableValueFactory(FlightInformationRegionBoundary::icaoProperty)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.6)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Name")
-                .stringObservableValueFactory(FlightInformationRegionBoundariesTableView::nameProperty)
-                .sortable()
-                .mono(true)
-                .widthFactor(2.5)
-                .build();
+            .titleKey("common.name")
+            .stringObservableValueFactory(FlightInformationRegionBoundariesTableView::nameProperty)
+            .sortable()
+            .mono(true)
+            .widthFactor(2.5)
+            .build();
+
+        final String yes = resourceBundle.getString("common.yes");
 
         this.<Boolean>newColumnBuilder()
-                .title("Oceanic")
-                .objectObservableValueFactory(FlightInformationRegionBoundary::oceanicProperty)
-                .toStringMapper(e -> e ? "Yes" : "")
-                .sortable()
-                .mono(true)
-                .widthFactor(0.5)
-                .build();
+            .titleKey("table.firb.oceanic")
+            .objectObservableValueFactory(FlightInformationRegionBoundary::oceanicProperty)
+            .toStringMapper(e -> e ? yes : "")
+            .sortable()
+            .mono(true)
+            .widthFactor(0.5)
+            .build();
 
         this.<Country>newColumnBuilder()
-                .title("Country")
-                .objectObservableValueFactory(FlightInformationRegionBoundary::countryProperty)
-                .toStringMapper(Country::getName)
-                .sortable()
-                .widthFactor(1.25)
-                .build();
+            .titleKey("common.country")
+            .objectObservableValueFactory(FlightInformationRegionBoundary::countryProperty)
+            .toStringMapper(Country::getName)
+            .sortable()
+            .widthFactor(1.25)
+            .build();
 
         this.<Number>newColumnBuilder()
-                .title("Controllers")
-                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
-                .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("common.number_of_controllers")
+            .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
+            .toStringMapper(FlightInformationRegionBoundariesTableView::emptyIfZero)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
     }
 
     private static ReadOnlyStringProperty nameProperty(final FlightInformationRegionBoundary e) {

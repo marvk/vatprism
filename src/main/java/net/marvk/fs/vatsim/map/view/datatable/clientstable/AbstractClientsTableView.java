@@ -23,46 +23,46 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
     @Override
     protected void initializeColumns() {
         this.<Number>newColumnBuilder()
-                .title("CID")
-                .objectObservableValueFactory(Client::cidProperty)
-                .toStringMapper(Object::toString)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("common.cid")
+            .objectObservableValueFactory(Client::cidProperty)
+            .toStringMapper(Object::toString)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.7)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Callsign")
-                .stringObservableValueFactory(Client::callsignProperty)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("common.callsign")
+            .stringObservableValueFactory(Client::callsignProperty)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Name")
-                .stringObservableValueFactory(Client::realNameProperty)
-                .sortable()
-                .widthFactor(2.0)
-                .build();
+            .titleKey("table.clients.name")
+            .stringObservableValueFactory(Client::realNameProperty)
+            .sortable()
+            .widthFactor(2.0)
+            .build();
 
         this.<ZonedDateTime>newColumnBuilder()
-                .title("Online since")
-                .objectObservableValueFactory(Client::logonTimeProperty)
-                .toStringMapper(FORMATTER::format)
-                .sortable()
-                .widthFactor(0.85)
-                .build();
+            .titleKey("table.clients.online_since")
+            .objectObservableValueFactory(Client::logonTimeProperty)
+            .toStringMapper(FORMATTER::format)
+            .sortable()
+            .widthFactor(0.85)
+            .build();
 
         this.<Duration>newColumnBuilder()
-                .title("Online for")
-                .objectObservableValueFactory(e -> new ImmutableObjectProperty<>(Duration.between(e.getLogonTime(), ZonedDateTime
-                        .now(ZoneId.of("Z")))))
-                .toStringMapper(AbstractClientsTableView::formatDuration)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("table.clients.online_for")
+            .objectObservableValueFactory(e -> new ImmutableObjectProperty<>(Duration.between(e.getLogonTime(), ZonedDateTime
+                    .now(ZoneId.of("Z")))))
+            .toStringMapper(AbstractClientsTableView::formatDuration)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.7)
+            .build();
     }
 
     private static String formatDuration(final Duration duration) {

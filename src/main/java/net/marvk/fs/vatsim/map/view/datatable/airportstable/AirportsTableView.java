@@ -23,23 +23,23 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
     @Override
     protected void initializeColumns() {
         this.<String>newColumnBuilder()
-                .title("ICAO")
-                .stringObservableValueFactory(Airport::icaoProperty)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.5)
-                .build();
+            .titleKey("common.icao")
+            .stringObservableValueFactory(Airport::icaoProperty)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.5)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Name")
-                .stringObservableValueFactory(AirportsTableView::airportName)
-                .sortable()
-                .mono(false)
-                .widthFactor(2.5)
-                .build();
+            .titleKey("table.airports.name")
+            .stringObservableValueFactory(AirportsTableView::airportName)
+            .sortable()
+            .mono(false)
+            .widthFactor(2.5)
+            .build();
 
         this.<Point2D>newColumnBuilder()
-            .title("Longitude")
+            .titleKey("table.airports.longitude")
             .objectObservableValueFactory(Airport::positionProperty)
             .toStringMapper(e -> GeomUtil.formatLon(e.getY()))
             .sortable(Comparator.comparingDouble(Point2D::getY))
@@ -48,7 +48,7 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
             .build();
 
         this.<Point2D>newColumnBuilder()
-            .title("Latitude")
+            .titleKey("table.airports.latitude")
             .objectObservableValueFactory(Airport::positionProperty)
             .toStringMapper(e -> GeomUtil.formatLat(e.getX()))
             .sortable(Comparator.comparingDouble(Point2D::getX))
@@ -57,56 +57,56 @@ public class AirportsTableView extends AbstractTableView<AirportsTableViewModel,
             .build();
 
         this.<String>newColumnBuilder()
-                .title("FIR")
-                .stringObservableValueFactory(AirportsTableView::firIcao)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.5)
-                .build();
+            .titleKey("common.fir")
+            .stringObservableValueFactory(AirportsTableView::firIcao)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.5)
+            .build();
 
         this.<Country>newColumnBuilder()
-                .title("Country")
-                .objectObservableValueFactory(Airport::countryProperty)
-                .toStringMapper(Country::getName)
-                .sortable()
-                .widthFactor(1.25)
-                .build();
+            .titleKey("table.airports.country")
+            .objectObservableValueFactory(Airport::countryProperty)
+            .toStringMapper(Country::getName)
+            .sortable()
+            .widthFactor(1.25)
+            .build();
 
         this.<Number>newColumnBuilder()
-                .title("Departures")
-                .objectObservableValueFactory(e -> e.getDeparting().sizeProperty())
-                .toStringMapper(AbstractTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("table.airports.departures")
+            .objectObservableValueFactory(e -> e.getDeparting().sizeProperty())
+            .toStringMapper(AbstractTableView::emptyIfZero)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
 
         this.<Number>newColumnBuilder()
-                .title("Arrivals")
-                .objectObservableValueFactory(e -> e.getArriving().sizeProperty())
-                .toStringMapper(AbstractTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("table.airports.arrivals")
+            .objectObservableValueFactory(e -> e.getArriving().sizeProperty())
+            .toStringMapper(AbstractTableView::emptyIfZero)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
 
         this.<Number>newColumnBuilder()
-                .title("Total")
-                .objectObservableValueFactory(Airport::trafficCountProperty)
-                .toStringMapper(AbstractTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("table.airports.total")
+            .objectObservableValueFactory(Airport::trafficCountProperty)
+            .toStringMapper(AbstractTableView::emptyIfZero)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
 
         this.<Number>newColumnBuilder()
-                .title("Controllers")
-                .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
-                .toStringMapper(AbstractTableView::emptyIfZero)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.85)
-                .build();
+            .titleKey("common.controller")
+            .objectObservableValueFactory(e -> e.getControllers().sizeProperty())
+            .toStringMapper(AbstractTableView::emptyIfZero)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.85)
+            .build();
     }
 
     private static ReadOnlyStringProperty firIcao(final Airport e) {

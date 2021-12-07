@@ -2,6 +2,7 @@ package net.marvk.fs.vatsim.map.view.map;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.ViewModel;
 import javafx.animation.Animation;
@@ -21,10 +22,7 @@ import net.marvk.fs.vatsim.map.view.SettingsScope;
 import net.marvk.fs.vatsim.map.view.StatusScope;
 import net.marvk.fs.vatsim.map.view.painter.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,7 +54,6 @@ public class MapViewModel implements ViewModel {
 
     private final MapVariables mapVariables = new MapVariables();
 
-    private final ContextMenuViewModel contextMenu = new ContextMenuViewModel();
 
     private final ObjectProperty<Data> selectedItem = new SimpleObjectProperty<>();
 
@@ -70,11 +67,16 @@ public class MapViewModel implements ViewModel {
 
     private FrameMetrics frameMetrics;
 
+    private ContextMenuViewModel contextMenu;
+
     @InjectScope
     private StatusScope statusScope;
 
     @InjectScope
     private SettingsScope settingsScope;
+
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
 
     private WorldPanTransition panTransition = null;
 
@@ -144,6 +146,8 @@ public class MapViewModel implements ViewModel {
     }
 
     public void initialize() {
+        this.contextMenu = new ContextMenuViewModel(resourceBundle);
+
         this.painterExecutors = executors(upperInformationRegionRepository);
 
         final ArrayList<String> names = painterExecutors

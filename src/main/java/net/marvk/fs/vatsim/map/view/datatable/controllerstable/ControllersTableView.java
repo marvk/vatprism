@@ -7,89 +7,87 @@ import net.marvk.fs.vatsim.map.view.datatable.clientstable.AbstractClientsTableV
 
 public class ControllersTableView extends AbstractClientsTableView<ControllersTableViewModel, Controller> {
 
-    private final LocationToStringVisitor locationToStringVisitor;
-    private final LocationTypeToStringVisitor locationTypeToStringVisitor;
-
     @Inject
     public ControllersTableView(final TextFlowHighlighter textFlowHighlighter) {
         super(textFlowHighlighter);
-        this.locationToStringVisitor = new LocationToStringVisitor();
-        this.locationTypeToStringVisitor = new LocationTypeToStringVisitor();
     }
 
     @Override
     protected void initializeColumns() {
         super.initializeColumns();
 
+        final LocationToStringVisitor locationToStringVisitor = new LocationToStringVisitor();
+        final LocationTypeToStringVisitor locationTypeToStringVisitor = new LocationTypeToStringVisitor();
+
         this.<ControllerRating>newColumnBuilder()
-                .title("Rating")
-                .objectObservableValueFactory(Controller::ratingProperty)
-                .toStringMapper(ControllerRating::getShortName)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("table.controllers.rating")
+            .objectObservableValueFactory(Controller::ratingProperty)
+            .toStringMapper(ControllerRating::getShortName)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.7)
+            .build();
 
         this.<Data>newColumnBuilder()
-                .title("Location")
-                .objectObservableValueFactory(Controller::workingLocationProperty)
-                .toStringMapper(locationTypeToStringVisitor::visit, true)
-                .sortable()
-                .mono(false)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("table.controllers.location")
+            .objectObservableValueFactory(Controller::workingLocationProperty)
+            .toStringMapper(locationTypeToStringVisitor::visit, true)
+            .sortable()
+            .mono(false)
+            .widthFactor(0.7)
+            .build();
 
         this.<Data>newColumnBuilder()
-                .title("ICAO")
-                .objectObservableValueFactory(Controller::workingLocationProperty)
-                .toStringMapper(locationToStringVisitor::visit, true)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("common.icao")
+            .objectObservableValueFactory(Controller::workingLocationProperty)
+            .toStringMapper(locationToStringVisitor::visit, true)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.7)
+            .build();
 
         this.<ControllerType>newColumnBuilder()
-                .title("Type")
-                .objectObservableValueFactory(Controller::controllerTypeProperty)
-                .toStringMapper(Enum::toString)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.5)
-                .build();
+            .titleKey("table.controllers.type")
+            .objectObservableValueFactory(Controller::controllerTypeProperty)
+            .toStringMapper(Enum::toString)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.5)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Frequency")
-                .stringObservableValueFactory(Controller::frequencyProperty)
-                .sortable()
-                .mono(true)
-                .widthFactor(0.7)
-                .build();
+            .titleKey("table.controllers.frequency")
+            .stringObservableValueFactory(Controller::frequencyProperty)
+            .sortable()
+            .mono(true)
+            .widthFactor(0.7)
+            .build();
     }
 
-    private static class LocationTypeToStringVisitor extends DefaultingDataVisitor<String> {
+    private class LocationTypeToStringVisitor extends DefaultingDataVisitor<String> {
         public LocationTypeToStringVisitor() {
-            super("Unknown");
+            super(resourceBundle.getString("common.unknown"));
         }
 
         @Override
         public String visit(final Airport airport) {
-            return "Airport";
+            return resourceBundle.getString("common.airport");
         }
 
         @Override
         public String visit(final FlightInformationRegionBoundary flightInformationRegionBoundary) {
-            return "FIR";
+            return resourceBundle.getString("common.fir");
         }
 
         @Override
         public String visit(final UpperInformationRegion upperInformationRegion) {
-            return "UIR";
+            return resourceBundle.getString("common.uir");
         }
     }
 
-    private static class LocationToStringVisitor extends DefaultingDataVisitor<String> {
+    private class LocationToStringVisitor extends DefaultingDataVisitor<String> {
         public LocationToStringVisitor() {
-            super("Unknown");
+            super(resourceBundle.getString("common.unknown"));
         }
 
         @Override

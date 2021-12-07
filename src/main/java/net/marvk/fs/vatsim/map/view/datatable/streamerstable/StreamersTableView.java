@@ -18,26 +18,26 @@ public class StreamersTableView extends AbstractClientsTableView<StreamersTableV
         super.initializeColumns();
 
         this.<ClientType>newColumnBuilder()
-                .title("Type")
-                .objectObservableValueFactory(Client::clientTypeProperty)
-                .toStringMapper(StreamersTableView::clientTypeToString)
-                .sortable()
-                .widthFactor(0.8)
-                .build();
+            .titleKey("common.type")
+            .objectObservableValueFactory(Client::clientTypeProperty)
+            .toStringMapper(this::clientTypeToString)
+            .sortable()
+            .widthFactor(0.8)
+            .build();
 
         this.<String>newColumnBuilder()
-                .title("Twitch Username")
-                .objectObservableValueFactory(e -> e.getUrls().twitchUrlProperty())
-                .toStringMapper(e -> e.replaceAll("(?:www\\.)?twitch\\.tv/", ""))
-                .sortable()
-                .widthFactor(2.0)
-                .build();
+            .titleKey("table.streamers.twitch_username")
+            .objectObservableValueFactory(e -> e.getUrls().twitchUrlProperty())
+            .toStringMapper(e -> e.replaceAll("(?:www\\.)?twitch\\.tv/", ""))
+            .sortable()
+            .widthFactor(2.0)
+            .build();
     }
 
-    private static String clientTypeToString(final ClientType e) {
+    private String clientTypeToString(final ClientType e) {
         return switch (e) {
-            case PILOT -> "Pilot";
-            case ATIS, CONTROLLER -> "Controller";
+            case PILOT -> resourceBundle.getString("common.pilot");
+            case ATIS, CONTROLLER -> resourceBundle.getString("common.controller");
         };
     }
 

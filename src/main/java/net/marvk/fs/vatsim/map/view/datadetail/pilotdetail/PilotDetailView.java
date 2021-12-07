@@ -1,5 +1,6 @@
 package net.marvk.fs.vatsim.map.view.datadetail.pilotdetail;
 
+import de.saxsys.mvvmfx.InjectResourceBundle;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.fxml.FXML;
@@ -17,9 +18,9 @@ import net.marvk.fs.vatsim.map.view.datadetail.flightplandetail.FlightPlanDetail
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pilot>, Pilot> {
-    private static final EtaToStringMapper ETA_MAPPER = new EtaToStringMapper();
     @FXML
     private Label firName;
     @FXML
@@ -48,6 +49,17 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
 
     @FXML
     private FlightPlanDetailView flightPlanController;
+
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
+    private EtaToStringMapper etaToStringMapper;
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        etaToStringMapper = new EtaToStringMapper(resourceBundle);
+    }
 
     @Override
     protected List<TextArea> textAreas() {
@@ -83,7 +95,7 @@ public class PilotDetailView extends DataDetailSubView<DataDetailSubViewModel<Pi
         flightPlanController.getViewModel().setData(pilot.getFlightPlan());
         clientController.getViewModel().setData(pilot);
         eta.textProperty().bind(Bindings.createStringBinding(
-                () -> ETA_MAPPER.map(pilot.getEta()),
+                () -> etaToStringMapper.map(pilot.getEta()),
                 pilot.etaProperty()
         ));
         verticalSpeed.textProperty().bind(Bindings.createStringBinding(

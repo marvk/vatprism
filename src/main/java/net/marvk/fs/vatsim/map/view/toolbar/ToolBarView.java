@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
@@ -30,9 +31,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private final PreferencesView preferencesView;
+    @FXML
+    private Label inDevelopmentHint;
     @FXML
     private ToggleButton pilots;
     @FXML
@@ -95,6 +99,9 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @InjectContext
     private Context context;
 
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
     @Inject
     public ToolBarView(final PreferencesView preferencesView) {
         this.preferencesView = preferencesView;
@@ -103,6 +110,10 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private RotateTransition reloadRotateTransition;
 
     public void initialize() {
+        inDevelopmentHint.setText(
+                inDevelopmentHint.getText().replace("{vatprism}", resourceBundle.getString("common.vatprism"))
+        );
+
         container.sceneProperty().addListener((observable, oldValue, newValue) -> setupWindowBindings(newValue));
 
         painterToggles().forEach(this::setupToggle);

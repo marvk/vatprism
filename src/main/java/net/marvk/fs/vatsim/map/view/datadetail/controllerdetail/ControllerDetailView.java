@@ -41,12 +41,13 @@ public class ControllerDetailView extends DataDetailSubView<ControllerDetailView
     @FXML
     private ClientDetailView clientController;
 
-    private final NameVisitor nameVisitor = new NameVisitor();
     private final IcaoVisitor icaoVisitor = new IcaoVisitor("????");
+    private NameVisitor nameVisitor;
 
     @Override
     public void initialize() {
         super.initialize();
+        nameVisitor = new NameVisitor(resourceBundle);
         atis.setOnMouseClicked(atisPane::fireEvent);
     }
 

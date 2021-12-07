@@ -21,6 +21,7 @@ import net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail.Uppe
 import net.marvk.fs.vatsim.map.view.datadetail.upperinformationregiondetail.UpperInformationRegionDetailViewModel;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class DataDetailView implements FxmlView<DataDetailViewModel> {
     @FXML
@@ -44,11 +45,15 @@ public class DataDetailView implements FxmlView<DataDetailViewModel> {
     @InjectContext
     private Context context;
 
-    private final NameVisitor nameVisitor = new NameVisitor();
+    @InjectResourceBundle
+    private ResourceBundle resourceBundle;
+
+    private NameVisitor nameVisitor;
 
     private PaneManager paneManager;
 
     public void initialize() {
+        nameVisitor = new NameVisitor(resourceBundle);
         paneManager = new PaneManager(context);
 
         viewModel.dataProperty().addListener((observable, oldValue, newValue) -> dataChanged(newValue));

@@ -46,16 +46,25 @@ public class OnboardingViewModel implements ViewModel {
     }
 
     enum Theme {
-        LIGHT("Light"), DARK("Dark"), CLASSIC_SEPIA("Classic Sepia"), EARTH("Earth");
+        LIGHT("Light", "onboarding.theme.light"),
+        DARK("Dark", "onboarding.theme.dark"),
+        CLASSIC_SEPIA("Classic Sepia", "onboarding.theme.classic_sepia"),
+        EARTH("Earth", "onboarding.theme.earth");
 
         private final String themeName;
+        private final String resourceBundleKey;
 
-        Theme(final String name) {
+        Theme(final String name, final String resourceBundleKey) {
             this.themeName = name;
+            this.resourceBundleKey = resourceBundleKey;
         }
 
         public String getThemeName() {
             return themeName;
+        }
+
+        public String getResourceBundleKey() {
+            return resourceBundleKey;
         }
     }
 }

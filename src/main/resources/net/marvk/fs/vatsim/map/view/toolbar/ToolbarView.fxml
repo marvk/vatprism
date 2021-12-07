@@ -142,7 +142,7 @@
         <!--        </ToggleButton>-->
         <Region HBox.hgrow="ALWAYS"/>
 <!--        <Label style="-fx-font-weight: bold" text="VATprism"/>-->
-        <Label text="%toolbar.in_development_hint">
+        <Label fx:id="inDevelopmentHint" text="%toolbar.in_development_hint">
             <padding>
                 <Insets right="10.0"/>
             </padding>
