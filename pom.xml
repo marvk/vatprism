@@ -60,7 +60,7 @@
 
         <java.version>15</java.version>
         <lombok.version>1.18.22</lombok.version>
-        <javafx.version>16</javafx.version>
+        <javafx.version>17.0.1</javafx.version>
         <slf4j.version>1.7.32</slf4j.version>
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.1</guice.version>
@@ -75,7 +75,6 @@
         <semver.version>0.9.0</semver.version>
         <jipsy.version>0.6.0</jipsy.version>
         <reflections.version>0.10.2</reflections.version>
-
 
         <jpackage.args.crossPlatform>
             --input "target-fat-jar/"
