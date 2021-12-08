@@ -46,7 +46,7 @@
 
     <properties>
         <!--Defaults, should be passed as command line argument for real builds-->
-        <versionName>0.2.1</versionName>
+        <versionName>0.2.0</versionName>
         <buildNumber>1</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
@@ -67,6 +67,16 @@
         <ikonli.version>12.2.0</ikonli.version>
         <log4j.version>2.17.0</log4j.version>
         <geotools.version>25.1</geotools.version>
+        <vatsim-api.version>0.1.0-SNAPSHOT</vatsim-api.version>
+        <junit.version>5.8.1</junit.version>
+        <preferencesfx.version>11.8.0</preferencesfx.version>
+        <appdirs.version>1.2.1</appdirs.version>
+        <rtree2.version>0.9-RC1</rtree2.version>
+        <semver.version>0.9.0</semver.version>
+        <jipsy.version>0.6.0</jipsy.version>
+        <reflections.version>0.10.2</reflections.version>
+
+
         <jpackage.args.crossPlatform>
             --input "target-fat-jar/"
             --name "${project.name}"
@@ -189,7 +199,7 @@
         <dependency>
             <groupId>net.marvk.fs</groupId>
             <artifactId>vatsim-api</artifactId>
-            <version>0.2.0</version>
+            <version>${vatsim-api.version}</version>
         </dependency>
 
         <dependency>
@@ -258,44 +268,44 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.8.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.dlsc.preferencesfx</groupId>
             <artifactId>preferencesfx-core</artifactId>
-            <version>11.8.0</version>
+            <version>${preferencesfx.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.harawata</groupId>
             <artifactId>appdirs</artifactId>
-            <version>1.2.1</version>
+            <version>${appdirs.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.davidmoten</groupId>
             <artifactId>rtree2</artifactId>
-            <version>0.9-RC1</version>
+            <version>${rtree2.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.zafarkhaja</groupId>
             <artifactId>java-semver</artifactId>
-            <version>0.9.0</version>
+            <version>${semver.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.kordamp.jipsy</groupId>
             <artifactId>jipsy</artifactId>
-            <version>0.6.0</version>
+            <version>${jipsy.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
+            <version>${reflections.version}</version>
         </dependency>
     </dependencies>
 
