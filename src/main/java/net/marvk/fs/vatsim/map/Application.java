@@ -19,7 +19,7 @@ public final class Application {
 
     public static void main(final String[] args) throws IOException {
         reconfigureLogger();
-        new SystemInformationLogger().log();
+        SystemInformationLogger.logGeneralInformation();
         App.main(args);
     }
 
@@ -31,14 +31,29 @@ public final class Application {
     }
 
     @Log4j2
-    private static class SystemInformationLogger {
-        public void log() {
+    private static final class SystemInformationLogger {
+        private SystemInformationLogger() {
+            throw new AssertionError("No instances of utility class " + SystemInformationLogger.class);
+        }
+
+        public static void logGeneralInformation() {
             log.info("VATprism version:   %s".formatted(new VersionProvider().getString()));
-            log.info("Operating system:   %s".formatted(System.getProperty("os.name")));
-            log.info("Available cores:    %s".formatted(Runtime.getRuntime().availableProcessors()));
-            log.info("Total JVM memory:   %s".formatted(Runtime.getRuntime().freeMemory()));
-            log.info("Maximum JVM memory: %s".formatted(Runtime.getRuntime().maxMemory()));
-            log.info("Total JVM memory:   %s".formatted(Runtime.getRuntime().totalMemory()));
+            log.info("Operating system:   %s (%s)".formatted(System.getProperty("os.name"), System.getProperty("os.arch")));
+            log.info("Available threads:  %s".formatted(Runtime.getRuntime().availableProcessors()));
+            log.info("JVM Free memory:    %s".formatted(toMbString(Runtime.getRuntime().freeMemory())));
+            log.info("JVM Maximum memory: %s".formatted(toMbString(Runtime.getRuntime().maxMemory())));
+            log.info("JVM Total memory:   %s".formatted(toMbString(Runtime.getRuntime().totalMemory())));
+            log.info("JRE Version         %s".formatted(System.getProperty("java.version")));
+            log.info("JRE Vendor          %s (%s)".formatted(System.getProperty("java.vendor"), System.getProperty("java.vendor.url")));
+            log.info("JRE Home            %s".formatted(System.getProperty("java.home")));
+            log.info("JVM Version         %s".formatted(System.getProperty("java.vm.version")));
+            log.info("JVM Vendor          %s".formatted(System.getProperty("java.vm.vendor")));
+            log.info("JVM Name            %s".formatted(System.getProperty("java.vm.name")));
+            log.info("Java Class Version  %s".formatted(System.getProperty("java.class.version")));
+        }
+
+        private static String toMbString(final long l) {
+            return Long.toString(l / 1000000) + "MB";
         }
     }
 }
