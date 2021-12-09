@@ -4,10 +4,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-import com.google.inject.name.Names;
+import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,13 +18,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(VatsimApiUrlProvider.class).to(UrlProviderV3.class).in(Singleton.class);
-        bind(VatsimApiDataSource.class).annotatedWith(Names.named("httpDataSource"))
-                                       .to(HttpDataSource.class)
-                                       .in(Singleton.class);
         bind(VatsimApiDataSource.class).to(ProxyDataSource.class).in(Singleton.class);
         bind(AirportRepository.class).in(Singleton.class);
         bind(ClientRepository.class).in(Singleton.class);
@@ -39,6 +39,31 @@ public class AppModule extends AbstractModule {
         bind(Preferences.class).to(ConfigFilePreferences.class).asEagerSingleton();
         bind(PreferencesView.class).asEagerSingleton();
         bind(TimeProvider.class).toInstance(new UpdatingTimeProvider(Duration.ofMinutes(1), true));
+    }
+
+    @Provides
+    @Singleton
+    private CloseableHttpClient closableHttpClient(@Named("userAgent") final String userAgent) {
+        return HttpClientBuilder
+                .create()
+                .setUserAgent(userAgent)
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    @Named("userAgent")
+    private String userAgent(final VersionProvider versionProvider) {
+        final String userAgent = "VATprism-Client/%s".formatted(versionProvider.getString());
+        log.info("User Agent: %s".formatted(userAgent));
+        return userAgent;
+    }
+
+    @Provides
+    @Singleton
+    @Named("httpDataSource")
+    private VatsimApiDataSource vatsimApiDataSource(final CloseableHttpClient closeableHttpClient) {
+        return new HttpDataSource(closeableHttpClient);
     }
 
     @Provides

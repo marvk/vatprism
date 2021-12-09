@@ -16,6 +16,7 @@
   startup ([#53](https://github.com/marvk/vatprism/issues/55))
 - Added countries to FIR table in upper UIR detail view
 - Added indicator for FIRs with active controller to FIR table in upper UIR detail view
+- Accelerated requests to the VATSIM API
 
 ### Changed
 
@@ -24,6 +25,7 @@
 - Debounced preferences file writing: Previously, the file would be written on every preference change, now, when
   multiple changes are made in quick succession, writing will take place only if no changes are detected for one second
   or when the application shuts down gracefully
+- VATprism is now sending a non-default user agent to the VATSIM API
 
 ### Fixed
 
