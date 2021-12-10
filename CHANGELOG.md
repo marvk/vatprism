@@ -17,6 +17,8 @@
 - Added countries to FIR table in upper UIR detail view
 - Added indicator for FIRs with active controller to FIR table in upper UIR detail view
 - Accelerated requests to the VATSIM API
+- Accelerated startup times by caching unchanged static map data
+- Added toggle to enable and disable static map data cache
 
 ### Changed
 
@@ -26,6 +28,8 @@
   multiple changes are made in quick succession, writing will take place only if no changes are detected for one second
   or when the application shuts down gracefully
 - VATprism is now sending a non-default user agent to the VATSIM API
+- VATprism will now cache static map data by default while still updating map data when required
+- Slightly darkened info hint font in preferences to increase contrast
 
 ### Fixed
 

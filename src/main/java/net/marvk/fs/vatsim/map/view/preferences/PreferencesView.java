@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Singleton
 @Log4j2
 public class PreferencesView {
-    private static final String INFO_STYLE = "-fx-text-fill: #aaaaaa; -fx-font-size: 10;";
+    private static final String INFO_STYLE = "-fx-text-fill: #888888; -fx-font-size: 10;";
     private static final String WARNING_STYLE = "-fx-text-fill: darkred; -fx-font-weight: bold; -fx-font-size: 10;";
     private final Preferences preferences;
     private final SettingsScope settingsScope;
@@ -136,6 +136,7 @@ public class PreferencesView {
         final IntegerProperty property = preferences.integerProperty("general.map_font_size");
         final DoubleProperty scrollSpeed = preferences.doubleProperty("general.scroll_speed");
         final BooleanProperty social = preferences.booleanProperty("general.social");
+        final BooleanProperty cacheMapData = preferences.booleanProperty("general.use_map_data_cache");
 
         final BooleanProperty debug = preferences.booleanProperty("general.debug");
         final BooleanProperty prereleases = preferences.booleanProperty("general.prereleases");
@@ -156,11 +157,13 @@ public class PreferencesView {
         return Category.of(
                 "General",
                 Group.of(
-                        Setting.of("Remember last position on startup", preferences.booleanProperty("window.rememberLastPosition")),
+                        Setting.of("Remember last window position on startup", preferences.booleanProperty("window.rememberLastPosition")),
                         Setting.of("UI Font Size", uiFontSize, 4, 72),
                         Setting.of("Map Font Size", property, 4, 72),
                         Setting.of("Scroll Speed", scrollSpeed, 1.1, 16, 2),
-                        Setting.of("Show Twitch Stream Links", social),
+                        Setting.of("Show Twitch stream links", social),
+                        Setting.of("Cache static map data", cacheMapData),
+                        Setting.of(infoLabel("Accelerates startup time, outdated map data will still be updated automatically", INFO_STYLE)),
                         Setting.of(openConfigDirectory)
                 ),
                 Group.of("Advanced",

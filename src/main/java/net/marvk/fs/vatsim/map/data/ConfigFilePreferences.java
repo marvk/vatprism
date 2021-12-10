@@ -53,6 +53,8 @@ public class ConfigFilePreferences implements Preferences, Writable {
         doubleProperty("window.height");
 
         booleanProperty("general.debug", false);
+        booleanProperty("general.use_map_data_cache", true);
+        integerProperty("general.map_data_cache_ttl", (int) Duration.ofDays(7).toSeconds());
         booleanProperty("general.social", true);
         booleanProperty("general.auto_reload", false);
         integerProperty("general.font_size", 12);
