@@ -6,7 +6,7 @@
 
     <groupId>net.marvk.fs</groupId>
     <artifactId>vatsim-map</artifactId>
-    <version>0.3.0</version>
+    <version>${versionName}</version>
 
     <name>VATprism</name>
     <description>VATprism is a data explorer for VATSIM, the Virtual Air Traffic Simulation Network. VATprism allows
@@ -46,7 +46,7 @@
 
     <properties>
         <!--Defaults, should be passed as command line argument for real builds-->
-        <versionName>${project.version}</versionName>
+        <versionName>DEV</versionName>
         <buildNumber>1</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
