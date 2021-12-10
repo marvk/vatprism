@@ -65,7 +65,7 @@
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.1</guice.version>
         <ikonli.version>12.2.0</ikonli.version>
-        <log4j.version>2.14.1</log4j.version>
+        <log4j.version>2.15.0</log4j.version>
         <geotools.version>25.1</geotools.version>
         <jpackage.args.crossPlatform>
             --input "target-fat-jar/"
