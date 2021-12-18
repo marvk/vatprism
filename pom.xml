@@ -46,7 +46,7 @@
 
     <properties>
         <!--Defaults, should be passed as command line argument for real builds-->
-        <versionName>0.2.0</versionName>
+        <versionName>0.2.1</versionName>
         <buildNumber>1</buildNumber>
 
         <mainClass>net.marvk.fs.vatsim.map.Application</mainClass>
@@ -65,7 +65,7 @@
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.1</guice.version>
         <ikonli.version>12.2.0</ikonli.version>
-        <log4j.version>2.14.1</log4j.version>
+        <log4j.version>2.17.0</log4j.version>
         <geotools.version>25.1</geotools.version>
         <jpackage.args.crossPlatform>
             --input "target-fat-jar/"
@@ -189,7 +189,7 @@
         <dependency>
             <groupId>net.marvk.fs</groupId>
             <artifactId>vatsim-api</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.2.0</version>
         </dependency>
 
         <dependency>

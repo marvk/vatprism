@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1](https://github.com/marvk/vatprism/compare/v0.2.0...v0.2.1) - 2021-12-18
+
+### Security
+
+- Critical: Updated Log4j to 2.17.0 to prevent the [Log4Shell](https://en.wikipedia.org/wiki/Log4Shell) exploit 
+
 ## [0.2.0](https://github.com/marvk/vatprism/compare/v0.1.0...v0.2.0) - 2021-09-17
 
 ### Added
