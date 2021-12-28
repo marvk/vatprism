@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.3.0](https://github.com/marvk/vatprism/compare/v0.2.0...v0.3.0) - 2021-12-13
+## [0.3.0](https://github.com/marvk/vatprism/compare/v0.2.0...v0.3.0) - 2021-12-28
 
 ### Added
 
 - Ability to turn off labels on uncontrolled airports and uncontrolled airports with arrivals and/or departures
 - Added button to close the preloader after an issue occurred ([#66](https://github.com/marvk/vatprism/issues/66))
-- Added tooltip for airline information like name, ICAO, callsign and country when hovering over a callsign
+- Added tooltip for airline information like name, ICAO, callsign and country when hovering over the callsign in the flight detail view
 - Context menus now correctly reflect what is painted on the map ([#53](https://github.com/marvk/vatprism/issues/53))
 - Context menus now communicate how many items of a certain type aren't displayed if there are too many items inside the
   selection circle ([#53](https://github.com/marvk/vatprism/issues/53))
