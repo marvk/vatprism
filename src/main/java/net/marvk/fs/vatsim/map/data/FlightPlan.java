@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
     private static final Pattern ALTITUDE_PATTERN = Pattern.compile("^(?<prefix>FL|F)?(?<amount>\\d+)$", Pattern.CASE_INSENSITIVE);
     private static final Pattern AIRCRAFT_PATTERN = Pattern.compile("^(?:./)?(...[^/-]{0,2})(?:[/-].*)?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HOURS_MINUTES = Pattern.compile("\\d{4}");
     private final Pilot pilot;
 
     private final StringProperty aircraft = new SimpleStringProperty();
@@ -51,8 +52,8 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
         departureTime.set(parseDepartureTime(model.getDepartureTime()));
         altitude.set(parseAltitude(model.getAltitude()));
         trueCruiseAirspeed.set(model.getCruiseTas());
-        enrouteProperty.set(parseDuration(model.getEnrouteTime()));
-        fuelProperty.set(parseDuration(model.getFuelTime()));
+        enrouteProperty.set(parseDurationOrNull(model.getEnrouteTime()));
+        fuelProperty.set(parseDurationOrNull(model.getFuelTime()));
 
         plannedRoute.set(model.getRoute());
         remarks.set(model.getRemarks());
@@ -248,6 +249,16 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
     private boolean isDomesticAirportsAndCountriesNullable() {
         return getDepartureAirport().getCountry().equals(getArrivalAirport().getCountry());
+    }
+
+    private static Duration parseDurationOrNull(final String hoursMinutes) {
+        if (hoursMinutes != null && HOURS_MINUTES.matcher(hoursMinutes).matches()) {
+            return parseDuration(hoursMinutes);
+        }
+
+        log.warn("Failed to parse duration %s".formatted(hoursMinutes));
+
+        return null;
     }
 
     private static Duration parseDuration(final String hoursMinutes) {

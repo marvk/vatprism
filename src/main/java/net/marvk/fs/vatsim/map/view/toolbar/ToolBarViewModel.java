@@ -107,4 +107,8 @@ public class ToolBarViewModel implements ViewModel {
     public void visitUsageGuide() {
         hostServices.showDocument("https://vatprism.org/usage-guide");
     }
+
+    public void visitChangelog() {
+        hostServices.showDocument("https://github.com/marvk/vatprism/blob/master/CHANGELOG.md");
+    }
 }

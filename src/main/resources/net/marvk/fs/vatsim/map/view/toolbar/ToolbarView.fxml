@@ -141,6 +141,8 @@
         <!--            </graphic>-->
         <!--        </ToggleButton>-->
         <Region HBox.hgrow="ALWAYS"/>
+        <Label styleClass="hyperlink-label" text="Changelog" onMouseClicked="#openChangelog"/>
+        <Separator orientation="VERTICAL"/>
         <Label style="-fx-font-weight: bold" text="VATprism"/>
         <Label text=" is still in Development. Join the discourse!">
             <padding>
@@ -181,7 +183,7 @@
                 <FontIcon iconLiteral="oct-bug-16" iconSize="24"/>
             </graphic>
         </ToggleButton>
-        <Button styleClass="icon-button" onAction="#showUsageGuide" mnemonicParsing="false">
+        <Button styleClass="icon-button" onAction="#openUsageGuide" mnemonicParsing="false">
             <tooltip>
                 <Tooltip text="Usage Guide"/>
             </tooltip>

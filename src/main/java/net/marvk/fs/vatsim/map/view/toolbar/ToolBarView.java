@@ -243,7 +243,12 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     }
 
     @FXML
-    private void showUsageGuide() {
+    private void openUsageGuide() {
         viewModel.visitUsageGuide();
+    }
+
+    @FXML
+    private void openChangelog() {
+        viewModel.visitChangelog();
     }
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.1](https://github.com/marvk/vatprism/compare/v0.3.0...v0.3.1) - 2022-01-02
+
+### Added
+
+- Changelog button in the toolbar
+
+### Fixed
+
+- Fixed parsing issue with invalid fuel remaining and enroute times preventing application startup
+
 ## [0.3.0](https://github.com/marvk/vatprism/compare/v0.2.0...v0.3.0) - 2021-12-28
 
 ### Added
