@@ -7,7 +7,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.TextFlow;
+import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.data.Data;
+import net.marvk.fs.vatsim.map.data.ImmutableObjectProperty;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 
 import java.util.Comparator;
@@ -15,6 +17,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Log4j2
 public class ColumnBuilderFactory<Model extends Data> {
     private final SimpleTableViewModel<Model> viewModel;
     private final TextFlowHighlighter textFlowHighlighter;
@@ -109,12 +112,24 @@ public class ColumnBuilderFactory<Model extends Data> {
 
         @Override
         public void build() {
-            result.setCellValueFactory(param -> valueFactory.apply(param.getValue(), viewModel.queryProperty()));
+            result.setCellValueFactory(this::valueOrNullPropertyProperty);
             result.setCellFactory(param -> new DataTableCell<>((cellValue, query) -> textFlowAdjusted(stringMapper.apply(cellValue, query), mono), valueNullable));
             result.setReorderable(false);
             result.prefWidthProperty()
                   .bind(viewModel.fontSizeProperty().divide(12.0).multiply(100.0).multiply(widthFactor));
             columnConsumer.accept(result);
+        }
+
+        /*
+         * TODO Band aid fix for bad api data
+         */
+        private ObservableValue<CellValue> valueOrNullPropertyProperty(final TableColumn.CellDataFeatures<Model, CellValue> param) {
+            try {
+                return valueFactory.apply(param.getValue(), viewModel.queryProperty());
+            } catch (final Exception e) {
+                log.error("Unexpected error while calculating cell value", e);
+                return new ImmutableObjectProperty<>(null);
+            }
         }
 
         private TextFlow textFlowAdjusted(final String cellValue, final boolean mono) {

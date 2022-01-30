@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.2](https://github.com/marvk/vatprism/compare/v0.3.1...v0.3.2) - 2022-01-30
+
+### Fixed
+
+- VATprism no longer crashes on startup when the API serves bad `logon_time` client data
+
 ## [0.3.1](https://github.com/marvk/vatprism/compare/v0.3.0...v0.3.1) - 2022-01-02
 
 ### Added

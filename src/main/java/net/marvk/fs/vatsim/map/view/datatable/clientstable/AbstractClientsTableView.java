@@ -56,13 +56,20 @@ public abstract class AbstractClientsTableView<ViewModel extends SimpleTableView
 
         this.<Duration>newColumnBuilder()
                 .title("Online for")
-                .objectObservableValueFactory(e -> new ImmutableObjectProperty<>(Duration.between(e.getLogonTime(), ZonedDateTime
-                        .now(ZoneId.of("Z")))))
+                .objectObservableValueFactory(this::onlineForProperty)
                 .toStringMapper(AbstractClientsTableView::formatDuration)
                 .sortable()
                 .mono(true)
                 .widthFactor(0.7)
                 .build();
+    }
+
+    private ImmutableObjectProperty<Duration> onlineForProperty(final Data e) {
+        if (e.getLogonTime() == null) {
+            return null;
+        }
+
+        return new ImmutableObjectProperty<>(Duration.between(e.getLogonTime(), ZonedDateTime.now(ZoneId.of("Z"))));
     }
 
     private static String formatDuration(final Duration duration) {
