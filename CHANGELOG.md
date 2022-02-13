@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.3](https://github.com/marvk/vatprism/compare/v0.3.2...v0.3.3) - 2022-02-13
+
+### Fixed
+
+- Fixed an issue where filters wouldn't show planes with specific statuses ([#92](https://github.com/marvk/vatprism/issues/92))
+
+### Security
+
+- Update to Log4j (2.17.0 -> 2.17.1)
+
 ## [0.3.2](https://github.com/marvk/vatprism/compare/v0.3.1...v0.3.2) - 2022-01-30
 
 ### Fixed

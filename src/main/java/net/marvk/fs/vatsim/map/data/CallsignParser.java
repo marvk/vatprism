@@ -43,6 +43,7 @@ public class CallsignParser {
             return Result.EMPTY;
         }
 
+//        final String callsign = "LON_N_CTR";
         final String callsign = controller.getCallsign();
         final String cid = controller.getCid();
 
@@ -72,6 +73,10 @@ public class CallsignParser {
             log.warn("Unexpected callsign " + callsign);
             return Result.EMPTY;
         }
+
+//        System.out.println("identifier = " + identifier);
+//        System.out.println("infix = " + infix);
+//        System.out.println("controllerType = " + controllerType);
 
         Airport airport = null;
         UpperInformationRegion uir = null;
@@ -105,13 +110,18 @@ public class CallsignParser {
             }
         }
 
-        return new Result(
+        final Result result = new Result(
                 controllerType,
                 airport,
                 fir.flightInformationRegionBoundary,
                 fir.flightInformationRegion,
                 uir
         );
+
+//        System.out.println(result);
+
+
+        return result;
     }
 
     private FirResult getFir(final VatsimController controller, final String identifier, final String infix, final ControllerType controllerType) {

@@ -82,6 +82,7 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
             return byUnknown1(noInfix.getResult(), identifier, infix);
         }
 
+        // TODO swap these two blocks i think
         final QueryResult withInfix = query(list, identifier + "_" + infix, FlightInformationRegion::prefixPositionProperty);
         if (withInfix.isOneResult()) {
             return withInfix.getResult();
@@ -139,10 +140,21 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
                 .stream()
                 .filter(e -> equalsIgnoreCaseAndDividers(queryExtractor.apply(e).get(), identifier))
                 .collect(Collectors.toList());
-        return new FlightInformationRegionRepository.QueryResult(byPrefixPosition);
+        final QueryResult queryResult = new QueryResult(byPrefixPosition);
+        if (queryResult.result.size() > 1) {
+            System.out.println(identifier);
+            queryResult.result.forEach(System.out::println);
+            System.out.println(queryResult.result.size());
+        }
+
+        return queryResult;
     }
 
     private static boolean equalsIgnoreCaseAndDividers(final String nullableString, final String string) {
+//        if (nullableString.contains("LON")) {
+//            System.out.println(nullableString);
+//        }
+
         if (nullableString == null) {
             return false;
         }
