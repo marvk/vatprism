@@ -82,7 +82,6 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
             return byUnknown1(noInfix.getResult(), identifier, infix);
         }
 
-        // TODO swap these two blocks i think
         final QueryResult withInfix = query(list, identifier + "_" + infix, FlightInformationRegion::prefixPositionProperty);
         if (withInfix.isOneResult()) {
             return withInfix.getResult();

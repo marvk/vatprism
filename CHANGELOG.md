@@ -1,10 +1,16 @@
 # Changelog
 
-## [0.3.3](https://github.com/marvk/vatprism/compare/v0.3.2...v0.3.3) - 2022-02-13
+## [0.3.4](https://github.com/marvk/vatprism/compare/v0.3.3...v0.3.4) - 2022-02-17
 
 ### Fixed
 
 - Fixed an issue where filters wouldn't show planes with specific statuses ([#92](https://github.com/marvk/vatprism/issues/92))
+
+## [0.3.3](https://github.com/marvk/vatprism/compare/v0.3.2...v0.3.3) - 2022-02-13
+
+### Fixed
+
+- ~~Fixed an issue where filters wouldn't show planes with specific statuses ([#92](https://github.com/marvk/vatprism/issues/92))~~
 
 ### Security
 

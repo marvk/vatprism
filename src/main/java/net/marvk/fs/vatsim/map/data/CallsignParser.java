@@ -43,7 +43,6 @@ public class CallsignParser {
             return Result.EMPTY;
         }
 
-//        final String callsign = "LON_N_CTR";
         final String callsign = controller.getCallsign();
         final String cid = controller.getCid();
 

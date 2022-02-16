@@ -191,22 +191,23 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
     }
 
     private boolean testFlightStatus(final Pilot pilot) {
-        if (pilot.getEta().is(Eta.Status.ARRIVING)) {
-            return flightStatuses.test(FlightStatus.ARRIVING);
-        }
-        if (pilot.getEta().is(Eta.Status.DEPARTING)) {
-            return flightStatuses.test(FlightStatus.DEPARTING);
-        }
-        if (pilot.getEta().is(Eta.Status.UNKNOWN)) {
-            return flightStatuses.test(FlightStatus.UNKNOWN);
-        }
-        if (pilot.getEta().is(Eta.Status.EN_ROUTE)) {
-            return flightStatuses.test(FlightStatus.ENROUTE);
-        }
-        return false;
+        return flightStatuses.matchesAll() ||
+                testSingleFlightStatus(pilot, Eta.Status.UNKNOWN, FlightStatus.UNKNOWN) ||
+                testSingleFlightStatus(pilot, Eta.Status.ARRIVING, FlightStatus.ARRIVING) ||
+                testSingleFlightStatus(pilot, Eta.Status.DEPARTING, FlightStatus.DEPARTING) ||
+                testSingleFlightStatus(pilot, Eta.Status.GROUND, FlightStatus.GROUND) ||
+                testSingleFlightStatus(pilot, Eta.Status.EN_ROUTE, FlightStatus.ENROUTE) ||
+                testSingleFlightStatus(pilot, Eta.Status.MID_AIR, FlightStatus.MIDAIR);
+    }
+
+    private boolean testSingleFlightStatus(final Pilot pilot, final Eta.Status status, final FlightStatus flightStatus) {
+        return pilot.getEta().is(status) && flightStatuses.test(flightStatus);
     }
 
     private boolean testFlightTypes(final Pilot pilot) {
+        if (flightTypes.matchesAll()) {
+            return true;
+        }
         if (pilot.getFlightPlan().isDomestic()) {
             return flightTypes.test(FlightType.DOMESTIC);
         }
@@ -217,18 +218,16 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
     }
 
     private boolean testFlightRules(final Pilot pilot) {
-        return testFlightRule(pilot, FlightRule.UNKNOWN) &&
-                testFlightRule(pilot, FlightRule.IFR) &&
-                testFlightRule(pilot, FlightRule.VFR) &&
-                testFlightRule(pilot, FlightRule.DVFR) &&
-                testFlightRule(pilot, FlightRule.SVFR);
+        return flightRules.matchesAll() ||
+                testSingleFlightRule(pilot, FlightRule.UNKNOWN) ||
+                testSingleFlightRule(pilot, FlightRule.IFR) ||
+                testSingleFlightRule(pilot, FlightRule.VFR) ||
+                testSingleFlightRule(pilot, FlightRule.DVFR) ||
+                testSingleFlightRule(pilot, FlightRule.SVFR);
     }
 
-    private boolean testFlightRule(final Pilot pilot, final FlightRule flightRule) {
-        if (pilot.getFlightPlan().getFlightRule() == flightRule) {
-            return flightRules.test(flightRule);
-        }
-        return true;
+    private boolean testSingleFlightRule(final Pilot pilot, final FlightRule flightRule) {
+        return pilot.getFlightPlan().getFlightRule() == flightRule && flightRules.test(flightRule);
     }
 
     private boolean testAirport(final StringPredicateListPredicate predicate, final Airport airport) {
@@ -380,9 +379,13 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
             this(collection.isEmpty() ? Collections.emptySet() : EnumSet.copyOf(collection));
         }
 
+        public boolean matchesAll() {
+            return set == null || set.isEmpty();
+        }
+
         @Override
         public boolean test(final E e) {
-            return set == null || set.isEmpty() || set.contains(e);
+            return matchesAll() || set.contains(e);
         }
     }
 
@@ -394,21 +397,12 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
         }
 
         public boolean matchesAll() {
-            return predicates.isEmpty();
+            return predicates == null || predicates.isEmpty();
         }
 
         @Override
         public boolean test(final String s) {
-            if (predicates == null || predicates.isEmpty()) {
-                return true;
-            }
-
-            for (final StringPredicate predicate : predicates) {
-                if (predicate.test(s)) {
-                    return true;
-                }
-            }
-            return false;
+            return matchesAll() || predicates.stream().anyMatch(predicate -> predicate.test(s));
         }
     }
 
@@ -495,9 +489,11 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
 
     public enum FlightStatus {
         UNKNOWN,
+        GROUND,
         DEPARTING,
+        ARRIVING,
         ENROUTE,
-        ARRIVING
+        MIDAIR
     }
 
     public enum FlightType {
