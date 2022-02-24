@@ -18,7 +18,7 @@ the [VAT-Spy Client Data Update Project](https://github.com/vatsimnetwork/vatspy
 
 #### Why does the text in VATprism look all scrambled?
 
-[![](assets/images/faq/scrambled_text.png)](assets/images/faq/scrambled_text.png)
+[![Scrambled Text Issue](assets/images/faq/scrambled_text.png)](assets/images/faq/scrambled_text.png)
 
 ### Answer:
 

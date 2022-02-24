@@ -4,3 +4,4 @@ show_downloads: true
 logo: https://i.imgur.com/orfmevM.png
 plugins:
   - jekyll-sitemap
+  - jekyll-seo-tag

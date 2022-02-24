@@ -31,7 +31,7 @@ amount of filters, marking flights you are interested in with any color you pref
 
 ## Showcase
 
-[![](assets/images/showcase/overview.png)](assets/images/showcase/overview.png)
+[![Overview](assets/images/showcase/overview.png)](assets/images/showcase/overview.png)
 
 ### Detail Views
 
@@ -40,26 +40,26 @@ brings up a detailed overview of the item that is easily navigable by clicking o
 
 #### Airports
 
-[![](assets/images/showcase/detail_airport.png)](assets/images/showcase/detail_airport.png)
+[![Airport Detail View](assets/images/showcase/detail_airport.png)](assets/images/showcase/detail_airport.png)
 
 See airport location, active controllers, metar, arrivals and departures!
 
 #### Controllers
 
-[![](assets/images/showcase/detail_controller.png)](assets/images/showcase/detail_controller.png)
+[![Controller Detail View](assets/images/showcase/detail_controller.png)](assets/images/showcase/detail_controller.png)
 
 Displays controller information, location and their atis.
 
 #### Pilots
 
-[![](assets/images/showcase/detail_pilot.png)](assets/images/showcase/detail_pilot.png)
+[![Pilot Detail View](assets/images/showcase/detail_pilot.png)](assets/images/showcase/detail_pilot.png)
 
 See a pilots' information, location including vertical speed and ETA, and flight plan including route and remarks and if
 they are streaming on Twitch.
 
 #### FIRs
 
-[![](assets/images/showcase/detail_fir.png)](assets/images/showcase/detail_fir.png)
+[![Flight Information Region Detail View](assets/images/showcase/detail_fir.png)](assets/images/showcase/detail_fir.png)
 
 Quickly check all controllers assigned to the FIR, including better FIR matching for controller callsigns with infixes,
 such as EDDG-E and EDDG-P.
@@ -71,26 +71,26 @@ more!
 
 #### Airports
 
-[![](assets/images/showcase/table_airports.png)](assets/images/showcase/table_airports.png)
+[![Airports Table](assets/images/showcase/table_airports.png)](assets/images/showcase/table_airports.png)
 
 Show all airports with the number of incoming and outgoing flights and number of connected controllers.
 
 #### Controllers
 
-[![](assets/images/showcase/table_controllers.png)](assets/images/showcase/table_controllers.png)
+[![Controllers Table](assets/images/showcase/table_controllers.png)](assets/images/showcase/table_controllers.png)
 
 See all controllers, including observers, with their location, rating and frequency.
 
 #### Pilots
 
-[![](assets/images/showcase/table_pilots.png)](assets/images/showcase/table_pilots.png)
+[![Pilots Table](assets/images/showcase/table_pilots.png)](assets/images/showcase/table_pilots.png)
 
 Lists all connected pilots with all kinds of data, including ETA, ground speed and altitude. Want to find the fastest or
 highest plane on the network? The longest flight? The flight that has been connected the longest? No problem!
 
 #### Streamers
 
-[![](assets/images/showcase/table_streamers.png)](assets/images/showcase/table_streamers.png)
+[![Streamers Table](assets/images/showcase/table_streamers.png)](assets/images/showcase/table_streamers.png)
 
 Want to find a VATSIM stream to watch? This table lists all users that have included a link to their twitch stream in
 their remarks. [Want to make sure you show up here when you're streaming?](/streamers)
@@ -107,14 +107,14 @@ adjustable ground speed.
 
 ### Filters
 
-[![](assets/images/showcase/filters.png)](assets/images/showcase/filters.png)
+[![Filters View](assets/images/showcase/filters.png)](assets/images/showcase/filters.png)
 
 Create an infinite amount of filters, filtering callsigns, CIDs, departure and arrival airports and much more, including
 custom map colors. Filters are also disableable, and may be shared as a .json file.
 
 ### Full Text Search
 
-[![](assets/images/showcase/search.png)](assets/images/showcase/search.png)
+[![Search View](assets/images/showcase/search.png)](assets/images/showcase/search.png)
 
 VATprism supports full text search, making it easy to search for airport names, ICAO codes, client names and more.
 
@@ -125,16 +125,16 @@ customize the look of your VATprism map. Dark, light, colorful or muted, or anyt
 
 #### Longing for the tried and trusted?
 
-[![](assets/images/showcase/color_scheme_vatspy.png)](assets/images/showcase/color_scheme_vatspy.png)
+[![VATspy Color Scheme](assets/images/showcase/color_scheme_vatspy.png)](assets/images/showcase/color_scheme_vatspy.png)
 
 #### Dark
 
-[![](assets/images/showcase/color_scheme_dark.png)](assets/images/showcase/color_scheme_dark.png)
+[![Dark Color Scheme](assets/images/showcase/color_scheme_dark.png)](assets/images/showcase/color_scheme_dark.png)
 
 #### or Light?
 
-[![](assets/images/showcase/color_scheme_light.png)](assets/images/showcase/color_scheme_light.png)
+[![Light Color Scheme](assets/images/showcase/color_scheme_light.png)](assets/images/showcase/color_scheme_light.png)
 
 #### Basically Google Maps
 
-[![](assets/images/showcase/color_scheme_real.png)](assets/images/showcase/color_scheme_real.png)
+[![Earth Color Scheme](assets/images/showcase/color_scheme_real.png)](assets/images/showcase/color_scheme_real.png)
