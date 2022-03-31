@@ -74,14 +74,6 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
 
     @SuppressWarnings("DuplicatedCode")
     private static List<FlightInformationRegion> byPrefix(final List<FlightInformationRegion> list, final String identifier, final String infix) {
-        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::prefixPositionProperty);
-        if (noInfix.isOneResult()) {
-            return noInfix.getResult();
-        }
-        if (noInfix.isManyResults()) {
-            return byUnknown1(noInfix.getResult(), identifier, infix);
-        }
-
         final QueryResult withInfix = query(list, identifier + "_" + infix, FlightInformationRegion::prefixPositionProperty);
         if (withInfix.isOneResult()) {
             return withInfix.getResult();
@@ -90,19 +82,19 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
             return byUnknown1(withInfix.getResult(), identifier, infix);
         }
 
+        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::prefixPositionProperty);
+        if (noInfix.isOneResult()) {
+            return noInfix.getResult();
+        }
+        if (noInfix.isManyResults()) {
+            return byUnknown1(noInfix.getResult(), identifier, infix);
+        }
+
         return byUnknown1(list, identifier, infix);
     }
 
     @SuppressWarnings("DuplicatedCode")
     private static List<FlightInformationRegion> byUnknown1(final List<FlightInformationRegion> list, final String identifier, final String infix) {
-        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::unknown1Property);
-        if (noInfix.isOneResult()) {
-            return noInfix.getResult();
-        }
-        if (noInfix.isManyResults()) {
-            return byIcao(noInfix.getResult(), identifier, infix);
-        }
-
         final QueryResult withInfix = query(list, identifier + "_" + infix, FlightInformationRegion::unknown1Property);
         if (withInfix.isOneResult()) {
             return withInfix.getResult();
@@ -111,24 +103,32 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
             return byIcao(withInfix.getResult(), identifier, infix);
         }
 
-        return byIcao(list, identifier, infix);
-    }
-
-    private static List<FlightInformationRegion> byIcao(final List<FlightInformationRegion> list, final String identifier, final String infix) {
-        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::icaoProperty);
+        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::unknown1Property);
         if (noInfix.isOneResult()) {
             return noInfix.getResult();
         }
         if (noInfix.isManyResults()) {
-            return noInfix.getResult();
+            return byIcao(noInfix.getResult(), identifier, infix);
         }
 
+        return byIcao(list, identifier, infix);
+    }
+
+    private static List<FlightInformationRegion> byIcao(final List<FlightInformationRegion> list, final String identifier, final String infix) {
         final QueryResult withInfix = query(list, identifier + "_" + infix, FlightInformationRegion::icaoProperty);
         if (withInfix.isOneResult()) {
             return withInfix.getResult();
         }
         if (withInfix.isManyResults()) {
             return withInfix.getResult();
+        }
+
+        final QueryResult noInfix = query(list, identifier, FlightInformationRegion::icaoProperty);
+        if (noInfix.isOneResult()) {
+            return noInfix.getResult();
+        }
+        if (noInfix.isManyResults()) {
+            return noInfix.getResult();
         }
 
         return Collections.emptyList();
@@ -139,21 +139,11 @@ public class FlightInformationRegionRepository extends ProviderRepository<Flight
                 .stream()
                 .filter(e -> equalsIgnoreCaseAndDividers(queryExtractor.apply(e).get(), identifier))
                 .collect(Collectors.toList());
-        final QueryResult queryResult = new QueryResult(byPrefixPosition);
-        if (queryResult.result.size() > 1) {
-            System.out.println(identifier);
-            queryResult.result.forEach(System.out::println);
-            System.out.println(queryResult.result.size());
-        }
 
-        return queryResult;
+        return new QueryResult(byPrefixPosition);
     }
 
     private static boolean equalsIgnoreCaseAndDividers(final String nullableString, final String string) {
-//        if (nullableString.contains("LON")) {
-//            System.out.println(nullableString);
-//        }
-
         if (nullableString == null) {
             return false;
         }
