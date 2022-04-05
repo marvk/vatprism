@@ -63,6 +63,7 @@ public class ConfigFilePreferences implements Preferences, Writable {
         booleanProperty("general.prereleases", false);
         booleanProperty("general.delete_old_logs", true);
         stringProperty("meta.version", "0.0.0");
+        stringProperty("meta.install_method", "default");
 
         booleanProperty("ui.auto_color", true);
         booleanProperty("ui.auto_shade", true);
