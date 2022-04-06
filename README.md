@@ -70,11 +70,24 @@ the future, see the [corresponding issue](https://github.com/marvk/vatprism/issu
 
 #### Linux
 
-Currently, there is no support for native linux binaries. It is still possible to run VATprism, though you are going to
+If you are using Arch Linux or any derivatives, you can use the third-party [vatprism](https://aur.archlinux.org/packages/vatprism)
+package on the AUR.   
+
+Using `yay` as your AUR helper...   
+```
+yay -Sy vatprism
+``` 
+
+Using no AUR helper...   
+```
+git clone https://aur.archlinux.org/vatprism.git && cd vatprism
+makepkg -si
+```
+It is still possible to run VATprism on other distros, though you are going to
 have to compile it yourself. For this, please refer to the [Build](#build) section of this readme.
 
-If there is demand for Linux native binaries in the future, I will think about adding support. Feel free to
-request [Linux](https://github.com/marvk/vatprism/issues/31) builds via the linked issue.
+If there is demand for more Linux native binaries in the future, I will think about adding support. Feel free to
+request different [Linux](https://github.com/marvk/vatprism/issues/31) builds via the linked issue.
 
 ## Build
 

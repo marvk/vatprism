@@ -171,6 +171,6 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
             method = new File("/etc/vatprism/aur").exists() ? "aur" : "default";
         }
         prefs.stringProperty("meta.install_method").set(method);
-        log.info(method);
+        log.info("Install method - " + method);
     }
 }
