@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import net.marvk.fs.vatsim.map.api.VersionResponse;
 import net.marvk.fs.vatsim.map.data.Preferences;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.Base64;
 
@@ -51,6 +52,8 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
     private PreloaderViewModel viewModel;
 
     public void initialize() {
+        final Preferences prefs = DependencyInjector.getInstance().getInstanceOf(Preferences.class);
+
         viewModel.progressPropertyWritable().bindBidirectional(progressBar.progressProperty());
         task.textProperty().bind(viewModel.taskDescriptionProperty());
         error.textProperty().bind(viewModel.errorProperty());
@@ -69,9 +72,10 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
         });
         versionAndName.setText(viewModel.getVersionAndName());
 
+        checkInstallMethod(prefs);
+
         viewModel.versionResponseProperty().addListener((observable, oldValue, response) -> {
             if (response != null && response.getResult() == VersionResponse.Result.OUTDATED) {
-                final Preferences prefs = DependencyInjector.getInstance().getInstanceOf(Preferences.class);
                 switch (prefs.stringProperty("meta.install_method").get()) {
                     case "aur" -> showNewVersionDialog(response, "the Arch User Repository");
                     default -> showNewVersionDialog(response);
@@ -158,5 +162,15 @@ public class PreloaderView implements FxmlView<PreloaderViewModel> {
 
     private static String decode(final String s) {
         return new String(Base64.getDecoder().decode(s));
+    }
+
+    private void checkInstallMethod(Preferences prefs) {
+        final String os = System.getProperty("os.name");
+        String method = "default";
+        if (os.contains("nix") || os.contains("nux")) {
+            method = new File("/etc/vatprism/aur").exists() ? "aur" : "default";
+        }
+        prefs.stringProperty("meta.install_method").set(method);
+        log.info(method);
     }
 }
