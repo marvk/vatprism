@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.5](https://github.com/marvk/vatprism/compare/v0.3.4...v0.3.5) - 2022-06-04
+
+### Fixed
+
+- Fixed an issue with the callsign matcher leading to matches that weren't as specific as possible ([#91](https://github.com/marvk/vatprism/issues/91))
+
+- Update to Log4j (2.17.1 -> 2.17.2)
+- 
 ## [0.3.4](https://github.com/marvk/vatprism/compare/v0.3.3...v0.3.4) - 2022-02-17
 
 ### Fixed
