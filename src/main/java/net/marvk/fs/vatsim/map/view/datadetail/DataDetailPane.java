@@ -125,6 +125,7 @@ public class DataDetailPane extends Control {
             headerHolder = new StackPane();
             headerHolder.getStyleClass().add(HEADER_PANE_STYLE_CLASS);
             node = new VBox();
+            node.getStyleClass().add("data-detail-pane");
             node.getChildren().add(headerHolder);
 
             headerNodeChanged(dataDetailPane.getHeaderNode());

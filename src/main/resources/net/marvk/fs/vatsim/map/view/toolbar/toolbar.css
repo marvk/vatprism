@@ -3,62 +3,53 @@
     -greyple: #99AAB5;
 }
 
-.separator *.line {
-    -fx-border-style: solid;
-    -fx-border-color: -vatsim-background-color-very-very-light;
-    -fx-border-width: 1;
-}
 
-.separator {
-    -fx-padding: 5, 2, 5, 2;
-}
+/*.discord-button {*/
+/*    -fx-background-radius: 3;*/
+/*    -fx-background-color: -blurple;*/
+/*}*/
 
-.discord-button {
-    -fx-background-radius: 3;
-    -fx-background-color: -blurple;
-}
+/*.discord-button:selected {;*/
+/*    -fx-background-color: -blurple;*/
+/*}*/
 
-.discord-button:selected {;
-    -fx-background-color: -blurple;
-}
+/*.discord-button:hover {;*/
+/*    -fx-background-color: -blurple;*/
+/*}*/
 
-.discord-button:hover {;
-    -fx-background-color: -blurple;
-}
-
-.discord-button:selected:hover {;
-    -fx-background-color: -blurple;
-}
+/*.discord-button:selected:hover {;*/
+/*    -fx-background-color: -blurple;*/
+/*}*/
 
 .discord-button .ikonli-font-icon {
-    -fx-icon-color: white;
+    -fx-icon-color: #5865F2;
 }
 
-.discord-button .ikonli-font-icon:hover {
-    -fx-icon-color: white;
-}
+/*.discord-button .ikonli-font-icon:hover {*/
+/*    -fx-icon-color: white;*/
+/*}*/
 
-.github-button {
-    -fx-background-radius: 3;
-    -fx-background-color: white;
-}
+/*.github-button {*/
+/*    -fx-background-radius: 3;*/
+/*    -fx-background-color: white;*/
+/*}*/
 
-.github-button:selected {
-    -fx-background-color: white;
-}
+/*.github-button:selected {*/
+/*    -fx-background-color: white;*/
+/*}*/
 
-.github-button:selected:hover {
-    -fx-background-color: white;
-}
+/*.github-button:selected:hover {*/
+/*    -fx-background-color: white;*/
+/*}*/
 
-.github-button:hover {
-    -fx-background-color: white;
-}
+/*.github-button:hover {*/
+/*    -fx-background-color: white;*/
+/*}*/
 
 .github-button .ikonli-font-icon {
-    -fx-icon-color: black;
+    -fx-icon-color: #171516;
 }
 
-.github-button .ikonli-font-icon:hover {
-    -fx-icon-color: black;
-}
+/*.github-button .ikonli-font-icon:hover {*/
+/*    -fx-icon-color: black;*/
+/*}*/

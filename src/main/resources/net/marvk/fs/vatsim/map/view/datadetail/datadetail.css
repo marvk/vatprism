@@ -1,31 +1,20 @@
-/*.titled-pane {*/
-/*    -fx-background-color: -vatsim-background-color-light;*/
-/*    -fx-border-color: -vatsim-background-color-light;*/
-/*}*/
-
-/*.titled-pane > * {*/
-/*    -fx-background-color: transparent;*/
-/*    -fx-box-border: transparent;*/
-/*}*/
-
-/*.titled-pane > *.content {*/
-/*    -fx-background-color: -vatsim-background-color-very-light;*/
-/*}*/
-
-/*.titled-pane-container > *.content {*/
-/*    -fx-background-color: -vatsim-background-color-very-light-25;*/
-/*}*/
-
-.button-bar {
-    -fx-background-color: -vatsim-background-color;
+.container {
+    -fx-background-color: -vatprism-2-content-fill;
 }
 
-.container {
-    -fx-background-color: -vatsim-background-color-very-light;
+.detail-container {
+    -fx-background-color: -vatprism-2-divider-fill;
+    -fx-spacing: 1;
+}
+
+.data-detail-pane {
+    -fx-background-color: -vatprism-2-divider-fill;
+    -fx-spacing: 1;
+    -fx-padding: 1 0 0 0;
 }
 
 .header-pane {
-    -fx-background-color: -vatsim-background-color-light;
+    -fx-background-color: -vatprism-2-structure-fill;
     -fx-alignment: center;
     -fx-pref-height: 25;
     -fx-max-height: infinity;
@@ -35,33 +24,16 @@
     -fx-font-size: 120%;
 }
 
-/*.text-area {*/
-/*    -fx-focus-color: transparent;*/
-/*    -fx-faint-focus-color: transparent;*/
-/*    -fx-box-border: -vatsim-background-color-light;*/
-/*    -fx-text-box-border: none;*/
-/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
-/*}*/
-
-/*.text-area .content {*/
-/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
-/*}*/
-
-/*.text-area:focused .content {*/
-/*    -fx-background-color: transparent, -vatsim-background-color-very-very-light, transparent, -vatsim-background-color-very-very-light;*/
-/*}*/
-
-
 .text-area .content {
-    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-color: -vatprism-2-content-fill;
     -fx-background-radius: 0;
 }
 
 .text-area {
-    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-color: -vatprism-2-content-fill;
     -fx-text-box-border: transparent;
     -fx-background-insets: 0;
-    -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
+    -fx-highlight-fill: -vatprism-2-text-area-highlight-fill;
     -fx-highlight-text-fill: -vatsim-text-color-light;
     -fx-padding: 0;
     -fx-background-radius: 0;
@@ -77,6 +49,8 @@
     -fx-background-radius: 0;
 }
 
-.detail-view-container {
-    -fx-effect: -vatsim-dropshadow;
+.detail-view-container2 {
+    -fx-background-color: -vatprism-2-divider-fill;
+    -fx-padding: 0 0 1 1;
+    /*-fx-effect: -vatsim-dropshadow;*/
 }

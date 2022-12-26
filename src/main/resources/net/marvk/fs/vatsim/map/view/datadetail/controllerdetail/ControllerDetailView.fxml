@@ -32,7 +32,7 @@
             </StackPane>
         </headerNode>
         <contentNode>
-            <VBox spacing="5.0">
+            <VBox spacing="5.0" styleClass="container">
                 <children>
                     <GridPane hgap="2.0" vgap="2.0">
                         <columnConstraints>

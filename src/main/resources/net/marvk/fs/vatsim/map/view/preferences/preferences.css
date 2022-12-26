@@ -1,0 +1,161 @@
+.content {
+    -fx-padding: 0;
+}
+
+.split-pane {
+    -fx-background-color: -vatprism-2-structure-fill;
+    -fx-padding: 0;
+}
+
+.tree-view {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane {
+    -fx-background-color: -vatprism-2-structure-secondary-fill;
+}
+
+.split-pane .split-pane-divider {
+    -fx-padding: 0;
+}
+
+
+.tree-view .cell {
+    -fx-background-color: transparent;
+}
+
+.tree-view .cell:selected,
+.tree-view .cell:filled:selected {
+    -fx-background-color: -vatprism-2-list-item-selected-focused-fill;
+    -fx-text-fill: -vatprism-2-list-item-text-selected-focused-fill !important;
+}
+
+.tree-view .cell:filled:selected .text {
+    -fx-text-fill: -vatprism-2-list-item-text-selected-focused-fill !important;
+}
+
+.tree-view .cell .arrow {
+    -fx-background-color: -vatprism-2-list-item-icon-fill
+}
+
+.tree-view .cell:selected .arrow {
+    -fx-background-color: -vatprism-2-list-item-text-selected-focused-fill
+}
+
+.custom-text-field,
+.custom-text-field:focused {
+    -fx-min-height: 43;
+    -fx-padding: 10 8 9 8;
+    -fx-border-insets: 10 8 9 8;
+    -fx-background-insets: 10 8 9 8;
+}
+
+.custom-text-field {
+    -fx-background-insets: 10 8 9 8, 11 9 10 9;
+    -fx-background-radius: 3;
+}
+
+.custom-text-field:focused {
+    -fx-background-insets: 8 6 7 6, 10 8 9 8, 11 9 10 9;
+    -fx-background-radius: 5, 3, 3;
+}
+
+.custom-text-field {
+    -fx-background-color: -vatprism-2-button-cancel-border, -vatprism-2-button-cancel-fill;
+    -fx-text-fill: -vatprism-2-button-cancel-text-fill;
+}
+
+.custom-text-field:focused {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-button-cancel-border, -vatprism-2-button-cancel-fill;
+}
+
+.bread-crumb-bar {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+}
+
+.viewport {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+
+.undo-button,
+.undo-button:focused,
+.redo-button,
+.redo-button:focused {
+    -fx-background-insets: none;
+    -fx-background-color: transparent;
+    -fx-min-width: 22;
+    -fx-max-width: 22;
+    -fx-min-height: 22;
+    -fx-max-height: 22;
+    -fx-padding: 0;
+    -fx-background-radius: 3;
+}
+
+.undo-button:hover,
+.redo-button:hover {
+    -fx-background-color: -vatprism-2-tool-button-hover-fill;
+}
+
+.undo-button:pressed,
+.redo-button:pressed {
+    -fx-background-color: -vatprism-2-tool-button-pressed-fill;
+}
+
+.undo-button:selected,
+.redo-button:selected {
+    -fx-background-color: -vatprism-2-tool-button-selected-fill;
+}
+
+.undo-button .ikonli-font-icon,
+.redo-button .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-icon-fill;
+    -fx-icon-size: -vatsim-toolbar-button-icon-size;
+}
+
+.undo-button:disabled .ikonli-font-icon,
+.redo-button:disabled .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-icon-disabled-fill;
+}
+
+.undo-redo-box {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+.undo-redo-box {
+    -fx-spacing: 4;
+    -fx-padding: 11 16 11 16;
+}
+
+.button-bar > .container {
+    -fx-background-color: -vatprism-2-divider-fill, -vatprism-2-structure-fill;
+    -fx-pref-height: 47;
+    -fx-padding: 11 14 11 14;
+    -fx-background-insets: 0, 1 0 0 0;
+}
+
+.custom-text-field-icon {
+    -fx-icon-color: -vatprism-2-icon-secondary-fill;
+    -fx-icon-size: 15;
+}
+
+.custom-text-field .left-pane {
+    -fx-padding: 0 0 0 11;
+}
+
+.undo-button > .ikonli-font-icon {
+    -fx-icon-code: '';
+}
+
+.undo-button > .ikonli-font-icon {
+    -fx-icon-code: 'mdi2u-undo';
+}
+
+.redo-button > .ikonli-font-icon {
+    -fx-icon-code: 'mdi2r-redo';
+}

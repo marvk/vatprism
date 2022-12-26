@@ -2,147 +2,80 @@ package net.marvk.fs.vatsim.map.view.filter.filteroutline;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
-import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import net.marvk.fs.vatsim.map.data.Filter;
 import net.marvk.fs.vatsim.map.view.filter.FilterListViewModel;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.octicons.Octicons;
 
 public class FilterOutlineView implements FxmlView<FilterOutlineViewModel> {
     @FXML
-    private TableView<FilterListViewModel> table;
+    private Button deleteButton;
+    @FXML
+    private ListView<FilterListViewModel> list;
 
     @InjectViewModel
     private FilterOutlineViewModel viewModel;
 
     public void initialize() {
-        table.setItems(viewModel.getFilters());
-
-        final TableColumn<FilterListViewModel, FilterListViewModel> nameColumn = new TableColumn<>("Name");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
-        nameColumn.setCellFactory(param -> new NameCell());
-        nameColumn.setPrefWidth(200);
-        nameColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
-        table.getColumns().add(nameColumn);
-
-        final TableColumn<FilterListViewModel, FilterListViewModel> deleteColumn = new TableColumn<>();
-        deleteColumn.setPrefWidth(24);
-        deleteColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
-        deleteColumn.setCellFactory(param -> new RemoveButtonCell());
-        table.getColumns().add(deleteColumn);
-
-        final TableColumn<FilterListViewModel, FilterListViewModel> enabledColumn = new TableColumn<>();
-        enabledColumn.setPrefWidth(24);
-        enabledColumn.setCellValueFactory(new PropertyValueFactory<>("self"));
-        enabledColumn.setCellFactory(param -> new EnabledIndicatorCell());
-        table.getColumns().add(enabledColumn);
-
-        table.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.PRIMARY) {
-                viewModel.setActive(table.getSelectionModel().getSelectedItem());
-                e.consume();
-            }
-        });
+        list.setItems(viewModel.getFilters());
+        list.setCellFactory(param -> new FilterListViewModelListCell());
+        list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        deleteButton.disableProperty().bind(list.getSelectionModel().selectedItemProperty().isNull());
     }
 
     @FXML
     private void add() {
         viewModel.addNewFilter();
+        list.getSelectionModel().select(list.getItems().size() - 1);
     }
 
-    private static class NameCell extends TableCell<FilterListViewModel, FilterListViewModel> {
-        public NameCell() {
-            getStyleClass().add("center-left-cell");
-        }
-
-        @Override
-        protected void updateItem(final FilterListViewModel item, final boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || empty) {
-                textProperty().unbind();
-                setText(null);
-                styleProperty().unbind();
-                setStyle("-fx-background-color: transparent;");
-            } else {
-                styleProperty().bind(Bindings.createStringBinding(
-                        () -> backgroundString(item),
-                        item.filterProperty()
-                ));
-                textProperty().bind(item.nameProperty());
-            }
-        }
-
-        private static String backgroundString(final FilterListViewModel item) {
-            final String backgroundHex = hex(item.getFilter().getBackgroundColor());
-            final String textHex = hex(item.getFilter().getTextColor());
-
-            return "-fx-background-color: #%s; -fx-text-fill: #%s;".formatted(backgroundHex, textHex);
-        }
-
-        private static String hex(final Color color) {
-            return color.toString().substring(2, 10);
-        }
+    @FXML
+    private void delete() {
+        viewModel.delete(list.getSelectionModel().getSelectedItem());
+        viewModel.setActive(list.getSelectionModel().getSelectedItem());
     }
 
-    private class RemoveButtonCell extends TableCell<FilterListViewModel, FilterListViewModel> {
-        private Button button;
+    private class FilterListViewModelListCell extends ListCell<FilterListViewModel> {
+        private final Label label = new Label();
+        private final CheckBox checkBox = new CheckBox();
+        private final Region region = new Region();
+        private final HBox hBox = new HBox(label, region, checkBox);
 
-        private Button getButton(final FilterListViewModel viewModel) {
-            if (button == null) {
-                button = new Button();
-                button.setGraphic(new FontIcon(Octicons.TRASHCAN_16));
-                button.getStyleClass().add("icon-button");
-            }
-            button.setOnAction(e -> FilterOutlineView.this.viewModel.delete(viewModel));
-            return button;
-        }
+        FilterListViewModelListCell() {
+            getStyleClass().add("vatprism-cell");
 
-        @Override
-        protected void updateItem(final FilterListViewModel item, final boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || empty) {
-                setGraphic(null);
-            } else {
-                setGraphic(getButton(item));
-            }
-        }
-    }
+            onMouseClickedProperty().bind(itemProperty().map(filterListViewModel -> (EventHandler<MouseEvent>) event -> {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    viewModel.setActive(filterListViewModel);
+                    event.consume();
+                }
+            }));
+            itemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == null) {
+                    checkBox.selectedProperty().unbind();
+                    label.textProperty().unbind();
+                    label.setText(null);
+                } else {
+                    // todo checkbox
+                    //                    checkBox.selectedProperty().bind(newValue.filterProperty().map(Filter::isEnabled));
+                    label.textProperty().bind(newValue.filterProperty().map(Filter::getName));
+                }
+            });
 
-    private static class EnabledIndicatorCell extends TableCell<FilterListViewModel, FilterListViewModel> {
-        private FontIcon fontIcon;
-
-        @Override
-        protected void updateItem(final FilterListViewModel item, final boolean empty) {
-            super.updateItem(item, empty);
-            if (item == null || empty) {
-                setGraphic(null);
-            } else {
-                setGraphic(getIcon(item));
-            }
-        }
-
-        private Node getIcon(final FilterListViewModel item) {
-            if (fontIcon == null) {
-                fontIcon = new FontIcon();
-                fontIcon.setStyle("""
-                            -fx-icon-color: -vatsim-text-color;
-                            -fx-icon-size: -vatsim-toolbar-button-icon-size;
-                        """);
-            }
-            fontIcon.iconCodeProperty().bind(Bindings.createObjectBinding(
-                    () -> item.getFilter().isEnabled() ? Octicons.EYE_16 : Octicons.EYE_CLOSED_16,
-                    item.filterProperty()
-            ));
-
-            return fontIcon;
+            checkBox.getStyleClass().add("check-box-standalone");
+            graphicProperty().bind(itemProperty().map(e -> hBox));
+            HBox.setHgrow(region, Priority.ALWAYS);
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            hBox.setPrefHeight(20);
+            hBox.setPadding(new Insets(0, 3, 0, 5));
         }
     }
 }

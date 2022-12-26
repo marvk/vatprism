@@ -1,0 +1,15 @@
+.root {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+.container {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+.separator:horizontal {
+    -fx-padding: 0;
+}
+
+.graphic-container {
+    -fx-max-width: 0;
+}

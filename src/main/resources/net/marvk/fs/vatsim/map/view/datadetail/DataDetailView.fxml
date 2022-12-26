@@ -3,40 +3,51 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<VBox styleClass="detail-view-container" pickOnBounds="false" prefHeight="500.0"
-      stylesheets="@datadetail.css"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<VBox pickOnBounds="false" prefHeight="500.0" stylesheets="@datadetail.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.datadetail.DataDetailView">
     <children>
-        <HBox styleClass="button-bar" alignment="CENTER">
-            <children>
-                <ToggleButton fx:id="follow" mnemonicParsing="false" styleClass="icon-button" onAction="#toggleFollow">
-                    <graphic>
-                        <FontIcon iconLiteral="oct-pin-16" iconSize="24"/>
-                    </graphic>
-                </ToggleButton>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="type"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="historyBack" mnemonicParsing="false" styleClass="icon-button" onAction="#historyBack">
-                    <graphic>
-                        <FontIcon iconLiteral="oct-arrow-left-16" iconSize="24"/>
-                    </graphic>
-                </Button>
-                <Button fx:id="historyForward" mnemonicParsing="false" styleClass="icon-button"
-                        onAction="#historyForward">
-                    <graphic>
-                        <FontIcon iconLiteral="oct-arrow-right-16" iconSize="24"/>
-                    </graphic>
-                </Button>
-                <Button mnemonicParsing="false" styleClass="icon-button" onAction="#hide">
-                    <graphic>
-                        <FontIcon iconLiteral="oct-x-16" iconSize="24"/>
-                    </graphic>
-                </Button>
-            </children>
-        </HBox>
-        <VBox fx:id="container"/>
-        <Region VBox.vgrow="ALWAYS" mouseTransparent="true"/>
+        <VBox styleClass="detail-view-container2">
+            <GridPane styleClass="button-bar-horizontal">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER" percentWidth="33.333333333333"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="33.333333333333"/>
+                    <ColumnConstraints hgrow="NEVER" percentWidth="33.333333333333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <children>
+                    <HBox alignment="CENTER_LEFT">
+                        <ToggleButton fx:id="follow" mnemonicParsing="false" onAction="#toggleFollow" styleClass="icon-button2">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2p-pin" iconSize="24"/>
+                            </graphic>
+                        </ToggleButton>
+                    </HBox>
+                    <HBox alignment="CENTER" GridPane.columnIndex="1">
+                        <Label fx:id="type"/>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="2">
+                        <Button fx:id="historyBack" mnemonicParsing="false" onAction="#historyBack" styleClass="icon-button2">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2a-arrow-left-bold" iconSize="24"/>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="historyForward" mnemonicParsing="false" onAction="#historyForward" styleClass="icon-button2">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2a-arrow-right-bold" iconSize="24"/>
+                            </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#hide" styleClass="icon-button2">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2w-window-close" iconSize="24"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                </children>
+            </GridPane>
+            <VBox fx:id="container" styleClass="data-detail-container"/>
+            <Region mouseTransparent="true" VBox.vgrow="ALWAYS"/>
+        </VBox>
     </children>
 </VBox>

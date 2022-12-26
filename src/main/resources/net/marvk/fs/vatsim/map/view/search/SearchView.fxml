@@ -10,7 +10,7 @@
       stylesheets="@search.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.search.SearchView">
     <children>
-        <StackPane fx:id="searchBoxHolder">
+        <StackPane fx:id="searchBoxHolder" VBox.vgrow="NEVER">
             <children>
                 <TextField fx:id="searchBox" alignment="TOP_LEFT" styleClass="search-box-text-field"/>
             </children>
@@ -30,6 +30,5 @@
                 </placeholder>
             </ListView>
         </VBox>
-        <Region pickOnBounds="false" VBox.vgrow="ALWAYS"/>
     </children>
 </VBox>

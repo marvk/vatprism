@@ -1,12 +1,12 @@
-.search-box-text-field,
-.search-box {
-    -fx-pref-width: 200;
-    -fx-max-width: 200;
-    -fx-background-radius: 0 8 8 0;
+.search-box-text-field {
+    -fx-pref-height: 27;
+    -fx-min-height: 27;
+    -fx-pref-width: 201;
+    -fx-max-width: 201;
 }
 
 .search-box .ikonli-font-icon {
-    -fx-icon-color: -vatsim-text-color-dark;
+    -fx-icon-color: -vatprism-2-icon-fill;
 }
 
 .search-box .clear-icon {
@@ -18,21 +18,67 @@
 }
 
 .search-box-text-field {
+    -fx-alignment: center-left;
+    -fx-background-color: -vatprism-2-divider-fill, -vatprism-2-content-fill;
+    -fx-background-insets: 0, 0 1 0 0;
 }
 
 .search-box-results-holder {
-    -fx-background-color: -vatsim-background-color-very-light;
-    -fx-effect: -vatsim-dropshadow;
+    -fx-background-color: -vatprism-2-divider-fill, -vatprism-2-content-fill;
+    -fx-background-insets: 0, 0 1 1 0;
+    -fx-padding: 0 0 1 0;
 }
 
 .search-box-progress-indicator {
     -fx-progress-color: -vatsim-text-color;
 }
 
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-view:focused {
+    -fx-background-color: transparent;
+}
+
+.list-cell:filled {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 -12 0 0;
+}
+
+.list-cell:filled *.search-result-cell-text {
+}
+
 .list-cell:filled:hover {
-    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-color: -vatprism-2-list-item-hover-fill;
+    -fx-background-insets: 0 -100 0 0;
+}
+
+.list-cell:filled:hover *.search-result-cell-text {
+    -fx-fill: -vatprism-2-list-item-text-hover-fill;
 }
 
 .list-cell:empty {
     -fx-background-color: transparent;
 }
+
+.list-view > .virtual-flow > .clipped-container > .sheet {
+    -fx-pref-height: 99999999;
+}
+
+
+*.scroll-bar:vertical,
+.scroll-bar:vertical .track {
+    -fx-background-insets: 1 2 2 2;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:vertical .thumb:pressed {
+    -fx-background-insets: 1 2 1 2, 2 3 2 3;
+}
+
+*.scroll-bar:vertical {
+    -fx-pref-width: 13;
+}
+

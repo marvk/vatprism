@@ -6,7 +6,7 @@ import javafx.beans.property.ReadOnlyStringProperty;
 
 import java.util.Comparator;
 
-public class Airline {
+public class Airline implements Data {
     private final ReadOnlyIntegerProperty airlineId;
     private final ReadOnlyStringProperty name;
     private final ReadOnlyStringProperty alias;
@@ -102,5 +102,10 @@ public class Airline {
 
     public static Comparator<Airline> comparingByIcao() {
         return Comparator.comparing(Airline::getIcao);
+    }
+
+    @Override
+    public <R> R visit(final DataVisitor<R> visitor) {
+        throw new UnsupportedOperationException();
     }
 }

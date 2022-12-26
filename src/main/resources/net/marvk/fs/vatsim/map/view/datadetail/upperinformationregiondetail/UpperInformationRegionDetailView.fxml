@@ -15,7 +15,7 @@
     <children>
         <DataDetailPane fx:id="status">
             <contentNode>
-                <GridPane>
+                <GridPane styleClass="container">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
                                            prefWidth="$descriptionColumn"/>
@@ -43,7 +43,7 @@
         <fx:include fx:id="controllers" source="../controllersdetail/ControllersDetailView.fxml"/>
         <DataDetailPane fx:id="firsContainer" headerText="FIRs">
             <contentNode>
-                <GridPane fx:id="firsGrid" hgap="10">
+                <GridPane fx:id="firsGrid" hgap="10" styleClass="container">
                     <columnConstraints>
                         <ColumnConstraints hgrow="NEVER"/>
                         <ColumnConstraints hgrow="NEVER"/>

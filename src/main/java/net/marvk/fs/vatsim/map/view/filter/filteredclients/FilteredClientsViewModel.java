@@ -50,7 +50,8 @@ public class FilteredClientsViewModel implements ViewModel {
     }
 
     private boolean isaBoolean(final Client e) {
-        return selectedFilters.stream().anyMatch(filter -> filter.isEnabled() && filter.test(e));
+        // todo enable and disable filters
+        return selectedFilters.stream().anyMatch(filter -> filter.test(e));
     }
 
     public Predicate<Client> getPredicate() {

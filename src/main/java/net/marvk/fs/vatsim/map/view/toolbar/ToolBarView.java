@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
@@ -25,9 +26,10 @@ import javafx.util.Duration;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.about.AboutView;
 import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
+import net.marvk.fs.vatsim.map.view.vatprism2.controls.IconToggleButton;
 import org.kordamp.ikonli.Ikon;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.octicons.Octicons;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
+import org.scenicview.ScenicView;
 
 import java.util.List;
 
@@ -59,6 +61,10 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private ToggleButton connections;
     @FXML
     private ToggleButton metrics;
+    @FXML
+    public Button sceneView;
+    @FXML
+    public Separator debugSeparator;
 
     private List<ToggleButton> painterToggles() {
         return List.of(
@@ -83,9 +89,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private ToggleButton autoReload;
     @FXML
-    private ToggleButton fullScreen;
-    @FXML
-    private FontIcon fullScreenIcon;
+    private IconToggleButton fullScreen;
     @FXML
     private HBox container;
 
@@ -113,8 +117,14 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
                 if (!children.contains(metrics)) {
                     children.add(children.size() - 2, metrics);
                 }
+                if (!children.contains(sceneView)) {
+                    children.add(children.size() - 2, sceneView);
+                }
+                if (!children.contains(debugSeparator)) {
+                    children.add(children.size() - 2, debugSeparator);
+                }
             } else {
-                children.remove(metrics);
+                children.removeAll(metrics, sceneView, debugSeparator);
             }
         });
 
@@ -168,19 +178,19 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
         fullScreenProperty.addListener((observable, oldValue, newValue) -> stage.setFullScreen(newValue));
 
-        fullScreenIcon.iconCodeProperty().bind(Bindings.<Ikon>createObjectBinding(
+        fullScreen.getIconCodeProperty().bind(Bindings.createObjectBinding(
                 () -> ikon(fullScreenProperty.get()), fullScreenProperty
         ));
 
         bindBooleanBidirectional(fullScreen, fullScreenProperty);
     }
 
-    private static Octicons ikon(final boolean fullscreen) {
+    private static Ikon ikon(final boolean fullscreen) {
         if (fullscreen) {
-            return Octicons.SCREEN_NORMAL_16;
+            return MaterialDesignF.FULLSCREEN_EXIT;
         }
 
-        return Octicons.SCREEN_FULL_16;
+        return MaterialDesignF.FULLSCREEN;
     }
 
     private BooleanProperty booleanProperty(final String key) {
@@ -250,5 +260,10 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     @FXML
     private void openChangelog() {
         viewModel.visitChangelog();
+    }
+
+    @FXML
+    public void showSceneView() {
+        ScenicView.show(container.getScene());
     }
 }

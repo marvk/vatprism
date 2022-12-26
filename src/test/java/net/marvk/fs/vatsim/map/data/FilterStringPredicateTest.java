@@ -8,7 +8,7 @@ import java.util.Optional;
 class FilterStringPredicateTest {
     @Test
     void testValidRegex() {
-        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate("AAL.*", true);
+        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate(null, "AAL.*", true);
         final Filter.StringPredicate predicate = Assertions.assertDoesNotThrow(test::get);
 
         runAalTest(predicate);
@@ -16,7 +16,7 @@ class FilterStringPredicateTest {
 
     @Test
     void testValidStartOfLine() {
-        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate("^AAL.*", true);
+        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate(null, "^AAL.*", true);
         final Filter.StringPredicate predicate = Assertions.assertDoesNotThrow(test::get);
 
         runAalTest(predicate);
@@ -24,7 +24,7 @@ class FilterStringPredicateTest {
 
     @Test
     void testValidEndOfLine() {
-        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate("AAL.*$", true);
+        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate(null, "AAL.*$", true);
         final Filter.StringPredicate predicate = Assertions.assertDoesNotThrow(test::get);
 
         runAalTest(predicate);
@@ -32,13 +32,13 @@ class FilterStringPredicateTest {
 
     @Test
     void testInvalidRegex() {
-        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate("AAL[", false);
+        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate(null, "AAL[", false);
         Assertions.assertFalse(test::isPresent);
     }
 
     @Test
     void testValidSimple() {
-        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate("AAL*", false);
+        final Optional<Filter.StringPredicate> test = Filter.StringPredicate.tryCreate(null, "AAL*", false);
         final Filter.StringPredicate predicate = Assertions.assertDoesNotThrow(test::get);
 
         runAalTest(predicate);

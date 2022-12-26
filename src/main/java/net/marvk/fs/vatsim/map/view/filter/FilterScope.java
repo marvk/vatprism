@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import net.marvk.fs.vatsim.map.data.Filter;
 
 public class FilterScope implements Scope {
+
     private final ObjectProperty<Filter> filter = new SimpleObjectProperty<>();
 
     public Filter getFilter() {
