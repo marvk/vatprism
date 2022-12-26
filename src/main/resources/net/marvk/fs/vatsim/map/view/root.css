@@ -1,26 +1,135 @@
-.root {
-    -vatsim-background-color: #0E0C06;
-    -vatsim-background-color-light: #17130a;
-    -vatsim-background-color-very-light: #2B2313;
-    -vatsim-background-color-very-light-25: #2B231340;
-    -vatsim-background-color-very-very-light: #392e19;
-    -vatsim-background-color-very-very-very-light: #42351D;
-    -vatsim-text-color-dark: #52482F;
-    -vatsim-text-color: #5f553d;
-    -vatsim-error-color: #5f1d1d;
-    -vatsim-text-color-light: #746A53;
-    -vatsim-text-greyed-out: #919191;
+* {
+    -vatsim-background-color: #8800ff;
+    -vatsim-background-color-light: #ff7700;
+    -vatsim-background-color-very-light: #99ff00;
+    -vatsim-background-color-very-light-25: #ff8822;
+    -vatsim-background-color-very-very-light: #99ffff;
+    -vatsim-background-color-very-very-very-light: #00ff22;
+    -vatsim-text-color-dark: #ff00ff;
+    -vatsim-text-color: #00ffff;
+    -vatsim-error-color: #ffff44;
+    -vatsim-text-color-light: #00ff00;
+    -vatsim-text-greyed-out: #9900ff;
     -vatsim-toolbar-button-size: 24px;
-    -vatsim-toolbar-button-icon-size: 20px;
+    -vatsim-toolbar-button-icon-size: 16px;
     -vatsim-dropshadow: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
     -fx-font-family: "B612";
+
+    -vatprism-2-text-fill: black;
+    -vatprism-2-text-faint-fill: #999999;
+
+    -vatprism-2-structure-fill: #f2f2f2;
+    -vatprism-2-structure-secondary-fill: #e6ebf0;
+    -vatprism-2-header-active-fill: #e2e6ec;
+    -vatprism-2-divider-fill: #d9d9d9;
+    -vatprism-2-divider-secondary-fill: #eeeeee;
+    -vatprism-2-separator-fill: #d1d1d1;
+    -vatprism-2-content-fill: white;
+
+    -vatprism-2-warning-fill: #ebc700;
+    -vatprism-2-error-fill: #cf5b56;
+
+    -vatprism-2-focus-fill: #97c3f3;
+
+
+    -vatprism-2-icon-fill: #6e6e6e;
+    -vatprism-2-icon-disabled-fill: #bdbdbd;
+
+    -vatprism-2-icon-secondary-fill: #8c969c;
+
+
+    -vatprism-2-tab-fill: transparent;
+    -vatprism-2-tab-hover-fill: #dadada;
+    -vatprism-2-tab-selected-fill: -vatprism-2-content-fill;
+    -vatprism-2-tab-selected-inactive-fill: transparent;
+    -vatprism-2-tab-icon-fill: #a8b1c0;
+    -vatprism-2-tab-icon-disabled-fill: #a8b1c0;
+    -vatprism-2-tab-indicator-selected-fill: #2675bf;
+    -vatprism-2-tab-indicator-inactive-selected-fill: #a8b1c0;
+
+
+    -vatprism-2-list-fill: -vatprism-2-structure-fill;
+    -vatprism-2-list-separator-fill: -vatprism-2-separator-fill;
+    -vatprism-2-list-border: #dadada;
+
+
+    -vatprism-2-list-item-fill: transparent;
+    -vatprism-2-list-item-hover-fill: #dbe4ee;
+    -vatprism-2-list-item-selected-fill: #d4d4d4;
+    -vatprism-2-list-item-selected-focused-fill: #2675bf;
+
+    -vatprism-2-list-item-text-fill: black;
+    -vatprism-2-list-item-text-hover-fill: -vatprism-2-list-item-text-fill;
+    -vatprism-2-list-item-text-selected-fill: -vatprism-2-list-item-text-fill;
+    -vatprism-2-list-item-text-selected-focused-fill: white;
+
+    -vatprism-2-list-item-icon-fill: -vatprism-2-icon-fill;
+    -vatprism-2-list-item-icon-hover-fill: -vatprism-2-list-item-icon-fill;
+    -vatprism-2-list-item-icon-selected-fill: -vatprism-2-list-item-icon-fill;
+    -vatprism-2-list-item-icon-selected-focused-fill: #a8b1c0;
+
+
+    -vatprism-2-scrollbar-fill: transparent;
+    -vatprism-2-scrollbar-thumb-fill: #e3e3e3;
+    -vatprism-2-scrollbar-thumb-border: #d4d4d4;
+
+    -vatprism-2-scrollbar-hover-fill: #f2f2f2;
+    -vatprism-2-scrollbar-thumb-hover-fill: #cfcfcf;
+    -vatprism-2-scrollbar-thumb-hover-border: #c8c8c8;
+
+
+    -vatprism-2-tooltip-fill: #f7f7f7;
+    -vatprism-2-tooltip-border: #ababab;
+
+
+    -vatprism-2-button-fill: transparent;
+    -vatprism-2-tool-button-fill: transparent;
+    -vatprism-2-tool-button-hover-fill: #dfdfdf;
+    -vatprism-2-tool-button-pressed-fill: #d1d1d1;
+    -vatprism-2-tool-button-selected-fill: -vatprism-2-tool-button-pressed-fill;
+
+    -vatprism-2-text-area-highlight-fill: #a6d2ff;
+    -vatprism-2-text-area-highlight-text-fill: black;
+    -vatprism-2-text-field-highlight-fill: #2675bf;
+    -vatprism-2-text-field-highlight-text-fill: white;
+
+    -vatprism-2-table-header-fill: white;
+    -vatprism-2-table-row-fill: -vatprism-2-content-fill;
+    -vatprism-2-table-row-hover-fill: -vatprism-2-header-active-fill;
+    -vatprism-2-table-divider-fill: #e6e6e6;
+
+
+    -vatprism-2-checkbox-fill: white;
+    -vatprism-2-checkbox-border: #b0b0b0;
+    -vatprism-2-checkbox-selected-fill: #4f9ee3;
+    -vatprism-2-checkbox-selected-border: #4b97d9;
+    -vatprism-2-checkbox-mark-selected-fill: white;
+
+    -vatprism-2-button-default-fill: #4e8ac9;
+    -vatprism-2-button-default-border: #3971b0;
+    -vatprism-2-button-default-text-fill: white;
+
+    -vatprism-2-button-cancel-fill: white;
+    -vatprism-2-button-cancel-border: #c4c4c4;
+    -vatprism-2-button-cancel-text-fill: black;
+
+    -vatprism-2-text-field-fill: white;
+    -vatprism-2-text-field-border: #c4c4c4;
+    -vatprism-2-text-field-text-fill: black;
+
+    -vatprism-2-combo-box-arrow-button-background-color: #fafafa;
+}
+
+.main-container {
+    -fx-background-color: -vatprism-2-divider-fill;
+    -fx-spacing: 1;
 }
 
 .button {
     -fx-background-color: transparent;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatprism-2-text-fill;
 }
 
 .button:hover {
@@ -28,7 +137,7 @@
 }
 
 .vatsim-font {
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatprism-2-text-fill;
 }
 
 .context-menu-drop-shadow-holder {
@@ -62,11 +171,12 @@
 }
 
 .container * {
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatprism-2-text-fill;
 }
 
-.icon-button {
-    -fx-background-insets: none;
+.icon-button,
+.icon-button:focused {
+    -fx-background-insets: 0;
     -fx-background-color: transparent;
     -fx-min-width: -vatsim-toolbar-button-size;
     -fx-min-height: -vatsim-toolbar-button-size;
@@ -75,6 +185,10 @@
     -fx-padding: 0;
     -fx-background-radius: 3;
     -fx-cursor: hand;
+}
+
+.icon-button:hover {
+    -fx-background-color: -vatprism-2-;
 }
 
 .icon-button:hover {
@@ -108,31 +222,34 @@
 
 
 .tab-header-background {
-    -fx-background-color: -vatsim-background-color;
+    -fx-background-color: -vatprism-2-divider-fill, -vatprism-2-structure-fill;
+    -fx-background-insets: 0, 0 0 1 0;
 }
 
 .tab {
-    -fx-background-color: -vatsim-background-color-light;
+    -fx-pref-height: 28;
+    -fx-background-color: -vatprism-2-tab-fill;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
-    -fx-cursor: hand;
-}
-
-.tab:selected {
-    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-background-radius: 0;
 }
 
 .tab:hover {
-    -fx-background-color: -vatsim-background-color-very-very-light;
+    -fx-background-color: -vatprism-2-tab-hover-fill;
+}
+
+.tab:selected {
+    -fx-background-color: -vatprism-2-tab-indicator-selected-fill, -vatprism-2-content-fill;
+    -fx-background-insets: 0 0 0 0, 0 0 3 0;
 }
 
 .tab * {
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatprism-2-text-fill;
 }
 
-.tab-pane:top *.tab-header-area {
-    -fx-padding: 0.0em 0.166667em 0.0em 0.0em;
-}
+/*.tab-pane:top *.tab-header-area {*/
+/*    -fx-padding: 0.0em 0.166667em 0.0em 0.0em;*/
+/*}*/
 
 .context-menu {
     -fx-background-color: -vatsim-background-color-very-light;
@@ -171,7 +288,7 @@
 
 .menu-item-data .label {
     -fx-font-family: "B612 Mono";
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: -vatprism-2-text-fill;
 }
 
 .menu-item-data:hover {
@@ -194,10 +311,6 @@
     -fx-background-color: transparent;
 }
 
-.mono {
-    -fx-font-family: "B612 Mono";
-}
-
 .variable-width {
     -fx-font-family: "B612";
 }
@@ -211,41 +324,8 @@
     -fx-text-fill: -vatsim-text-color-light;
 }
 
-.text-field {
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-    -fx-min-height: 0;
-    -fx-text-fill: -vatsim-text-color;
-    -fx-background-color: -vatsim-background-color-very-very-light;
-    -fx-highlight-fill: -vatsim-background-color-very-very-very-light;
-    -fx-highlight-text-fill: -vatsim-text-color-light;
-    -fx-prompt-text-fill: -vatsim-text-color-dark;
-}
-
 .description {
     -fx-text-fill: -vatsim-text-color-dark;
-    /*-fx-font-size: 80%;*/
-    /*-fx-font-style: italic;*/
-}
-
-.radio-button:selected .radio .dot {
-    -fx-background-color: -vatsim-background-color;
-    -fx-background-insets: 0;
-}
-
-.radio-button .radio {
-    -fx-background-color: -vatsim-background-color-very-very-light;
-    -fx-background-insets: 0;
-}
-
-.check-box .box {
-    -fx-background-color: -vatsim-background-color-very-very-light;
-    -fx-background-insets: 0;
-    -fx-border-radius: 0;
-}
-
-.check-box:selected .mark {
-    -fx-background-color: -vatsim-background-color;
 }
 
 .hyperlink-label {
@@ -257,11 +337,445 @@
     -fx-text-fill: -vatsim-text-color-light;
 }
 
-.tooltip {
-    -fx-text-fill: -vatsim-text-color;
-    -fx-background-color: -vatsim-background-color-very-light;
-}
-
 .square-button {
     -fx-background-radius: 0;
+}
+
+/*////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+.ikonli-font-icon {
+    -fx-icon-fill: -vatprism-2-icon-fill;
+}
+
+.label,
+.label .text {
+    -fx-font-family: "B612";
+    -fx-text-fill: -vatprism-2-text-fill;
+}
+
+.faint,
+.faint .text {
+    -fx-text-fill: -vatprism-2-text-faint-fill !important;
+}
+
+.mono,
+.mono .text {
+    -fx-font-family: "B612 Mono" !important;
+}
+
+.bold,
+.bold .text {
+    -fx-font-weight: bold !important;
+}
+
+.structure {
+    -fx-background-color: -vatprism-2-structure-fill;
+}
+
+.button-bar-horizontal {
+    -fx-background-color: -vatprism-2-structure-fill;
+    -fx-min-height: 28;
+    -fx-max-height: 28;
+    -fx-spacing: 4;
+    -fx-padding: 0 4 0 4;
+    -fx-alignment: center-left;
+}
+
+.align-center {
+    -fx-alignment: center;
+}
+
+.align-center-right {
+    -fx-alignment: center-right;
+}
+
+.button-bar-vertical {
+    -fx-background-color: -vatprism-2-structure-fill;
+    -fx-min-width: 28;
+    -fx-max-width: 28;
+    -fx-spacing: 4;
+    -fx-padding: 4 0 4 0;
+    -fx-alignment: top-center;
+}
+
+.structure-header {
+    -fx-background-color: -vatprism-2-header-active-fill;
+}
+
+.vatprism-check-box {
+    -fx-pref-height: 14;
+    -fx-max-height: 14;
+}
+
+
+.list-view .vatprism-cell:filled .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-icon-fill;
+}
+
+.list-view .vatprism-cell:filled:hover .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-list-item-icon-hover-fill;
+}
+
+.list-view .vatprism-cell:selected:hover .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-list-item-icon-selected-fill;
+}
+
+.list-view:focused .vatprism-cell:selected .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-list-item-icon-selected-focused-fill;
+}
+
+.list-view .vatprism-cell:filled {
+    -fx-background-color: -vatprism-2-list-item-fill;
+}
+
+.list-view .vatprism-cell:filled:hover {
+    -fx-background-color: -vatprism-2-list-item-hover-fill;
+}
+
+.list-view .vatprism-cell:filled:selected {
+    -fx-background-color: -vatprism-2-list-item-selected-fill;
+}
+
+.list-view:focused .vatprism-cell:filled:selected {
+    -fx-background-color: -vatprism-2-list-item-selected-focused-fill;
+}
+
+.list-view .vatprism-cell:filled .label {
+    -fx-text-fill: -vatprism-2-list-item-text-fill;
+}
+
+.list-view .vatprism-cell:filled:hover .label {
+    -fx-text-fill: -vatprism-2-list-item-text-hover-fill;
+}
+
+.list-view .vatprism-cell:filled:selected .label {
+    -fx-text-fill: -vatprism-2-list-item-text-selected-fill;
+}
+
+.list-view:focused .vatprism-cell:filled:selected .label,
+.list-view:focused .vatprism-cell:filled:selected .faint,
+.list-view:focused .vatprism-cell:filled:selected .faint .text {
+    -fx-text-fill: -vatprism-2-list-item-text-selected-focused-fill !important;
+}
+
+.separator *.line {
+    -fx-border-width: 0.5px;
+    -fx-border-style: solid;
+    -fx-border-color: -vatprism-2-separator-fill;
+}
+
+.separator:vertical {
+    -fx-padding: 4 0 4 0;
+}
+
+.separator:horizontal {
+    -fx-padding: 0 4 0 4;
+}
+
+.radio-button .radio,
+.radio-button:determinate .radio,
+.radio-button:indeterminate .radio,
+.radio-button:armed .radio {
+    -fx-border-width: 1;
+    -fx-background-color: -vatprism-2-checkbox-fill;
+    -fx-background-insets: 0;
+    -fx-border-color: -vatprism-2-checkbox-border;
+    -fx-border-radius: 7;
+    -fx-padding: 4;
+}
+
+.radio-button:focused .radio {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-checkbox-fill;
+    -fx-background-insets: -2, 0;
+}
+
+.radio-button:selected .radio {
+    -fx-border-color: -vatprism-2-checkbox-selected-border;
+    -fx-background-insets: 0;
+    -fx-background-color: -vatprism-2-checkbox-selected-fill;
+}
+
+.radio-button:selected:focused .radio {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-checkbox-selected-fill;
+    -fx-background-insets: -2, 0;
+}
+
+.radio-button .radio .dot {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-padding: 3;
+}
+
+
+.warning-icon {
+    -fx-icon-color: -vatprism-2-warning-fill;
+}
+
+.error-icon {
+    -fx-icon-color: -vatprism-2-error-fill;
+    -fx-cursor: default;
+}
+
+.tooltip {
+    -fx-background-color: -vatprism-2-tooltip-border, -vatprism-2-tooltip-fill;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 10;
+    -fx-effect: null;
+    -fx-text-fill: black;
+}
+
+.combo-box {
+    -fx-pref-height: 24;
+}
+
+.combo-box > .list-cell {
+    -fx-padding: 0 8 0 8;
+}
+
+.combo-box-base,
+.button {
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 3;
+    -fx-pref-height: 24;
+    -fx-max-height: 24;
+}
+
+.button {
+    -fx-padding: 0 8 0 8;
+}
+
+.combo-box-base {
+    -fx-padding: 0;
+}
+
+.combo-box-base:focused,
+.button:focused {
+    -fx-background-insets: -2, 0, 1;
+    -fx-background-radius: 5, 3, 3;
+}
+
+.combo-box-popup .scroll-bar:vertical .track {
+    -fx-background-color: -vatprism-2-scrollbar-hover-fill;
+    -fx-background-insets: 1 1 1 0;
+}
+
+
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: -vatprism-2-list-item-hover-fill;
+    -fx-text-fill: -vatprism-2-list-item-text-hover-fill;
+}
+
+.combo-box-popup .cell:selected,
+.combo-box-popup .cell:selected:hover {
+    -fx-background-color: -vatprism-2-list-item-selected-focused-fill;
+    -fx-text-fill: -vatprism-2-list-item-text-selected-focused-fill;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: -vatprism-2-button-cancel-border, -vatprism-2-combo-box-arrow-button-background-color;
+    -fx-background-insets: 1 1 1 0, 1;
+    -fx-background-radius: 0 3 3 0;
+    -fx-padding: 0 7 0 7;
+}
+
+.combo-box .arrow {
+    -fx-background-color: -vatprism-2-icon-fill;
+    -fx-padding: 4 9 0 0;
+}
+
+.button:default,
+.button:default:hover,
+.button:default:pressed {
+    -fx-background-color: -vatprism-2-button-default-border, -vatprism-2-button-default-fill;
+    -fx-text-fill: -vatprism-2-button-default-text-fill;
+    -fx-font-weight: bold;
+}
+
+.button:default:focused {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-button-default-border, -vatprism-2-button-default-fill;
+}
+
+.combo-box-base,
+.button,
+.button:hover,
+.button:pressed,
+.button:cancel,
+.button:cancel:hover,
+.button:cancel:pressed {
+    -fx-background-color: -vatprism-2-button-cancel-border, -vatprism-2-button-cancel-fill;
+    -fx-text-fill: -vatprism-2-button-cancel-text-fill;
+}
+
+.combo-box-base:focused,
+.button:focused,
+.button:cancel:focused {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-button-cancel-border, -vatprism-2-button-cancel-fill;
+}
+
+.text-field {
+    -fx-background-color: -vatprism-2-text-field-border, -vatprism-2-text-field-fill;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 0;
+    -fx-min-height: 24;
+    -fx-pref-height: 24;
+    -fx-max-height: 24;
+    -fx-text-fill: -vatprism-2-text-field-text-fill;
+    -fx-highlight-fill: -vatprism-2-text-field-highlight-fill;
+    -fx-highlight-text-fill: -vatprism-2-text-field-highlight-text-fill;
+}
+
+.text-field:focused {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-text-field-border, -vatprism-2-text-field-fill;
+    -fx-background-insets: -2, 0, 1;
+}
+
+
+.check-box {
+    -fx-skin: 'net.marvk.fs.vatsim.map.view.vatprism2.controls.VatprismCheckBoxSkin';
+}
+
+.check-box-standalone {
+    -fx-skin: 'net.marvk.fs.vatsim.map.view.vatprism2.controls.VatprismCheckBoxStandaloneSkin' !important;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: magenta;
+}
+
+.vatprism-check-box .box {
+    -fx-background-color: -vatprism-2-checkbox-border, -vatprism-2-checkbox-fill;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 1.5;
+    -fx-pref-height: 14;
+    -fx-max-height: 14;
+    -fx-pref-width: 14;
+    -fx-max-width: 14;
+    -fx-padding: 0;
+}
+
+.vatprism-check-box:selected .box {
+    -fx-background-color: -vatprism-2-checkbox-selected-border, -vatprism-2-checkbox-selected-fill;
+}
+
+.vatprism-check-box:selected:focused .box {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-checkbox-selected-border, -vatprism-2-checkbox-selected-fill;
+    -fx-background-insets: -2, 0, 1;
+    -fx-background-radius: 3, 1.5, 1.5;
+}
+
+.vatprism-check-box:focused .box {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-checkbox-border, -vatprism-2-checkbox-fill;
+    -fx-background-insets: -2, 0, 1;
+    -fx-background-radius: 3, 1.5, 1.5;
+}
+
+.vatprism-check-box .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-checkbox-mark-selected-fill !important;
+}
+
+
+.icon-button2,
+.icon-button2:focused {
+    -fx-background-insets: none;
+    -fx-background-color: transparent;
+    -fx-min-width: 22;
+    -fx-max-width: 22;
+    -fx-min-height: 22;
+    -fx-max-height: 22;
+    -fx-padding: 0;
+    -fx-background-radius: 3;
+}
+
+.icon-button2:hover {
+    -fx-background-color: -vatprism-2-tool-button-hover-fill;
+}
+
+.icon-button2:pressed {
+    -fx-background-color: -vatprism-2-tool-button-pressed-fill;
+}
+
+.icon-button2:selected {
+    -fx-background-color: -vatprism-2-tool-button-selected-fill;
+}
+
+.icon-button2 .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-icon-fill;
+    -fx-icon-size: -vatsim-toolbar-button-icon-size;
+}
+
+.icon-button2:disabled .ikonli-font-icon {
+    -fx-icon-color: -vatprism-2-icon-disabled-fill;
+}
+
+.split-pane:horizontal > .split-pane-divider,
+.split-pane:vertical > .split-pane-divider {
+}
+
+.split-pane-divider {
+    -fx-background-color: -vatprism-2-divider-fill;
+    -fx-padding: 0 1 0 0;
+    -fx-background-insets: 0;
+}
+
+.no-padding {
+    -fx-padding: 0 !important;
+}
+
+.spinner .text-field {
+    -fx-background-radius: 3 0 0 3, 3 0 0 3;
+    -fx-background-insets: 0, 1 0 1 1;
+}
+
+.spinner:focused .text-field {
+    -fx-background-radius: 5 0 0 5, 3 0 0 3, 3 0 0 3;
+    -fx-background-insets: -2 0 -2 -2, 0, 1 0 1 1;
+}
+
+
+.spinner .increment-arrow-button {
+    -fx-background-color: -vatprism-2-button-cancel-border, -vatprism-2-combo-box-arrow-button-background-color;
+    -fx-background-insets: 0, 1 1 0 1;
+    -fx-background-radius: 0 3 0 0;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-background-color: -vatprism-2-button-cancel-border, -vatprism-2-combo-box-arrow-button-background-color;
+    -fx-background-insets: 0, 0 1 1 1;
+    -fx-background-radius: 0 0 3 0;
+}
+
+.spinner:focused .increment-arrow-button {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-button-cancel-border, -vatprism-2-combo-box-arrow-button-background-color;
+    -fx-background-insets: -2 -2 0 0, 0, 1 1 0 1;
+    -fx-background-radius: 0 5 0 0, 0 3 0 0, 0 3 0 0;
+}
+
+.spinner:focused .decrement-arrow-button {
+    -fx-background-color: -vatprism-2-focus-fill, -vatprism-2-button-cancel-border, -vatprism-2-combo-box-arrow-button-background-color;
+    -fx-background-insets: 0 -2 -2 0, 0, 0 1 1 1;
+    -fx-background-radius: 0 0 5 0, 0 0 3 0, 0 0 3 0;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -vatprism-2-icon-fill;
+}
+
+.spinner .increment-arrow {
+    -fx-padding: 4 9 0 0;
+}
+
+.spinner .decrement-arrow {
+    -fx-padding: 4 9 0 0;
+}
+
+.spinner .increment-arrow-button {
+    -fx-alignment: bottom-center;
+    -fx-padding: 0 7 3 7;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-alignment: top-center;
+    -fx-padding: 2 7 0 7;
 }

@@ -2,9 +2,10 @@ package net.marvk.fs.vatsim.map.view.datatable;
 
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.TextFlow;
 import lombok.extern.log4j.Log4j2;
@@ -132,7 +133,7 @@ public class ColumnBuilderFactory<Model extends Data> {
             }
         }
 
-        private TextFlow textFlowAdjusted(final String cellValue, final boolean mono) {
+        private Node textFlowAdjusted(final String cellValue, final boolean mono) {
             // TODO find cause of nullable cellValue
             if (cellValue == null) {
                 return null;
@@ -143,6 +144,7 @@ public class ColumnBuilderFactory<Model extends Data> {
             textFlow.setPrefHeight(Region.USE_PREF_SIZE);
             textFlow.setMinWidth(Region.USE_PREF_SIZE);
             textFlow.setPrefWidth(Region.USE_COMPUTED_SIZE);
+            textFlow.setPadding(new Insets(3, 0, 0, 4));
             return textFlow;
         }
 
@@ -208,11 +210,11 @@ public class ColumnBuilderFactory<Model extends Data> {
     }
 
     private class DataTableCell<CellValue> extends TableCell<Model, CellValue> {
-        private final BiFunction<CellValue, String, Pane> paneSupplier;
+        private final BiFunction<CellValue, String, Node> nodeSupplier;
         private final boolean valueNullable;
 
-        public DataTableCell(final BiFunction<CellValue, String, Pane> paneSupplier, final boolean valueNullable) {
-            this.paneSupplier = paneSupplier;
+        public DataTableCell(final BiFunction<CellValue, String, Node> nodeSupplier, final boolean valueNullable) {
+            this.nodeSupplier = nodeSupplier;
             this.valueNullable = valueNullable;
         }
 
@@ -224,7 +226,7 @@ public class ColumnBuilderFactory<Model extends Data> {
                 setText(null);
                 setGraphic(null);
             } else {
-                setGraphic(paneSupplier.apply(item, viewModel.getQuery()));
+                setGraphic(nodeSupplier.apply(item, viewModel.getQuery()));
             }
         }
     }

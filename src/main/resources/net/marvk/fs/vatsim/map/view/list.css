@@ -1,15 +1,19 @@
+.table-view .arrow {
+    -fx-mark-color: -vatprism-2-icon-fill;
+}
+
 /*.table-cell,*/
 .table-row-cell,
 .list-cell {
+    -fx-background-color: -vatprism-2-table-row-fill;
     -fx-text-fill: -vatsim-text-color;
     -fx-padding: 0px;
-    -fx-background-color: -vatsim-background-color-very-light;
 }
 
 /*.table-cell:even,*/
 .table-row-cell:even,
 .list-cell:even {
-    -fx-background-color: derive(-vatsim-background-color-very-light, 2%);
+    -fx-background-color: -vatprism-2-table-row-fill;
 }
 
 .table-view,
@@ -17,20 +21,38 @@
 .list-view,
 .list-view:focused {
     -fx-padding: 0;
-    -fx-background-color: -vatsim-background-color-very-light;
+    -fx-background-color: -vatprism-2-content-fill;
     -fx-background-insets: 0;
     -fx-background-radius: 0;
 }
 
 .table-view .column-header,
 .table-view .column-header-background .filler {
-    -fx-background-color: -vatsim-background-color-light;
+    -fx-background-color: -vatprism-2-table-divider-fill, -vatprism-2-table-header-fill, -vatprism-2-table-divider-fill, -vatprism-2-table-header-fill;
+    -fx-background-insets: 0, 0 0 1 0, 2 0 3 0, 0 1 1 0;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: -vatsim-text-color;
+    -fx-text-fill: black;
+    -fx-font-weight: normal;
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 0 3;
 }
 
 .table-row-cell {
-    -fx-table-cell-border-color: -vatsim-background-color;
+    -fx-table-cell-border-color: -vatprism-2-table-divider-fill;
+}
+
+.table-row-cell:filled:hover *.search-result-cell-text {
+    -fx-fill: -vatprism-2-list-item-text-hover-fill;
+}
+
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: -vatprism-2-list-item-hover-fill;
+}
+
+.no-header .column-header-background {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
 }

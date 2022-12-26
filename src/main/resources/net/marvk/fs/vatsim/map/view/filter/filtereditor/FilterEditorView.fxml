@@ -6,9 +6,9 @@
 <?import org.kordamp.ikonli.javafx.*?>
 <VBox fx:id="container" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
       minHeight="-Infinity"
-      minWidth="300" prefWidth="500.0" spacing="5.0" styleClass="container"
+      minWidth="300" prefWidth="500.0" spacing="5.0" styleClass="structure"
       xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditorView">
+      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditor2View">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>

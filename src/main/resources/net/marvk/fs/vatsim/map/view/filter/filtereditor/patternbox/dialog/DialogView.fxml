@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.patternbox.dialog.DialogView">
+    <children>
+        <GridPane hgap="6.0" vgap="7.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS" prefWidth="200.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER"/>
+            </rowConstraints>
+            <children>
+                <Label text="Name (Optional):"/>
+                <Label text="Pattern:" GridPane.rowIndex="2"/>
+                <Separator GridPane.columnSpan="2" GridPane.rowIndex="1"/>
+                <TextField fx:id="nameTextField" GridPane.columnIndex="1"/>
+                <CustomTextField styleClass="mono" fx:id="patternTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                <HBox alignment="CENTER_RIGHT" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <children>
+                        <RadioButton fx:id="wildcardRadio" mnemonicParsing="false" selected="true" text="Wildcard">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2f-format-text-variant"/>
+                            </graphic>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="matchingTypeToggleGroup"/>
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="regexRadio" mnemonicParsing="false" text="Regex" toggleGroup="$matchingTypeToggleGroup">
+                            <graphic>
+                                <FontIcon iconLiteral="mdi2r-regex"/>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </HBox>
+            </children>
+        </GridPane>
+    </children>
+</VBox>

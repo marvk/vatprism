@@ -14,7 +14,7 @@
     <children>
         <DataDetailPane fx:id="status" headerMonospace="true">
             <contentNode>
-                <GridPane>
+                <GridPane styleClass="container">
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
                                            prefWidth="$descriptionColumn"/>

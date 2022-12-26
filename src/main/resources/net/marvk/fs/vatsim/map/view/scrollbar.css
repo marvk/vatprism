@@ -2,58 +2,79 @@
 https://stackoverflow.com/a/48050208/3000387
  */
 
+*.scroll-bar:vertical {
+    -fx-pref-width: 10;
+}
+
+*.scroll-bar:horizontal {
+    -fx-pref-height: 10;
+}
+
 *.scroll-bar:vertical,
 *.scroll-bar:horizontal {
     -fx-background-color: transparent;
+    -fx-background-insets: 1 0 0 0;
 }
 
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track {
-    -fx-background-color: transparent;
+    -fx-background-color: -vatprism-2-scrollbar-fill;
+    -fx-background-insets: 1 0 0 0;
     -fx-border-color: transparent;
-    -fx-background-radius: 0.0em;
-    -fx-border-radius: 2.0em;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
 }
 
+
+.scroll-bar:horizontal:hover .track,
+.scroll-bar:vertical:hover .track,
+.scroll-bar:horizontal:pressed .track,
+.scroll-bar:vertical:pressed .track {
+    -fx-background-color: -vatprism-2-scrollbar-hover-fill;
+}
 
 .scroll-bar:horizontal .increment-button,
 .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
-    -fx-background-radius: 0.0em;
-    -fx-padding: 0.0 0.0 10.0 0.0;
+    -fx-background-radius: 0;
+    -fx-padding: 0 0 10 0;
 
 }
 
 .scroll-bar:vertical .increment-button,
 .scroll-bar:vertical .decrement-button {
     -fx-background-color: transparent;
-    -fx-background-radius: 0.0em;
-    -fx-padding: 0.0 10.0 0.0 0.0;
-
+    -fx-background-radius: 0;
+    -fx-padding: 0 10 0 0;
 }
 
 .scroll-bar .increment-arrow,
 .scroll-bar .decrement-arrow {
     -fx-shape: " ";
-    -fx-padding: 0.15em 0.0;
+    -fx-padding: 0.15em 0;
 }
 
 .scroll-bar:vertical .increment-arrow,
 .scroll-bar:vertical .decrement-arrow {
     -fx-shape: " ";
-    -fx-padding: 0.0 0.15em;
+    -fx-padding: 0 0.15em;
 }
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: -vatsim-text-color;
-    -fx-background-insets: 2.0, 0.0, 0.0;
-    -fx-background-radius: 2.0em;
+    -fx-background-color: -vatprism-2-scrollbar-thumb-border, -vatprism-2-scrollbar-thumb-fill;
+    -fx-background-insets: 1 1 1 0, 2 2 2 1;
+    -fx-background-radius: 0;
 }
 
 .scroll-bar:horizontal .thumb:hover,
-.scroll-bar:vertical .thumb:hover {
-    -fx-background-color: -vatsim-text-color-light;
-    -fx-background-insets: 2.0, 0.0, 0.0;
-    -fx-background-radius: 2.0em;
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:horizontal .thumb:pressed,
+.scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: -vatprism-2-scrollbar-thumb-hover-border, -vatprism-2-scrollbar-thumb-hover-fill;
+    -fx-background-insets: 1 1 1 0, 2 2 2 1;
+    -fx-background-radius: 0;
 }
+
+/**************/
+

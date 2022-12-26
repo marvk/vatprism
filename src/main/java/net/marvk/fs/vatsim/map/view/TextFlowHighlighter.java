@@ -135,7 +135,7 @@ public class TextFlowHighlighter {
     private Text createText(final String s, final boolean bold, final boolean mono) {
         final Text text = new Text(s);
         text.setFont(getFont(bold, mono));
-        text.setStyle("-fx-fill: -vatsim-text-color");
+        text.getStyleClass().add("search-result-cell-text");
         return text;
     }
 

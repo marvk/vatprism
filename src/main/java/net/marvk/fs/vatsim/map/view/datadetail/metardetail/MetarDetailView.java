@@ -13,7 +13,8 @@ import net.marvk.fs.vatsim.map.data.Metar;
 import net.marvk.fs.vatsim.map.view.datadetail.DataDetailPane;
 import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DetailSubView;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.octicons.Octicons;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignD;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignR;
 
 import java.util.List;
 
@@ -34,16 +35,16 @@ public class MetarDetailView extends DetailSubView<MetarDetailViewModel, Metar> 
         refreshMetar.disableProperty().bind(viewModel.fetchMetar().notExecutableProperty());
         refreshMetar.setOnAction(e -> viewModel.fetchMetar().execute());
         metarText.setOnMouseClicked(container::fireEvent);
-        metarText.maxWidthProperty().bind(Bindings.createDoubleBinding(
-                () -> viewModel.getData() == null ? 0.0 : Double.POSITIVE_INFINITY,
-                viewModel.dataProperty()
-        ));
+//        metarText.maxWidthProperty().bind(Bindings.createDoubleBinding(
+//                () -> viewModel.getData() == null ? 0.0 : Double.POSITIVE_INFINITY,
+//                viewModel.dataProperty()
+//        ));
         viewModel.dataProperty().addListener((observable, oldValue, newValue) ->
                 HBox.setHgrow(refreshMetar, newValue == null ? Priority.ALWAYS : Priority.NEVER)
         );
         final FontIcon icon = (FontIcon) refreshMetar.getGraphic();
         icon.iconCodeProperty().bind(Bindings.createObjectBinding(
-                () -> viewModel.fetchMetar().isRunning() ? Octicons.SYNC_16 : Octicons.DOWNLOAD_16,
+                () -> viewModel.fetchMetar().isRunning() ? MaterialDesignD.DOWNLOAD : MaterialDesignR.RELOAD,
                 viewModel.fetchMetar().runningProperty()
         ));
         viewModel.fetchMetar().runningProperty().addListener((observable, oldValue, newValue) -> {

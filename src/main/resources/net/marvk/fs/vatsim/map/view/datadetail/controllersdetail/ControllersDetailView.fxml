@@ -5,7 +5,7 @@
                 xmlns:fx="http://javafx.com/fxml/1"
                 fx:controller="net.marvk.fs.vatsim.map.view.datadetail.controllersdetail.ControllersDetailView">
     <contentNode>
-        <VBox fx:id="contentContainer">
+        <VBox fx:id="contentContainer" styleClass="container">
             <HBox fx:id="noControllers" alignment="CENTER" minWidth="0.0">
                 <children>
                     <Label styleClass="mono" text="No Controllers"/>

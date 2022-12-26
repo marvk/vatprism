@@ -6,10 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import net.marvk.fs.vatsim.map.view.vatprism2.controls.ButtonBarBox;
 
 public class FilteredClientsView implements FxmlView<FilteredClientsViewModel> {
     @FXML
-    private VBox container;
+    private ButtonBarBox<Parent> container;
     @FXML
     private CheckBox controllers;
     @FXML
@@ -30,7 +31,7 @@ public class FilteredClientsView implements FxmlView<FilteredClientsViewModel> {
         final Parent clientsTable = viewTuple.getView();
         VBox.setVgrow(clientsTable, Priority.ALWAYS);
 
-        container.getChildren().add(clientsTable);
+        container.setContent(clientsTable);
         viewModel.controllersProperty().bind(controllers.selectedProperty());
         viewModel.pilotsProperty().bind(pilots.selectedProperty());
     }

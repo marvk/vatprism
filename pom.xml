@@ -58,9 +58,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
+        <kotlin.version>1.7.10</kotlin.version>
         <java.version>15</java.version>
         <lombok.version>1.18.22</lombok.version>
-        <javafx.version>17.0.1</javafx.version>
+        <javafx.version>19</javafx.version>
         <slf4j.version>1.7.32</slf4j.version>
         <mvvmfx.version>1.9.0-SNAPSHOT</mvvmfx.version>
         <guice.version>5.0.1</guice.version>
@@ -69,7 +70,7 @@
         <geotools.version>25.1</geotools.version>
         <vatsim-api.version>1.2.0</vatsim-api.version>
         <junit.version>5.8.1</junit.version>
-        <preferencesfx.version>11.8.0</preferencesfx.version>
+        <preferencesfx.version>11.11.0</preferencesfx.version>
         <appdirs.version>1.2.1</appdirs.version>
         <rtree2.version>0.9-RC1</rtree2.version>
         <semver.version>0.9.0</semver.version>
@@ -169,6 +170,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-octicons-pack</artifactId>
             <version>${ikonli.version}</version>
@@ -181,6 +195,11 @@
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-ionicons4-pack</artifactId>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-materialdesign2-pack</artifactId>
             <version>${ikonli.version}</version>
         </dependency>
         <dependency>
@@ -311,6 +330,27 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.5</version>
@@ -356,7 +396,31 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>java-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>java-test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <generatedSourcesDirectory>src/lib/java</generatedSourcesDirectory>
                 </configuration>

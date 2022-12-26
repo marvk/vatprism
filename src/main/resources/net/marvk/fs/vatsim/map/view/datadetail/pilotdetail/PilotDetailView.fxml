@@ -15,7 +15,7 @@
     <fx:include fx:id="client" source="../clientdetail/ClientDetailView.fxml"/>
     <DataDetailPane headerText="Status">
         <contentNode>
-            <GridPane hgap="2.0" vgap="2.0">
+            <GridPane hgap="2.0" vgap="2.0" styleClass="container">
                 <columnConstraints>
                     <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
                                        prefWidth="$descriptionColumn"/>

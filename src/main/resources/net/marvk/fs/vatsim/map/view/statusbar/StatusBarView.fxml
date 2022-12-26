@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
-<HBox styleClass="container" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+<HBox styleClass="structure" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.marvk.fs.vatsim.map.view.statusbar.StatusBarView">
     <children>
         <GridPane prefWidth="600.0" HBox.hgrow="ALWAYS">

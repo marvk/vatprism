@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import net.marvk.fs.vatsim.map.view.filter.filtereditor.patternbox.PatternBox?>
+<?import net.marvk.fs.vatsim.map.view.filter.filtereditor.selectbox.SelectBox?>
+<?import net.marvk.fs.vatsim.map.view.vatprism2.controls.*?>
+<VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditor2View">
+    <HBox GridPane.columnSpan="2147483647" prefWidth="100" alignment="CENTER_LEFT" spacing="6">
+        <Label text="Name:"/>
+        <TextField fx:id="nameField" HBox.hgrow="ALWAYS"/>
+        <Region prefWidth="30"/>
+        <Label text="Text:"/>
+        <VatprismColorPicker fx:id="textColorPicker"/>
+        <Region prefWidth="30"/>
+        <Label text="Background:"/>
+        <VatprismColorPicker fx:id="backgroundColorPicker"/>
+    </HBox>
+    <GridPane fx:id="grid" vgap="17">
+        <columnConstraints>
+            <ColumnConstraints fx:id="columnConstraints1" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+            <ColumnConstraints fx:id="columnConstraints2" hgrow="SOMETIMES" maxWidth="50.0" minWidth="-Infinity" prefWidth="50.0"/>
+            <ColumnConstraints fx:id="columnConstraints3" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="0" vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints valignment="CENTER" prefHeight="200" vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints valignment="CENTER" prefHeight="200" vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints valignment="CENTER" prefHeight="301" vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints valignment="CENTER" prefHeight="141" vgrow="SOMETIMES"/>
+            <RowConstraints vgrow="SOMETIMES"/>
+            <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
+        </rowConstraints>
+        <children>
+            <SectionHeader maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Identification"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="1"/>
+            <SectionHeader maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Airports"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="4"/>
+            <HBox alignment="CENTER" styleClass="structure" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                <Label text="and"/>
+            </HBox>
+            <SectionHeader maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Client Type"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="6"/>
+            <HBox alignment="CENTER" styleClass="structure" GridPane.rowIndex="6" GridPane.columnIndex="1">
+                <Label text="and"/>
+            </HBox>
+            <SectionHeader maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Flight Type"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="8"/>
+            <HBox alignment="CENTER" styleClass="structure" GridPane.rowIndex="8" GridPane.columnIndex="1">
+                <Label text="and"/>
+            </HBox>
+            <SectionHeader maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="Other"
+                           GridPane.columnSpan="2147483647" GridPane.rowIndex="10"/>
+
+
+            <HBox spacing="10" alignment="CENTER" GridPane.rowIndex="2" GridPane.columnSpan="2147483647">
+                <CheckBox fx:id="controllerCheckbox" text="Controller"/>
+                <CheckBox fx:id="pilotCheckbox" text="Pilot"/>
+            </HBox>
+            <PatternBox fx:id="callsignPatternBox" title="Callsigns" type="Callsign" GridPane.rowIndex="3"/>
+            <AndOrToggle fx:id="callsignCidToggle" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            <PatternBox fx:id="cidPatternBox" title="CIDs" type="CID" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+            <PatternBox fx:id="departurePatternBox" type="Departure Airport" title="Departures" GridPane.rowIndex="5"/>
+            <AndOrToggle fx:id="departureArrivalToggle" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <PatternBox fx:id="arrivalPatternBox" type="Arrival Airport" title="Arrivals" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+            <SelectBox fx:id="ratingsSelectBox" title="Ratings" GridPane.rowIndex="7"/>
+            <Label text="and" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+            <SelectBox fx:id="facilitiesSelectBox" title="Facilities" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
+            <SelectBox fx:id="flightStatusBox" title="Flight Status" GridPane.rowIndex="9"/>
+            <Label text="and" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+            <SelectBox fx:id="flightTypeBox" title="Flight Types" GridPane.columnIndex="2" GridPane.rowIndex="9"/>
+            <CheckBox fx:id="flightPlanFiledCheckBox" GridPane.rowIndex="11" text="Flight Plan Filed"/>
+        </children>
+    </GridPane>
+    <padding>
+        <Insets topRightBottomLeft="17"/>
+    </padding>
+</VBox>

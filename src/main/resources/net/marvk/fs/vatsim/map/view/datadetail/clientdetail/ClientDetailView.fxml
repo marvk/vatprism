@@ -34,7 +34,7 @@
         </StackPane>
     </headerNode>
     <contentNode>
-        <GridPane hgap="2.0" vgap="2.0">
+        <GridPane hgap="2.0" vgap="2.0" styleClass="container">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0"
                                    prefWidth="$descriptionColumn"/>

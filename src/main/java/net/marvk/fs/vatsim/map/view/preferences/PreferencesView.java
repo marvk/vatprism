@@ -6,6 +6,7 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
+import com.dlsc.preferencesfx.view.PreferencesFxView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -16,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
@@ -30,6 +32,7 @@ import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 import net.marvk.fs.vatsim.map.view.painter.Parameter;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
+import org.scenicview.ScenicView;
 
 import java.awt.*;
 import java.io.IOException;
@@ -66,9 +69,28 @@ public class PreferencesView {
     private PreferencesFx getPreferencesDialog() {
         if (preferencesFx == null) {
             preferencesFx = createPreferencesDialog();
+            modifyPreferencesFxStyle(preferencesFx.getView());
         }
 
         return preferencesFx;
+    }
+
+    private static void modifyPreferencesFxStyle(final PreferencesFxView view) {
+        final Parent parent = view.getParent();
+        parent.getStylesheets().addAll(
+                PreferencesView.class.getResource("/net/marvk/fs/vatsim/map/view/root.css").toExternalForm(),
+                PreferencesView.class.getResource("/net/marvk/fs/vatsim/map/view/preferences/preferences.css").toExternalForm()
+        );
+        System.out.println(parent);
+        final ButtonBar buttonBar = (ButtonBar) parent.getChildrenUnmodifiable().get(2);
+        final List<Button> buttons = buttonBar.getButtons().stream().map(e -> (Button) e).collect(Collectors.toList());
+        final Button okButton = buttons.get(0);
+        okButton.setDefaultButton(true);
+        okButton.setCancelButton(false);
+        okButton.setText("OK");
+        final Button cancelButton = buttons.get(1);
+        cancelButton.setText("Cancel");
+
     }
 
     @SneakyThrows
@@ -154,6 +176,8 @@ public class PreferencesView {
 
         final Button openConfigDirectory = new Button("Open Config Directory");
         openConfigDirectory.setOnAction(e -> openConfigDirectory());
+        final Button scenicView = new Button("Scenic View");
+        scenicView.setOnAction(e -> ScenicView.show(preferencesFx.getView().getScene()));
         return Category.of(
                 "General",
                 Group.of(
@@ -164,7 +188,8 @@ public class PreferencesView {
                         Setting.of("Show Twitch stream links", social),
                         Setting.of("Cache static map data", cacheMapData),
                         Setting.of(infoLabel("Accelerates startup time, outdated map data will still be updated automatically", INFO_STYLE)),
-                        Setting.of(openConfigDirectory)
+                        Setting.of(openConfigDirectory),
+                        Setting.of(scenicView)
                 ),
                 Group.of("Advanced",
                         Setting.of("Enable Debug Mode", debug),

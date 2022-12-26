@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import de.saxsys.mvvmfx.InjectScope;
 import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,11 +39,14 @@ public class SearchViewModel extends BaseViewModel {
     @Inject
     public SearchViewModel(
             final Provider<SearchActionSupplier> searchActionProvider,
-            final Preferences preferences
+            final Preferences preferences,
+            final AirlineRepository airlineRepository
     ) {
         final SearchActionSupplier supplier = searchActionProvider.get();
         this.searchCommand = new DelegateCommand(() -> supplier.createAction(query.get(), results), true);
         this.preferences = preferences;
+        this.results.set(airlineRepository.stream().limit(200).collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        Platform.runLater(() -> this.results.set(null));
     }
 
     public void initialize() {

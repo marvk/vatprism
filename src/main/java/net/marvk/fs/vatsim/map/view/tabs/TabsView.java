@@ -103,7 +103,7 @@ public class TabsView implements FxmlView<TabsViewModel> {
             setSkin(createDefaultSkin());
 
             tabHeaderArea().paddingProperty().bind(Bindings.createObjectBinding(
-                    () -> new Insets(0, 0, 0, paddingLeft.doubleValue() + 1),
+                    () -> new Insets(0, 0, 0, paddingLeft.doubleValue()),
                     paddingLeft
             ));
         }

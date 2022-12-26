@@ -26,7 +26,8 @@ import net.marvk.fs.vatsim.map.view.Notifications;
 import net.marvk.fs.vatsim.map.view.TextFlowHighlighter;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.octicons.Octicons;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignC;
+import org.kordamp.ikonli.materialdesign2.MaterialDesignM;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -95,8 +96,8 @@ public class SearchView implements FxmlView<SearchViewModel> {
     }
 
     private FontIcon createClearIcon() {
-        final FontIcon icon = FontIcon.of(Octicons.X_16);
-        StackPane.setMargin(icon, new Insets(0, 3, 0, 0));
+        final FontIcon icon = FontIcon.of(MaterialDesignC.CLOSE_CIRCLE);
+        StackPane.setMargin(icon, new Insets(0, 10, 0, 0));
         StackPane.setAlignment(icon, Pos.CENTER_RIGHT);
         icon.visibleProperty().bind(searchBox.textProperty().isNotEmpty().or(viewModel.resultsProperty().isNotNull()));
         icon.setCursor(Cursor.HAND);
@@ -107,16 +108,21 @@ public class SearchView implements FxmlView<SearchViewModel> {
             }
         });
         icon.getStyleClass().add("clear-icon");
-        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(2.0));
+        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(1.7));
+        icon.iconCodeProperty()
+            .bind(Bindings.createObjectBinding(
+                    () -> icon.isHover() ? MaterialDesignC.CLOSE_CIRCLE : MaterialDesignC.CLOSE,
+                    icon.hoverProperty()
+            ));
         return icon;
     }
 
     private FontIcon createSearchIcon() {
-        final FontIcon icon = FontIcon.of(Octicons.SEARCH_16);
-        StackPane.setMargin(icon, new Insets(0, 0, 0, 3));
+        final FontIcon icon = FontIcon.of(MaterialDesignM.MAGNIFY);
+        StackPane.setMargin(icon, new Insets(0, 0, 0, 7));
         StackPane.setAlignment(icon, Pos.CENTER_LEFT);
         icon.visibleProperty().bind(searchBox.textProperty().isEmpty().and(searchBox.focusedProperty().not()));
-        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(2.0));
+        icon.iconSizeProperty().bind(searchBox.heightProperty().divide(1.7));
         return icon;
     }
 

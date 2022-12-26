@@ -10,9 +10,9 @@ import java.util.Map;
 public class ControllerRating implements Comparable<ControllerRating> {
     private static final Map<Integer, ControllerRating> RATINGS = new LinkedHashMap<>();
 
-    int id;
-    String shortName;
-    String longName;
+    public int id;
+    public String shortName;
+    public String longName;
 
     public static ControllerRating of(final int id, final String shortName, final String longName) {
         return RATINGS.computeIfAbsent(id, key -> new ControllerRating(id, shortName, longName));

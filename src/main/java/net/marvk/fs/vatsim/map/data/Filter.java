@@ -18,8 +18,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
 
     private final EnumSetPredicate<Type> types;
     private final ReadOnlyStringProperty name;
-    private final ImmutableBooleanProperty enabled;
-
     private final ReadOnlyObjectProperty<Color> textColor;
     private final ReadOnlyObjectProperty<Color> backgroundColor;
 
@@ -46,7 +44,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
         this(
                 UUID.randomUUID(),
                 "Unnamed Filter",
-                true,
                 Color.BLACK,
                 Color.hsb(ThreadLocalRandom.current().nextDouble(360), 0.8, 0.8),
                 Collections.singletonList(Type.PILOT),
@@ -69,7 +66,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
     public Filter(
             final UUID uuid,
             final String name,
-            final boolean enabled,
             final Color textColor,
             final Color backgroundColor,
             final List<Type> types,
@@ -90,7 +86,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
         this.uuid = new ImmutableObjectProperty<>(uuid);
         this.types = new EnumSetPredicate<>(types);
         this.name = new ImmutableStringProperty(name);
-        this.enabled = new ImmutableBooleanProperty(enabled);
         this.textColor = new ImmutableObjectProperty<>(textColor);
         this.backgroundColor = new ImmutableObjectProperty<>(backgroundColor);
         this.callsignPredicates = new StringPredicateListPredicate(callsignPredicates);
@@ -110,10 +105,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
 
     @Override
     public boolean test(final Client client) {
-        if (!isEnabled()) {
-            return false;
-        }
-
         final boolean isPilot = client instanceof Pilot;
         if (isPilot && !types.test(Type.PILOT)) {
             return false;
@@ -280,14 +271,6 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
         return name;
     }
 
-    public boolean isEnabled() {
-        return enabled.get();
-    }
-
-    public ImmutableBooleanProperty enabledProperty() {
-        return enabled;
-    }
-
     public Color getTextColor() {
         return textColor.get();
     }
@@ -424,11 +407,13 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
     }
 
     public static class StringPredicate implements Predicate<String> {
+        private final String name;
         private final Pattern pattern;
         private final String content;
         private final boolean regex;
 
-        public StringPredicate(final Pattern pattern, final String content, final boolean regex) {
+        public StringPredicate(final String name, final Pattern pattern, final String content, final boolean regex) {
+            this.name = name;
             this.pattern = pattern;
             this.content = content;
             this.regex = regex;
@@ -439,9 +424,9 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
             return pattern.matcher(s).matches();
         }
 
-        public static Optional<StringPredicate> tryCreate(final String content, final boolean regex) {
+        public static Optional<StringPredicate> tryCreate(final String name, final String content, final boolean regex) {
             return Optional.ofNullable(pattern(content, regex))
-                           .map(pattern -> new StringPredicate(pattern, content, regex));
+                           .map(pattern -> new StringPredicate(name, pattern, content, regex));
         }
 
         private static Pattern pattern(final String content, final boolean regex) {
@@ -465,6 +450,10 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
             return String.join(".*", simplePattern.split("\\*", -1));
         }
 
+        public String getName() {
+            return name;
+        }
+
         public Pattern getPattern() {
             return pattern;
         }
@@ -475,6 +464,16 @@ public class Filter implements Predicate<Client>, UniquelyIdentifiable {
 
         public boolean isRegex() {
             return regex;
+        }
+
+        @Override
+        public String toString() {
+            return "StringPredicate{" +
+                    "name='" + name + '\'' +
+                    ", pattern=" + pattern +
+                    ", content='" + content + '\'' +
+                    ", regex=" + regex +
+                    '}';
         }
     }
 

@@ -39,7 +39,6 @@ public class JsonFilterAdapter implements Adapter<Filter> {
             final JsonObject result = new JsonObject();
             result.add("uuid", context.serialize(src.getUuid()));
             result.add("name", context.serialize(src.getName()));
-            result.add("enabled", context.serialize(src.isEnabled()));
             result.add("textColor", context.serialize(src.getTextColor()));
             result.add("backgroundColor", context.serialize(src.getBackgroundColor()));
             result.add("types", context.serialize(src.getTypes()));
@@ -85,7 +84,6 @@ public class JsonFilterAdapter implements Adapter<Filter> {
             return new Filter(
                     UUID.fromString(o.get("uuid").getAsString()),
                     o.get("name").getAsString(),
-                    o.get("enabled").getAsBoolean(),
                     textColor,
                     backgroundColor,
                     types,
@@ -110,13 +108,24 @@ public class JsonFilterAdapter implements Adapter<Filter> {
         @Override
         public Filter.StringPredicate deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context) throws JsonParseException {
             final JsonObject o = json.getAsJsonObject();
+
+            final JsonElement nameElement = o.get("name");
+            final String name;
+
+            if (nameElement.isJsonNull()) {
+                name = "";
+            } else {
+                name = nameElement.getAsString();
+            }
+
             return Filter.StringPredicate
-                    .tryCreate(o.get("content").getAsString(), o.get("regex").getAsBoolean()).get();
+                    .tryCreate(name, o.get("content").getAsString(), o.get("regex").getAsBoolean()).get();
         }
 
         @Override
         public JsonElement serialize(final Filter.StringPredicate src, final Type typeOfSrc, final JsonSerializationContext context) {
             final JsonObject result = new JsonObject();
+            result.addProperty("name", src.getName());
             result.addProperty("content", src.getContent());
             result.addProperty("regex", src.isRegex());
             return result;
