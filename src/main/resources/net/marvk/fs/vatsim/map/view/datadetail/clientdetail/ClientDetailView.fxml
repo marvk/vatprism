@@ -25,7 +25,7 @@
                         <Insets left="5.0"/>
                     </padding>
                 </Label>
-                <FontIcon styleClass="live-twitch-logo" iconLiteral="ion4-logo-twitch"/>
+                <FontIcon styleClass="live-logo" fx:id="livestreamIcon"/>
             </HBox>
             <HBox styleClass="header-label-container" alignment="CENTER" spacing="5" fx:id="headerLabelContainer">
                 <Label styleClass="header-label" fx:id="headerLabel"/>

@@ -1,5 +1,6 @@
 * {
     -twitch: #9146FF;
+    -youtube: #FF0000;
 }
 
 .twitch-container {
@@ -9,11 +10,26 @@
     -fx-cursor: hand;
 }
 
+.youtube-container {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, -vatsim-background-color-light, -youtube);
+    -fx-background-radius: 0 10 10 0;
+    -fx-background-insets: 0 10 0 0;
+    -fx-cursor: hand;
+}
+
 .twitch-container:hover {
     -fx-background-color: -twitch;
 }
 
+.youtube-container:hover {
+    -fx-background-color: -youtube;
+}
+
 .twitch-container .header-label {
+    -fx-text-fill: white;
+}
+
+.youtube-container .header-label {
     -fx-text-fill: white;
 }
 
@@ -26,17 +42,46 @@
     visibility: visible;
 }
 
-.header-pane .live-twitch-logo {
+.youtube-container .live-dot {
+    -fx-text-fill: red;
+    visibility: visible;
+}
+
+.header-pane .live-logo {
     visibility: hidden;
 }
 
-.twitch-container .live-twitch-logo {
+.header-pane .live-logo {
+    visibility: hidden;
+}
+
+.twitch-container .live-logo {
     -fx-icon-color: -twitch;
     visibility: visible;
 }
 
-.twitch-container:hover .live-twitch-logo {
+.youtube-container .live-logo {
+    -fx-icon-color: -youtube;
+    visibility: visible;
+}
+
+.twitch-container:hover .live-logo {
     -fx-icon-color: white;
+    visibility: visible;
+}
+
+.youtube-container:hover .live-logo {
+    -fx-icon-color: white;
+    visibility: visible;
+}
+
+.twitch-container:hover .live-dot {
+    -fx-text-fill: white;
+    visibility: visible;
+}
+
+.youtube-container:hover .live-dot {
+    -fx-text-fill: white;
     visibility: visible;
 }
 
@@ -53,5 +98,9 @@
 }
 
 .twitch-container .question-mark-icon {
+    -fx-icon-color: white;
+}
+
+.youtube-container .question-mark-icon {
     -fx-icon-color: white;
 }

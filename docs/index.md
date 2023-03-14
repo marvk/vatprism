@@ -92,8 +92,8 @@ highest plane on the network? The longest flight? The flight that has been conne
 
 [![Streamers Table](assets/images/showcase/table_streamers.png)](assets/images/showcase/table_streamers.png)
 
-Want to find a VATSIM stream to watch? This table lists all users that have included a link to their twitch stream in
-their remarks. [Want to make sure you show up here when you're streaming?](/streamers)
+Want to find a VATSIM stream to watch? This table lists all users that have included a link to their Twitch or YouTube 
+stream in their remarks. [Want to make sure you show up here when you're streaming?](/streamers)
 
 #### Distance Measure
 
