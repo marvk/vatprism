@@ -25,8 +25,8 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
         final BooleanProperty social = preferences.booleanProperty("general.social");
 
         data.addListener((observable, oldValue, newValue) -> {
-            twitchStream.bind(newValue.getUrls().twitchProperty().and(social));
-            twitchStreamUrl.bind(newValue.getUrls().twitchUrlProperty());
+            twitchStream.bind(newValue.getUrls().livestreamProperty().and(social));
+            twitchStreamUrl.bind(newValue.getUrls().urlProperty());
         });
     }
 
