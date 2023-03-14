@@ -42,9 +42,9 @@ public class StreamersTableViewModel extends SimpleTableViewModel<Client> {
     }
 
     public void openStream(final Client client) {
-        final String twitchUrl = client.getUrls().getUrl();
-        if (twitchUrl != null) {
-            hostServices.showDocument("https://" + twitchUrl);
+        final String livestreamUrl = client.getUrls().getUrl();
+        if (livestreamUrl != null) {
+            hostServices.showDocument("https://" + livestreamUrl);
         }
     }
 }
