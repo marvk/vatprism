@@ -2,10 +2,7 @@ package net.marvk.fs.vatsim.map.view.datadetail.clientdetail;
 
 import com.google.inject.Inject;
 import javafx.application.HostServices;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.*;
 import net.marvk.fs.vatsim.api.VatsimApiUrlProvider;
 import net.marvk.fs.vatsim.map.data.Client;
 import net.marvk.fs.vatsim.map.data.Preferences;
@@ -14,8 +11,9 @@ import net.marvk.fs.vatsim.map.view.datadetail.detailsubview.DataDetailSubViewMo
 public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
     private final HostServices hostServices;
     private final VatsimApiUrlProvider urlProvider;
-    private final ReadOnlyBooleanWrapper twitchStream = new ReadOnlyBooleanWrapper();
-    private final ReadOnlyObjectWrapper<String> twitchStreamUrl = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyBooleanWrapper livestream = new ReadOnlyBooleanWrapper();
+    private final ReadOnlyObjectWrapper<String> livestreamUrl = new ReadOnlyObjectWrapper<>();
+    private final ReadOnlyStringWrapper livestreamPlatform = new ReadOnlyStringWrapper();
 
     @Inject
     public ClientDetailViewModel(final HostServices hostServices, final VatsimApiUrlProvider urlProvider, final Preferences preferences) {
@@ -25,17 +23,26 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
         final BooleanProperty social = preferences.booleanProperty("general.social");
 
         data.addListener((observable, oldValue, newValue) -> {
-            twitchStream.bind(newValue.getUrls().livestreamProperty().and(social));
-            twitchStreamUrl.bind(newValue.getUrls().urlProperty());
+            livestream.bind(newValue.getUrls().livestreamProperty().and(social));
+            livestreamUrl.bind(newValue.getUrls().urlProperty());
+            livestreamPlatform.bind(newValue.getUrls().platformProperty());
         });
     }
 
-    public boolean isTwitchStream() {
-        return twitchStream.get();
+    public boolean isLivestream() {
+        return livestream.get();
     }
 
-    public ReadOnlyBooleanProperty twitchStreamProperty() {
-        return twitchStream.getReadOnlyProperty();
+    public ReadOnlyBooleanProperty livestreamProperty() {
+        return livestream.getReadOnlyProperty();
+    }
+
+    public String getLivestreamPlatform() {
+        return livestreamPlatform.get();
+    }
+
+    public ReadOnlyStringProperty livestreamPlatformProperty() {
+        return livestreamPlatform.getReadOnlyProperty();
     }
 
     public void openStats() {
@@ -45,8 +52,8 @@ public class ClientDetailViewModel extends DataDetailSubViewModel<Client> {
     }
 
     public void openStream() {
-        if (twitchStreamUrl.get() != null) {
-            hostServices.showDocument("https://" + twitchStreamUrl.get());
+        if (livestreamUrl.get() != null) {
+            hostServices.showDocument("https://" + livestreamUrl.get());
         }
     }
 }
