@@ -6,7 +6,6 @@ import com.dlsc.preferencesfx.PreferencesFx;
 import com.dlsc.preferencesfx.model.Category;
 import com.dlsc.preferencesfx.model.Group;
 import com.dlsc.preferencesfx.model.Setting;
-import com.dlsc.preferencesfx.view.PreferencesFxView;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -17,7 +16,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import lombok.SneakyThrows;
@@ -69,28 +67,10 @@ public class PreferencesView {
     private PreferencesFx getPreferencesDialog() {
         if (preferencesFx == null) {
             preferencesFx = createPreferencesDialog();
-            modifyPreferencesFxStyle(preferencesFx.getView());
+            PreferencesFxModKt.modifyPreferencesFxStyle(preferencesFx);
         }
 
         return preferencesFx;
-    }
-
-    private static void modifyPreferencesFxStyle(final PreferencesFxView view) {
-        final Parent parent = view.getParent();
-        parent.getStylesheets().addAll(
-                PreferencesView.class.getResource("/net/marvk/fs/vatsim/map/view/root.css").toExternalForm(),
-                PreferencesView.class.getResource("/net/marvk/fs/vatsim/map/view/preferences/preferences.css").toExternalForm()
-        );
-        System.out.println(parent);
-        final ButtonBar buttonBar = (ButtonBar) parent.getChildrenUnmodifiable().get(2);
-        final List<Button> buttons = buttonBar.getButtons().stream().map(e -> (Button) e).collect(Collectors.toList());
-        final Button okButton = buttons.get(0);
-        okButton.setDefaultButton(true);
-        okButton.setCancelButton(false);
-        okButton.setText("OK");
-        final Button cancelButton = buttons.get(1);
-        cancelButton.setText("Cancel");
-
     }
 
     @SneakyThrows
