@@ -21,7 +21,7 @@
     <GridPane fx:id="grid" vgap="17">
         <columnConstraints>
             <ColumnConstraints fx:id="columnConstraints1" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
-            <ColumnConstraints fx:id="columnConstraints2" hgrow="SOMETIMES" maxWidth="50.0" minWidth="-Infinity" prefWidth="50.0"/>
+            <ColumnConstraints fx:id="columnConstraints2" halignment="CENTER" hgrow="SOMETIMES" maxWidth="50.0" minWidth="-Infinity" prefWidth="50.0"/>
             <ColumnConstraints fx:id="columnConstraints3" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity"/>
         </columnConstraints>
         <rowConstraints>

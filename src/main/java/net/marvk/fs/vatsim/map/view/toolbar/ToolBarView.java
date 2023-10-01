@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.SneakyThrows;
 import net.marvk.fs.vatsim.map.view.about.AboutView;
-import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
+import net.marvk.fs.vatsim.map.view.preferences.PreferencesView2;
 import net.marvk.fs.vatsim.map.view.vatprism2.controls.IconToggleButton;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
@@ -34,7 +34,7 @@ import org.scenicview.ScenicView;
 import java.util.List;
 
 public class ToolBarView implements FxmlView<ToolBarViewModel> {
-    private final PreferencesView preferencesView;
+    private final PreferencesView2 preferencesView;
     @FXML
     private ToggleButton pilots;
     @FXML
@@ -100,7 +100,7 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
     private Context context;
 
     @Inject
-    public ToolBarView(final PreferencesView preferencesView) {
+    public ToolBarView(final PreferencesView2 preferencesView) {
         this.preferencesView = preferencesView;
     }
 

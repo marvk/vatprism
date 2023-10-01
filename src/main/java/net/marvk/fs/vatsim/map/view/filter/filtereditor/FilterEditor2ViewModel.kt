@@ -3,6 +3,7 @@ package net.marvk.fs.vatsim.map.view.filter.filtereditor
 import de.saxsys.mvvmfx.InjectScope
 import de.saxsys.mvvmfx.ViewModel
 import javafx.application.Platform
+import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
@@ -22,20 +23,19 @@ import net.marvk.fs.vatsim.map.view.extensions.setValue
 import net.marvk.fs.vatsim.map.view.extensions.unmodifiable
 import net.marvk.fs.vatsim.map.view.filter.FilterScope
 import net.marvk.fs.vatsim.map.view.filter.FilterStringListViewModel
-import org.apache.logging.log4j.Logger
 import java.time.Duration
 
 @Log4j2
 class FilterEditor2ViewModel : ViewModel {
-    private val log: Logger = createLogger()
+    private val log = createLogger()
 
     val availableRatings: ObservableList<ControllerRating> by unmodifiable(FXCollections.observableArrayList(*ControllerRating.values()))
     val availableFacilities: ObservableList<ControllerType> by unmodifiable(FXCollections.observableArrayList(*ControllerType.values()))
     val availableFlightStatuses: ObservableList<Filter.FlightStatus> by unmodifiable(FXCollections.observableArrayList(*Filter.FlightStatus.values()))
     val availableFlightTypes: ObservableList<Filter.FlightType> by unmodifiable(FXCollections.observableArrayList(*Filter.FlightType.values()))
 
-    val currentProperty get() = filterScope.filterProperty()
-    var current: Filter
+    val currentProperty: ObjectProperty<Filter?> get() = filterScope.filterProperty()
+    var current: Filter?
         get() = filterScope.filter
         private set(value) {
             filterScope.filter = value
@@ -82,7 +82,7 @@ class FilterEditor2ViewModel : ViewModel {
             log.error("No pilot ratings available")
         }
         currentProperty.addListener { _, _, newValue ->
-            load(newValue)
+            newValue?.also(::load)
         }
 
         listOf(
@@ -93,7 +93,7 @@ class FilterEditor2ViewModel : ViewModel {
             departuresArrivalsOperatorProperty,
             flightPlanFiledProperty,
         ).forEach {
-            it.addListener { a, b, c ->
+            it.addListener { _, _, _ ->
                 save()
             }
         }
@@ -117,7 +117,7 @@ class FilterEditor2ViewModel : ViewModel {
                         continue
                     }
 
-                    if (it.wasReplaced() && it.removedSize == it.addedSize && it.addedSubList.zip(it.removed).all { it.first == it.second }) {
+                    if (it.wasReplaced() && it.removedSize == it.addedSize && it.addedSubList.zip(it.removed).all { (lhs, rhs) -> lhs == rhs }) {
                         continue
                     }
 
@@ -131,9 +131,7 @@ class FilterEditor2ViewModel : ViewModel {
         }
     }
 
-    fun load(filter: Filter?) {
-        filter ?: return
-
+    fun load(filter: Filter) {
         name = filter.name
         textColor = filter.textColor
         backgroundColor = filter.backgroundColor
@@ -175,26 +173,28 @@ class FilterEditor2ViewModel : ViewModel {
     }
 
     fun compile() =
-        Filter(
-            current.uuid,
-            name,
-            textColor,
-            backgroundColor,
-            filterTypes,
-            callsigns.let(::predicates),
-            callsignCidOperator,
-            cids.let(::predicates),
-            departures.let(::predicates),
-            departuresArrivalsOperator,
-            arrivals.let(::predicates),
-            emptyList(),
-            ratings,
-            flightStatus,
-            facilities,
-            flightTypes,
-            emptyList(),
-            flightPlanFiled,
-        )
+        current?.let {
+            Filter(
+                it.uuid,
+                name,
+                textColor,
+                backgroundColor,
+                filterTypes,
+                callsigns.let(::predicates),
+                callsignCidOperator,
+                cids.let(::predicates),
+                departures.let(::predicates),
+                departuresArrivalsOperator,
+                arrivals.let(::predicates),
+                emptyList(),
+                ratings,
+                flightStatus,
+                facilities,
+                flightTypes,
+                emptyList(),
+                flightPlanFiled,
+            )
+        }
 
     private fun predicates(viewModels: List<FilterStringListViewModel>) =
         viewModels.mapNotNull { it.predicate }

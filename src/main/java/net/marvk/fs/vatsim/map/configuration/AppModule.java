@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.marvk.fs.vatsim.api.*;
 import net.marvk.fs.vatsim.map.data.*;
 import net.marvk.fs.vatsim.map.view.preferences.PreferencesView;
+import net.marvk.fs.vatsim.map.view.preferences.PreferencesView2;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -38,6 +39,7 @@ public class AppModule extends AbstractModule {
         bind(PackagedColorSchemeRepository.class).in(Singleton.class);
         bind(Preferences.class).to(ConfigFilePreferences.class).asEagerSingleton();
         bind(PreferencesView.class).asEagerSingleton();
+        bind(PreferencesView2.class).asEagerSingleton();
         bind(TimeProvider.class).toInstance(new UpdatingTimeProvider(Duration.ofMinutes(1), true));
     }
 
