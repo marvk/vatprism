@@ -150,7 +150,7 @@ class GroupContext(val name: String?) {
         setting(CheckBox(SettingContext().apply(block).textAfter).also { it.selectedProperty().bindBidirectional(booleanProperty) }, booleanProperty) {
             block()
             textAfter?.also(hiddenSearchableText::add)
-            textAfter = null;
+            textAfter = null
         }
     }
 

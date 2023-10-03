@@ -301,29 +301,20 @@ public class PreferencesView {
         final double min = parameter.min();
         final double max = parameter.max();
 
-        final String bindToKey = parameter.bind();
         final boolean enabled = !parameter.disabled();
-        final boolean visible = parameter.visible() && enabled;
-        final boolean bind = !bindToKey.isBlank() && enabled;
         final String key = key(prefix, name);
         if (Color.class.isAssignableFrom(field.getType())) {
             final ObjectProperty<Color> property = preferences.colorProperty(key, (Color) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
             setField(field, painter, property.getValue());
-            if (bind) {
-                property.bind(preferences.colorProperty(bindToKey));
-            }
-            if (visible) {
+            if (enabled) {
                 return Setting.of(name, property).customKey(key);
             }
         } else if (int.class.isAssignableFrom(field.getType())) {
             final IntegerProperty property = preferences.integerProperty(key, (int) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
             setField(field, painter, property.getValue());
-            if (bind) {
-                property.bind(preferences.integerProperty(bindToKey));
-            }
-            if (visible) {
+            if (enabled) {
                 return Setting.of(name, property)
                               .customKey(key)
                               .validate(IntegerRangeValidator.between((int) min, (int) max, "Not in range"));
@@ -332,10 +323,7 @@ public class PreferencesView {
             final DoubleProperty property = preferences.doubleProperty(key, (double) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
             setField(field, painter, property.getValue());
-            if (bind) {
-                property.bind(preferences.doubleProperty(bindToKey));
-            }
-            if (visible) {
+            if (enabled) {
                 return Setting.of(name, property)
                               .customKey(key)
                               .validate(DoubleRangeValidator.between(min, max, "Not in range"));
@@ -344,10 +332,7 @@ public class PreferencesView {
             final BooleanProperty property = preferences.booleanProperty(key, (boolean) field.get(painter));
             property.addListener((observable, oldValue, newValue) -> setField(field, painter, newValue));
             setField(field, painter, property.getValue());
-            if (bind) {
-                property.bind(preferences.booleanProperty(bindToKey));
-            }
-            if (visible) {
+            if (enabled) {
                 return Setting.of(name, property)
                               .customKey(key);
             }
