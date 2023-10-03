@@ -10,11 +10,7 @@ import java.lang.annotation.Target;
 public @interface Parameter {
     String value();
 
-    String bind() default "";
-
     boolean disabled() default false;
-
-    boolean visible() default true;
 
     double min() default -Double.MAX_VALUE;
 
