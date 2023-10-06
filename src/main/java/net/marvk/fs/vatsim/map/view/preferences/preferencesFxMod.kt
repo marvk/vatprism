@@ -45,8 +45,10 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import net.marvk.fs.vatsim.map.data.ImmutableBooleanProperty
 import net.marvk.fs.vatsim.map.view.vatprism2.controls.SectionHeader
+import net.marvk.fs.vatsim.map.view.vatprism2.controls.VatprismColorPicker
 import org.controlsfx.control.BreadCrumbBar
 import org.controlsfx.control.MasterDetailPane
 import org.controlsfx.control.textfield.CustomTextField
@@ -71,7 +73,7 @@ fun preferencesFx(saveClass: Class<*>, block: PreferencesFxContext.() -> Unit): 
 }
 
 @PreferencesFxMarker
-class PreferencesFxContext() {
+class PreferencesFxContext {
     lateinit var preferencesFx: PreferencesFx
 
     val categories = mutableListOf<Category>()
@@ -173,6 +175,10 @@ class GroupContext(val name: String?) {
 
     fun label(label: String, block: SettingContext.() -> Unit = {}) {
         setting(Label(label)) { block() }
+    }
+
+    fun colorPicker(colorProperty: ObjectProperty<Color>, block: SettingContext.() -> Unit = {}) {
+        setting(VatprismColorPicker().apply { this.valueProperty().bindBidirectional(colorProperty) }) { block() }
     }
 
     fun setting(node: Node, vararg observableValues: Property<*>, block: SettingContext.() -> Unit = {}) {

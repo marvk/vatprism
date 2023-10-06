@@ -14,20 +14,20 @@ import java.util.Set;
 
 public class FirbPainter extends MapPainter<FlightInformationRegionBoundary> {
     private static final int MULTI_DRAW_BOUND = 20;
-    @Parameter("Fill")
-    private final boolean fill;
-    @Parameter("Fill Color")
-    private final Color fillColor;
-    @Parameter("Stroke")
-    private final boolean stroke;
-    @Parameter("Stroke Color")
-    private final Color strokeColor;
-    @Parameter(value = "Stroke Width", min = 0, max = 10)
-    private final double lineWidth;
-    @Parameter("Label")
-    private final boolean label;
-    @Parameter("Label Color")
-    private final Color textColor;
+    @Parameter(name = "Fill", group = "Fill")
+    private boolean fill;
+    @Parameter(name = "Fill Color", group = "Fill")
+    private Color fillColor;
+    @Parameter(name = "Stroke", group = "Stroke")
+    private boolean stroke;
+    @Parameter(name = "Stroke Color", group = "Stroke")
+    private Color strokeColor;
+    @Parameter(name = "Stroke Width", group = "Stroke", min = 0, max = 10)
+    private double lineWidth;
+    @Parameter(name = "Label", group = "Label")
+    private boolean label;
+    @Parameter(name = "Label Color", group = "Label")
+    private Color textColor;
 
     private final Set<FlightInformationRegionBoundary> paintedFirbs = new HashSet<>();
 

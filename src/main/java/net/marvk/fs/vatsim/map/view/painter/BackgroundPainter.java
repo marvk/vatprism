@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import net.marvk.fs.vatsim.map.view.map.MapVariables;
 
 public class BackgroundPainter extends AlwaysOnMapPainter<Void> {
-    @Parameter("Color")
+    @Parameter(name = "Color")
     private Color color;
 
     public BackgroundPainter(final MapVariables mapVariables, final Color color) {

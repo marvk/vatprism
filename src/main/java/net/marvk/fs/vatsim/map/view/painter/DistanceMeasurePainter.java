@@ -13,23 +13,23 @@ import java.time.Duration;
 
 public class DistanceMeasurePainter extends MapPainter<DistanceMeasure> {
     private static final double W = 10;
-    private static final double W_HALF = W / 2.0;
-    @Parameter("Color")
+
+    @Parameter(name = "Color")
     private Color color = Color.web("#a05260");
 
-    @Parameter("Text Color")
+    @Parameter(name = "Text Color")
     private Color textColor = Color.web("#481720");
 
-    @Parameter("Great Circle Line")
+    @Parameter(name = "Great Circle Line", hintText = "When enabled, shows tracks as great circle lines. When disabled, shows tracks as straight lines on the map.")
     private boolean greatCircle = true;
 
-    @Parameter("Persistent")
+    @Parameter(name = "Persistent", hintText = "If disabled, measure will disappear as soon as the map is clicked")
     protected boolean persistent = true;
 
-    @Parameter("Estimated Duration")
+    @Parameter(name = "Estimated Duration")
     private boolean displayEstimatedDuration = false;
 
-    @Parameter(value = "Estimation Ground Speed In Knots", min = 1)
+    @Parameter(name = "Estimation Ground Speed In Knots", min = 1)
     private int estimationKnots = 450;
 
     private Point2D[] polylineBuffer = new Point2D[51];

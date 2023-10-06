@@ -20,35 +20,35 @@ public class PilotPainter extends MapPainter<Pilot> {
     private static final double MAX_SPEED = 600.0;
     private static final double SCALE_SCALE = 64.0;
 
-    @Parameter("Label")
+    @Parameter(name = "Label", group = "Label")
     private boolean label = true;
-    @Parameter("Label Color")
+    @Parameter(name = "Label Color", group = "Label")
     private Color labelColor = Color.valueOf("3b3526").deriveColor(0, 1, 3, 0.25);
 
-    @Parameter("Background")
+    @Parameter(name = "Background", group = "Background")
     private boolean paintBackground = false;
-    @Parameter("Background Color")
+    @Parameter(name = "Background Color", group = "Background")
     private Color backgroundColor;
 
-    @Parameter("Pilots On Ground")
+    @Parameter(name = "Show Pilots On Ground", legacyName = "Pilots On Ground")
     private boolean onGround = true;
 
-    @Parameter("Head")
+    @Parameter(name = "Show Head", legacyName = "Head", group = "Head and Tail")
     private boolean head = true;
 
-    @Parameter(value = "Head Max Length", min = 0)
+    @Parameter(name = "Head Max Length", group = "Head and Tail", min = 0)
     private int headLength = 8;
 
-    @Parameter("Tail")
+    @Parameter(name = "Show Tail", legacyName = "Tail", group = "Head and Tail")
     private boolean tail = true;
 
-    @Parameter(value = "Tail Max Length", min = 0)
+    @Parameter(name = "Tail Max Length", group = "Head and Tail", min = 0)
     private int tailLength = 50;
 
-    @Parameter(value = "Head/Tail length scale fixed")
+    @Parameter(name = "Head/Tail length scale fixed", group = "Head and Tail")
     private boolean headTailFixed = false;
 
-    @Parameter(value = "Head/Tail length scaled with speed")
+    @Parameter(name = "Head/Tail length scaled with speed", group = "Head and Tail")
     private boolean headTailScaledWithSpeed = true;
 
     private final TextAngleResolver textAngleResolver = new TextAngleResolver();

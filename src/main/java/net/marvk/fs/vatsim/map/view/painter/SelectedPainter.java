@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SelectedPainter extends CompositeMapPainter<Data> {
-    @MetaPainter("Pilot")
+    @MetaPainter(name = "Flight", legacyName = "Pilot")
     private final PilotPainter pilotPainter;
 
-    @MetaPainter("Airport")
+    @MetaPainter(name = "Airport")
     private final AirportPainter airportPainter;
 
-    @MetaPainter("FIR")
+    @MetaPainter(name = "Flight Information Region", legacyName = "FIR")
     private final FirbPainter firbPainter;
 
     private final PainterVisitor painterVisitor;

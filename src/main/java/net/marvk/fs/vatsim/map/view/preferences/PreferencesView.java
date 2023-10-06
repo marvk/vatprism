@@ -210,14 +210,14 @@ public class PreferencesView {
         final List<Category> categories = new ArrayList<>();
 
         for (final PainterExecutor<?> executor : executors) {
-            final Group[] groups = getSettings(executor.getPainter(), executor.getName());
+            final Group[] groups = getSettings(executor.getPainter(), executor.getLegacyName());
             for (final Group group : groups) {
                 for (final Setting<?, ?> setting : group.getSettings()) {
                     final Property<?> o = setting.valueProperty();
 //                    observables.put(o.getName(), o);
                 }
             }
-            final Category category = Category.of(executor.getName(), groups);
+            final Category category = Category.of(executor.getLegacyName(), groups);
             categories.add(category);
         }
         return categories.toArray(Category[]::new);
@@ -270,7 +270,7 @@ public class PreferencesView {
                 final MetaPainter metaPainter = field.getAnnotation(MetaPainter.class);
 
                 final Painter<?> thePainter = (Painter<?>) field.get(painter);
-                result.addAll(Arrays.asList(getSettings(thePainter, prefix + "." + metaPainter.value())));
+                result.addAll(Arrays.asList(getSettings(thePainter, prefix + "." + metaPainter.name())));
             }
         }
 
@@ -296,7 +296,7 @@ public class PreferencesView {
     private Setting<?, ?> extracted(final Painter<?> painter, final Field field, final String prefix) throws IllegalAccessException {
         final Parameter parameter = field.getAnnotation(Parameter.class);
 
-        final String name = parameter.value();
+        final String name = parameter.name();
 
         final double min = parameter.min();
         final double max = parameter.max();

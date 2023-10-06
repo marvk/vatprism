@@ -17,51 +17,52 @@ import java.util.stream.Collectors;
 public class AirportPainter extends MapPainter<Airport> {
     private static final int TYPES_WIDTH = 9;
 
-    @Parameter("Paint Uncontrolled Airports")
+    @Parameter(name = "Show Uncontrolled Airports", legacyName = "Paint Uncontrolled Airports")
     private boolean paintAll = false;
 
-    @Parameter("Paint Labels of Uncontrolled Airports")
+    @Parameter(name = "Show Labels of Uncontrolled Airports", legacyName = "Paint Labels of Uncontrolled Airports")
     private boolean paintAllLabels = true;
 
-    @Parameter("Paint Uncontrolled Airports with Arrivals or Departures")
+    @Parameter(name = "Show Uncontrolled Airports with Arrivals or Departures", legacyName = "Paint Uncontrolled Airports with Arrivals or Departures")
     private boolean paintUncontrolledButDestinationsOrArrivals = false;
 
-    @Parameter("Paint Labels of Uncontrolled Airports with Arrivals or Departures")
+    @Parameter(name = "Show Labels of Uncontrolled Airports with Arrivals or Departures", legacyName = "Paint Labels of Uncontrolled Airports with Arrivals or Departures")
     private boolean paintUncontrolledButDestinationsOrArrivalLabels = true;
 
-    @Parameter("Airport Color")
+    @Parameter(name = "Airport Marker Color", hintText = "The color of the airport marker")
     private Color airportColor = Color.WHITE;
 
-    @Parameter("Label")
+    @Parameter(name = "Show Label", group = "Label")
     private boolean text = true;
-    @Parameter("Label Color")
+    @Parameter(name = "Label Color", group = "Label")
     private Color textColor = Color.web("80334d");
-
-    @Parameter("Background")
+    @Parameter(name = "Show Background", group = "Label", hintText = "Show a background behind the airport label")
     private boolean paintBackground = true;
-    @Parameter("Background Color")
+    @Parameter(name = "Background Color", group = "Label")
     private Color backgroundColor;
 
-    @Parameter("Controllers")
+    @Parameter(name = "Show Controllers", group = "Controllers", hintText = "Show active controllers above the airport marker")
     private boolean paintControllers = true;
-    @Parameter("Atis Color")
+    @Parameter(name = "Atis Color", group = "Controllers")
     private Color atisColor = Color.web("443000");
-    @Parameter("Delivery Color")
+    @Parameter(name = "Delivery Color", group = "Controllers")
     private Color delColor = Color.web("004600");
-    @Parameter("Ground Color")
+    @Parameter(name = "Ground Color", group = "Controllers")
     private Color gndColor = Color.web("004D72");
-    @Parameter("Tower Color")
+    @Parameter(name = "Tower Color", group = "Controllers")
     private Color twrColor = Color.web("760023");
-    @Parameter("Approach Color")
-    private Color appColor = Color.web("005757");
-    @Parameter("Approach Placeholder Color")
+    @Parameter(name = "Approach Placeholder Color", group = "Controllers", hintText = "Color of the box that, when sufficiently zoomed out, is displayed above an airport when doesn't have other controllers")
     private Color appPlaceholderColor = Color.web("17130a");
-    @Parameter(value = "Approach Radius", min = 0.25, max = 10)
-    private double approachRadius = 1;
-    @Parameter("Controller Label Color")
+    @Parameter(name = "Controller Label Color", group = "Controllers", hintText = "Color of the controller glyphs above the airport marker")
     private Color typesLabelColor = Color.WHITE.darker();
-    @Parameter("Controller Border Color")
+    @Parameter(name = "Controller Border Color", group = "Controllers")
     private Color typesBorderColor = Color.BLACK.brighter();
+
+    @Parameter(name = "Approach Color", group = "Approach")
+    private Color appColor = Color.web("005757");
+    @Parameter(name = "Approach Radius", group = "Approach", min = 0.25, max = 10, hintText = "Radius of the circle that, when sufficiently zoomed in, shows an airport has an active approach controller")
+    private double approachRadius = 1;
+
 
     public AirportPainter(final MapVariables mapVariables) {
         super(mapVariables);

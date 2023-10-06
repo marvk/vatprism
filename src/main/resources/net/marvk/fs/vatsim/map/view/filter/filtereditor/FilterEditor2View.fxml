@@ -7,7 +7,7 @@
 <?import net.marvk.fs.vatsim.map.view.filter.filtereditor.selectbox.SelectBox?>
 <?import net.marvk.fs.vatsim.map.view.vatprism2.controls.*?>
 <VBox xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditor2View">
+      fx:controller="net.marvk.fs.vatsim.map.view.filter.filtereditor.FilterEditor2View" fx:id="container">
     <HBox GridPane.columnSpan="2147483647" prefWidth="100" alignment="CENTER_LEFT" spacing="6">
         <Label text="Name:"/>
         <TextField fx:id="nameField" HBox.hgrow="ALWAYS"/>

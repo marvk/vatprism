@@ -10,11 +10,11 @@ import java.util.Collection;
 import java.util.List;
 
 public class UirPainter extends CompositeMapPainter<UpperInformationRegion> {
-    @MetaPainter("FIR")
+    @MetaPainter(name = "Flight Information Regions", legacyName = "FIR")
     private final FirbPainter firbPainter;
 
-    @Parameter("Paint FIRs with FIR controller")
-    private final boolean paintFirControlled;
+    @Parameter(name = "Show FIRs that have a non-UIR controller", legacyName = "Paint FIRs with FIR controller")
+    private boolean paintFirControlled;
 
     public UirPainter(final MapVariables mapVariables, final Color color, final boolean paintFirControlled) {
         this.firbPainter = new FirbPainter(
