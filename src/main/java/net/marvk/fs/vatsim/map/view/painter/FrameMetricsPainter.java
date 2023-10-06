@@ -12,13 +12,13 @@ import java.util.stream.DoubleStream;
 
 public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     private static final double NANOS_IN_MILLI = 1000000.;
-    private static final double AVERAGES_X_OFFSET = 100;
+    private static final double AVERAGES_X_OFFSET = 240;
     private static final Color TOTAL_COLOR = Color.gray(0.4);
 
-    @Parameter("Averages")
+    @Parameter(name = "Averages")
     private boolean showAverages = true;
 
-    @Parameter("Chart")
+    @Parameter(name = "Chart")
     private boolean showChart = true;
 
     private static final Color[] COLORS = new Color[]{
@@ -44,7 +44,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
             Color.web("#BB7CB2")
     };
 
-    @Parameter(value = "Height", min = 0)
+    @Parameter(name = "Height", min = 0)
     private double chartHeight = 300;
 
     private int x = 10;
@@ -191,7 +191,7 @@ public class FrameMetricsPainter extends MapPainter<FrameMetrics> {
     }
 
     private int averageListWidth() {
-        return showAverages ? borderWidth * 10 : 0;
+        return showAverages ? borderWidth * 16 : 0;
     }
 
     private int chartWidth(final int maxFrames) {

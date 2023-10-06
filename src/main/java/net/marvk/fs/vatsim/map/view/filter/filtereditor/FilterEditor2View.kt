@@ -10,6 +10,7 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.TextField
 import javafx.scene.layout.ColumnConstraints
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.VBox
 import net.marvk.fs.vatsim.map.data.ControllerRating
 import net.marvk.fs.vatsim.map.data.ControllerType
 import net.marvk.fs.vatsim.map.data.Filter
@@ -20,6 +21,9 @@ import net.marvk.fs.vatsim.map.view.vatprism2.controls.AndOrToggle
 import net.marvk.fs.vatsim.map.view.vatprism2.controls.VatprismColorPicker
 
 class FilterEditor2View : FxmlView<FilterEditor2ViewModel> {
+    @FXML
+    private lateinit var container: VBox
+
     @FXML
     private lateinit var pilotCheckbox: CheckBox
 

@@ -1,15 +1,15 @@
 * {
-    -vatsim-background-color: #8800ff;
-    -vatsim-background-color-light: #ff7700;
-    -vatsim-background-color-very-light: #99ff00;
-    -vatsim-background-color-very-light-25: #ff8822;
-    -vatsim-background-color-very-very-light: #99ffff;
-    -vatsim-background-color-very-very-very-light: #00ff22;
-    -vatsim-text-color-dark: #ff00ff;
-    -vatsim-text-color: #00ffff;
-    -vatsim-error-color: #ffff44;
-    -vatsim-text-color-light: #00ff00;
-    -vatsim-text-greyed-out: #9900ff;
+    -vatsim-background-color: #ff0000;
+    -vatsim-background-color-light: #ff6a00;
+    -vatsim-background-color-very-light: #ffc400;
+    -vatsim-background-color-very-light-25: #c1ff00;
+    -vatsim-background-color-very-very-light: #42ff00;
+    -vatsim-background-color-very-very-very-light: #00ffce;
+    -vatsim-text-color-dark: #007eff;
+    -vatsim-text-color: #1b00ff;
+    -vatsim-error-color: #a000ff;
+    -vatsim-text-color-light: #ee00ff;
+    -vatsim-text-greyed-out: #ff00a7;
     -vatsim-toolbar-button-size: 24px;
     -vatsim-toolbar-button-icon-size: 16px;
     -vatsim-dropshadow: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0.0, 0, 8);
@@ -167,7 +167,7 @@
 }
 
 .container {
-    -fx-background-color: -vatsim-background-color;
+    -fx-background-color: -vatprism-2-structure-fill;
 }
 
 .container * {

@@ -7,19 +7,10 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.value.ObservableBooleanValue
 import javafx.collections.FXCollections
-import javafx.scene.Node
-import javafx.scene.control.CheckBox
-import javafx.scene.control.Spinner
-import javafx.scene.control.TreeItem
-import javafx.scene.control.TreeTableCell
-import javafx.scene.control.TreeTableColumn
-import javafx.scene.control.TreeTableView
-import javafx.scene.control.cell.TreeItemPropertyValueFactory
-import javafx.util.Callback
 import net.marvk.fs.vatsim.map.data.Preferences
 import net.marvk.fs.vatsim.map.extensions.createLogger
-import net.marvk.fs.vatsim.map.view.vatprism2.controls.VatprismColorPicker
 import org.scenicview.ScenicView
 import java.awt.Desktop
 import java.io.IOException
@@ -79,7 +70,7 @@ class PreferencesView2 @Inject constructor(
                         }
                     }
 
-                    category("Layers") {
+                    category("Layers", "Customize the look of the map") {
                         painters()
                     }
                 }
@@ -163,97 +154,79 @@ class PreferencesView2 @Inject constructor(
         preferencesFx.show(false)
     }
 
-    data class PainterTreeItem(
-        val name: String,
-        val preferenceDto: PreferenceDto?,
-    )
-
-    class PainterTreeCell : TreeTableCell<PainterTreeItem, PainterTreeItem>() {
-        override fun updateItem(item: PainterTreeItem?, empty: Boolean) {
-            super.updateItem(item, empty)
-
-            val pref = item?.preferenceDto
-
-            if (empty || item == null || pref == null) {
-                text = null
-                graphic = null
-            } else {
-                val node: Node = when (pref) {
-                    is PreferenceDto.Int -> {
-                        Spinner<Int>(pref.parameter.min.toInt(), pref.parameter.max.toInt(), pref.property.value, 1)
-                            .also { it.valueFactory.valueProperty().bindBidirectional(pref.property.asObject()) }
-                    }
-
-                    is PreferenceDto.Double -> {
-                        Spinner<Double>(pref.parameter.min, pref.parameter.max, pref.property.value, 1.0)
-                            .also { it.valueFactory.valueProperty().bindBidirectional(pref.property.asObject()) }
-                    }
-
-                    is PreferenceDto.Boolean -> {
-                        CheckBox(SettingContext().textAfter)
-                            .also { it.selectedProperty().bindBidirectional(pref.property) }
-                    }
-
-                    is PreferenceDto.Color -> {
-                        VatprismColorPicker()
-                            .also { it.valueProperty().bind(pref.property) }
-                    }
-                }
-
-                graphic = node
-            }
-        }
-    }
 
     private fun CategoryContext.painters() {
-        val loadSettings = painterPreferencesLoader.loadSettings()
+        val painterPreferences = painterPreferencesLoader.loadSettings()
 
-        val items = generateTreeItems(loadSettings)
+        for (painterPreference in painterPreferences) {
+            painterCategory(painterPreference)
+        }
+    }
 
-        group {
-            val treeTableView = TreeTableView<PainterTreeItem>().apply {
-                columns += TreeTableColumn<PainterTreeItem, String>("Name").apply {
-                    cellValueFactory = TreeItemPropertyValueFactory("name")
+    private fun CategoryContext.painterCategory(painterPreferencesDto: PainterPreferencesDto) {
+        category(painterPreferencesDto.name) {
+            if (painterPreferencesDto.enabledPreference != null) {
+                group {
+                    painterPreference(painterPreferencesDto.enabledPreference)
                 }
-
-                columns += TreeTableColumn<PainterTreeItem, PainterTreeItem>("Node").apply {
-                    cellValueFactory = Callback {
-                        SimpleObjectProperty(it.value.value)
-                    }
-
-                    cellFactory = Callback {
-                        PainterTreeCell()
-                    }
-                }
-
-                root = TreeItem<PainterTreeItem>().apply {
-                    children.addAll(items)
-                }
-
-                isShowRoot = false
             }
 
-            setting(treeTableView) {
+            if (painterPreferencesDto.ungroupedPreferences.isNotEmpty()) {
+                painterPreferencesGroup(painterPreferencesDto.ungroupedPreferences, "", painterPreferencesDto.enabledPreference?.property?.not())
+            }
 
+            for ((groupName, group) in painterPreferencesDto.groupedPreferences) {
+                painterPreferencesGroup(group, groupName, painterPreferencesDto.enabledPreference?.property?.not())
+            }
+
+            for (subPainterPreference in painterPreferencesDto.subPainterPreferences) {
+                painterCategory(subPainterPreference)
             }
         }
     }
 
-    private fun generateTreeItems(loadSettings: List<PainterPreferencesDto>) =
-        loadSettings
-            .map(::generateTreeItem)
-
-    private fun generateTreeItem(painterPreferencesDto: PainterPreferencesDto): TreeItem<PainterTreeItem> {
-        val result = TreeItem(PainterTreeItem(painterPreferencesDto.name, painterPreferencesDto.enabledPreference))
-
-        result.children += painterPreferencesDto.preferences.map(::generateTreeItem)
-        result.children += painterPreferencesDto.subPainterPreferences.map(::generateTreeItem)
-
-        return result
+    private fun CategoryContext.painterPreferencesGroup(preferenceDtos: List<PreferenceDto>, groupName: String, enabled: ObservableBooleanValue? = null) {
+        group(groupName) {
+            for (preference in preferenceDtos) {
+                painterPreference(preference, enabled)
+            }
+        }
     }
 
-    private fun generateTreeItem(preferenceDto: PreferenceDto): TreeItem<PainterTreeItem> {
-        return TreeItem(PainterTreeItem(preferenceDto.parameter.value, preferenceDto))
+    private fun GroupContext.painterPreference(preference: PreferenceDto, disableProperty: ObservableBooleanValue? = null) {
+        val parameter = preference.parameter
+        val hintText = parameter.hintText.takeIf(String::isNotBlank)
+
+        when (preference) {
+            is PreferenceDto.Int -> {
+                intSpinner(parameter.min.toInt(), parameter.max.toInt(), parameter.stepSize.toInt(), preference.property) {
+                    this.textBefore = parameter.name
+                    this.disableProperty = disableProperty
+                    this.textExplanation = hintText
+                }
+            }
+
+            is PreferenceDto.Double ->
+                doubleSpinner(parameter.min, parameter.max, parameter.stepSize, preference.property) {
+                    this.textBefore = parameter.name
+                    this.disableProperty = disableProperty
+                    this.textExplanation = hintText
+                }
+
+            is PreferenceDto.Boolean ->
+                checkbox(preference.property) {
+                    this.textAfter = parameter.name
+                    this.disableProperty = disableProperty
+                    this.textExplanation = hintText
+                }
+
+            is PreferenceDto.Color ->
+                colorPicker(preference.property) {
+                    this.textBefore = parameter.name
+                    this.disableProperty = disableProperty
+                    this.textExplanation = hintText
+                }
+        }
     }
 
     private fun openConfigDirectory() {
@@ -272,5 +245,4 @@ class PreferencesView2 @Inject constructor(
             }
         }
     }
-
 }

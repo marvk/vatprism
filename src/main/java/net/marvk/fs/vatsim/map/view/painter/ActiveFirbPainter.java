@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class ActiveFirbPainter extends CompositeMapPainter<FlightInformationRegionBoundary> {
-    @MetaPainter("FIR")
+    @MetaPainter(name = "Flight Information Regions", legacyName = "FIR")
     private final FirbPainter firbPainter;
 
     public ActiveFirbPainter(final MapVariables mapVariables) {

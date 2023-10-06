@@ -13,13 +13,14 @@ https://stackoverflow.com/a/48050208/3000387
 *.scroll-bar:vertical,
 *.scroll-bar:horizontal {
     -fx-background-color: transparent;
-    -fx-background-insets: 1 0 0 0;
+    -fx-padding: 0 0 0 0;
+    -fx-background-insets: 0 0 0 0;
 }
 
 .scroll-bar:horizontal .track,
 .scroll-bar:vertical .track {
     -fx-background-color: -vatprism-2-scrollbar-fill;
-    -fx-background-insets: 1 0 0 0;
+    -fx-background-insets: 0 0 0 0;
     -fx-border-color: transparent;
     -fx-background-radius: 0;
     -fx-border-radius: 0;
@@ -38,7 +39,6 @@ https://stackoverflow.com/a/48050208/3000387
     -fx-background-color: transparent;
     -fx-background-radius: 0;
     -fx-padding: 0 0 10 0;
-
 }
 
 .scroll-bar:vertical .increment-button,
@@ -63,7 +63,7 @@ https://stackoverflow.com/a/48050208/3000387
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
     -fx-background-color: -vatprism-2-scrollbar-thumb-border, -vatprism-2-scrollbar-thumb-fill;
-    -fx-background-insets: 1 1 1 0, 2 2 2 1;
+    -fx-background-insets: 0 0 0 0, 1 1 1 1;
     -fx-background-radius: 0;
 }
 
@@ -72,7 +72,7 @@ https://stackoverflow.com/a/48050208/3000387
 .scroll-bar:horizontal .thumb:pressed,
 .scroll-bar:vertical .thumb:pressed {
     -fx-background-color: -vatprism-2-scrollbar-thumb-hover-border, -vatprism-2-scrollbar-thumb-hover-fill;
-    -fx-background-insets: 1 1 1 0, 2 2 2 1;
+    -fx-background-insets: 0 0 0 0, 1 1 1 1;
     -fx-background-radius: 0;
 }
 

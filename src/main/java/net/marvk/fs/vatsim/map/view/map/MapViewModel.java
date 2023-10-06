@@ -206,24 +206,24 @@ public class MapViewModel implements ViewModel {
 
     private ObservableList<PainterExecutor<?>> executors(final UpperInformationRegionRepository upperInformationRegionRepository) {
         return FXCollections.observableArrayList(
-                PainterExecutor.of("Background", new BackgroundPainter(mapVariables, Color.valueOf("291e0f"))),
-                PainterExecutor.ofCollection("World", new WorldPainter(mapVariables, Color.valueOf("1a130a")), this::world),
-                PainterExecutor.ofCollection("Lakes", new WorldPainter(mapVariables, Color.valueOf("291e0f")), this::lakes),
-                PainterExecutor.ofItem("Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
-                PainterExecutor.of("Scale", new ScalePainter(mapVariables)),
-                PainterExecutor.ofCollection("Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-                PainterExecutor.ofCollection("Inactive Uirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
-                PainterExecutor.ofCollection("Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
-                PainterExecutor.ofCollection("Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
-                PainterExecutor.ofItem("Connections", new ConnectionsPainter(mapVariables), this.selectedItemProperty()::get),
-                PainterExecutor.ofCollection("Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
-                PainterExecutor.ofCollection("Filters", new FilterPainter(mapVariables, filterRepository.list()), this::pilots, this::isNotSelected),
-                PainterExecutor.ofCollection("Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
-                PainterExecutor.ofCollection("Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
-                PainterExecutor.ofItem("Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
-                PainterExecutor.ofItem("Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
-                PainterExecutor.ofItem("Distance Measure", new DistanceMeasurePainter(mapVariables), distanceMeasureWorld::get),
-                PainterExecutor.ofItem("Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
+                PainterExecutor.of("Ocean", "Background", new BackgroundPainter(mapVariables, Color.valueOf("291e0f"))),
+                PainterExecutor.ofCollection("Landmass", "World", new WorldPainter(mapVariables, Color.valueOf("1a130a")), this::world),
+                PainterExecutor.ofCollection(null, "Lakes", new WorldPainter(mapVariables, Color.valueOf("291e0f")), this::lakes),
+                PainterExecutor.ofItem("International Date Line", "Date Line", new IdlPainter(mapVariables, Color.valueOf("3b3b3b")), this::internationalDateLine),
+                PainterExecutor.of(null, "Scale", new ScalePainter(mapVariables)),
+                PainterExecutor.ofCollection("Inactive Flight Information Regions", "Inactive Firs", new InactiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofCollection("Inactive Upper Information Regions", "Inactive Uirs", new InactiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Upper Information Regions", "Active Uirs", new ActiveUirPainter(mapVariables), upperInformationRegionRepository::list, this::isNotSelected),
+                PainterExecutor.ofCollection("Active Flight Information Regions", "Active Firs", new ActiveFirbPainter(mapVariables), this::flightInformationRegionBoundaries, this::isNotSelected),
+                PainterExecutor.ofItem("Flight Tracks", "Connections", new ConnectionsPainter(mapVariables), this.selectedItemProperty()::get),
+                PainterExecutor.ofCollection("Flights", "Pilots", new PilotPainter(mapVariables), this::pilots, this::isNotSelected),
+                PainterExecutor.ofCollection(null, "Filters", new FilterPainter(mapVariables, filterRepository.list()), this::pilots, this::isNotSelected),
+                PainterExecutor.ofCollection(null, "Airports", new AirportPainter(mapVariables), this::airports, this::isNotSelected),
+                PainterExecutor.ofCollection(null, "Search Items", new SelectedPainter(mapVariables, Color.DEEPSKYBLUE, true), statusScope::getSearchedData, this::isNotSelected),
+                PainterExecutor.ofItem(null, "Selected Item", new SelectedPainter(mapVariables), selectedItem::get),
+                PainterExecutor.ofItem(null, "Selection Shape", new SelectionShapePainter(mapVariables), selectionShape::get),
+                PainterExecutor.ofItem(null, "Distance Measure", new DistanceMeasurePainter(mapVariables), distanceMeasureWorld::get),
+                PainterExecutor.ofItem(null, "Metrics", new FrameMetricsPainter(mapVariables), () -> frameMetrics)
         );
     }
 

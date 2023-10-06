@@ -14,25 +14,25 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ConnectionsPainter extends CompositeMapPainter<Data> {
-    @Parameter(value = "Stroke Width", min = 0, max = 10)
+    @Parameter(name = "Stroke Width", min = 0, max = 10)
     private double strokeWidth = 1;
 
-    @Parameter("Departure Color")
+    @Parameter(name = "Departure Color")
     private Color departureColor = Color.CORAL.deriveColor(0, 1, 1, 0.5);
 
-    @Parameter("Arrival Color")
+    @Parameter(name = "Arrival Color")
     private Color arrivalColor = Color.DARKOLIVEGREEN.deriveColor(0, 1, 1, 0.5);
 
-    @Parameter("Great Circle Lines")
+    @Parameter(name = "Great Circle Lines", hintText = "When enabled, shows tracks as great circle lines. When disabled, shows tracks as straight lines on the map.")
     private boolean greatCircle = true;
 
-    @MetaPainter("Pilots")
+    @MetaPainter(name = "Flights", legacyName = "Pilots")
     private final ConnectionPainter pilots;
 
-    @MetaPainter("Airport Departures")
+    @MetaPainter(name = "Airport Departures")
     private final ConnectionPainter airportDepartures;
 
-    @MetaPainter("Airport Arrivals")
+    @MetaPainter(name = "Airport Arrivals")
     private final ConnectionPainter airportArrivals;
 
     private final PainterVisitor painterVisitor = new PainterVisitor();
@@ -127,13 +127,13 @@ public class ConnectionsPainter extends CompositeMapPainter<Data> {
     }
 
     private class ConnectionPainter extends MapPainter<Connection> {
-        @Parameter("History")
+        @Parameter(name = "Show History in Departure Track", legacyName = "History", hintText = "When enabled, shows the exact path the aircraft has taken since application start")
         private boolean history;
 
-        @Parameter("Departure")
+        @Parameter(name = "Show Track to Departure Airport", legacyName = "Departure")
         private boolean departure;
 
-        @Parameter("Arrival")
+        @Parameter(name = "Show Track to Arrival Airport", legacyName = "Arrival")
         private boolean arrival;
 
         private final Supplier<Color> departureColorSupplier;

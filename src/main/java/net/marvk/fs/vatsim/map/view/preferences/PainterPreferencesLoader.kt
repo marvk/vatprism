@@ -28,9 +28,9 @@ class PainterPreferencesLoader @Inject constructor(
     fun loadSettings() =
         settingsScope
             .painters
-            .map { generatePreferences(it.painter, it.name) }
+            .map { generatePreferences(it.painter, it.legacyName, it.name) }
 
-    private fun generatePreferences(painter: Painter<*>, name: String): PainterPreferencesDto {
+    private fun generatePreferences(painter: Painter<*>, prefix: String, name: String): PainterPreferencesDto {
         val fields = getFields(painter)
 
         val subPainterPreferences =
@@ -41,19 +41,23 @@ class PainterPreferencesLoader @Inject constructor(
                     painterField.isAccessible = true
 
                     val subPainter = painterField.getter.call(painter) as Painter<*>
-                    val subPainterName = painterField.annotations.filterIsInstance<MetaPainter>().single().value
+                    val metaPainterAnnotation = painterField.annotations.filterIsInstance<MetaPainter>().single()
 
-                    generatePreferences(subPainter, "$name.$subPainterName")
+                    generatePreferences(subPainter, "$prefix.${metaPainterAnnotation.legacyName.takeIf(String::isNotBlank) ?: metaPainterAnnotation.name}", metaPainterAnnotation.name)
                 }
 
         return fields
             .filterIsInstance<KMutableProperty<*>>()
             .filter { it.getParameterAnnotationOrNull() != null }
-            .mapNotNull { generatePreferencesList(it, painter, name) }
+            .mapNotNull { generatePreferencesList(it, painter, prefix) }
             .let { preferences ->
                 val (enabled, remaining) = preferences.partition { it.key.endsWith(".enabled") }
 
-                PainterPreferencesDto(name, enabled.singleOrNull(), remaining, subPainterPreferences)
+                val groupedPreferences = remaining.groupBy { it.parameter.group }.toMutableMap()
+
+                val ungroupedPreferences = groupedPreferences.remove("") ?: listOf()
+
+                PainterPreferencesDto(name, enabled.filterIsInstance<PreferenceDto.Boolean>().singleOrNull(), ungroupedPreferences, groupedPreferences, subPainterPreferences)
             }
     }
 
@@ -62,7 +66,7 @@ class PainterPreferencesLoader @Inject constructor(
 
         val parameter = field.getParameterAnnotation()
 
-        val name = parameter.value
+        val name = parameter.legacyName.takeIf(String::isNotBlank) ?: parameter.name
         val enabled = !parameter.disabled
 
         val key = calculateKey(prefix, name)

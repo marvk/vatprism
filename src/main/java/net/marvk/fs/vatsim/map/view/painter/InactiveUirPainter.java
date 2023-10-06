@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class InactiveUirPainter extends CompositeMapPainter<UpperInformationRegion> {
-    @MetaPainter("UIR")
+    @MetaPainter(name = "Upper Information Regions", legacyName = "UIR")
     private final UirPainter uirPainter;
 
     public InactiveUirPainter(final MapVariables mapVariables) {

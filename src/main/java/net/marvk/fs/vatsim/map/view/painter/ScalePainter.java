@@ -11,7 +11,7 @@ public class ScalePainter extends MapPainter<Void> {
     private static final int EDGE_OFFSET = 20;
     private static final int LIMIT_LENGTH = 5;
 
-    @Parameter("Color")
+    @Parameter(name = "Color")
     private Color color = Color.web("3b3526");
 
     public ScalePainter(final MapVariables mapVariables) {
