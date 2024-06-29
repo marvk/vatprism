@@ -15,7 +15,7 @@ public abstract class MapPainter<T> extends DisableablePainter<T> {
     }
 
     @Override
-    public PainterMetric getMetricsSnapshot() {
+    public PainterMetric createMetricsSnapshot() {
         return painterHelper.metricSnapshot();
     }
 }

@@ -55,15 +55,18 @@ import org.controlsfx.control.textfield.CustomTextField
 import org.kordamp.ikonli.javafx.FontIcon
 import org.kordamp.ikonli.materialdesign2.MaterialDesignC
 import org.kordamp.ikonli.materialdesign2.MaterialDesignM
-import org.scenicview.ScenicView
 import java.util.UUID
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
+/**
+ * Utilities and DSL to create a heavily modified version of a PreferencesFx View
+ */
+
 @DslMarker
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class PreferencesFxMarker
+private annotation class PreferencesFxMarker
 
 fun preferencesFx(saveClass: Class<*>, block: PreferencesFxContext.() -> Unit): PreferencesFx {
     val context = PreferencesFxContext().apply(block)
@@ -291,8 +294,6 @@ fun PreferencesFx.modifyPreferencesFxStyle() {
         val newBreadCrumbs = BreadCrumb2(preferencesFxModel.displayedCategoryProperty()).apply { HBox.setHgrow(this, Priority.ALWAYS) }
         view.children.replace(view.breadCrumbBar, newBreadCrumbs)
     }
-
-    ScenicView.show(view.scene)
 }
 
 private class BreadCrumb2(categoryProperty: ObservableValue<Category>) : HBox() {
@@ -338,6 +339,10 @@ private fun MutableList<Node>.replace(from: Node, to: Node) {
 private val INVISIBLE = VisibilityProperty.of<Nothing>(ImmutableBooleanProperty(false))
 private fun <E : Element<*>, P : Property<*>> Setting<E, P>.invisible() = also { applyVisibility(INVISIBLE) }
 
+/**
+ * Here be dragons
+ */
+
 private fun GridPane.replace(from: Node, to: Node) {
     require(children.contains(from))
     GridPane.setColumnIndex(to, GridPane.getColumnIndex(from))
@@ -348,31 +353,40 @@ private fun GridPane.replace(from: Node, to: Node) {
     children.add(to)
 }
 
-private val PreferencesFx.preferencesFxDialog get() = view.parent.to<PreferencesFxDialog>()
-private val PreferencesFx.navigationPresenter get() = field<NavigationPresenter>("navigationPresenter")
-private val PreferencesFx.preferencesFxModel get() = field<PreferencesFxModel>("preferencesFxModel")
-private val PreferencesFx.buttonBar get() = view.parent.singleChildOf<ButtonBar>()
-private val NavigationPresenter.categoryTreeItemMap get() = field<HashMap<Category, FilterableTreeItem<Category>>>("categoryTreeItemMap")
+private val PreferencesFx.preferencesFxDialog get() = view.parent.asType<PreferencesFxDialog>()
+private val PreferencesFx.navigationPresenter get() = fieldValueOfType<NavigationPresenter>("navigationPresenter")
+private val PreferencesFx.preferencesFxModel get() = fieldValueOfType<PreferencesFxModel>("preferencesFxModel")
+private val PreferencesFx.buttonBar get() = view.parent.singleChildOfType<ButtonBar>()
+private val NavigationPresenter.categoryTreeItemMap get() = fieldValueOfType<HashMap<Category, FilterableTreeItem<Category>>>("categoryTreeItemMap")
 private val ButtonBar.safeButtons get() = buttons.filterIsInstance<Button>()
-private val PreferencesFxDialog.preferencesFxView get() = singleChildOf<PreferencesFxView>()
-private val PreferencesFxView.navigationView get() = singleChildOf<MasterDetailPane>().detailNode.to<NavigationView>()
-private val NavigationView.searchField get() = field<CustomTextField>("searchFld")
-private val NavigationView.treeView get() = field<TreeView<Category>>("treeView")
-private val PreferencesFxView.breadCrumbView get() = singleChildOf<MasterDetailPane>().masterNode.to<VBox>().singleChildOf<BreadCrumbView>()
-private val BreadCrumbView.breadCrumbBar get() = field<BreadCrumbBar<Category>>("breadCrumbBar")
-private val PreferencesFxView.categoryController get() = singleChildOf<MasterDetailPane>().masterNode.to<VBox>().singleChildOf<CategoryController>()
-private val CategoryController.views get() = field<Map<String, CategoryView>>("views")
-private val CategoryView.preferencesFormRenderer get() = field<PreferencesFxFormRenderer>("preferencesFormRenderer")
-private val PreferencesFxFormRenderer.groups get() = field<List<PreferencesFxGroupRenderer>>("groups")
+private val PreferencesFxDialog.preferencesFxView get() = singleChildOfType<PreferencesFxView>()
+private val PreferencesFxView.navigationView get() = singleChildOfType<MasterDetailPane>().detailNode.asType<NavigationView>()
+private val NavigationView.searchField get() = fieldValueOfType<CustomTextField>("searchFld")
+private val NavigationView.treeView get() = fieldValueOfType<TreeView<Category>>("treeView")
+private val PreferencesFxView.breadCrumbView get() = singleChildOfType<MasterDetailPane>().masterNode.asType<VBox>().singleChildOfType<BreadCrumbView>()
+private val BreadCrumbView.breadCrumbBar get() = fieldValueOfType<BreadCrumbBar<Category>>("breadCrumbBar")
+private val PreferencesFxView.categoryController get() = singleChildOfType<MasterDetailPane>().masterNode.asType<VBox>().singleChildOfType<CategoryController>()
+private val CategoryController.views get() = fieldValueOfType<Map<String, CategoryView>>("views")
+private val CategoryView.preferencesFormRenderer get() = fieldValueOfType<PreferencesFxFormRenderer>("preferencesFormRenderer")
+private val PreferencesFxFormRenderer.groups get() = fieldValueOfType<List<PreferencesFxGroupRenderer>>("groups")
 
 private val Parent.deepChildren
-    get(): Iterable<Node> = childrenUnmodifiable.toList() + childrenUnmodifiable.filterIsInstance<Parent>().flatMap { it.deepChildren }
-        .toList() + childrenUnmodifiable.filterIsInstance<MasterDetailPane>().flatMap { listOf(it.masterNode, it.detailNode) }
+    get(): Iterable<Node> =
+        childrenUnmodifiable.toList() +
+                childrenUnmodifiable.filterIsInstance<Parent>().flatMap { it.deepChildren }.toList() +
+                childrenUnmodifiable.filterIsInstance<MasterDetailPane>().flatMap { listOf(it.masterNode, it.detailNode) }
 
-private inline fun <reified R> List<*>.singleInstanceOf() = filterIsInstance<R>().single()
-private inline fun <reified R> Any.to() = (this as R)
-private inline fun <reified R> Parent.singleChildOf() = childrenUnmodifiable.singleInstanceOf<R>()
-private inline fun <reified R> Any.field(fieldName: String) = this::class.declaredMemberProperties.single { it.name == fieldName }.apply { javaField!!.isAccessible = true }.getter.call(this)!!.to<R>()
+private inline fun <reified R> List<*>.singleInstanceOfType() = filterIsInstance<R>().single()
+private inline fun <reified R> Any.asType() = (this as R)
+private inline fun <reified R> Parent.singleChildOfType() = childrenUnmodifiable.singleInstanceOfType<R>()
+private inline fun <reified R> Any.fieldValueOfType(fieldName: String) =
+    this::class
+        .declaredMemberProperties
+        .single { it.name == fieldName }
+        .apply { javaField!!.isAccessible = true }
+        .getter
+        .call(this)!!
+        .asType<R>()
 
 
 private fun CategoryContext.build() =

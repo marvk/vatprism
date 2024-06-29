@@ -80,9 +80,11 @@ public abstract class FileRepository<E extends UniquelyIdentifiable> implements 
             log.debug("Deserializing %s \n%s".formatted(singular(), s));
             return adapter.deserialize(s);
         } catch (final JsonParseException e) {
-            log.error("Failed to deserialize %s".formatted(singular()), e);
-            return null;
+            log.error("Failed to deserialize %s, malformed JSON".formatted(singular()), e);
+        } catch (final Exception e) {
+            log.error("Failed to deserialize %s, unknown error".formatted(singular()), e);
         }
+        return null;
     }
 
     public boolean canSaveToDisk() {

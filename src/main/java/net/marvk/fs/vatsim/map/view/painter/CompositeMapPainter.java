@@ -20,10 +20,10 @@ public abstract class CompositeMapPainter<T> extends DisableablePainter<T> {
     }
 
     @Override
-    public PainterMetric getMetricsSnapshot() {
+    public PainterMetric createMetricsSnapshot() {
         final List<PainterMetric> metrics = getPainters()
                 .stream()
-                .map(Painter::getMetricsSnapshot)
+                .map(Painter::createMetricsSnapshot)
                 .collect(Collectors.toList());
 
         return PainterMetric.ofMetrics(metrics);

@@ -163,8 +163,20 @@ public class ConfigFilePreferences implements Preferences, Writable {
                 observables.put(e.getKey(), e.getValue());
                 registerListener(e.getKey(), e.getValue());
             }
+            return;
         } catch (final IOException e) {
-            log.error("Failed to load config", e);
+            log.error("Failed to deserialize config, malformed JSON", e);
+        } catch (final Exception e) {
+            log.error("Failed to deserialize config, unknown error", e);
+        }
+        tryDeleteConfig();
+    }
+
+    private void tryDeleteConfig() {
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            log.error("Failed to delete config", e);
         }
     }
 
