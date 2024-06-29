@@ -15,7 +15,7 @@ public abstract class AlwaysOnMapPainter<T> implements Painter<T> {
     }
 
     @Override
-    public PainterMetric getMetricsSnapshot() {
+    public PainterMetric createMetricsSnapshot() {
         return painterHelper.metricSnapshot();
     }
 }

@@ -30,7 +30,6 @@ import net.marvk.fs.vatsim.map.view.painter.PainterExecutor;
 import net.marvk.fs.vatsim.map.view.painter.Parameter;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.octicons.Octicons;
-import org.scenicview.ScenicView;
 
 import java.awt.*;
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class PreferencesView {
         final Button openConfigDirectory = new Button("Open Config Directory");
         openConfigDirectory.setOnAction(e -> openConfigDirectory());
         final Button scenicView = new Button("Scenic View");
-        scenicView.setOnAction(e -> ScenicView.show(preferencesFx.getView().getScene()));
+//        scenicView.setOnAction(e -> ScenicView.show(preferencesFx.getView().getScene()));
         return Category.of(
                 "General",
                 Group.of(

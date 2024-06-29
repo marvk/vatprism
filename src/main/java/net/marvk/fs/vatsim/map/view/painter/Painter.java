@@ -40,5 +40,5 @@ public interface Painter<T> {
 
     boolean isEnabled();
 
-    PainterMetric getMetricsSnapshot();
+    PainterMetric createMetricsSnapshot();
 }

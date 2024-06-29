@@ -29,7 +29,6 @@ import net.marvk.fs.vatsim.map.view.preferences.PreferencesView2;
 import net.marvk.fs.vatsim.map.view.vatprism2.controls.IconToggleButton;
 import org.kordamp.ikonli.Ikon;
 import org.kordamp.ikonli.materialdesign2.MaterialDesignF;
-import org.scenicview.ScenicView;
 
 import java.util.List;
 
@@ -264,6 +263,6 @@ public class ToolBarView implements FxmlView<ToolBarViewModel> {
 
     @FXML
     public void showSceneView() {
-        ScenicView.show(container.getScene());
+//        ScenicView.show(container.getScene());
     }
 }

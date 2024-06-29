@@ -88,6 +88,8 @@ class FilterEditor2View : FxmlView<FilterEditor2ViewModel> {
     private lateinit var viewModel: FilterEditor2ViewModel
 
     fun initialize() {
+        grid.disableProperty().bind(viewModel.currentProperty.isNull)
+
         initTypeCheckbox(pilotCheckbox, Filter.Type.PILOT)
         initTypeCheckbox(controllerCheckbox, Filter.Type.CONTROLLER)
 

@@ -11,7 +11,6 @@ import javafx.beans.value.ObservableBooleanValue
 import javafx.collections.FXCollections
 import net.marvk.fs.vatsim.map.data.Preferences
 import net.marvk.fs.vatsim.map.extensions.createLogger
-import org.scenicview.ScenicView
 import java.awt.Desktop
 import java.io.IOException
 import java.nio.file.Path
@@ -76,7 +75,6 @@ class PreferencesView2 @Inject constructor(
                 }
             }
 
-
             category("Other") {
                 group {
                     button("Open Config Directory", { openConfigDirectory() })
@@ -123,9 +121,9 @@ class PreferencesView2 @Inject constructor(
                         textBefore = "Log level"
                         disableProperty = advancedModeDisabled
                     }
-                    button("Scenic View", { ScenicView.show(this@preferencesFx.preferencesFx.view) }) {
-                        disableProperty = advancedModeDisabled
-                    }
+//                    button("Scenic View", { ScenicView.show(this@preferencesFx.preferencesFx.view) }) {
+//                        disableProperty = advancedModeDisabled
+//                    }
                 }
 
                 group("Metrics") {
@@ -236,7 +234,7 @@ class PreferencesView2 @Inject constructor(
             log.warn("Failed to open config directory via Desktop API, trying explorer...")
             try {
                 val pathString: String = configDirectory.toAbsolutePath().toString().replace("/".toRegex(), "\\\\")
-                val proc = Runtime.getRuntime().exec("explorer.exe $pathString")
+                val proc: Process = Runtime.getRuntime().exec(arrayOf("explorer.exe", pathString))
                 proc.waitFor()
             } catch (e: IOException) {
                 log.error("Failed to open config directory", e)

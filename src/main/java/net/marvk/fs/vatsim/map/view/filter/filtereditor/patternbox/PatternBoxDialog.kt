@@ -33,10 +33,19 @@ class PatternBoxDialog : Alert(AlertType.NONE) {
         onCloseRequest = EventHandler { close() }
         buttonTypes += okButton
         buttonTypes += cancelButton
-        dialogPane.lookupButton(okButton).disableProperty().bind(Bindings.createBooleanBinding({
-            with(dialogContent.viewModel) {
-                !patternValid || pattern.isBlank()
-            }
-        }, dialogContent.viewModel.patternValidProperty, dialogContent.viewModel.patternProperty))
+        dialogPane
+            .lookupButton(okButton)
+            .disableProperty()
+            .bind(
+                Bindings.createBooleanBinding(
+                    {
+                        with(dialogContent.viewModel) {
+                            !patternValid || pattern.isBlank()
+                        }
+                    },
+                    dialogContent.viewModel.patternValidProperty,
+                    dialogContent.viewModel.patternProperty
+                )
+            )
     }
 }
