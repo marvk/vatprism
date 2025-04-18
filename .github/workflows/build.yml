@@ -63,14 +63,14 @@ jobs:
       - name: Rename artifacts
         run: ren target-installer/VATprism-${{github.run_number}}.0.0.msi VATprism-${{env.PROJECT_VERSION}}.msi;
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows
           path: |
             target-installer/*
             LICENSE
       - name: Upload Vars
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: vars
           path: ./*.var
@@ -80,7 +80,7 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '#no-build') }}
     steps:
       - name: Download Vars
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: vars
       - name: Read Vars
@@ -106,7 +106,7 @@ jobs:
       - name: Rename artifacts
         run: mv target-installer/VATprism-${{github.run_number}}.0.0.dmg target-installer/VATprism-${{env.PROJECT_VERSION}}.dmg;
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: macos
           path: target-installer/*
@@ -116,16 +116,16 @@ jobs:
     needs: [ build-windows, build-osx ]
     steps:
       - name: Download Windows Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: windows
       - name: Download macOS Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: macos
           path: target-installer/
       - name: Download Vars
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: vars
       - run: ls

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.6](https://github.com/marvk/vatprism/compare/v0.3.4...v0.3.5) - 2025-04-18
+
+### Fixed
+
+- Fixed an issue with broken vatsim api airport data causing the application to crash at launch ([#148](https://github.com/marvk/vatprism/issues/91))
+
 ## [0.3.5](https://github.com/marvk/vatprism/compare/v0.3.4...v0.3.5) - 2022-06-04
 
 ### Fixed

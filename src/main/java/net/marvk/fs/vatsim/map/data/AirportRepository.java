@@ -51,6 +51,9 @@ public class AirportRepository extends ProviderRepository<Airport, AirportReposi
                 .getAirports()
                 .stream()
 //                .filter(e -> !e.getPseudo())
+                // Workaround for #148 (https://github.com/marvk/vatprism/issues/148)
+                // Remove broken airports, as it's just an issue with the data that will hopefully be fixed soon
+                .filter(e -> e.getFlightInformationRegion() != null)
                 .collect(Collectors.groupingBy(VatsimAirport::getIcao))
                 .values()
                 .stream()
