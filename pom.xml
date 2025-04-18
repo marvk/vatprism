@@ -73,7 +73,7 @@
         <appdirs.version>1.2.1</appdirs.version>
         <rtree2.version>0.9-RC1</rtree2.version>
         <semver.version>0.9.0</semver.version>
-        <jipsy.version>0.6.0</jipsy.version>
+        <jipsy.version>1.2.0</jipsy.version>
         <reflections.version>0.10.2</reflections.version>
 
         <jpackage.args.crossPlatform>
