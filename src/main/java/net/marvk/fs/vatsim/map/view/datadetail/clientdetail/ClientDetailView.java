@@ -30,6 +30,8 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     @FXML
     private FontIcon questionMarkIcon;
     @FXML
+    private FontIcon livestreamIcon;
+    @FXML
     private HBox headerLabelContainer;
     @FXML
     private Label headerLabel;
@@ -68,10 +70,21 @@ public class ClientDetailView extends DataDetailSubView<ClientDetailViewModel, C
     @Override
     public void initialize() {
         super.initialize();
-        viewModel.twitchStreamProperty().addListener((observable, oldValue, newValue) -> {
+        viewModel.livestreamProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                headerPane.getStyleClass().add("twitch-container");
+                viewModel.livestreamPlatformProperty().addListener((observable1, oldValue1, newValue1) -> {
+                    if (newValue1.equals("YouTube")) {
+                        livestreamIcon.setIconLiteral("ion4-logo-youtube");
+                        headerPane.getStyleClass().remove("twitch-container");
+                        headerPane.getStyleClass().add("youtube-container");
+                    } else {
+                        livestreamIcon.setIconLiteral("ion4-logo-twitch");
+                        headerPane.getStyleClass().remove("youtube-container");
+                        headerPane.getStyleClass().add("twitch-container");
+                    }
+                });
             } else {
+                headerPane.getStyleClass().remove("youtube-container");
                 headerPane.getStyleClass().remove("twitch-container");
             }
         });

@@ -29,7 +29,7 @@ public class StreamersTableViewModel extends SimpleTableViewModel<Client> {
 
         this.filteredList = new FilteredList<>(clientRepository.list());
         this.filteredList.predicateProperty().bind(Bindings.createObjectBinding(
-                () -> e -> e.getUrls().isTwitch(),
+                () -> e -> e.getUrls().getLivestream(),
                 currentTime
         ));
         Notifications.CLIENTS_RELOADED.subscribe(() -> currentTime.set(LocalDateTime.now()));
@@ -42,9 +42,9 @@ public class StreamersTableViewModel extends SimpleTableViewModel<Client> {
     }
 
     public void openStream(final Client client) {
-        final String twitchUrl = client.getUrls().getTwitchUrl();
-        if (twitchUrl != null) {
-            hostServices.showDocument("https://" + twitchUrl);
+        final String livestreamUrl = client.getUrls().getUrl();
+        if (livestreamUrl != null) {
+            hostServices.showDocument("https://" + livestreamUrl);
         }
     }
 }
