@@ -278,7 +278,11 @@ public class FlightPlan implements Settable<VatsimFlightPlan>, Data {
 
                 final int multiplier = prefix == null ? 1 : 100;
 
-                return String.valueOf(Integer.parseInt(amount) * multiplier);
+                try {
+                    return String.valueOf(Integer.parseInt(amount) * multiplier);
+                } catch (NumberFormatException e) {
+                    return null;
+                }
             }
             return null;
         });
