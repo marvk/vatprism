@@ -26,9 +26,18 @@ public class StreamersTableView extends AbstractClientsTableView<StreamersTableV
                 .build();
 
         this.<String>newColumnBuilder()
-                .title("Twitch Username")
-                .objectObservableValueFactory(e -> e.getUrls().twitchUrlProperty())
-                .toStringMapper(e -> e.replaceAll("(?:www\\.)?twitch\\.tv/", ""))
+                .title("Platform")
+                .objectObservableValueFactory(e -> e.getUrls().platformProperty())
+                .toStringMapper(e -> e)
+                .sortable()
+                .widthFactor(0.8)
+                .build();
+
+        this.<String>newColumnBuilder()
+                .title("Username")
+                .objectObservableValueFactory(e -> e.getUrls().urlProperty())
+                .toStringMapper(e -> e.replaceAll("(?:www\\.)?twitch\\.tv/", "")
+                        .replaceAll("(?:www\\.)?youtube\\.com/", ""))
                 .sortable()
                 .widthFactor(2.0)
                 .build();
