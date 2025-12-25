@@ -5,9 +5,13 @@ import net.harawata.appdirs.AppDirs;
 import net.harawata.appdirs.AppDirsFactory;
 import net.marvk.fs.vatsim.map.data.VersionProvider;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 /**
  * TODO Hacky way to start a JavaFX application without messing with modules
@@ -18,6 +22,16 @@ public final class Application {
     }
 
     public static void main(final String[] args) throws IOException {
+        // Establish and check lockfile to prevent multiple instances
+        String userHome = System.getProperty("user.home");
+        File file = new File(userHome, "vatprism.lock");
+        FileChannel fc = FileChannel.open(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        FileLock lock = fc.tryLock();
+        if (lock == null) {
+            System.out.println("Another instance of VATprism is running");
+            System.exit(1);
+        }
+
         reconfigureLogger();
         SystemInformationLogger.logGeneralInformation();
         App.main(args);
