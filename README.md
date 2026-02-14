@@ -84,7 +84,7 @@ Building the project requires the following tools:
 
 * [JDK 15+](https://adoptopenjdk.net/)
 
-* [WiX Toolset](https://wixtoolset.org/) (Windows Only)
+* [WiX Toolset](https://wixtoolset.org/) (Windows Only, version 3 required)
 
 To build the project, clone the repository and run `mvn package`. To run the project, navigate to `target-fat-jar` and
 run `java -jar vatsim-map-[VERSION]-fat.jar`
